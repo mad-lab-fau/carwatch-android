@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CAR Watch</string>
+
+    <!-- App Bar Titles -->
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Alarm</string>
+    <string name="title_notifications">Scan</string>
+</resources>
