@@ -45,6 +45,10 @@ public class AlarmViewModel extends AndroidViewModel {
             time = time.plusDays(1);
         }
 
+        if (getAlarm().getValue() != null && getAlarm().getValue().equals(time)) {
+            return;
+        }
+
         alarm.setValue(time);
         sharedPreferences.edit().putLong(Constants.KEY_ALARM_TIME, time.getMillis()).apply();
     }
@@ -63,6 +67,9 @@ public class AlarmViewModel extends AndroidViewModel {
     }
 
     public void setAlarmEnabled(boolean enable) {
+        if (getAlarm().getValue() != null) {
+            setAlarm(getAlarm().getValue());
+        }
         alarmEnabled.setValue(enable);
         sharedPreferences.edit().putBoolean(Constants.KEY_ALARM_ENABLED, enable).apply();
     }
