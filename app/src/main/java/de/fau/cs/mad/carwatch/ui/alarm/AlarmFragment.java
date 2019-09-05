@@ -6,7 +6,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,11 +50,10 @@ public class AlarmFragment extends Fragment implements View.OnClickListener, Com
     private PeriodFormatter formatter = new PeriodFormatterBuilder()
             .appendHours()
             .appendSuffix(" hour", " hours")
-            .appendSeparator(" and ")
+            .appendSeparatorIfFieldsBefore(" from ")
             .appendMinutes()
             .appendSuffix(" minute", " minutes")
-            .printZeroAlways()
-            .appendSuffix(" from ")
+            .appendSeparatorIfFieldsBefore(" from ")
             .toFormatter();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -146,6 +144,7 @@ public class AlarmFragment extends Fragment implements View.OnClickListener, Com
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), Constants.REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Intent intentShow = new Intent(getActivity(), MainActivity.class);
+                intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 PendingIntent pendingIntentShow = PendingIntent.getActivity(getContext(), Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(time.getMillis(), pendingIntentShow);
@@ -162,10 +161,6 @@ public class AlarmFragment extends Fragment implements View.OnClickListener, Com
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), Constants.REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.cancel(pendingIntent);
-
-            /*if (coordinatorLayout != null && isInitialized) {
-                Snackbar.make(coordinatorLayout, "Alarm canceled.", Snackbar.LENGTH_SHORT).show();
-            }*/
         }
     }
 }
