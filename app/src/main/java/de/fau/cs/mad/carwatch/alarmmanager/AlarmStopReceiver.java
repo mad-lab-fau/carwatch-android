@@ -20,9 +20,9 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
 
         Log.d(TAG, "Stopping alarm " + alarmId);
-        /*
+
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
-        alarmSoundControl.stopAlarmSound();*/
+        alarmSoundControl.stopAlarmSound();
 
         // Dismiss notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

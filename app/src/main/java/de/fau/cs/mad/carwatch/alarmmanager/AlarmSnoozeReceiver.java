@@ -19,12 +19,11 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int alarmID = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
 
-        /*Log.d(TAG, "Stopping ringing and dismissing alarm " + alarmID);
+        Log.d(TAG, "Stopping alarm " + alarmId + " to activate snooze...");
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.stopAlarmSound();
-         */
 
         // Dismiss notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -39,8 +38,8 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
         snoozeTime = snoozeTime.plusMinutes(5);
 
         // Schedule next ring
-        Log.d(TAG, "Snoozing alarm " + alarmID + " for " + snoozeTime.getMinuteOfHour() + " minutes");
+        Log.d(TAG, "Snoozing alarm " + alarmId + " for " + snoozeTime.getMinuteOfHour() + " minutes");
         AlarmHandler alarmHandler = new AlarmHandler(context, null);
-        alarmHandler.scheduleAlarmAtTime(snoozeTime, alarmID);
+        alarmHandler.scheduleAlarmAtTime(snoozeTime, alarmId);
     }
 }

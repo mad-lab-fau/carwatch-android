@@ -40,10 +40,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
         Notification notification = buildNotification(
-                context,
-                createSnoozeAlarmIntent(context, alarmId),
-                createStopAlarmIntent(context, alarmId)
+                context, createSnoozeAlarmIntent(context, alarmId), createStopAlarmIntent(context, alarmId)
         );
+
+        // Play alarm ringing sound
+        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
+        alarmSoundControl.playAlarmSound(context);
 
         Log.d(TAG, "Displaying notification for alarm " + alarmId);
         if (notificationManager != null) {
