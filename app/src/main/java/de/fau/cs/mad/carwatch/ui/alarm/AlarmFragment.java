@@ -90,9 +90,6 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
         if (resultCode == Activity.RESULT_OK) {
             if (data.hasExtra(Constants.EXTRA_ALARM)) {
                 Alarm alarm = data.getParcelableExtra(Constants.EXTRA_ALARM);
-                if (data.hasExtra(Constants.EXTRA_DELETE)) {
-                    Snackbar.make(coordinatorLayout, R.string.alarm_deleted, Snackbar.LENGTH_SHORT).show();
-                }
                 adapter.updateAlarm(alarm);
             }
         } else {
