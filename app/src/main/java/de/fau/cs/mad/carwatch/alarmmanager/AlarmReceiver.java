@@ -12,7 +12,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import de.fau.cs.mad.carwatch.AlarmActivity;
+import de.fau.cs.mad.carwatch.ui.ShowAlarmActivity;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 
@@ -53,7 +53,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private Notification buildNotification(Context context, PendingIntent snoozeIntent, PendingIntent stopIntent) {
         // Full screen Intent
-        Intent fullScreenIntent = new Intent(context, AlarmActivity.class);
+        Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

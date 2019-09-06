@@ -17,7 +17,7 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
-import de.fau.cs.mad.carwatch.MainActivity;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 

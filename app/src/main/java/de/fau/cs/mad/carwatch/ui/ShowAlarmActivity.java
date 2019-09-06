@@ -1,4 +1,4 @@
-package de.fau.cs.mad.carwatch;
+package de.fau.cs.mad.carwatch.ui;
 
 import android.app.KeyguardManager;
 import android.content.Context;
@@ -8,9 +8,11 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class AlarmActivity extends AppCompatActivity {
+import de.fau.cs.mad.carwatch.R;
 
-    private static final String TAG = AlarmActivity.class.getSimpleName();
+public class ShowAlarmActivity extends AppCompatActivity {
+
+    private static final String TAG = ShowAlarmActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
