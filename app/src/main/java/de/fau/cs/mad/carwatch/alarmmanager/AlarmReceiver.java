@@ -13,12 +13,15 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import de.fau.cs.mad.carwatch.AlarmActivity;
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+
+import static android.os.Build.VERSION;
+import static android.os.Build.VERSION_CODES;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
-
     private final String CHANNEL_ID = "AlarmReceiverChannel";
 
     @SuppressLint("WrongConstant")
@@ -28,22 +31,27 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Create and add notification channel
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
             if (notificationManager != null) {
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
                 notificationManager.createNotificationChannel(channel);
             }
         }
 
-        Notification notification = buildNotification(context);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        Notification notification = buildNotification(
+                context,
+                createSnoozeAlarmIntent(context, alarmId),
+                createStopAlarmIntent(context, alarmId)
+        );
 
-        Log.i(TAG, "displaying notification for alarm");
+        Log.d(TAG, "Displaying notification for alarm " + alarmId);
         if (notificationManager != null) {
-            notificationManager.notify(0x01, notification);
+            notificationManager.notify(alarmId, notification);
         }
     }
 
-    private Notification buildNotification(Context context) {
+    private Notification buildNotification(Context context, PendingIntent snoozeIntent, PendingIntent stopIntent) {
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, AlarmActivity.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
@@ -57,11 +65,43 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setOngoing(true)
                 // TODO only for development!
                 .setAutoCancel(true)
-                .setSmallIcon(R.drawable.ic_alarm_black_24dp)
+                .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText("ALARM ALARM!")
+                .setContentText(context.getString(R.string.alarm_notification_text))
+                .addAction(R.drawable.ic_snooze_white_24dp, context.getString(R.string.snooze), snoozeIntent)
+                .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();
     }
+
+
+    /**
+     * Get PendingIntent to Snooze Alarm
+     *
+     * @param context current App context
+     * @param alarmId ID of alarm to handle
+     * @return PendingIntent to AlarmSnooze(Broadcast)Receiver
+     */
+    private PendingIntent createSnoozeAlarmIntent(Context context, int alarmId) {
+        Intent snoozeAlarmIntent = new Intent(context, AlarmSnoozeReceiver.class);
+        snoozeAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        snoozeAlarmIntent.setAction("Snooze Alarm");
+        return PendingIntent.getBroadcast(context, 0, snoozeAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    /**
+     * Get PendingIntent to Stop Alarm
+     *
+     * @param context current App context
+     * @param alarmId ID of alarm to handle
+     * @return PendingIntent to AlarmStop(Broadcast)Receiver
+     */
+    private PendingIntent createStopAlarmIntent(Context context, int alarmId) {
+        Intent stopAlarmIntent = new Intent(context, AlarmStopReceiver.class);
+        stopAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        stopAlarmIntent.setAction("Stop Alarm");
+        return PendingIntent.getBroadcast(context, 0, stopAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
 }

@@ -14,15 +14,12 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
-import java.util.Calendar;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.MainActivity;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
-
-import static de.fau.cs.mad.carwatch.Constants.EXTRA_ID;
 
 
 /**
@@ -59,15 +56,6 @@ public class AlarmHandler {
             return;
         }
 
-        // Get PendingIntent to AlarmReceiver Broadcast
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(EXTRA_ID, alarm.getId());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Intent intentShow = new Intent(context, MainActivity.class);
-        intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntentShow = PendingIntent.getActivity(context, Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, PendingIntent.FLAG_UPDATE_CURRENT);
-
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         if (alarmManager == null) {
@@ -80,6 +68,8 @@ public class AlarmHandler {
 
         DateTime nextAlarmRing = null; // used in Snackbar
 
+        PendingIntent pendingIntent = getPendingIntent(alarm.getId());
+        PendingIntent pendingIntentShow = getPendingIntentShow(alarm.getId());
 
         if (alarm.isRepeating()) {
             // get list of time to ring in milliseconds for each active day, and repeat weekly
@@ -111,26 +101,21 @@ public class AlarmHandler {
     }
 
     /**
-     * Schedule alarm notification based on time until next alarm
+     * Schedule alarm notification based on absolute time
      *
      * @param timeToRing time to next alarm in milliseconds
-     * @param alarmID    ID of alarm to ring
+     * @param alarmId    ID of alarm to ring
      */
-    public void scheduleAlarmWithTime(int timeToRing, int alarmID) {
-        // Calculate time until alarm from millis since epoch
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MILLISECOND, timeToRing);
-        long alarmTimeInMillis = calendar.getTimeInMillis();
+    public void scheduleAlarmAtTime(DateTime timeToRing, int alarmId) {
+        PendingIntent pendingIntent = getPendingIntent(alarmId);
+        PendingIntent pendingIntentShow = getPendingIntentShow(alarmId);
 
-        // Get PendingIntent to AlarmReceiver Broadcast channel
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(EXTRA_ID, alarmID);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.d(TAG, "Setting timed alarm " + alarmId + " at " + timeToRing);
 
-        Log.d(TAG, "Setting timed alarm " + alarmID + " to AlarmManager for " + alarmTimeInMillis + " milliseconds");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMillis, pendingIntent);
+            AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(timeToRing.getMillis(), pendingIntentShow);
+            alarmManager.setAlarmClock(info, pendingIntent);
         }
     }
 
@@ -154,5 +139,22 @@ public class AlarmHandler {
 
         // Show snackbar to notify user
         Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_cancelled), Snackbar.LENGTH_SHORT).show();
+    }
+
+
+    private PendingIntent getPendingIntent(int alarmId) {
+        // Get PendingIntent to AlarmReceiver Broadcast
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra(Constants.EXTRA_ID, alarmId);
+
+        return PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private PendingIntent getPendingIntentShow(int alarmId) {
+        Intent intentShow = new Intent(context, MainActivity.class);
+        intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intentShow.putExtra(Constants.EXTRA_ID, alarmId);
+
+        return PendingIntent.getActivity(context, Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

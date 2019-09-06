@@ -35,6 +35,21 @@
             android:enabled="true"
             android:exported="true" />
 
+        <receiver
+            android:name=".alarmmanager.AlarmStopReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="Stop Alarm" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".alarmmanager.AlarmSnoozeReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="Snooze Alarm" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
