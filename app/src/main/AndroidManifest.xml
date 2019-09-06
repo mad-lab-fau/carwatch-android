@@ -26,8 +26,12 @@
             android:launchMode="singleTask"
             android:taskAffinity="" />
 
+        <activity
+            android:name=".ui.AddAlarmActivity"
+            android:parentActivityName=".MainActivity" />
+
         <receiver
-            android:name=".service.AlarmReceiver"
+            android:name=".alarmmanager.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 

@@ -1,4 +1,4 @@
-package de.fau.cs.mad.carwatch.service;
+package de.fau.cs.mad.carwatch.alarmmanager;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
