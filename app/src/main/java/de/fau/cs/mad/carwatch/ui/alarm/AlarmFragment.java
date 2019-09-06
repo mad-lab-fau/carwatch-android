@@ -34,13 +34,12 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = AlarmFragment.class.getSimpleName();
 
     private AlarmRecyclerAdapter adapter;
-    private AlarmViewModel alarmViewModel;
     private CoordinatorLayout coordinatorLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+        AlarmViewModel alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
 
         FragmentAlarmBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
         View root = dataBinding.getRoot();
@@ -70,35 +69,6 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
 
         FloatingActionButton fab = root.findViewById(R.id.fab);
         fab.setOnClickListener(this);
-
-
-        /*final TextView textView = root.findViewById(R.id.tv_alarm);
-        textView.setOnClickListener(this);
-
-        final Switch enableSwitch = root.findViewById(R.id.switch_enable);
-        enableSwitch.setOnCheckedChangeListener(this);
-
-        alarmViewModel.getAlarmString().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String alarm) {
-                textView.setText(alarm);
-            }
-        });
-
-        alarmViewModel.getAlarmEnabled().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                setAlarm(alarmViewModel.getAlarm().getValue(), aBoolean);
-            }
-        });
-
-        alarmViewModel.getAlarm().observe(this, new Observer<DateTime>() {
-            @Override
-            public void onChanged(DateTime dateTime) {
-                setAlarm(dateTime, alarmViewModel.getAlarmEnabled().getValue());
-                isInitialized = true;
-            }
-        });*/
 
         return root;
     }
@@ -130,31 +100,4 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
-    /*public void setAlarm(DateTime time, boolean enableAlarm) {
-        if (enableAlarm) {
-            if (time != null) {
-                Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), Constants.REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                Intent intentShow = new Intent(getActivity(), MainActivity.class);
-                intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                PendingIntent pendingIntentShow = PendingIntent.getActivity(getContext(), Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(time.getMillis(), pendingIntentShow);
-                alarmManager.setAlarmClock(info, pendingIntent);
-
-                Period timeDiff = new Period(DateTime.now(), time);
-
-                if (coordinatorLayout != null && isInitialized) {
-                    Snackbar.make(coordinatorLayout, "Alarm set for " + formatter.print(timeDiff) + "now.", Snackbar.LENGTH_SHORT).show();
-                }
-            }
-        } else {
-            Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), Constants.REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            alarmManager.cancel(pendingIntent);
-        }
-    }*/
 }
