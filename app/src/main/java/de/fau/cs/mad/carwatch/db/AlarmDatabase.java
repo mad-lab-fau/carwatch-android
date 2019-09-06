@@ -1,7 +1,6 @@
 package de.fau.cs.mad.carwatch.db;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -21,7 +20,7 @@ import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 @TypeConverters({DateConverter.class, BooleanArrayConverter.class})
 public abstract class AlarmDatabase extends RoomDatabase {
 
-    private static AlarmDatabase sINSTANCE;
+    private static AlarmDatabase sInstance;
 
     @VisibleForTesting
     public static final String DATABASE_NAME = "alarm-db";
@@ -29,10 +28,10 @@ public abstract class AlarmDatabase extends RoomDatabase {
     public abstract AlarmDao alarmModel();
 
     public static AlarmDatabase getInstance(final Context context) {
-        if (sINSTANCE == null) {
+        if (sInstance == null) {
             synchronized (AlarmDatabase.class) {
-                if (sINSTANCE == null) {
-                    sINSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                if (sInstance == null) {
+                    sInstance = Room.databaseBuilder(context.getApplicationContext(),
                             AlarmDatabase.class, DATABASE_NAME)
                             .fallbackToDestructiveMigration() // TODO Add Proper Migration
                             .addCallback(roomDatabaseCallback)
@@ -40,7 +39,7 @@ public abstract class AlarmDatabase extends RoomDatabase {
                 }
             }
         }
-        return sINSTANCE;
+        return sInstance;
     }
 
     /**
