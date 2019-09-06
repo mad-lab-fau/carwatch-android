@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">CAR Watch</string>
 
+    <string-array name="days_of_week">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
     <!-- App Bar Titles -->
     <string name="title_home">Home</string>
     <string name="title_dashboard">Alarm</string>

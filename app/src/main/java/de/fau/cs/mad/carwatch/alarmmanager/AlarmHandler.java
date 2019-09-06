@@ -78,7 +78,7 @@ public class AlarmHandler {
             return;
         }
 
-        long nextAlarmRing = 0; // used in Snackbar
+        DateTime nextAlarmRing = null; // used in Snackbar
 
 
         if (alarm.isRepeating()) {
@@ -86,29 +86,28 @@ public class AlarmHandler {
             List<DateTime> timeToWeeklyRings = alarm.getTimeToWeeklyRings();
 
             for (DateTime time : timeToWeeklyRings) {
-                Log.d(TAG, "Setting weekly repeat at " + time.toString());
-
-                if (time.getMillis() < nextAlarmRing || nextAlarmRing == 0) {
-                    nextAlarmRing = time.getMillis();
-                    AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(nextAlarmRing, pendingIntentShow);
-                    alarmManager.setAlarmClock(info, pendingIntent);
-                } else {
-                    alarmManager.setRepeating(
-                            AlarmManager.RTC_WAKEUP,
-                            time.getMillis(), // need to call TimeShift an hour early
-                            AlarmManager.INTERVAL_DAY * 7,
-                            pendingIntent);
+                Log.d(TAG, "Setting weekly repeat at " + time);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                if (time.isBefore(nextAlarmRing) || nextAlarmRing == null) {
+                    nextAlarmRing = time;
                 }
+            }
+            if (nextAlarmRing != null) {
+                Log.d(TAG, "Setting next alarm to " + nextAlarmRing);
+                AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(nextAlarmRing.getMillis(), pendingIntentShow);
+                alarmManager.setAlarmClock(info, pendingIntent);
             }
         } else {
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
 
-            Log.d(TAG, "Setting alarm " + alarm.getId() + " to AlarmManager");
+            Log.d(TAG, "Setting alarm for " + alarm);
         }
 
-        Period timeDiff = new Period(DateTime.now(), alarm.getTimeToNextRing());
-        Snackbar.make(snackBarAnchor, "Alarm set for " + formatter.print(timeDiff) + "now.", Snackbar.LENGTH_SHORT).show();
+        if (!alarm.isRepeating()) {
+            Period timeDiff = new Period(DateTime.now(), alarm.getTimeToNextRing());
+            Snackbar.make(snackBarAnchor, "Alarm set for " + formatter.print(timeDiff) + "now.", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     /**

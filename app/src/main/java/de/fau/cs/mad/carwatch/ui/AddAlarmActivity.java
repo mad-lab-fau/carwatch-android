@@ -22,11 +22,12 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.ui.alarm.AlarmViewModel;
+import de.fau.cs.mad.carwatch.ui.alarm.RepeatDaysDialogFragment;
 
 /**
  * Used to create and edit alarms, depending on REQUEST_CODE
  */
-public class AddAlarmActivity extends AppCompatActivity {//implements SetRepeatDaysDialogFragment.OnDialogCompleteListener {
+public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDialogFragment.OnDialogCompleteListener {
 
     private final String TAG = AddAlarmActivity.class.getSimpleName();
 
@@ -128,8 +129,7 @@ public class AddAlarmActivity extends AppCompatActivity {//implements SetRepeatD
                     time = alarm.getTime().toLocalTime();
                 }
 
-                TimePickerDialog timePicker;
-                timePicker = new TimePickerDialog(AddAlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog timePicker = new TimePickerDialog(AddAlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
@@ -153,12 +153,12 @@ public class AddAlarmActivity extends AppCompatActivity {//implements SetRepeatD
         setRepeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*SetRepeatDaysDialogFragment setRepeatDaysDialogFragment = new SetRepeatDaysDialogFragment();
+                RepeatDaysDialogFragment setRepeatDaysDialogFragment = new RepeatDaysDialogFragment(AddAlarmActivity.this);
 
                 Bundle args = getBundle();
                 setRepeatDaysDialogFragment.setArguments(args);
                 // Display dialog
-                setRepeatDaysDialogFragment.show(getSupportFragmentManager(), "A");*/
+                setRepeatDaysDialogFragment.show(getSupportFragmentManager(), RepeatDaysDialogFragment.class.getSimpleName());
             }
         });
     }
@@ -169,7 +169,6 @@ public class AddAlarmActivity extends AppCompatActivity {//implements SetRepeatD
     @NonNull
     private Bundle getBundle() {
         Bundle args = new Bundle();
-
         args.putBooleanArray(Constants.KEY_ACTIVE_DAYS, alarm.getActiveDays());
         return args;
     }
@@ -178,10 +177,10 @@ public class AddAlarmActivity extends AppCompatActivity {//implements SetRepeatD
      * This method is called when SetRepeatDaysDialogFragment completes, we get the selectedDays
      * and apply that to alarm
      *
-     * @param selectedDaysBools boolean array of selected days of the week
+     * @param selectedDays boolean array of selected days of the week
      */
-    public void onDialogComplete(boolean[] selectedDaysBools) {
-        alarm.setActiveDays(selectedDaysBools);
+    public void onDialogComplete(boolean[] selectedDays) {
+        alarm.setActiveDays(selectedDays);
         String formattedActiveDays = Alarm.getStringOfActiveDays(alarm.getActiveDays());
         repeatTextView.setText(formattedActiveDays);
     }

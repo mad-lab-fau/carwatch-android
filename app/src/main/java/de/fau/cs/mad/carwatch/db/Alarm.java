@@ -201,14 +201,13 @@ public class Alarm implements Parcelable {
      */
     @Ignore
     private DateTime getCorrectRingDay(LocalTime alarmTime, int activeDay) {
+        // JodaTime DateTimeConstants count from 1 (Monday) to 7 (Sunday)
+        activeDay += 1;
+
         DateTime currTime = DateTime.now();
         int currDay = currTime.getDayOfWeek();
 
         DateTime alarmDate = alarmTime.toDateTimeToday();
-
-        if (alarmDate.isBefore(currTime)) {
-            alarmDate = alarmDate.plusDays(1);
-        }
 
         // alarm time has passed for today
         if (alarmDate.isBefore(currTime) || currDay != activeDay) { // current day is not an active day
