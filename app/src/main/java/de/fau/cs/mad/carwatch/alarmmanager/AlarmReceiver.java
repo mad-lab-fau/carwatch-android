@@ -12,9 +12,9 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import de.fau.cs.mad.carwatch.ui.ShowAlarmActivity;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.ui.ShowAlarmActivity;
 
 import static android.os.Build.VERSION;
 import static android.os.Build.VERSION_CODES;
@@ -39,9 +39,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
-        Notification notification = buildNotification(
-                context, createSnoozeAlarmIntent(context, alarmId), createStopAlarmIntent(context, alarmId)
-        );
+        Notification notification = buildNotification(context, alarmId);
 
         // Play alarm ringing sound
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
@@ -53,9 +51,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private Notification buildNotification(Context context, PendingIntent snoozeIntent, PendingIntent stopIntent) {
+    private Notification buildNotification(Context context, int alarmId) {
         // Full screen Intent
+        PendingIntent snoozeIntent = createSnoozeAlarmIntent(context, alarmId);
+        PendingIntent stopIntent = createStopAlarmIntent(context, alarmId);
+
+
         Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
+        fullScreenIntent.putExtra(Constants.EXTRA_ID, alarmId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
