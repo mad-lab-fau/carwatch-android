@@ -54,7 +54,7 @@ public class AlarmRepository {
     }
 
     public Alarm getAlarmById(int id) throws ExecutionException, InterruptedException {
-        return new getByIdAsyncTask(alarmModel).execute(id).get();
+        return new GetByIdAsyncTask(alarmModel).execute(id).get();
     }
 
 
@@ -140,11 +140,11 @@ public class AlarmRepository {
         }
     }
 
-    private static class getByIdAsyncTask extends android.os.AsyncTask<Integer, Void, Alarm> {
+    private static class GetByIdAsyncTask extends android.os.AsyncTask<Integer, Void, Alarm> {
 
         private AlarmDao alarmModel;
 
-        getByIdAsyncTask(AlarmDao alarmModel) {
+        GetByIdAsyncTask(AlarmDao alarmModel) {
             this.alarmModel = alarmModel;
         }
 
