@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,15 +21,34 @@
         </activity>
 
         <activity
-            android:name=".AlarmActivity"
+            android:name=".ui.ShowAlarmActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity="" />
 
+        <activity
+            android:name=".ui.AddAlarmActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
         <receiver
-            android:name=".service.AlarmReceiver"
+            android:name=".alarmmanager.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
+
+        <receiver
+            android:name=".alarmmanager.AlarmStopReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="Stop Alarm" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".alarmmanager.AlarmSnoozeReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="Snooze Alarm" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

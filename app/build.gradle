@@ -32,4 +32,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'joda-time:joda-time:2.10.3'
+
+    def room_version = "1.1.1"
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    implementation "android.arch.lifecycle:extensions:$room_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$room_version"
 }

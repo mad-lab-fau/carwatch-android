@@ -1,18 +1,12 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,85 +15,60 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
+import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
-import de.fau.cs.mad.carwatch.MainActivity;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.databinding.FragmentAlarmBinding;
-import de.fau.cs.mad.carwatch.service.AlarmReceiver;
+import de.fau.cs.mad.carwatch.db.Alarm;
+import de.fau.cs.mad.carwatch.ui.AddAlarmActivity;
 
-public class AlarmFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class AlarmFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = AlarmFragment.class.getSimpleName();
 
-    private boolean isInitialized = false;
-
-    private AlarmManager alarmManager;
-
-    private AlarmViewModel alarmViewModel;
+    private AlarmRecyclerAdapter adapter;
     private CoordinatorLayout coordinatorLayout;
-
-    private PeriodFormatter formatter = new PeriodFormatterBuilder()
-            .appendHours()
-            .appendSuffix(" hour", " hours")
-            .appendSeparatorIfFieldsBefore(" from ")
-            .appendMinutes()
-            .appendSuffix(" minute", " minutes")
-            .appendSeparatorIfFieldsBefore(" from ")
-            .toFormatter();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+        AlarmViewModel alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
 
         FragmentAlarmBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
         View root = dataBinding.getRoot();
         dataBinding.setViewmodel(alarmViewModel);
 
-        if (getContext() != null) {
-            alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        }
-
         if (getActivity() != null) {
             coordinatorLayout = getActivity().findViewById(R.id.coordinator);
         }
 
-        final TextView textView = root.findViewById(R.id.tv_alarm);
-        textView.setOnClickListener(this);
+        adapter = new AlarmRecyclerAdapter(this, coordinatorLayout);
 
-        final Switch enableSwitch = root.findViewById(R.id.switch_enable);
-        enableSwitch.setOnCheckedChangeListener(this);
+        RecyclerView recyclerView = root.findViewById(R.id.alarm_recycler_view);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        alarmViewModel.getAlarmString().observe(this, new Observer<String>() {
+        final TextView noAlarmsTextView = root.findViewById(R.id.tv_no_alarms);
+
+        // Add an observer on the LiveData returned by getAllAlarms.
+        alarmViewModel.getAllAlarms().observe(this, new Observer<List<Alarm>>() {
             @Override
-            public void onChanged(@Nullable String alarm) {
-                textView.setText(alarm);
+            public void onChanged(@Nullable final List<Alarm> alarms) {
+                // Update the cached copy of the words in the adapter.
+                adapter.setAlarms(alarms);
+                noAlarmsTextView.setVisibility(alarms.size() == 0 ? View.VISIBLE : View.GONE);
             }
         });
 
-        alarmViewModel.getAlarmEnabled().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                setAlarm(alarmViewModel.getAlarm().getValue(), aBoolean);
-            }
-        });
-
-        alarmViewModel.getAlarm().observe(this, new Observer<DateTime>() {
-            @Override
-            public void onChanged(DateTime dateTime) {
-                setAlarm(dateTime, alarmViewModel.getAlarmEnabled().getValue());
-                isInitialized = true;
-            }
-        });
+        FloatingActionButton fab = root.findViewById(R.id.fab);
+        fab.setOnClickListener(this);
 
         return root;
     }
@@ -107,60 +76,25 @@ public class AlarmFragment extends Fragment implements View.OnClickListener, Com
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_alarm:
-                DateTime time = alarmViewModel.getAlarm().getValue();
-                if (time == null) {
-                    return;
-                }
-
-                TimePickerDialog dialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        DateTime time = new LocalTime(hourOfDay, minute).toDateTimeToday();
-
-                        alarmViewModel.setAlarm(time);
-                    }
-                }, time.getHourOfDay(), time.getMinuteOfHour(), true);
-
-                dialog.show();
+            case R.id.fab:
+                Intent intent = new Intent(getContext(), AddAlarmActivity.class);
+                startActivityForResult(intent, Constants.REQUEST_CODE_NEW_ALARM);
                 break;
         }
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.switch_enable:
-                alarmViewModel.setAlarmEnabled(isChecked);
-                break;
-        }
-    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-
-    public void setAlarm(DateTime time, boolean enableAlarm) {
-        if (enableAlarm) {
-            if (time != null) {
-                Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), Constants.REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                Intent intentShow = new Intent(getActivity(), MainActivity.class);
-                intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                PendingIntent pendingIntentShow = PendingIntent.getActivity(getContext(), Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(time.getMillis(), pendingIntentShow);
-                alarmManager.setAlarmClock(info, pendingIntent);
-
-                Period timeDiff = new Period(DateTime.now(), time);
-
-                if (coordinatorLayout != null && isInitialized) {
-                    Snackbar.make(coordinatorLayout, "Alarm set for " + formatter.print(timeDiff) + "now.", Snackbar.LENGTH_SHORT).show();
-                }
+        if (resultCode == Activity.RESULT_OK) {
+            if (data.hasExtra(Constants.EXTRA_ALARM)) {
+                Alarm alarm = data.getParcelableExtra(Constants.EXTRA_ALARM);
+                adapter.updateAlarm(alarm);
             }
         } else {
-            Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), Constants.REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            alarmManager.cancel(pendingIntent);
+            Snackbar.make(coordinatorLayout, R.string.alarm_not_saved, Snackbar.LENGTH_SHORT).show();
         }
     }
+
 }
