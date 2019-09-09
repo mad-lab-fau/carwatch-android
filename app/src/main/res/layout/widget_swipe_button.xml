@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/swipe_button_height"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_rounded" />
+
+    <TextView
+        android:id="@+id/tv_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:padding="16dp"
+        android:text="SNOOZE"
+        android:textColor="@color/colorWhite" />
+
+    <ImageView
+        android:id="@+id/iv_slide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/swipe_button_padding"
+        android:src="@drawable/ic_ring_black_24dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_button" />
+
+    <TextView
+        android:id="@+id/tv_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:padding="16dp"
+        android:text="STOP"
+        android:textColor="@color/colorWhite" />
+
+</RelativeLayout>
