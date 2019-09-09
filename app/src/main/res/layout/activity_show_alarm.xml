@@ -9,27 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <RelativeLayout
+        <de.fau.cs.mad.carwatch.ui.widgets.SwipeButton
+            android:id="@+id/button_swipe"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
-
-            <Button
-                android:id="@+id/button_snooze"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="@string/snooze" />
-
-            <Button
-                android:id="@+id/button_stop"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_toEndOf="@+id/button_snooze"
-                android:text="@string/stop" />
-        </RelativeLayout>
+            android:layout_height="100dp"
+            android:layout_margin="16dp"
+            android:layout_centerInParent="true" />
 
 
     </RelativeLayout>

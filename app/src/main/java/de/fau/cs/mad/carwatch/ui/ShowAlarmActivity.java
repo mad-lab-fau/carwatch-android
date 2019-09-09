@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,8 +13,9 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSnoozeReceiver;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmStopReceiver;
+import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
 
-public class ShowAlarmActivity extends AppCompatActivity implements View.OnClickListener {
+public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.OnSwipeListener {
 
     private static final String TAG = ShowAlarmActivity.class.getSimpleName();
 
@@ -48,24 +47,9 @@ public class ShowAlarmActivity extends AppCompatActivity implements View.OnClick
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        Button snoozeButton = findViewById(R.id.button_snooze);
-        snoozeButton.setOnClickListener(this);
+        SwipeButton swipeButton = findViewById(R.id.button_swipe);
+        swipeButton.setOnSwipeListener(this);
 
-        Button stopButton = findViewById(R.id.button_stop);
-        stopButton.setOnClickListener(this);
-
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.button_snooze:
-                snoozeAlarm();
-                break;
-            case R.id.button_stop:
-                stopAlarm();
-                break;
-        }
     }
 
     private void snoozeAlarm() {
@@ -82,5 +66,15 @@ public class ShowAlarmActivity extends AppCompatActivity implements View.OnClick
         stopAlarmIntent.setAction("Stop Alarm");
         sendBroadcast(stopAlarmIntent);
         finish();
+    }
+
+    @Override
+    public void onSwipeLeft() {
+        snoozeAlarm();
+    }
+
+    @Override
+    public void onSwipeRight() {
+        stopAlarm();
     }
 }
