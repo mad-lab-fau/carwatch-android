@@ -29,8 +29,10 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         AlarmRepository repository = new AlarmRepository((Application) context.getApplicationContext());
         try {
             Alarm alarm = repository.getAlarmById(alarmId);
-            alarm.setActive(false);
-            repository.updateActive(alarm);
+            if (alarm != null) {
+                alarm.setActive(false);
+                repository.updateActive(alarm);
+            }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
