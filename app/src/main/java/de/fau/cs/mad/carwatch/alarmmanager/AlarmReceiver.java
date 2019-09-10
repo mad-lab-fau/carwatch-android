@@ -27,7 +27,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     @SuppressLint("WrongConstant")
     @Override
     public void onReceive(Context context, Intent intent) {
-
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Create and add notification channel
@@ -38,7 +37,12 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
         }
 
+        // convert id from hidden alarm to regular alarm id (will be needed in SnoozeReceiver and StopReceiver)
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        if (alarmId > Integer.MAX_VALUE / 2) {
+            alarmId = Integer.MAX_VALUE - alarmId;
+        }
+
         Notification notification = buildNotification(context, alarmId);
 
         // Play alarm ringing sound
