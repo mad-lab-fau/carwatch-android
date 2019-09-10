@@ -32,13 +32,15 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
-        // Get snooze length from shared preferences
+        // TODO Get snooze length from shared preferences
         DateTime snoozeTime = DateTime.now();
+        // set seconds to 0
         snoozeTime = snoozeTime.minusSeconds(snoozeTime.getSecondOfMinute());
+        // add snooze time
         snoozeTime = snoozeTime.plusMinutes(5);
 
         // Schedule next ring
-        Log.d(TAG, "Snoozing alarm " + alarmId + " for " + snoozeTime.getMinuteOfHour() + " minutes");
+        Log.d(TAG, "Snoozing alarm " + alarmId + " for " + 5 + " minutes");
         AlarmHandler alarmHandler = new AlarmHandler(context, null);
         alarmHandler.scheduleAlarmAtTime(snoozeTime, alarmId);
     }
