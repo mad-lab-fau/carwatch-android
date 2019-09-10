@@ -35,10 +35,16 @@ public class Alarm implements Parcelable {
     @ColumnInfo(name = "alarm_time")
     private DateTime time;
 
+    @ColumnInfo(name = "hidden_delta")
+    private int hiddenDelta;
+
+    @ColumnInfo(name = "has_hidden_time")
+    private boolean hasHiddenTime;
+
     @ColumnInfo(name = "alarm_active")
     private boolean active;
 
-    // Must have length 7
+    // Must have length 7 (= Constants.NUM_DAYS)
     // i'th item being true means alarm is active on i'th day
     @ColumnInfo(name = "alarm_active_days")
     private boolean[] activeDays;
@@ -47,10 +53,13 @@ public class Alarm implements Parcelable {
         this(
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
                 false,
+                0,
+                false,
                 new boolean[]{false, true, true, true, true, true, false}
         );
     }
 
+    // Getters/Setters
     public void setId(int id) {
         this.id = id;
     }
@@ -59,13 +68,32 @@ public class Alarm implements Parcelable {
         return id;
     }
 
-    // Getters/Setters
     public void setTime(DateTime time) {
         this.time = time;
     }
 
     public DateTime getTime() {
         return time;
+    }
+
+    public void setHasHiddenTime(boolean hasHiddenTime) {
+        this.hasHiddenTime = hasHiddenTime;
+        if (this.hasHiddenTime && this.hiddenDelta == 0) {
+            this.hiddenDelta = 30 + (int) (Math.random() * 30);
+        }
+    }
+
+    public boolean hasHiddenTime() {
+        return hasHiddenTime;
+    }
+
+    public void setHiddenDelta(int hiddenDelta) {
+        this.hiddenDelta = hiddenDelta;
+        this.hasHiddenTime = true;
+    }
+
+    public int getHiddenDelta() {
+        return hiddenDelta;
     }
 
     public boolean isActive() {
@@ -102,8 +130,10 @@ public class Alarm implements Parcelable {
             {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
     @Ignore
-    public Alarm(DateTime time, boolean active, boolean[] activeDays) {
+    public Alarm(DateTime time, boolean hasHiddenTime, int hiddenDelta, boolean active, boolean[] activeDays) {
         this.time = time;
+        this.hasHiddenTime = hasHiddenTime;
+        this.hiddenDelta = hiddenDelta;
         this.active = active;
         this.activeDays = activeDays;
     }
@@ -163,7 +193,7 @@ public class Alarm implements Parcelable {
     }
 
     /**
-     * Get time until next alarm ring in milliseconds since epoch
+     * Get time until next alarm ring
      */
     @Ignore
     public DateTime getTimeToNextRing() {
@@ -214,11 +244,16 @@ public class Alarm implements Parcelable {
             if (activeDay > currDay) { // Alarm is active a later day of the week
                 alarmDate = alarmDate.plusDays(activeDay - currDay);
             } else { // Have to move the alarm time to next week's active day
-                alarmDate = alarmDate.plusDays(7 - currDay);
+                alarmDate = alarmDate.plusDays(Constants.NUM_DAYS - currDay);
                 alarmDate = alarmDate.plusDays(activeDay);
             }
         }
         return alarmDate;
+    }
+
+    @Ignore
+    public DateTime getHiddenTime() {
+        return getTime().minusMinutes(hiddenDelta);
     }
 
     // Parcelable implementation
@@ -235,6 +270,8 @@ public class Alarm implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeInt(id);
         out.writeLong(DateConverter.toTimestamp(time));
+        out.writeInt(hasHiddenTime ? 1 : 0);
+        out.writeInt(hiddenDelta);
         out.writeBooleanArray(activeDays);
         out.writeInt(active ? 1 : 0);
     }
@@ -258,16 +295,23 @@ public class Alarm implements Parcelable {
         id = in.readInt();
         Long timestamp = in.readLong();
         time = DateConverter.toDate(timestamp);
-
-        activeDays = new boolean[7];
+        hasHiddenTime = in.readInt() != 0;
+        hiddenDelta = in.readInt();
+        activeDays = new boolean[Constants.NUM_DAYS];
         in.readBooleanArray(activeDays);
         active = in.readInt() != 0;
     }
+
 
     @NonNull
     @Ignore
     @Override
     public String toString() {
-        return "Alarm <" + getId() + "> next alarm: " + getTimeToNextRing().toString("HH:mm") + " [" + isActive() + "]";
+        String ret = "Alarm <" + getId() + "> next alarm: " + getTimeToNextRing().toString("HH:mm") + " [" + isActive() + "]";
+        if (hasHiddenTime()) {
+            ret += ", hidden: [" + getHiddenTime() + "]";
+        }
+
+        return ret;
     }
 }
