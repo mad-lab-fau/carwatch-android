@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="user_credentials"
+        android:order="10"
+        android:title="User Credentials">
+
+        <!-- TODO REMOVE CODE BEFORE PUBLISHING!!!!!-->
+        <EditTextPreference
+            android:defaultValue="0406HR94"
+            android:key="subject_id"
+            android:summary="Please enter the Code you generated in the online survey"
+            android:title="Code" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

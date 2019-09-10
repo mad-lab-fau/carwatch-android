@@ -21,14 +21,23 @@
         </activity>
 
         <activity
-            android:name=".ui.ShowAlarmActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTask"
-            android:taskAffinity="" />
+            android:name=".ui.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".ui.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.fau.cs.mad.carwatch.ui.MainActivity" />
+        </activity>
 
         <activity
             android:name=".ui.AddAlarmActivity"
             android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.ShowAlarmActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="" />
 
         <receiver
             android:name=".alarmmanager.AlarmReceiver"
@@ -42,6 +51,7 @@
                 <action android:name="Stop Alarm" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".alarmmanager.AlarmSnoozeReceiver"
             android:enabled="true">
@@ -52,8 +62,7 @@
 
     </application>
 
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
 </manifest>

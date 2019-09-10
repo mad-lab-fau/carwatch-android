@@ -6,6 +6,9 @@ public class Constants {
 
     public static final String KEY_ALARM_TIME = "alarm_time";
     public static final String KEY_ALARM_ENABLED = "alarm_enabled";
+    public static final String KEY_ACTIVE_DAYS = "active_days";
+
+    public static final String PREF_SUBJECT_ID = "subject_id";
 
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
@@ -24,8 +27,8 @@ public class Constants {
     public static final String ACTION_SNOOZE_ALARM = "Snooze Alarm";
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
-    public static final String KEY_ACTIVE_DAYS = "active_days";
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
+
 }
