@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
+import androidx.preference.PreferenceManager;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import org.joda.time.DateTime;
@@ -17,9 +19,11 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
-import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
+import de.fau.cs.mad.carwatch.subject.Condition;
+import de.fau.cs.mad.carwatch.subject.SubjectMap;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 
 
 /**
@@ -77,10 +81,17 @@ public class AlarmHandler {
 
             for (DateTime time : timeToWeeklyRings) {
                 Log.d(TAG, "Setting weekly repeat at " + time);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+
                 if (time.isBefore(nextAlarmRing) || nextAlarmRing == null) {
                     nextAlarmRing = time;
                 }
+
+                // TODO Currently: fixed hidden delta for repeating alarms... change? Leave as it is? Disable repeating function?
+                if (alarm.hasHiddenTime()) {
+                    time = time.minusMinutes(alarm.getHiddenDelta());
+                    Log.d(TAG, "Condition " + Condition.UNKNOWN_ALARM + "! Setting hidden repeating alarm for " + time);
+                }
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
             }
             if (nextAlarmRing != null) {
                 Log.d(TAG, "Setting next alarm to " + nextAlarmRing);
@@ -88,10 +99,17 @@ public class AlarmHandler {
                 alarmManager.setAlarmClock(info, pendingIntent);
             }
         } else {
+            Log.d(TAG, "Setting alarm for " + alarm);
+
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
 
-            Log.d(TAG, "Setting alarm for " + alarm);
+            if (alarm.hasHiddenTime()) {
+                PendingIntent pendingIntentUnknown = getPendingIntent(Integer.MAX_VALUE - alarm.getId());
+
+                Log.d(TAG, "Condition " + Condition.UNKNOWN_ALARM + "! Setting hidden alarm for " + alarm.getHiddenTime());
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.getHiddenTime().getMillis(), pendingIntentUnknown);
+            }
         }
 
         if (!alarm.isRepeating()) {
@@ -130,11 +148,19 @@ public class AlarmHandler {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, PendingIntent.FLAG_NO_CREATE);
+        String subjectId = PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.PREF_SUBJECT_ID, null);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         // PendingIntent may be null if the alarm hasn't been set
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
+            if (subjectId != null && SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM) {
+                PendingIntent pendingIntentUnknown = getPendingIntent(Integer.MAX_VALUE - alarm.getId());
+                if (pendingIntentUnknown != null) {
+                    Log.d(TAG, "Cancelling unknown alarm for " + alarm.getId());
+                    alarmManager.cancel(pendingIntentUnknown);
+                }
+            }
         }
 
         // Show snackbar to notify user
