@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -87,11 +88,11 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
      */
     private void setInitialAlarmTime() {
         // Get time and set it to alarm time TextView
-        LocalTime time = LocalTime.now();
+        DateTime time = DateTime.now();
 
         String currentTime = time.toString("HH:mm");
         timeTextView.setText(currentTime);
-        alarm.setTime(time.toDateTimeToday());
+        alarm.setTime(time);
     }
 
     private void addDeleteButtonListener() {
@@ -121,12 +122,11 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
         setTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                LocalTime time;
+                DateTime time;
                 if (alarm.getTime() == null) {
-                    time = LocalTime.now();
+                    time = DateTime.now();
                 } else {
-                    time = alarm.getTime().toLocalTime();
+                    time = alarm.getTime();
                 }
 
                 TimePickerDialog timePicker = new TimePickerDialog(AddAlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
