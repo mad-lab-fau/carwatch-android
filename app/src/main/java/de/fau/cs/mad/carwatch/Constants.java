@@ -4,6 +4,8 @@ import org.joda.time.LocalTime;
 
 public class Constants {
 
+    public static final int NUM_DAYS = 7;
+
     public static final String KEY_ALARM_TIME = "alarm_time";
     public static final String KEY_ALARM_ENABLED = "alarm_enabled";
     public static final String KEY_ACTIVE_DAYS = "active_days";
