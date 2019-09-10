@@ -31,6 +31,9 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             Alarm alarm = repository.getAlarmById(alarmId);
             if (alarm != null) {
                 alarm.setActive(false);
+                if (alarm.hasHiddenTime()) {
+                    alarm.setHiddenDelta(0);
+                }
                 repository.updateActive(alarm);
             }
         } catch (ExecutionException | InterruptedException e) {
