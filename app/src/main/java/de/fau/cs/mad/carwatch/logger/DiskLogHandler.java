@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.logger;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -9,12 +10,15 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import de.fau.cs.mad.carwatch.Constants;
 
 public class DiskLogHandler extends Handler {
 
@@ -83,7 +87,14 @@ public class DiskLogHandler extends Handler {
     }
 
     private File getLogFile() {
-        String filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
+        String filename;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
+        if (subjectId != null) {
+            filename = "carwatch_" + subjectId + "_" + DateTime.now().toString("YYYYMMdd");
+        } else {
+            filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
+        }
 
         boolean storageWritable;
         boolean fileCreated;
