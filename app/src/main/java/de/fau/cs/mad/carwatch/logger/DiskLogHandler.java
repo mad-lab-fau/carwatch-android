@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import org.joda.time.DateTime;
+import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,12 +25,12 @@ public class DiskLogHandler extends Handler {
 
     private static final String TAG = DiskLogHandler.class.getSimpleName();
 
-    private Context context;
-
     /**
      * Directory name where data will be stored on the external storage
      */
     private static final String DIR_NAME = "CarWatchLogger";
+
+    private Context context;
 
     public DiskLogHandler(Context context) {
         this(getDefaultLooper(), context);
@@ -54,7 +55,6 @@ public class DiskLogHandler extends Handler {
         FileWriter fileWriter = null;
         File logFile = getLogFile();
         if (logFile == null) {
-            Log.e(TAG, "NULL");
             return;
         }
 
@@ -96,11 +96,19 @@ public class DiskLogHandler extends Handler {
             filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
         }
 
+        File directory = getDirectory(context);
+
+        if (directory != null) {
+            return new File(directory + "/" + String.format("%s.csv", filename));
+        } else {
+            return null;
+        }
+    }
+
+    private static File getRootDirectory(Context context) {
         boolean storageWritable;
-        boolean fileCreated;
         String state;
         File root;
-        File path;
 
         root = context.getExternalFilesDir(null);
         // try to write on SD card
@@ -125,38 +133,56 @@ public class DiskLogHandler extends Handler {
         if (!storageWritable) {
             // try to write on external storage
             root = ContextCompat.getDataDir(context);
-            if (root != null && root.canWrite()) {
-                storageWritable = true;
-            } else {
+            if (root == null || !root.canWrite()) {
                 Log.e(TAG, "External storage not readable and writable!");
             }
         }
+        return root;
+    }
 
-        if (storageWritable) {
+    private static File getDirectory(Context context) {
+        boolean fileCreated;
+        File directory;
+        File root = getRootDirectory(context);
+
+        if (root != null) {
             try {
                 // create directory
-                path = new File(root, DIR_NAME);
-                fileCreated = path.mkdirs();
+                directory = new File(root, DIR_NAME);
+                fileCreated = directory.mkdirs();
 
                 if (!fileCreated) {
-                    fileCreated = path.exists();
+                    fileCreated = directory.exists();
                     if (!fileCreated) {
                         Log.e(TAG, "Directory could not be created!");
                         return null;
                     } else {
-                        Log.i(TAG, "Working directory is " + path.getAbsolutePath());
+                        Log.i(TAG, "Working directory is " + directory.getAbsolutePath());
                     }
                 } else {
-                    Log.i(TAG, "Directory created at " + path.getAbsolutePath());
+                    Log.i(TAG, "Directory created at " + directory.getAbsolutePath());
                 }
-
-                return new File(path + "/" + String.format("%s.csv", filename));
-
             } catch (Exception e) {
                 Log.e(TAG, "Exception on dir and file create!", e);
                 return null;
             }
+            return directory;
+        } else {
+            return null;
         }
+    }
+
+
+    public static File zipDirectory(Context context, String subjectId) {
+        File directory = getDirectory(context);
+        File root = getRootDirectory(context);
+        String filename = subjectId == null ? "logs.zip" : String.format("logs_%s.zip", subjectId);
+        File file = new File(root, filename);
+        if (directory != null) {
+            ZipUtil.pack(directory, file);
+            return file;
+        }
+
         return null;
     }
 }

@@ -6,7 +6,7 @@ import com.orhanobut.logger.CsvFormatStrategy;
 import com.orhanobut.logger.DiskLogStrategy;
 import com.orhanobut.logger.Logger;
 
-import de.fau.cs.mad.carwatch.Constants;
+import java.io.File;
 
 public class LoggerUtil {
 
@@ -32,6 +32,11 @@ public class LoggerUtil {
 
     public static void log(String tag, String message) {
         Logger.log(Logger.INFO, tag, message, null);
+    }
+
+
+    public static File zipDirectory(Context context, String subjectId) {
+        return DiskLogHandler.zipDirectory(context, subjectId);
     }
 
 }

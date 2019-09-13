@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +23,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
+import java.io.File;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
             showSubjectIdDialog();
         }
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
@@ -68,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
             };
             Logger.addLogAdapter(sAdapter);
         }
+
+
+        // TODO just for testing
+        LoggerUtil.log("test", "testLog");
     }
 
     @Override
@@ -82,12 +90,25 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            case R.id.menu_share:
+                String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
+                File zipFile = LoggerUtil.zipDirectory(this, subjectId);
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri uri = GenericFileProvider.getUriForFile(this,
+                        getApplicationContext().getPackageName() +
+                                ".logger.provider",
+                        zipFile);
+                sharingIntent.setType("application/octet-stream");
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
+                startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
         }
         return super.onOptionsItemSelected(item);
     }
 
 
-    public void showSubjectIdDialog() {
+    private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
         EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
@@ -113,4 +134,5 @@ public class MainActivity extends AppCompatActivity {
 
         dialogBuilder.show();
     }
+
 }
