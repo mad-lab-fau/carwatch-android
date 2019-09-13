@@ -6,6 +6,9 @@
     <string name="cancel">Cancel</string>
     <string name="alarm_notification_text">Alarm going off!</string>
 
+    <!-- Activity Titles -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="settings">Settings</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>
@@ -42,23 +45,11 @@
     <string name="alarm_set">Alarm set for %s from now.</string>
     <string name="alarm_cancelled">Alarm cancelled.</string>
     <string name="alarm_set_error">Error setting alarm.</string>
-    <string name="settings">Settings</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="messages_header">Messages</string>
 
-    <!-- Preference Titles -->
-    <string name="sync_header">Sync</string>
-    <string name="signature_title">Your signature</string>
+    <!-- Subject ID Dialog -->
+    <string name="title_subject_id">Enter Code</string>
+    <string name="message_subject_id">Please enter the Code you generated in the online survey.</string>
 
-    <!-- Messages Preferences -->
-    <string name="reply_title">Default reply action</string>
-    <string name="sync_title">Sync email periodically</string>
-
-    <!-- Sync Preferences -->
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string-array name="days_of_week">
         <item>Monday</item>
         <item>Tuesday</item>

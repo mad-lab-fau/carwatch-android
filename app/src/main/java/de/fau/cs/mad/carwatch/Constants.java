@@ -10,6 +10,7 @@ public class Constants {
     public static final String KEY_ALARM_ENABLED = "alarm_enabled";
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
+    public static final String PREF_FIRST_RUN = "first_run";
     public static final String PREF_SUBJECT_ID = "subject_id";
     public static final String PREF_SNOOZE_DURATION = "snooze_duration";
 
@@ -27,6 +28,7 @@ public class Constants {
     public static final String EXTRA_DELETE = "extra_delete";
     public static final String EXTRA_ID = "extra_id";
     public static final String EXTRA_SOURCE = "extra_source";
+
     public static final int SOURCE_ACTIVITY = 1;
     public static final int SOURCE_NOTIFICATION = 2;
 

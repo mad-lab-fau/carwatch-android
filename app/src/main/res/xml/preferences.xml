@@ -9,8 +9,8 @@
         <EditTextPreference
             android:defaultValue="0406HR94"
             android:key="subject_id"
-            android:summary="Please enter the Code you generated in the online survey"
-            android:title="Code" />
+            android:summary="@string/message_subject_id"
+            android:title="@string/title_subject_id" />
 
     </PreferenceCategory>
 
