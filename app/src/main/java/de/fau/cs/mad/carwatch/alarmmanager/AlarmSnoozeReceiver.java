@@ -11,6 +11,7 @@ import com.orhanobut.logger.Logger;
 import org.joda.time.DateTime;
 
 import de.fau.cs.mad.carwatch.Constants;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
 /**
  * Broadcast Receiver to snooze alarm
@@ -22,6 +23,7 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        int alarmSource = intent.getIntExtra(Constants.EXTRA_SOURCE, -1);
 
         Log.d(TAG, "Stopping alarm " + alarmId + " to activate snooze...");
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
@@ -44,8 +46,10 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
         snoozeTime = snoozeTime.plusMinutes(snoozeDuration);
 
         // Schedule next ring
-        Logger.log(Logger.INFO, Constants.LOGGER_ACTION_SNOOZE, String.valueOf(alarmId), null);
-        Logger.log(Logger.INFO, Constants.LOGGER_EXTRA_SNOOZE_DURATION, String.valueOf(snoozeDuration), null);
+        LoggerUtil.log(Constants.LOGGER_ACTION_SNOOZE, String.valueOf(alarmId));
+        LoggerUtil.log(Constants.LOGGER_EXTRA_SNOOZE_DURATION, String.valueOf(snoozeDuration));
+        LoggerUtil.log(Constants.LOGGER_EXTRA_SNOOZE_SOURCE, String.valueOf(alarmSource));
+        Log.d(TAG, "Alarm source: " + alarmSource);
         Log.d(TAG, "Snoozing alarm " + alarmId + " for " + snoozeDuration + " minutes");
 
         AlarmHandler alarmHandler = new AlarmHandler(context, null);

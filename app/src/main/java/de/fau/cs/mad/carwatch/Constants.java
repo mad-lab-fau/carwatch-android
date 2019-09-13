@@ -25,16 +25,21 @@ public class Constants {
     public static final String EXTRA_EDIT = "extra_edit";
     public static final String EXTRA_DELETE = "extra_delete";
     public static final String EXTRA_ID = "extra_id";
+    public static final String EXTRA_SOURCE = "extra_source";
+    public static final int SOURCE_ACTIVITY = 1;
+    public static final int SOURCE_NOTIFICATION = 2;
 
     public static final String ACTION_SNOOZE_ALARM = "Snooze Alarm";
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
 
-    public static final String LOGGER_ACTION_SNOOZE = "Action-Snooze";
-    public static final String LOGGER_ACTION_STOP = "Action-Stop";
-    public static final String LOGGER_ACTION_START = "Action-Start";
-    public static final String LOGGER_EXTRA_START_HIDDEN = "Extra-Start-Hidden";
-    public static final String LOGGER_EXTRA_SNOOZE_DURATION = "Extra-Duration-Snooze";
+    public static final String LOGGER_ACTION_SNOOZE = "action-snooze";
+    public static final String LOGGER_ACTION_STOP = "action-stop";
+    public static final String LOGGER_ACTION_START = "action-start";
+    public static final String LOGGER_EXTRA_START_HIDDEN = "extra-start-hidden";
+    public static final String LOGGER_EXTRA_STOP_SOURCE = "extra-stop-source";
+    public static final String LOGGER_EXTRA_SNOOZE_DURATION = "extra-snooze-duration";
+    public static final String LOGGER_EXTRA_SNOOZE_SOURCE = "extra-snooze-source";
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);

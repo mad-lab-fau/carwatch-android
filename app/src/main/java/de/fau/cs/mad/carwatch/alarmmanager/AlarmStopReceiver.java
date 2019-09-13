@@ -7,12 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.orhanobut.logger.Logger;
-
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.Alarm;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 /**
@@ -25,6 +24,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        int alarmSource = intent.getIntExtra(Constants.EXTRA_SOURCE, -1);
 
         AlarmRepository repository = new AlarmRepository((Application) context.getApplicationContext());
         try {
@@ -43,7 +43,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.stopAlarmSound();
 
-        Logger.log(Logger.INFO, Constants.LOGGER_ACTION_STOP, String.valueOf(alarmId), null);
+        LoggerUtil.log(Constants.LOGGER_ACTION_STOP, String.valueOf(alarmId));
+        LoggerUtil.log(Constants.LOGGER_EXTRA_STOP_SOURCE, String.valueOf(alarmSource));
         Log.d(TAG, "Stopping Alarm: " + alarmId);
 
         // Dismiss notification

@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.orhanobut.logger.CsvFormatStrategy;
 import com.orhanobut.logger.DiskLogStrategy;
+import com.orhanobut.logger.Logger;
+
+import de.fau.cs.mad.carwatch.Constants;
 
 public class LoggerUtil {
 
@@ -24,6 +27,11 @@ public class LoggerUtil {
         }
 
         return sFormatStrategy;
+    }
+
+
+    public static void log(String tag, String message) {
+        Logger.log(Logger.INFO, tag, message, null);
     }
 
 }
