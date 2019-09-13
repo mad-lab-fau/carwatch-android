@@ -4,9 +4,10 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.orhanobut.logger.Logger;
+import androidx.preference.PreferenceManager;
 
 import org.joda.time.DateTime;
 
@@ -36,8 +37,8 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
-        // TODO Get snooze duration from shared preferences
-        int snoozeDuration = 5;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int snoozeDuration = sp.getInt(Constants.PREF_SNOOZE_DURATION, 5);
 
         DateTime snoozeTime = DateTime.now();
         // set seconds to 0

@@ -11,6 +11,7 @@ public class Constants {
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
     public static final String PREF_SUBJECT_ID = "subject_id";
+    public static final String PREF_SNOOZE_DURATION = "snooze_duration";
 
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;

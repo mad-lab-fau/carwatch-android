@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:key="user_credentials"
+        android:key="cat_user_credentials"
         android:order="10"
         android:title="User Credentials">
 
@@ -11,6 +11,21 @@
             android:key="subject_id"
             android:summary="Please enter the Code you generated in the online survey"
             android:title="Code" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:key="cat_snooze_duration"
+        android:order="20"
+        android:title="Snooze Duration">
+
+        <ListPreference
+            android:defaultValue="5"
+            android:entries="@array/snooze_duration_names"
+            android:entryValues="@array/snooze_duration_values"
+            android:key="snooze_duration"
+            android:title="Snooze Duration" />
 
     </PreferenceCategory>
 
