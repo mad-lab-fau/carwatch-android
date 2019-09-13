@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -12,8 +13,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.orhanobut.logger.DiskLogAdapter;
+import com.orhanobut.logger.Logger;
 
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
         navController.navigate(R.id.navigation_alarm);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        Logger.addLogAdapter(new DiskLogAdapter(LoggerUtil.getFormatStrategy(this)) {
+            @Override
+            public boolean isLoggable(int priority, @Nullable String tag) {
+                return true;
+            }
+        });
+
     }
 
     @Override
