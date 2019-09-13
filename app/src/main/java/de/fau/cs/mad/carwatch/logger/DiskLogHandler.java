@@ -20,7 +20,6 @@ public class DiskLogHandler extends Handler {
 
     private static final String TAG = DiskLogHandler.class.getSimpleName();
 
-    private final int maxFileSize;
     private Context context;
 
     /**
@@ -28,13 +27,12 @@ public class DiskLogHandler extends Handler {
      */
     private static final String DIR_NAME = "CarWatchLogger";
 
-    public DiskLogHandler(Context context, int maxFileSize) {
-        this(getDefaultLooper(), context, maxFileSize);
+    public DiskLogHandler(Context context) {
+        this(getDefaultLooper(), context);
     }
 
-    public DiskLogHandler(Looper looper, Context context, int maxFileSize) {
+    public DiskLogHandler(Looper looper, Context context) {
         super(looper);
-        this.maxFileSize = maxFileSize;
         this.context = context;
     }
 
@@ -141,25 +139,7 @@ public class DiskLogHandler extends Handler {
                     Log.i(TAG, "Directory created at " + path.getAbsolutePath());
                 }
 
-                int newFileCount = 0;
-                File newFile;
-                File existingFile = null;
-                newFile = new File(path + "/" + String.format("%s_%s.csv", filename, newFileCount));
-
-                while (newFile.exists()) {
-                    existingFile = newFile;
-                    newFileCount++;
-                    newFile = new File(DIR_NAME, String.format("%s_%s.csv", filename, newFileCount));
-                }
-
-                if (existingFile != null) {
-                    if (existingFile.length() >= maxFileSize) {
-                        return newFile;
-                    }
-                    return existingFile;
-                }
-
-                return newFile;
+                return new File(path + "/" + String.format("%s.csv", filename));
 
             } catch (Exception e) {
                 Log.e(TAG, "Exception on dir and file create!", e);

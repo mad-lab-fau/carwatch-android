@@ -9,16 +9,20 @@ public class LoggerUtil {
 
     private static final String TAG = LoggerUtil.class.getSimpleName();
 
+    private static CsvFormatStrategy sFormatStrategy;
 
     public static CsvFormatStrategy getFormatStrategy(Context context) {
-        CsvFormatStrategy.Builder formatStrategy = CsvFormatStrategy.newBuilder();
 
-        DiskLogHandler diskLogHandler = new DiskLogHandler(context, 2048);
+        if (sFormatStrategy == null) {
+            DiskLogHandler diskLogHandler = new DiskLogHandler(context);
+            DiskLogStrategy diskLogStrategy = new DiskLogStrategy(diskLogHandler);
+            sFormatStrategy = CsvFormatStrategy.newBuilder()
+                    .logStrategy(diskLogStrategy)
+                    .build();
+            return sFormatStrategy;
+        }
 
-        DiskLogStrategy diskLogStrategy = new DiskLogStrategy(diskLogHandler);
-        formatStrategy.tag("CarWatch").logStrategy(diskLogStrategy);
-
-        return formatStrategy.build();
+        return sFormatStrategy;
     }
 
 }

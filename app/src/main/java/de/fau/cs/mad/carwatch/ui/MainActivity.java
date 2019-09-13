@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    static DiskLogAdapter sAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +42,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        Logger.addLogAdapter(new DiskLogAdapter(LoggerUtil.getFormatStrategy(this)) {
-            @Override
-            public boolean isLoggable(int priority, @Nullable String tag) {
-                return true;
-            }
-        });
+        if (sAdapter == null) {
+            sAdapter = new DiskLogAdapter(LoggerUtil.getFormatStrategy(this)) {
+                @Override
+                public boolean isLoggable(int priority, @Nullable String tag) {
+                    return priority == Logger.INFO;
+                }
+            };
+            Logger.addLogAdapter(sAdapter);
+        }
+
 
     }
 
@@ -60,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                Logger.i("test");
                 break;
         }
         return super.onOptionsItemSelected(item);
