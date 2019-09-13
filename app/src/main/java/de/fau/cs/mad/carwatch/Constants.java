@@ -30,6 +30,12 @@ public class Constants {
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
 
+    public static final String LOGGER_ACTION_SNOOZE = "Action-Snooze";
+    public static final String LOGGER_ACTION_STOP = "Action-Stop";
+    public static final String LOGGER_ACTION_START = "Action-Start";
+    public static final String LOGGER_EXTRA_START_HIDDEN = "Extra-Start-Hidden";
+    public static final String LOGGER_EXTRA_SNOOZE_DURATION = "Extra-Duration-Snooze";
+
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
 

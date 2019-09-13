@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import org.joda.time.DateTime;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -32,15 +34,20 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
-        // TODO Get snooze length from shared preferences
+        // TODO Get snooze duration from shared preferences
+        int snoozeDuration = 5;
+
         DateTime snoozeTime = DateTime.now();
         // set seconds to 0
         snoozeTime = snoozeTime.minusSeconds(snoozeTime.getSecondOfMinute());
         // add snooze time
-        snoozeTime = snoozeTime.plusMinutes(5);
+        snoozeTime = snoozeTime.plusMinutes(snoozeDuration);
 
         // Schedule next ring
-        Log.d(TAG, "Snoozing alarm " + alarmId + " for " + 5 + " minutes");
+        Logger.log(Logger.INFO, Constants.LOGGER_ACTION_SNOOZE, String.valueOf(alarmId), null);
+        Logger.log(Logger.INFO, Constants.LOGGER_EXTRA_SNOOZE_DURATION, String.valueOf(snoozeDuration), null);
+        Log.d(TAG, "Snoozing alarm " + alarmId + " for " + snoozeDuration + " minutes");
+
         AlarmHandler alarmHandler = new AlarmHandler(context, null);
         alarmHandler.scheduleAlarmAtTime(snoozeTime, alarmId);
     }

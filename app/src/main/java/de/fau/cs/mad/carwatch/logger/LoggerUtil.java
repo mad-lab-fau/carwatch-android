@@ -17,6 +17,7 @@ public class LoggerUtil {
             DiskLogHandler diskLogHandler = new DiskLogHandler(context);
             DiskLogStrategy diskLogStrategy = new DiskLogStrategy(diskLogHandler);
             sFormatStrategy = CsvFormatStrategy.newBuilder()
+                    .tag("CarWatch")
                     .logStrategy(diskLogStrategy)
                     .build();
             return sFormatStrategy;

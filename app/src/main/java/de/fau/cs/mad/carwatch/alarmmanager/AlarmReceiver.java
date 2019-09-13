@@ -12,6 +12,8 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.orhanobut.logger.Logger;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.ui.ShowAlarmActivity;
@@ -37,9 +39,12 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
         }
 
+        boolean isHidden = false;
+
         // convert id from hidden alarm to regular alarm id (will be needed in SnoozeReceiver and StopReceiver)
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
         if (alarmId > Integer.MAX_VALUE / 2) {
+            isHidden = true;
             alarmId = Integer.MAX_VALUE - alarmId;
         }
 
@@ -50,6 +55,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmSoundControl.playAlarmSound(context);
 
         Log.d(TAG, "Displaying notification for alarm " + alarmId);
+        Logger.log(Logger.INFO, Constants.LOGGER_ACTION_START, String.valueOf(alarmId), null);
+        Logger.log(Logger.INFO, Constants.LOGGER_EXTRA_START_HIDDEN, String.valueOf(isHidden), null);
+
         if (notificationManager != null) {
             notificationManager.notify(alarmId, notification);
         }

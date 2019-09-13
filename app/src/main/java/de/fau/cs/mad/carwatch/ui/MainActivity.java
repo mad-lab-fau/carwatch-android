@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
             };
             Logger.addLogAdapter(sAdapter);
         }
-
-
     }
 
     @Override
@@ -66,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
-                Logger.i("test");
                 break;
         }
         return super.onOptionsItemSelected(item);
