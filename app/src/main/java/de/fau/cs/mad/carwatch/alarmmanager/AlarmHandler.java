@@ -15,12 +15,16 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.subject.Condition;
 import de.fau.cs.mad.carwatch.subject.SubjectMap;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
@@ -94,22 +98,55 @@ public class AlarmHandler {
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
             }
             if (nextAlarmRing != null) {
+                try {
+                    // create Json object and log information
+                    JSONObject json = new JSONObject();
+                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
+                    json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, nextAlarmRing.getMillis());
+                    json.put(Constants.LOGGER_EXTRA_ALARM_IS_REPEATING, alarm.isRepeating());
+                    json.put(Constants.LOGGER_EXTRA_ALARM_REPEATING_DAYS, new JSONArray(alarm.getActiveDays()));
+                    json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, alarm.hasHiddenTime());
+                    if (alarm.hasHiddenTime()) {
+                        json.put(Constants.LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP, alarm.getHiddenTime().getMillis());
+                    }
+
+                    LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 Log.d(TAG, "Setting next alarm to " + nextAlarmRing);
                 AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(nextAlarmRing.getMillis(), pendingIntentShow);
                 alarmManager.setAlarmClock(info, pendingIntent);
             }
         } else {
-            Log.d(TAG, "Setting alarm for " + alarm);
-
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
 
+            try {
+                // create Json object and log information
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
+                json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, alarm.getTimeToNextRing().getMillis());
+                json.put(Constants.LOGGER_EXTRA_ALARM_IS_REPEATING, alarm.isRepeating());
+                json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, alarm.hasHiddenTime());
+                if (alarm.hasHiddenTime()) {
+                    json.put(Constants.LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP, alarm.getHiddenTime().getMillis());
+                }
+                LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "Setting alarm for " + alarm);
+
             if (alarm.hasHiddenTime()) {
                 PendingIntent pendingIntentUnknown = getPendingIntent(Integer.MAX_VALUE - alarm.getId());
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.getHiddenTime().getMillis(), pendingIntentUnknown);
 
                 Log.d(TAG, "Condition " + Condition.UNKNOWN_ALARM + "! Setting hidden alarm for " + alarm.getHiddenTime());
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.getHiddenTime().getMillis(), pendingIntentUnknown);
             }
+
         }
 
         if (!alarm.isRepeating()) {
@@ -143,7 +180,6 @@ public class AlarmHandler {
      * @param alarm Alarm to cancel
      */
     public void cancelAlarm(Alarm alarm) {
-        Log.d(TAG, "Cancelling alarm " + alarm.getId());
 
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
@@ -151,9 +187,22 @@ public class AlarmHandler {
         String subjectId = PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.PREF_SUBJECT_ID, null);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
         // PendingIntent may be null if the alarm hasn't been set
         if (alarmManager != null && pendingIntent != null) {
+            Log.d(TAG, "Cancelling alarm " + alarm.getId());
+
+            try {
+                // create Json object and log information
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
+                LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_CANCEL, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             alarmManager.cancel(pendingIntent);
+
             if (subjectId != null && SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM) {
                 PendingIntent pendingIntentUnknown = getPendingIntent(Integer.MAX_VALUE - alarm.getId());
                 if (pendingIntentUnknown != null) {

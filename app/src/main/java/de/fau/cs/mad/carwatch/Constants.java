@@ -29,20 +29,26 @@ public class Constants {
     public static final String EXTRA_ID = "extra_id";
     public static final String EXTRA_SOURCE = "extra_source";
 
-    public static final int SOURCE_ACTIVITY = 1;
-    public static final int SOURCE_NOTIFICATION = 2;
-
     public static final String ACTION_SNOOZE_ALARM = "Snooze Alarm";
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
 
-    public static final String LOGGER_ACTION_SNOOZE = "action-snooze";
-    public static final String LOGGER_ACTION_STOP = "action-stop";
-    public static final String LOGGER_ACTION_START = "action-start";
-    public static final String LOGGER_EXTRA_START_HIDDEN = "extra-start-hidden";
-    public static final String LOGGER_EXTRA_STOP_SOURCE = "extra-stop-source";
-    public static final String LOGGER_EXTRA_SNOOZE_DURATION = "extra-snooze-duration";
-    public static final String LOGGER_EXTRA_SNOOZE_SOURCE = "extra-snooze-source";
+    // Actions that the Logger should log
+    public static final String LOGGER_ACTION_ALARM_SET = "alarm_set";
+    public static final String LOGGER_ACTION_ALARM_CANCEL = "alarm_cancel";
+    public static final String LOGGER_ACTION_ALARM_RING = "alarm_ring";
+    public static final String LOGGER_ACTION_ALARM_SNOOZE = "alarm_snooze";
+    public static final String LOGGER_ACTION_ALARM_STOP = "alarm_stop";
+
+    // Extras that can be added to the Logger
+    public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
+    public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long
+    public static final String LOGGER_EXTRA_ALARM_IS_HIDDEN = "is_hidden"; // boolean
+    public static final String LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP = "timestamp_hidden"; // long
+    public static final String LOGGER_EXTRA_ALARM_IS_REPEATING = "is_repeating"; // boolean
+    public static final String LOGGER_EXTRA_ALARM_REPEATING_DAYS = "repeating_days"; // boolean[]
+    public static final String LOGGER_EXTRA_ALARM_SNOOZE_DURATION = "snooze_duration"; // int
+    public static final String LOGGER_EXTRA_ALARM_SOURCE = "source"; // int
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);

@@ -12,6 +12,9 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
@@ -54,8 +57,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmSoundControl.playAlarmSound(context);
 
         Log.d(TAG, "Displaying notification for alarm " + alarmId);
-        LoggerUtil.log(Constants.LOGGER_ACTION_START, String.valueOf(alarmId));
-        LoggerUtil.log(Constants.LOGGER_EXTRA_START_HIDDEN, String.valueOf(isHidden));
+        try {
+            // create Json object and log information
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
+            json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, isHidden);
+            LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_RING, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         if (notificationManager != null) {
             notificationManager.notify(alarmId, notification);
@@ -102,7 +112,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     private PendingIntent createSnoozeAlarmIntent(Context context, int alarmId) {
         Intent snoozeAlarmIntent = new Intent(context, AlarmSnoozeReceiver.class);
         snoozeAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
-        snoozeAlarmIntent.putExtra(Constants.EXTRA_SOURCE, Constants.SOURCE_NOTIFICATION);
+        snoozeAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
         snoozeAlarmIntent.setAction(Constants.ACTION_SNOOZE_ALARM);
         return PendingIntent.getBroadcast(context, 0, snoozeAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -117,7 +127,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     private PendingIntent createStopAlarmIntent(Context context, int alarmId) {
         Intent stopAlarmIntent = new Intent(context, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
-        stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, Constants.SOURCE_NOTIFICATION);
+        stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
         stopAlarmIntent.setAction(Constants.ACTION_STOP_ALARM);
         return PendingIntent.getBroadcast(context, 0, stopAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }

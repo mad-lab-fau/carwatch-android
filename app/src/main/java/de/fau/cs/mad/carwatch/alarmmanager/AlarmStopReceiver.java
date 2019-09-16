@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -24,7 +27,11 @@ public class AlarmStopReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
-        int alarmSource = intent.getIntExtra(Constants.EXTRA_SOURCE, -1);
+        AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
+        if (alarmSource == null) {
+            // this should never happen!
+            alarmSource = AlarmSource.SOURCE_UNKNOWN;
+        }
 
         AlarmRepository repository = new AlarmRepository((Application) context.getApplicationContext());
         try {
@@ -43,8 +50,16 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.stopAlarmSound();
 
-        LoggerUtil.log(Constants.LOGGER_ACTION_STOP, String.valueOf(alarmId));
-        LoggerUtil.log(Constants.LOGGER_EXTRA_STOP_SOURCE, String.valueOf(alarmSource));
+        try {
+            // create Json object and log information
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
+            json.put(Constants.LOGGER_EXTRA_ALARM_SOURCE, alarmSource.ordinal());
+            LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_STOP, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         Log.d(TAG, "Stopping Alarm: " + alarmId);
 
         // Dismiss notification

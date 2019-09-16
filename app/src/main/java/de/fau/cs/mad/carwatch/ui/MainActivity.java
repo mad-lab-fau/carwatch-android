@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             showSubjectIdDialog();
         }
 
-
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         // Passing each menu ID as a set of Ids because each
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             sAdapter = new DiskLogAdapter(LoggerUtil.getFormatStrategy(this)) {
                 @Override
                 public boolean isLoggable(int priority, @Nullable String tag) {
-                    return priority == Logger.INFO;
+                    return true;
                 }
             };
             Logger.addLogAdapter(sAdapter);
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // TODO just for testing
-        LoggerUtil.log("test", "testLog");
+        //LoggerUtil.log("test", "testLog");
     }
 
     @Override

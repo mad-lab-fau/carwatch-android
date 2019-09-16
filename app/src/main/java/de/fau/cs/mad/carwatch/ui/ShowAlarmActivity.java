@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSnoozeReceiver;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmSource;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmStopReceiver;
 import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
 
@@ -55,7 +56,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     private void snoozeAlarm() {
         Intent snoozeAlarmIntent = new Intent(this, AlarmSnoozeReceiver.class);
         snoozeAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
-        snoozeAlarmIntent.putExtra(Constants.EXTRA_SOURCE, Constants.SOURCE_ACTIVITY);
+        snoozeAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
         snoozeAlarmIntent.setAction("Snooze Alarm");
         sendBroadcast(snoozeAlarmIntent);
         finish();
@@ -64,7 +65,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     private void stopAlarm() {
         Intent stopAlarmIntent = new Intent(this, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
-        stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, Constants.SOURCE_ACTIVITY);
+        stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
         stopAlarmIntent.setAction("Stop Alarm");
         sendBroadcast(stopAlarmIntent);
         finish();

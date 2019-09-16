@@ -2,9 +2,10 @@ package de.fau.cs.mad.carwatch.logger;
 
 import android.content.Context;
 
-import com.orhanobut.logger.CsvFormatStrategy;
 import com.orhanobut.logger.DiskLogStrategy;
 import com.orhanobut.logger.Logger;
+
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -12,23 +13,23 @@ public class LoggerUtil {
 
     private static final String TAG = LoggerUtil.class.getSimpleName();
 
-    private static CsvFormatStrategy sFormatStrategy;
+    private static LogFormatStrategy sFormatStrategy;
 
-    public static CsvFormatStrategy getFormatStrategy(Context context) {
+    public static LogFormatStrategy getFormatStrategy(Context context) {
 
         if (sFormatStrategy == null) {
             DiskLogHandler diskLogHandler = new DiskLogHandler(context);
             DiskLogStrategy diskLogStrategy = new DiskLogStrategy(diskLogHandler);
-            sFormatStrategy = CsvFormatStrategy.newBuilder()
-                    .tag("CarWatch")
-                    .logStrategy(diskLogStrategy)
-                    .build();
+            sFormatStrategy = new LogFormatStrategy(diskLogStrategy);
             return sFormatStrategy;
         }
 
         return sFormatStrategy;
     }
 
+    public static void log(String tag, JSONObject json) {
+        Logger.log(Logger.INFO, tag, json.toString(), null);
+    }
 
     public static void log(String tag, String message) {
         Logger.log(Logger.INFO, tag, message, null);
