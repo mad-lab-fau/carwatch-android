@@ -29,14 +29,15 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    static DiskLogAdapter sAdapter;
+    private static DiskLogAdapter sAdapter;
 
-    SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +72,14 @@ public class MainActivity extends AppCompatActivity {
             };
             Logger.addLogAdapter(sAdapter);
         }
+    }
 
-
-        // TODO just for testing
-        //LoggerUtil.log("test", "testLog");
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Utils.allPermissionsGranted(this)) {
+            Utils.requestRuntimePermissions(this);
+        }
     }
 
     @Override

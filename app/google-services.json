@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "867022731236",
+    "firebase_url": "https://car-watch-99772.firebaseio.com",
+    "project_id": "car-watch-99772",
+    "storage_bucket": "car-watch-99772.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867022731236:android:aaecca368575dc637f39f1",
+        "android_client_info": {
+          "package_name": "de.fau.cs.mad.carwatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867022731236-6qq4rd3bci9tamjjelg96fvtfn9bfscq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjOI_EO97QKDcImxEq-W4drZQyEUi1fPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867022731236-6qq4rd3bci9tamjjelg96fvtfn9bfscq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

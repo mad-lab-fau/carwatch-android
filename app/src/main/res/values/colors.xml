@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00000000</color>
+
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
@@ -9,4 +11,12 @@
     <color name="colorGrey500">#9E9E9E</color>
     <color name="colorDarkText">#616161</color>
     <color name="colorWhite">#FFFFFF</color>
+
+
+    <!-- Barcode Scanner -->
+    <color name="reticle_ripple">#9AFFFFFF</color>
+    <color name="barcode_reticle_background">#99000000</color>
+    <color name="barcode_reticle_stroke">#40000000</color>
+    <color name="dark">#9A000000</color>
+
 </resources>
