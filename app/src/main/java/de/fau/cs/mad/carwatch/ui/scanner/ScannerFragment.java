@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
+import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSource;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSourcePreview;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.GraphicOverlay;
@@ -134,17 +135,11 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
                             promptChip.setText(R.string.prompt_point_at_a_barcode);
                             startCameraPreview();
                             break;
-                        case CONFIRMING:
-                            promptChip.setVisibility(View.VISIBLE);
-                            promptChip.setText(R.string.prompt_move_camera_closer);
-                            startCameraPreview();
-                            break;
                         case SEARCHING:
                             promptChip.setVisibility(View.VISIBLE);
-                            promptChip.setText(R.string.prompt_searching);
+                            promptChip.setText(R.string.prompt_scanning);
                             stopCameraPreview();
                             break;
-                        case DETECTED:
                         case SEARCHED:
                             promptChip.setVisibility(View.GONE);
                             stopCameraPreview();
@@ -168,8 +163,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
                         ArrayList<BarcodeField> barcodeFieldList = new ArrayList<>();
                         barcodeFieldList.add(new BarcodeField("Raw Value", barcode.getRawValue()));
                         Log.d(TAG, "Detected Barcodes: " + barcodeFieldList);
-                        // TODO change maybe
-                        //BarcodeResultFragment.show(getSupportFragmentManager(), barcodeFieldList);
+                        BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList);
                     }
                 });
     }

@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 
 import java.io.IOException;
@@ -42,10 +43,16 @@ import de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowStat
  */
 public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarcode>> {
 
-    private static final String TAG = "BarcodeProcessor";
+    private static final String TAG = BarcodeProcessor.class.getSimpleName();
+
+    private final FirebaseVisionBarcodeDetectorOptions options =
+            new FirebaseVisionBarcodeDetectorOptions.Builder()
+                    .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_EAN_8)
+                    .build();
 
     private final FirebaseVisionBarcodeDetector detector =
-            FirebaseVision.getInstance().getVisionBarcodeDetector();
+            FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+
     private final WorkflowModel workflowModel;
     private final CameraReticleAnimator cameraReticleAnimator;
 
@@ -61,10 +68,7 @@ public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarc
 
     @MainThread
     @Override
-    protected void onSuccess(
-            FirebaseVisionImage image,
-            List<FirebaseVisionBarcode> results,
-            GraphicOverlay graphicOverlay) {
+    protected void onSuccess(FirebaseVisionImage image, List<FirebaseVisionBarcode> results, GraphicOverlay graphicOverlay) {
         if (!workflowModel.isCameraLive()) {
             return;
         }

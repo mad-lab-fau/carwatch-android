@@ -27,6 +27,7 @@ import java.io.File;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.util.Utils;
@@ -80,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
         }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        BarcodeResultFragment.dismiss(getSupportFragmentManager());
     }
 
     @Override

@@ -39,17 +39,12 @@ public class WorkflowModel extends AndroidViewModel {
     public enum WorkflowState {
         NOT_STARTED,
         DETECTING,
-        DETECTED,
-        CONFIRMING,
-        CONFIRMED,
         SEARCHING,
         SEARCHED
     }
 
     public final MutableLiveData<WorkflowState> workflowState = new MutableLiveData<>();
     public final MutableLiveData<FirebaseVisionBarcode> detectedBarcode = new MutableLiveData<>();
-
-    private final Set<Integer> objectIdsToSearch = new HashSet<>();
 
     private boolean isCameraLive = false;
 
@@ -64,7 +59,6 @@ public class WorkflowModel extends AndroidViewModel {
 
     public void markCameraLive() {
         isCameraLive = true;
-        objectIdsToSearch.clear();
     }
 
     public void markCameraFrozen() {

@@ -11,12 +11,15 @@
     <color name="colorGrey500">#9E9E9E</color>
     <color name="colorDarkText">#616161</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
 
 
     <!-- Barcode Scanner -->
     <color name="reticle_ripple">#9AFFFFFF</color>
     <color name="barcode_reticle_background">#99000000</color>
     <color name="barcode_reticle_stroke">#40000000</color>
+    <color name="barcode_field_value">#797979</color>
+    <color name="barcode_field_box_stroke">#757575</color>
     <color name="dark">#9A000000</color>
 
 </resources>
