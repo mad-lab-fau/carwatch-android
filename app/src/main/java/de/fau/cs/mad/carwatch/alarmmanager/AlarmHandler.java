@@ -175,12 +175,21 @@ public class AlarmHandler {
     }
 
     /**
+     * Schedule alarm notification for taking saliva sample based on the saliva ID
+     *
+     * @param alarmId  ID of alarm to ring
+     * @param salivaId ID of the next saliva sample to take
+     */
+    public void scheduleNextSalivaAlarm(int alarmId, int salivaId) {
+
+    }
+
+    /**
      * Cancel alarm notification and TimeShiftIntent using AlarmManager
      *
      * @param alarm Alarm to cancel
      */
     public void cancelAlarm(Alarm alarm) {
-
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, PendingIntent.FLAG_NO_CREATE);
