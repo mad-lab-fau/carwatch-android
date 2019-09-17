@@ -33,7 +33,7 @@ public abstract class AlarmDatabase extends RoomDatabase {
                 if (sInstance == null) {
                     sInstance = Room.databaseBuilder(context.getApplicationContext(),
                             AlarmDatabase.class, DATABASE_NAME)
-                            .fallbackToDestructiveMigration() // TODO Add Proper Migration
+                            .fallbackToDestructiveMigration()
                             .addCallback(roomDatabaseCallback)
                             .build();
                 }
