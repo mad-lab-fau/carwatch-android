@@ -35,12 +35,9 @@ import de.fau.cs.mad.carwatch.ui.MainActivity;
  */
 public class AlarmHandler {
 
-    private final String TAG = AlarmHandler.class.getSimpleName();
+    private static final String TAG = AlarmHandler.class.getSimpleName();
 
-    private Context context;
-    private View snackBarAnchor;
-
-    private PeriodFormatter formatter = new PeriodFormatterBuilder()
+    private static PeriodFormatter formatter = new PeriodFormatterBuilder()
             .appendHours()
             .appendSuffix(" hour", " hours")
             .appendSeparatorIfFieldsBefore(" from ")
@@ -49,9 +46,8 @@ public class AlarmHandler {
             .appendSeparatorIfFieldsBefore(" from ")
             .toFormatter();
 
-    public AlarmHandler(Context context, View snackBarAnchor) {
-        this.context = context;
-        this.snackBarAnchor = snackBarAnchor;
+    public static void scheduleAlarm(Context context, Alarm alarm) {
+        scheduleAlarm(context, alarm, null);
     }
 
     /**
@@ -59,7 +55,7 @@ public class AlarmHandler {
      *
      * @param alarm Alarm to schedule
      */
-    public void scheduleAlarm(Alarm alarm) {
+    public static void scheduleAlarm(Context context, Alarm alarm, View snackBarAnchor) {
         if (!alarm.isActive()) {
             return;
         }
@@ -68,16 +64,16 @@ public class AlarmHandler {
 
         if (alarmManager == null) {
             alarm.setActive(false);
-            Snackbar.make(snackBarAnchor,
-                    context.getString(R.string.alarm_set_error),
-                    Snackbar.LENGTH_SHORT).show();
+            if (snackBarAnchor != null) {
+                Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set_error), Snackbar.LENGTH_SHORT).show();
+            }
             return;
         }
 
         DateTime nextAlarmRing = null; // used in Snackbar
 
-        PendingIntent pendingIntent = getPendingIntent(alarm.getId());
-        PendingIntent pendingIntentShow = getPendingIntentShow(alarm.getId());
+        PendingIntent pendingIntent = getPendingIntent(context, alarm.getId());
+        PendingIntent pendingIntentShow = getPendingIntentShow(context, alarm.getId());
 
         if (alarm.isRepeating()) {
             // get list of time to ring in milliseconds for each active day, and repeat weekly
@@ -141,7 +137,7 @@ public class AlarmHandler {
             Log.d(TAG, "Setting alarm for " + alarm);
 
             if (alarm.hasHiddenTime()) {
-                PendingIntent pendingIntentUnknown = getPendingIntent(Integer.MAX_VALUE - alarm.getId());
+                PendingIntent pendingIntentUnknown = getPendingIntent(context, Integer.MAX_VALUE - alarm.getId());
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.getHiddenTime().getMillis(), pendingIntentUnknown);
 
                 Log.d(TAG, "Condition " + Condition.UNKNOWN_ALARM + "! Setting hidden alarm for " + alarm.getHiddenTime());
@@ -151,20 +147,32 @@ public class AlarmHandler {
 
         if (!alarm.isRepeating()) {
             Period timeDiff = new Period(DateTime.now(), alarm.getTimeToNextRing());
-            Snackbar.make(snackBarAnchor, "Alarm set for " + formatter.print(timeDiff) + "now.", Snackbar.LENGTH_SHORT).show();
+            if (snackBarAnchor != null) {
+                Snackbar.make(snackBarAnchor, "Alarm set for " + formatter.print(timeDiff) + "now.", Snackbar.LENGTH_SHORT).show();
+            }
         }
     }
 
     /**
      * Schedule alarm notification based on absolute time
      *
-     * @param timeToRing time to next alarm in milliseconds
+     * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public void scheduleAlarmAtTime(DateTime timeToRing, int alarmId) {
-        PendingIntent pendingIntent = getPendingIntent(alarmId);
-        PendingIntent pendingIntentShow = getPendingIntentShow(alarmId);
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId) {
+        PendingIntent pendingIntent = getPendingIntent(context, alarmId);
+        PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId);
 
+        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow);
+    }
+
+    /**
+     * Schedule alarm notification based on absolute time
+     *
+     * @param timeToRing time to next alarm
+     * @param alarmId    ID of alarm to ring
+     */
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow) {
         Log.d(TAG, "Setting timed alarm " + alarmId + " at " + timeToRing);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -184,12 +192,16 @@ public class AlarmHandler {
 
     }
 
+    public static void cancelAlarm(Context context, Alarm alarm) {
+        cancelAlarm(context, alarm, null);
+    }
+
     /**
      * Cancel alarm notification and TimeShiftIntent using AlarmManager
      *
      * @param alarm Alarm to cancel
      */
-    public void cancelAlarm(Alarm alarm) {
+    public static void cancelAlarm(Context context, Alarm alarm, View snackBarAnchor) {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, PendingIntent.FLAG_NO_CREATE);
@@ -213,7 +225,7 @@ public class AlarmHandler {
             alarmManager.cancel(pendingIntent);
 
             if (subjectId != null && SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM) {
-                PendingIntent pendingIntentUnknown = getPendingIntent(Integer.MAX_VALUE - alarm.getId());
+                PendingIntent pendingIntentUnknown = getPendingIntent(context, Integer.MAX_VALUE - alarm.getId());
                 if (pendingIntentUnknown != null) {
                     Log.d(TAG, "Cancelling unknown alarm for " + alarm.getId());
                     alarmManager.cancel(pendingIntentUnknown);
@@ -221,12 +233,14 @@ public class AlarmHandler {
             }
         }
 
-        // Show snackbar to notify user
-        Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_cancelled), Snackbar.LENGTH_SHORT).show();
+        if (snackBarAnchor != null) {
+            // Show snackbar to notify user
+            Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_cancelled), Snackbar.LENGTH_SHORT).show();
+        }
     }
 
 
-    private PendingIntent getPendingIntent(int alarmId) {
+    private static PendingIntent getPendingIntent(Context context, int alarmId) {
         // Get PendingIntent to AlarmReceiver Broadcast
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(Constants.EXTRA_ID, alarmId);
@@ -234,7 +248,7 @@ public class AlarmHandler {
         return PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private PendingIntent getPendingIntentShow(int alarmId) {
+    private static PendingIntent getPendingIntentShow(Context context, int alarmId) {
         Intent intentShow = new Intent(context, MainActivity.class);
         intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intentShow.putExtra(Constants.EXTRA_ID, alarmId);

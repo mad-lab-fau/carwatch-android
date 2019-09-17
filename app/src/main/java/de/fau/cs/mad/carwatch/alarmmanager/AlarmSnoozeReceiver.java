@@ -67,7 +67,6 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
         Log.d(TAG, "Alarm source: " + alarmSource);
         Log.d(TAG, "Snoozing alarm " + alarmId + " for " + snoozeDuration + " minutes");
 
-        AlarmHandler alarmHandler = new AlarmHandler(context, null);
-        alarmHandler.scheduleAlarmAtTime(snoozeTime, alarmId);
+        AlarmHandler.scheduleAlarmAtTime(context, snoozeTime, alarmId);
     }
 }

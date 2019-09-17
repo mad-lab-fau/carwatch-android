@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -56,17 +55,19 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
         }
     }
 
+    private Context context;
+
     // Data list (cached copy of alarms)
     private List<Alarm> alarms = Collections.emptyList();
     // To handle interactions with database
     private AlarmViewModel alarmViewModel;
-    // To schedule alarms
-    private AlarmHandler alarmHandler;
+    // View to display Snackbar messages
+    private View snackBarAnchor;
 
     public AlarmRecyclerAdapter(Fragment fragment, View snackBarAnchor) {
         this.fragment = fragment;
         alarmViewModel = ViewModelProviders.of(fragment).get(AlarmViewModel.class);
-        alarmHandler = new AlarmHandler(fragment.getContext(), snackBarAnchor);
+        this.snackBarAnchor = snackBarAnchor;
 
         setHasStableIds(true); // so Switch interaction has smooth animations
     }
@@ -80,7 +81,9 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     @Override
     public void onBindViewHolder(final @NonNull AlarmViewHolder viewHolder, int position) {
-        final Resources resources = viewHolder.itemView.getContext().getResources();
+        context = viewHolder.itemView.getContext();
+
+        final Resources resources = context.getResources();
         final Alarm alarm = alarms.get(position);
 
         viewHolder.timeTextView.setText(alarm.getStringTime()); // set alarm time
@@ -111,41 +114,35 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
             viewHolder.repetitionTextView.setTextColor(resources.getColor(R.color.colorGrey500));
         }
 
-        viewHolder.activeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                if (checked) {
-                    alarm.setActive(true);
-                    viewHolder.timeTextView.setTextColor(resources.getColor(R.color.colorAccent));
-                    viewHolder.repetitionTextView.setTextColor(resources.getColor(R.color.colorDarkText));
-                    // schedule alarm
-                    Log.d(TAG, "scheduling alarm: " + alarm.getId());
-                    alarmHandler.scheduleAlarm(alarm);
-                } else {
-                    alarm.setActive(false);
-                    viewHolder.timeTextView.setTextColor(resources.getColor(R.color.colorGrey500));
-                    viewHolder.repetitionTextView.setTextColor(resources.getColor(R.color.colorGrey500));
-                    alarmHandler.cancelAlarm(alarm);
-                }
-
-                // Update database and schedule alarm
-                Log.d(TAG, "updating database with alarm: " + alarm.getId());
-                alarmViewModel.updateActive(alarm);
+        viewHolder.activeSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+            if (checked) {
+                alarm.setActive(true);
+                viewHolder.timeTextView.setTextColor(resources.getColor(R.color.colorAccent));
+                viewHolder.repetitionTextView.setTextColor(resources.getColor(R.color.colorDarkText));
+                // schedule alarm
+                Log.d(TAG, "scheduling alarm: " + alarm.getId());
+                AlarmHandler.scheduleAlarm(context, alarm, snackBarAnchor);
+            } else {
+                alarm.setActive(false);
+                viewHolder.timeTextView.setTextColor(resources.getColor(R.color.colorGrey500));
+                viewHolder.repetitionTextView.setTextColor(resources.getColor(R.color.colorGrey500));
+                AlarmHandler.cancelAlarm(context, alarm, snackBarAnchor);
             }
+
+            // Update database and schedule alarm
+            Log.d(TAG, "updating database with alarm: " + alarm.getId());
+            alarmViewModel.updateActive(alarm);
         });
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = view.getContext();
-                Intent intent = new Intent(context, AddAlarmActivity.class);
+        viewHolder.itemView.setOnClickListener(view -> {
+            Context context = view.getContext();
+            Intent intent = new Intent(context, AddAlarmActivity.class);
 
-                Bundle args = new Bundle();
-                args.putParcelable(Constants.EXTRA_ALARM, alarm);
-                intent.putExtra(Constants.EXTRA_BUNDLE, args);
+            Bundle args = new Bundle();
+            args.putParcelable(Constants.EXTRA_ALARM, alarm);
+            intent.putExtra(Constants.EXTRA_BUNDLE, args);
 
-                fragment.startActivityForResult(intent, Constants.REQUEST_CODE_EDIT_ALARM);
-            }
+            fragment.startActivityForResult(intent, Constants.REQUEST_CODE_EDIT_ALARM);
         });
     }
 
@@ -165,9 +162,9 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
             if (alarm.getId() == alarms.get(i).getId()) {
                 alarms.set(i, alarm);
                 if (alarm.isActive()) {
-                    alarmHandler.scheduleAlarm(alarm);
+                    AlarmHandler.scheduleAlarm(context, alarm, snackBarAnchor);
                 } else {
-                    alarmHandler.cancelAlarm(alarm);
+                    AlarmHandler.cancelAlarm(context, alarm, snackBarAnchor);
                 }
             }
         }

@@ -5,6 +5,7 @@
 
     <string name="cancel">Cancel</string>
     <string name="alarm_notification_text">Alarm going off!</string>
+    <string name="timer_notification_text">Saliva sample!</string>
 
     <!-- Activity Titles -->
     <string name="title_activity_settings">Settings</string>
@@ -12,6 +13,7 @@
     <!-- Menu -->
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share Logs …</string>
+    <string name="menu_scanner">Scanner</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>

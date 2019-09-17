@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
@@ -33,6 +34,8 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = ScannerFragment.class.getSimpleName();
 
+    private int alarmId;
+
     private CameraSource cameraSource;
     private CameraSourcePreview preview;
     private GraphicOverlay graphicOverlay;
@@ -41,6 +44,15 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
 
     private WorkflowModel workflowModel;
     private WorkflowState currentWorkflowState;
+
+    public ScannerFragment() {
+        this(0);
+    }
+
+    public ScannerFragment(int alarmId) {
+        super();
+        this.alarmId = alarmId;
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -160,11 +172,21 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
                 this,
                 barcode -> {
                     if (barcode != null) {
+
                         ArrayList<BarcodeField> barcodeFieldList = new ArrayList<>();
                         barcodeFieldList.add(new BarcodeField("Raw Value", barcode.getRawValue()));
                         Log.d(TAG, "Detected Barcodes: " + barcodeFieldList);
                         BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList);
+                        // TODO check if correct barcode
+                        cancelTimer();
                     }
                 });
+    }
+
+
+    public void cancelTimer() {
+        if (getContext() != null) {
+            TimerHandler.cancelTimer(getContext(), alarmId);
+        }
     }
 }

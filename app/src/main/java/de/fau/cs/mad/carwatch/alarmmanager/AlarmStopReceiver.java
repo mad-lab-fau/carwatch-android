@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.ScannerActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 /**
@@ -67,5 +68,13 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         if (notificationManager != null) {
             notificationManager.cancelAll();
         }
+
+        Intent scannerIntent = new Intent(context, ScannerActivity.class);
+        scannerIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(scannerIntent);
+
+        TimerHandler.scheduleTimer(context, alarmId);
+
     }
 }

@@ -73,11 +73,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private Notification buildNotification(Context context, int alarmId) {
-        // Full screen Intent
         PendingIntent snoozeIntent = createSnoozeAlarmIntent(context, alarmId);
         PendingIntent stopIntent = createStopAlarmIntent(context, alarmId);
 
-
+        // Full screen Intent
         Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
         fullScreenIntent.putExtra(Constants.EXTRA_ID, alarmId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
@@ -89,8 +88,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setOngoing(true)
-                // TODO only for development!
-                .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.alarm_notification_text))

@@ -2,12 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.fau.cs.mad.carwatch">
 
-    <uses-feature android:name="android.hardware.camera"/>
-
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -45,8 +39,28 @@
             android:launchMode="singleTask"
             android:taskAffinity="" />
 
+        <activity android:name=".ui.ScannerActivity" />
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="barcode" />
+        <provider
+            android:name=".logger.GenericFileProvider"
+            android:authorities="${applicationId}.logger.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <receiver
             android:name=".alarmmanager.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
             android:exported="true" />
 
@@ -65,21 +79,13 @@
                 <action android:name="Snooze Alarm" />
             </intent-filter>
         </receiver>
-
-        <provider
-            android:name="de.fau.cs.mad.carwatch.logger.GenericFileProvider"
-            android:authorities="${applicationId}.logger.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-
-        <meta-data
-            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
-            android:value="barcode" />
-
     </application>
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>
