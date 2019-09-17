@@ -2,9 +2,14 @@ package de.fau.cs.mad.carwatch;
 
 import org.joda.time.LocalTime;
 
-public class Constants {
+public final class Constants {
 
     public static final int NUM_DAYS = 7;
+
+    /**
+     * Timer duration in minutes.
+     */
+    public static final int TIMER_DURATION = 1;
 
     public static final String KEY_ALARM_TIME = "alarm_time";
     public static final String KEY_ALARM_ENABLED = "alarm_enabled";
@@ -13,6 +18,7 @@ public class Constants {
     public static final String PREF_FIRST_RUN = "first_run";
     public static final String PREF_SUBJECT_ID = "subject_id";
     public static final String PREF_SNOOZE_DURATION = "snooze_duration";
+    public static final String PREF_TIMER_DURATION = "timer_duration";
 
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;

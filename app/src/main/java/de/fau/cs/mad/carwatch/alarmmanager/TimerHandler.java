@@ -27,9 +27,7 @@ public class TimerHandler {
 
     @SuppressLint("WrongConstant")
     public static void scheduleTimer(Context context, int alarmId) {
-        // TODO get from sharedpreferences
-        int timerDuration = 1; // minutes
-        long when = DateTime.now().plusMinutes(timerDuration).getMillis();
+        long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
