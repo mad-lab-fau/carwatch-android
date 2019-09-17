@@ -46,7 +46,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
     private WorkflowState currentWorkflowState;
 
     public ScannerFragment() {
-        this(0);
+        this(-1);
     }
 
     public ScannerFragment(int alarmId) {
@@ -183,9 +183,8 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-
-    public void cancelTimer() {
-        if (getContext() != null) {
+    private void cancelTimer() {
+        if (getContext() != null && alarmId != -1) {
             TimerHandler.cancelTimer(getContext(), alarmId);
         }
     }

@@ -50,7 +50,6 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
         SwipeButton swipeButton = findViewById(R.id.button_swipe);
         swipeButton.setOnSwipeListener(this);
-
     }
 
     private void snoozeAlarm() {

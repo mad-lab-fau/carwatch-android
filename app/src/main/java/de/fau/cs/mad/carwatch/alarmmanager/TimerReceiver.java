@@ -8,13 +8,15 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.ui.ScannerActivity;
+
+import static android.os.Build.VERSION;
+import static android.os.Build.VERSION_CODES;
 
 public class TimerReceiver extends BroadcastReceiver {
 
@@ -28,17 +30,16 @@ public class TimerReceiver extends BroadcastReceiver {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Create and add notification channel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
             if (notificationManager != null) {
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
                 notificationManager.createNotificationChannel(channel);
             }
         }
 
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, -1);
 
         Notification notification = buildNotification(context, alarmId);
-
 
         // Play alarm ringing sound
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();

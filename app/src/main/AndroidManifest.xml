@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.fau.cs.mad.carwatch">
 
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -39,7 +45,11 @@
             android:launchMode="singleTask"
             android:taskAffinity="" />
 
-        <activity android:name=".ui.ScannerActivity" />
+        <activity
+            android:name=".ui.ScannerActivity"
+            android:parentActivityName=".ui.MainActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="" />
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -80,12 +90,5 @@
             </intent-filter>
         </receiver>
     </application>
-
-    <uses-feature android:name="android.hardware.camera" />
-
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>

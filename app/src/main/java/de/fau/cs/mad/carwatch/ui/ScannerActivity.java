@@ -4,8 +4,10 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -14,12 +16,24 @@ import de.fau.cs.mad.carwatch.ui.scanner.ScannerFragment;
 
 public class ScannerActivity extends AppCompatActivity {
 
+    private static final String TAG = ScannerActivity.class.getSimpleName();
+
+    private int alarmId = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
 
-        int alarmId = getIntent().getIntExtra(Constants.EXTRA_ID, 0);
+        if (getIntent() != null && getIntent().hasExtra(Constants.EXTRA_ID)) {
+            this.alarmId = getIntent().getIntExtra(Constants.EXTRA_ID, -1);
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         ScannerFragment fragment = new ScannerFragment(alarmId);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();

@@ -4,8 +4,8 @@
     <string name="ok">OK</string>
 
     <string name="cancel">Cancel</string>
-    <string name="alarm_notification_text">Alarm going off!</string>
-    <string name="timer_notification_text">Saliva sample!</string>
+    <string name="alarm_notification_text">Good Morning!</string>
+    <string name="timer_notification_text">Please take your saliva sample!</string>
 
     <!-- Activity Titles -->
     <string name="title_activity_settings">Settings</string>
