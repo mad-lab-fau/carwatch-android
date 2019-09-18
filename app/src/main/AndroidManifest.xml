@@ -48,29 +48,12 @@
         <activity
             android:name=".ui.ScannerActivity"
             android:parentActivityName=".ui.MainActivity"
+            android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity="" />
 
-        <meta-data
-            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
-            android:value="barcode" />
-        <provider
-            android:name=".logger.GenericFileProvider"
-            android:authorities="${applicationId}.logger.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-
         <receiver
             android:name=".alarmmanager.AlarmReceiver"
-            android:enabled="true"
-            android:exported="true" />
-
-        <receiver
-            android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
             android:exported="true" />
 
@@ -89,6 +72,27 @@
                 <action android:name="Snooze Alarm" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".alarmmanager.TimerReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <provider
+            android:name=".logger.GenericFileProvider"
+            android:authorities="${applicationId}.logger.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="barcode" />
+
     </application>
+
 
 </manifest>
