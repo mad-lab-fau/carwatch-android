@@ -126,15 +126,19 @@ public class AlarmHandler {
         }
     }
 
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId) {
+        scheduleAlarmAtTime(context, timeToRing, alarmId, -1);
+    }
+
     /**
      * Schedule alarm notification based on absolute time
      *
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId) {
-        PendingIntent pendingIntent = getPendingIntent(context, alarmId);
-        PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId);
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
+        PendingIntent pendingIntent = getPendingIntent(context, alarmId, salivaId);
+        PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId, salivaId);
 
         scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow);
     }
@@ -153,16 +157,6 @@ public class AlarmHandler {
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(timeToRing.getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
         }
-    }
-
-    /**
-     * Schedule alarm notification for taking saliva sample based on the saliva ID
-     *
-     * @param alarmId  ID of alarm to ring
-     * @param salivaId ID of the next saliva sample to take
-     */
-    public void scheduleNextSalivaAlarm(int alarmId, int salivaId) {
-
     }
 
     public static void cancelAlarm(Context context, Alarm alarm) {
@@ -212,19 +206,31 @@ public class AlarmHandler {
         }
     }
 
-
     private static PendingIntent getPendingIntent(Context context, int alarmId) {
+        return getPendingIntent(context, alarmId, -1);
+    }
+
+    private static PendingIntent getPendingIntent(Context context, int alarmId, int salivaId) {
         // Get PendingIntent to AlarmReceiver Broadcast
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(Constants.EXTRA_ID, alarmId);
-
+        if (salivaId != -1) {
+            intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        }
         return PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private static PendingIntent getPendingIntentShow(Context context, int alarmId) {
+        return getPendingIntentShow(context, alarmId, -1);
+    }
+
+    private static PendingIntent getPendingIntentShow(Context context, int alarmId, int salivaId) {
         Intent intentShow = new Intent(context, MainActivity.class);
         intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intentShow.putExtra(Constants.EXTRA_ID, alarmId);
+        if (salivaId != -1) {
+            intentShow.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        }
 
         return PendingIntent.getActivity(context, Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, PendingIntent.FLAG_UPDATE_CURRENT);
     }

@@ -20,7 +20,8 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
     private static final String TAG = ShowAlarmActivity.class.getSimpleName();
 
-    private int alarmId = 0;
+    private int alarmId = Constants.EXTRA_ID_DEFAULT;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +32,9 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
             getSupportActionBar().hide();
         }
 
-        if (getIntent() != null && getIntent().hasExtra(Constants.EXTRA_ID)) {
-            this.alarmId = getIntent().getIntExtra(Constants.EXTRA_ID, 0);
+        if (getIntent() != null) {
+            this.alarmId = getIntent().getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+            this.salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -64,6 +66,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     private void stopAlarm() {
         Intent stopAlarmIntent = new Intent(this, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        stopAlarmIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
         stopAlarmIntent.setAction("Stop Alarm");
         sendBroadcast(stopAlarmIntent);

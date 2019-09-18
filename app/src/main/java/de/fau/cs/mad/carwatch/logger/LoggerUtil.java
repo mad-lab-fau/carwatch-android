@@ -29,11 +29,11 @@ public class LoggerUtil {
     }
 
     public static void log(String tag, JSONObject json) {
-        Logger.log(Logger.INFO, tag, json.toString(), null);
+        log(tag, json.toString());
     }
 
     public static void log(String tag, String message) {
-        Log.d(TAG, message);
+        Log.d(TAG, tag + "\t" + message);
         Logger.log(Logger.INFO, tag, message, null);
     }
 

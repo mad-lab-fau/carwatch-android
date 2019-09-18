@@ -4,7 +4,6 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.ActionBar;
@@ -18,15 +17,17 @@ public class ScannerActivity extends AppCompatActivity {
 
     private static final String TAG = ScannerActivity.class.getSimpleName();
 
-    private int alarmId = -1;
+    private int alarmId = Constants.EXTRA_ID_DEFAULT;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
 
-        if (getIntent() != null && getIntent().hasExtra(Constants.EXTRA_ID)) {
-            this.alarmId = getIntent().getIntExtra(Constants.EXTRA_ID, -1);
+        if (getIntent() != null) {
+            alarmId = getIntent().getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
         }
 
         ActionBar actionBar = getSupportActionBar();
@@ -35,7 +36,10 @@ public class ScannerActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        ScannerFragment fragment = new ScannerFragment(alarmId);
+        ScannerFragment fragment = new ScannerFragment();
+        fragment.setAlarmId(alarmId);
+        fragment.setSalivaId(salivaId);
+
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {

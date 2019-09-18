@@ -43,14 +43,16 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         boolean isHidden = false;
 
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+        int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
+
         // convert id from hidden alarm to regular alarm id (will be needed in SnoozeReceiver and StopReceiver)
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
         if (alarmId > Integer.MAX_VALUE / 2) {
             isHidden = true;
             alarmId = Integer.MAX_VALUE - alarmId;
         }
 
-        Notification notification = buildNotification(context, alarmId);
+        Notification notification = buildNotification(context, alarmId, salivaId);
 
         // Play alarm ringing sound
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
@@ -61,6 +63,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             // create Json object and log information
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
+            json.put(Constants.EXTRA_SALIVA_ID, salivaId);
             json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, isHidden);
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_RING, json);
         } catch (JSONException e) {
@@ -72,13 +75,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private Notification buildNotification(Context context, int alarmId) {
+    private Notification buildNotification(Context context, int alarmId, int salivaId) {
         PendingIntent snoozeIntent = createSnoozeAlarmIntent(context, alarmId);
-        PendingIntent stopIntent = createStopAlarmIntent(context, alarmId);
+        PendingIntent stopIntent = createStopAlarmIntent(context, alarmId, salivaId);
 
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
         fullScreenIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -121,9 +125,10 @@ public class AlarmReceiver extends BroadcastReceiver {
      * @param alarmId ID of alarm to handle
      * @return PendingIntent to AlarmStop(Broadcast)Receiver
      */
-    private PendingIntent createStopAlarmIntent(Context context, int alarmId) {
+    private PendingIntent createStopAlarmIntent(Context context, int alarmId, int salivaId) {
         Intent stopAlarmIntent = new Intent(context, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        stopAlarmIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
         stopAlarmIntent.setAction(Constants.ACTION_STOP_ALARM);
         return PendingIntent.getBroadcast(context, 0, stopAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);

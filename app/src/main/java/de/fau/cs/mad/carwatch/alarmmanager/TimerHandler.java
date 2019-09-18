@@ -25,8 +25,21 @@ public class TimerHandler {
 
     private static final String CHANNEL_ID = "TimerHandlerChannel";
 
+
+    public static void scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
+        if (salivaId < Constants.SALIVA_TIMES.length) {
+            if (Constants.SALIVA_TIMES[salivaId] == 0) {
+                scheduleSalivaCountdown(context, alarmId, salivaId);
+            } else {
+                DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
+                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId);
+            }
+        }
+    }
+
     @SuppressLint("WrongConstant")
-    public static void scheduleTimer(Context context, int alarmId) {
+    public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId) {
+
         long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -40,10 +53,10 @@ public class TimerHandler {
             }
         }
 
-        Notification notification = buildNotification(context, alarmId, when);
+        Notification notification = buildCountdownNotification(context, alarmId, salivaId, when);
 
         if (alarmManager != null) {
-            PendingIntent pendingIntent = getPendingIntent(context, alarmId);
+            PendingIntent pendingIntent = getTinerPendingIntent(context, alarmId, salivaId);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, when, pendingIntent);
         }
 
@@ -51,6 +64,7 @@ public class TimerHandler {
             notificationManager.notify(alarmId, notification);
         }
     }
+
 
     public static void cancelTimer(Context context, int alarmId) {
         // Dismiss notification
@@ -77,9 +91,10 @@ public class TimerHandler {
     }
 
 
-    private static Notification buildNotification(Context context, int alarmId, long when) {
+    private static Notification buildCountdownNotification(Context context, int alarmId, int salivaId, long when) {
         Intent contentIntent = new Intent(context, ScannerActivity.class);
         contentIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -93,15 +108,16 @@ public class TimerHandler {
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(context.getString(R.string.timer_notification_text));
+                .setContentText(context.getString(R.string.timer_notification_text, salivaId));
 
         return builder.build();
     }
 
-    private static PendingIntent getPendingIntent(Context context, int alarmId) {
+    private static PendingIntent getTinerPendingIntent(Context context, int alarmId, int salivaId) {
         // Get PendingIntent to TimerReceiver Broadcast
         Intent intent = new Intent(context, TimerReceiver.class);
         intent.putExtra(Constants.EXTRA_ID, alarmId);
+        intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
         return PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }

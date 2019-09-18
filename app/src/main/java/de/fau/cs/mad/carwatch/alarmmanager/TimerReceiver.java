@@ -18,6 +18,9 @@ import de.fau.cs.mad.carwatch.ui.ScannerActivity;
 import static android.os.Build.VERSION;
 import static android.os.Build.VERSION_CODES;
 
+/**
+ * Called when countdown timer to take saliva sample is over.
+ */
 public class TimerReceiver extends BroadcastReceiver {
 
     private static final String TAG = TimerReceiver.class.getSimpleName();
@@ -37,9 +40,10 @@ public class TimerReceiver extends BroadcastReceiver {
             }
         }
 
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, -1);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+        int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
 
-        Notification notification = buildNotification(context, alarmId);
+        Notification notification = buildAlarmNotification(context, alarmId, salivaId);
 
         // Play alarm ringing sound
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
@@ -51,10 +55,11 @@ public class TimerReceiver extends BroadcastReceiver {
     }
 
 
-    private Notification buildNotification(Context context, int alarmId) {
+    private static Notification buildAlarmNotification(Context context, int alarmId, int salivaId) {
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, ScannerActivity.class);
         fullScreenIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -66,7 +71,7 @@ public class TimerReceiver extends BroadcastReceiver {
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(context.getString(R.string.alarm_notification_text))
+                .setContentText(context.getString(R.string.timer_over_notification_text, salivaId))
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();
