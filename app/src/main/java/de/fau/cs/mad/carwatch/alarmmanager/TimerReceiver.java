@@ -22,7 +22,7 @@ public class TimerReceiver extends BroadcastReceiver {
 
     private static final String TAG = TimerReceiver.class.getSimpleName();
 
-    private final String CHANNEL_ID = "TimerReceiverChannel";
+    private static final String CHANNEL_ID = "TimerReceiverChannel";
 
     @SuppressLint("WrongConstant")
     @Override

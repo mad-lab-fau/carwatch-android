@@ -66,8 +66,8 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     public AlarmRecyclerAdapter(Fragment fragment, View snackBarAnchor) {
         this.fragment = fragment;
-        alarmViewModel = ViewModelProviders.of(fragment).get(AlarmViewModel.class);
         this.snackBarAnchor = snackBarAnchor;
+        alarmViewModel = ViewModelProviders.of(fragment).get(AlarmViewModel.class);
 
         setHasStableIds(true); // so Switch interaction has smooth animations
     }

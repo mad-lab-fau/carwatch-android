@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -46,7 +47,7 @@ public class AlarmHandler {
             .appendSeparatorIfFieldsBefore(" from ")
             .toFormatter();
 
-    public static void scheduleAlarm(Context context, Alarm alarm) {
+    public static void scheduleAlarm(@NonNull Context context, Alarm alarm) {
         scheduleAlarm(context, alarm, null);
     }
 
@@ -55,7 +56,7 @@ public class AlarmHandler {
      *
      * @param alarm Alarm to schedule
      */
-    public static void scheduleAlarm(Context context, Alarm alarm, View snackBarAnchor) {
+    public static void scheduleAlarm(@NonNull Context context, Alarm alarm, View snackBarAnchor) {
         if (!alarm.isActive()) {
             return;
         }
@@ -82,7 +83,7 @@ public class AlarmHandler {
             for (DateTime time : timeToWeeklyRings) {
                 Log.d(TAG, "Setting weekly repeat at " + time);
 
-                if (time.isBefore(nextAlarmRing) || nextAlarmRing == null) {
+                if (nextAlarmRing == null || time.isBefore(nextAlarmRing)) {
                     nextAlarmRing = time;
                 }
 
@@ -94,22 +95,7 @@ public class AlarmHandler {
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
             }
             if (nextAlarmRing != null) {
-                try {
-                    // create Json object and log information
-                    JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
-                    json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, nextAlarmRing.getMillis());
-                    json.put(Constants.LOGGER_EXTRA_ALARM_IS_REPEATING, alarm.isRepeating());
-                    json.put(Constants.LOGGER_EXTRA_ALARM_REPEATING_DAYS, new JSONArray(alarm.getActiveDays()));
-                    json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, alarm.hasHiddenTime());
-                    if (alarm.hasHiddenTime()) {
-                        json.put(Constants.LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP, alarm.getHiddenTime().getMillis());
-                    }
-
-                    LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                logAlarmSet(alarm, nextAlarmRing);
 
                 Log.d(TAG, "Setting next alarm to " + nextAlarmRing);
                 AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(nextAlarmRing.getMillis(), pendingIntentShow);
@@ -119,20 +105,7 @@ public class AlarmHandler {
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
 
-            try {
-                // create Json object and log information
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
-                json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, alarm.getTimeToNextRing().getMillis());
-                json.put(Constants.LOGGER_EXTRA_ALARM_IS_REPEATING, alarm.isRepeating());
-                json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, alarm.hasHiddenTime());
-                if (alarm.hasHiddenTime()) {
-                    json.put(Constants.LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP, alarm.getHiddenTime().getMillis());
-                }
-                LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            logAlarmSet(alarm, alarm.getTimeToNextRing());
 
             Log.d(TAG, "Setting alarm for " + alarm);
 
@@ -254,5 +227,26 @@ public class AlarmHandler {
         intentShow.putExtra(Constants.EXTRA_ID, alarmId);
 
         return PendingIntent.getActivity(context, Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private static void logAlarmSet(Alarm alarm, DateTime nextRing) {
+        try {
+            // create Json object and log information
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
+            json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, nextRing.getMillis());
+            json.put(Constants.LOGGER_EXTRA_ALARM_IS_REPEATING, alarm.isRepeating());
+            if (alarm.isRepeating()) {
+                json.put(Constants.LOGGER_EXTRA_ALARM_REPEATING_DAYS, new JSONArray(alarm.getActiveDays()));
+            }
+            json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, alarm.hasHiddenTime());
+            if (alarm.hasHiddenTime()) {
+                json.put(Constants.LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP, alarm.getHiddenTime().getMillis());
+            }
+
+            LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

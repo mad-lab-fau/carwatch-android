@@ -1,6 +1,5 @@
 package de.fau.cs.mad.carwatch.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
-        EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
+        final EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
         editText.setText(sharedPreferences.getString(Constants.PREF_SUBJECT_ID, ""));
 
         dialogBuilder
@@ -134,17 +133,13 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(getString(R.string.title_subject_id))
                 .setMessage(getString(R.string.message_subject_id))
                 .setView(dialogView)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
-                        String subjectId = editText.getText().toString();
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+                    String subjectId = editText.getText().toString();
 
-                        sharedPreferences.edit()
-                                .putBoolean(Constants.PREF_FIRST_RUN, false)
-                                .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                                .apply();
-                    }
+                    sharedPreferences.edit()
+                            .putBoolean(Constants.PREF_FIRST_RUN, false)
+                            .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                            .apply();
                 });
 
         dialogBuilder.show();
