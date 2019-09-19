@@ -147,7 +147,6 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
                         timeTextView.setText(selectedTime.toString("HH:mm"));
                     }
                 }, time.getHourOfDay(), time.getMinuteOfHour(), true);
-                timePicker.setTitle("Select Time");
                 timePicker.show();
             }
         });

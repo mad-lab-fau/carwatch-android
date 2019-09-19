@@ -17,7 +17,6 @@
 package de.fau.cs.mad.carwatch.barcodedetection.camera;
 
 import android.os.SystemClock;
-import android.util.Log;
 
 import androidx.annotation.GuardedBy;
 
@@ -32,7 +31,7 @@ import java.nio.ByteBuffer;
  */
 public abstract class FrameProcessorBase<T> implements FrameProcessor {
 
-    private static final String TAG = "FrameProcessorBase";
+    private static final String TAG = FrameProcessorBase.class.getSimpleName();
 
     // To keep the latest frame and its metadata.
     @GuardedBy("this")
@@ -72,11 +71,11 @@ public abstract class FrameProcessorBase<T> implements FrameProcessor {
                             .setRotation(processingFrameMetaData.rotation)
                             .build();
             FirebaseVisionImage image = FirebaseVisionImage.fromByteBuffer(processingFrame, metadata);
-            long startMs = SystemClock.elapsedRealtime();
+            //long startMs = SystemClock.elapsedRealtime();
             detectInImage(image)
                     .addOnSuccessListener(
                             results -> {
-                                Log.d(TAG, "Latency is: " + (SystemClock.elapsedRealtime() - startMs));
+                                //Log.d(TAG, "Latency is: " + (SystemClock.elapsedRealtime() - startMs));
                                 FrameProcessorBase.this.onSuccess(image, results, graphicOverlay);
                                 processLatestFrame(graphicOverlay);
                             })

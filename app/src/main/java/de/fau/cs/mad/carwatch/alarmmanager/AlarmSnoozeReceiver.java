@@ -25,7 +25,7 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
         AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
         if (alarmSource == null) {
             // this should never happen!
@@ -67,7 +67,6 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
         Log.d(TAG, "Alarm source: " + alarmSource);
         Log.d(TAG, "Snoozing alarm " + alarmId + " for " + snoozeDuration + " minutes");
 
-        AlarmHandler alarmHandler = new AlarmHandler(context, null);
-        alarmHandler.scheduleAlarmAtTime(snoozeTime, alarmId);
+        AlarmHandler.scheduleAlarmAtTime(context, snoozeTime, alarmId);
     }
 }

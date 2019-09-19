@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.logger;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.orhanobut.logger.DiskLogStrategy;
 import com.orhanobut.logger.Logger;
@@ -28,10 +29,11 @@ public class LoggerUtil {
     }
 
     public static void log(String tag, JSONObject json) {
-        Logger.log(Logger.INFO, tag, json.toString(), null);
+        log(tag, json.toString());
     }
 
     public static void log(String tag, String message) {
+        Log.d(TAG, tag + "\t" + message);
         Logger.log(Logger.INFO, tag, message, null);
     }
 

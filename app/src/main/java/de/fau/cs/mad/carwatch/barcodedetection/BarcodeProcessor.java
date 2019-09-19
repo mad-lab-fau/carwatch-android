@@ -73,7 +73,7 @@ public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarc
             return;
         }
 
-        Log.d(TAG, "Barcode result size: " + results.size());
+        //Log.d(TAG, "Barcode result size: " + results.size());
 
         // Picks the barcode, if exists, that covers the center of graphic overlay.
         FirebaseVisionBarcode barcodeInCenter = null;

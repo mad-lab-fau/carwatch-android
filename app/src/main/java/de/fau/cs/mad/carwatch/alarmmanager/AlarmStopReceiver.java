@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.ScannerActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 /**
@@ -26,14 +27,16 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, 0);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
+        int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
+
         AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
         if (alarmSource == null) {
             // this should never happen!
             alarmSource = AlarmSource.SOURCE_UNKNOWN;
         }
 
-        AlarmRepository repository = new AlarmRepository((Application) context.getApplicationContext());
+        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
         try {
             Alarm alarm = repository.getAlarmById(alarmId);
             if (alarm != null) {
@@ -55,6 +58,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
             json.put(Constants.LOGGER_EXTRA_ALARM_SOURCE, alarmSource.ordinal());
+            json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaId);
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_STOP, json);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -67,5 +71,13 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         if (notificationManager != null) {
             notificationManager.cancelAll();
         }
+
+        Intent scannerIntent = new Intent(context, ScannerActivity.class);
+        scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(scannerIntent);
+
+        TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId);
     }
 }

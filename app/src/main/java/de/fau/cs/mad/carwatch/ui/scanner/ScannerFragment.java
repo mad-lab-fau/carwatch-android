@@ -15,10 +15,15 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.gms.common.internal.Objects;
 import com.google.android.material.chip.Chip;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
@@ -26,12 +31,16 @@ import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSource;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSourcePreview;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.GraphicOverlay;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
 public class ScannerFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = ScannerFragment.class.getSimpleName();
+
+    private int alarmId;
+    private int salivaId;
 
     private CameraSource cameraSource;
     private CameraSourcePreview preview;
@@ -91,6 +100,16 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
 
     }
+
+
+    public void setAlarmId(int alarmId) {
+        this.alarmId = alarmId;
+    }
+
+    public void setSalivaId(int salivaId) {
+        this.salivaId = salivaId;
+    }
+
 
     private void startCameraPreview() {
         if (!workflowModel.isCameraLive() && cameraSource != null) {
@@ -160,11 +179,32 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
                 this,
                 barcode -> {
                     if (barcode != null) {
+
                         ArrayList<BarcodeField> barcodeFieldList = new ArrayList<>();
                         barcodeFieldList.add(new BarcodeField("Raw Value", barcode.getRawValue()));
                         Log.d(TAG, "Detected Barcodes: " + barcodeFieldList);
                         BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList);
+                        // TODO check if correct barcode
+                        cancelTimer(alarmId, salivaId, barcode.getRawValue());
                     }
                 });
+    }
+
+    private void cancelTimer(int alarmId, int salivaId, String barcodeValue) {
+        if (getContext() != null && this.alarmId != -1) {
+            TimerHandler.cancelTimer(getContext(), alarmId);
+            // create Json object and log information
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
+                json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaId);
+                json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
+                LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
+        }
     }
 }

@@ -16,6 +16,7 @@
 
 package de.fau.cs.mad.carwatch.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -64,6 +65,9 @@ public class Utils {
     public static boolean allPermissionsGranted(Context context) {
         for (String permission : getRequiredPermissions(context)) {
             if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                if (permission.equals(Manifest.permission.USE_FULL_SCREEN_INTENT)) {
+                    continue;
+                }
                 return false;
             }
         }
@@ -72,10 +76,9 @@ public class Utils {
 
     private static String[] getRequiredPermissions(Context context) {
         try {
-            PackageInfo info =
-                    context
-                            .getPackageManager()
-                            .getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+            PackageInfo info = context
+                    .getPackageManager()
+                    .getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
             String[] ps = info.requestedPermissions;
             return (ps != null && ps.length > 0) ? ps : new String[0];
         } catch (Exception e) {

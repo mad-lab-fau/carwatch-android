@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="de.fau.cs.mad.carwatch">
 
-    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera" />
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name=".ui.MainActivity"
@@ -45,6 +47,13 @@
             android:launchMode="singleTask"
             android:taskAffinity="" />
 
+        <activity
+            android:name=".ui.ScannerActivity"
+            android:parentActivityName=".ui.MainActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="" />
+
         <receiver
             android:name=".alarmmanager.AlarmReceiver"
             android:enabled="true"
@@ -66,8 +75,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".alarmmanager.TimerReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
         <provider
-            android:name="de.fau.cs.mad.carwatch.logger.GenericFileProvider"
+            android:name=".logger.GenericFileProvider"
             android:authorities="${applicationId}.logger.provider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -81,5 +95,6 @@
             android:value="barcode" />
 
     </application>
+
 
 </manifest>

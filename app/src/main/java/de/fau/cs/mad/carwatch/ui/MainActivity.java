@@ -1,6 +1,5 @@
 package de.fau.cs.mad.carwatch.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -27,6 +26,7 @@ import java.io.File;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
@@ -98,22 +98,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+            // TODO REMOVE (OR HIDE BETTER)
+            case R.id.menu_kill:
+                AlarmHandler.killAll(getApplication());
                 break;
             case R.id.menu_share:
                 String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
                 File zipFile = LoggerUtil.zipDirectory(this, subjectId);
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 Uri uri = GenericFileProvider.getUriForFile(this,
                         getApplicationContext().getPackageName() +
                                 ".logger.provider",
                         zipFile);
                 sharingIntent.setType("application/octet-stream");
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                sharingIntent.setData(uri);
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
                 startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
+            case R.id.menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
-        EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
+        final EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
         editText.setText(sharedPreferences.getString(Constants.PREF_SUBJECT_ID, ""));
 
         dialogBuilder
@@ -130,17 +135,13 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(getString(R.string.title_subject_id))
                 .setMessage(getString(R.string.message_subject_id))
                 .setView(dialogView)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
-                        String subjectId = editText.getText().toString();
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+                    String subjectId = editText.getText().toString();
 
-                        sharedPreferences.edit()
-                                .putBoolean(Constants.PREF_FIRST_RUN, false)
-                                .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                                .apply();
-                    }
+                    sharedPreferences.edit()
+                            .putBoolean(Constants.PREF_FIRST_RUN, false)
+                            .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                            .apply();
                 });
 
         dialogBuilder.show();

@@ -22,7 +22,7 @@ public class AlarmViewModel extends AndroidViewModel {
 
     public AlarmViewModel(Application application) {
         super(application);
-        repository = new AlarmRepository(application);
+        repository = AlarmRepository.getInstance(application);
         allAlarms = repository.getAllAlarms();
     }
 
