@@ -213,7 +213,7 @@ public class AlarmHandler {
     private static PendingIntent getPendingIntent(Context context, int alarmId, int salivaId) {
         // Get PendingIntent to AlarmReceiver Broadcast
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(Constants.EXTRA_ID, alarmId);
+        intent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         if (salivaId != -1) {
             intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         }
@@ -227,7 +227,7 @@ public class AlarmHandler {
     private static PendingIntent getPendingIntentShow(Context context, int alarmId, int salivaId) {
         Intent intentShow = new Intent(context, MainActivity.class);
         intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intentShow.putExtra(Constants.EXTRA_ID, alarmId);
+        intentShow.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         if (salivaId != -1) {
             intentShow.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         }

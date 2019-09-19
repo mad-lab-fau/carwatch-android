@@ -17,7 +17,7 @@ public class ScannerActivity extends AppCompatActivity {
 
     private static final String TAG = ScannerActivity.class.getSimpleName();
 
-    private int alarmId = Constants.EXTRA_ID_DEFAULT;
+    private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
     private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
 
     @Override
@@ -26,7 +26,7 @@ public class ScannerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scanner);
 
         if (getIntent() != null) {
-            alarmId = getIntent().getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
             salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
         }
 

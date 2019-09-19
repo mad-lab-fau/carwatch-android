@@ -27,7 +27,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
         int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
 
         AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
@@ -73,7 +73,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
 
         Intent scannerIntent = new Intent(context, ScannerActivity.class);
-        scannerIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(scannerIntent);

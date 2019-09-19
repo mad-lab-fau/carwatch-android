@@ -43,7 +43,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         boolean isHidden = false;
 
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
         int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
 
         // convert id from hidden alarm to regular alarm id (will be needed in SnoozeReceiver and StopReceiver)
@@ -81,7 +81,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
-        fullScreenIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -112,7 +112,7 @@ public class AlarmReceiver extends BroadcastReceiver {
      */
     private PendingIntent createSnoozeAlarmIntent(Context context, int alarmId) {
         Intent snoozeAlarmIntent = new Intent(context, AlarmSnoozeReceiver.class);
-        snoozeAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        snoozeAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         snoozeAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
         snoozeAlarmIntent.setAction(Constants.ACTION_SNOOZE_ALARM);
         return PendingIntent.getBroadcast(context, 0, snoozeAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -127,7 +127,7 @@ public class AlarmReceiver extends BroadcastReceiver {
      */
     private PendingIntent createStopAlarmIntent(Context context, int alarmId, int salivaId) {
         Intent stopAlarmIntent = new Intent(context, AlarmStopReceiver.class);
-        stopAlarmIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        stopAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         stopAlarmIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
         stopAlarmIntent.setAction(Constants.ACTION_STOP_ALARM);

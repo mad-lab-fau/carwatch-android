@@ -25,7 +25,7 @@ public class AlarmSnoozeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
         AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
         if (alarmSource == null) {
             // this should never happen!

@@ -40,7 +40,7 @@ public class TimerReceiver extends BroadcastReceiver {
             }
         }
 
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ID, Constants.EXTRA_ID_DEFAULT);
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
         int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
 
         Notification notification = buildAlarmNotification(context, alarmId, salivaId);
@@ -58,7 +58,7 @@ public class TimerReceiver extends BroadcastReceiver {
     private static Notification buildAlarmNotification(Context context, int alarmId, int salivaId) {
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, ScannerActivity.class);
-        fullScreenIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);

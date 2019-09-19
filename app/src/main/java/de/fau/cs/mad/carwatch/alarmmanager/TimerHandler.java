@@ -93,7 +93,7 @@ public class TimerHandler {
 
     private static Notification buildCountdownNotification(Context context, int alarmId, int salivaId, long when) {
         Intent contentIntent = new Intent(context, ScannerActivity.class);
-        contentIntent.putExtra(Constants.EXTRA_ID, alarmId);
+        contentIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -116,7 +116,7 @@ public class TimerHandler {
     private static PendingIntent getTinerPendingIntent(Context context, int alarmId, int salivaId) {
         // Get PendingIntent to TimerReceiver Broadcast
         Intent intent = new Intent(context, TimerReceiver.class);
-        intent.putExtra(Constants.EXTRA_ID, alarmId);
+        intent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
         return PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
