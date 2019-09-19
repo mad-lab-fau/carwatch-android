@@ -14,7 +14,7 @@
     <!-- Menu -->
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share Logs …</string>
-    <string name="menu_scanner">Scanner</string>
+    <string name="menu_kill">Kill</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>

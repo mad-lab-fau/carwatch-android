@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.alarmmanager;
 
 import android.app.AlarmManager;
+import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +30,7 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.subject.Condition;
 import de.fau.cs.mad.carwatch.subject.SubjectMap;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
+import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 
 /**
@@ -253,6 +255,21 @@ public class AlarmHandler {
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void killAll(Application application) {
+        AlarmRepository repo = AlarmRepository.getInstance(application);
+
+        if (repo.getAllAlarms() == null || repo.getAllAlarms().getValue() == null) {
+            return;
+        }
+
+        // cancel everything that's there: all alarms, all hidden alarms, all timer alarms...
+        for (Alarm alarm : repo.getAllAlarms().getValue()) {
+            alarm.setActive(false);
+            TimerHandler.killAllTimersForAlarm(application, alarm.getId());
+            repo.update(alarm);
         }
     }
 }

@@ -26,6 +26,7 @@ import java.io.File;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
@@ -97,11 +98,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_scan:
-                startActivity(new Intent(this, ScannerActivity.class));
-                break;
-            case R.id.menu_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+            // TODO REMOVE (OR HIDE BETTER)
+            case R.id.menu_kill:
+                AlarmHandler.killAll(getApplication());
                 break;
             case R.id.menu_share:
                 String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
@@ -117,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 sharingIntent.setData(uri);
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
                 startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
+            case R.id.menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

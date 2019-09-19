@@ -17,15 +17,24 @@ import de.fau.cs.mad.carwatch.db.AlarmDatabase;
  */
 public class AlarmRepository {
 
+    private static AlarmRepository sAlarmRepository;
+
     private AlarmDao alarmModel;
     private LiveData<List<Alarm>> allAlarms;
 
-    public AlarmRepository(Application application) {
+    private AlarmRepository(Application application) {
         // Application is used instead of Context in order to prevent memory leaks
         // between Activity switches
         AlarmDatabase db = AlarmDatabase.getInstance(application);
         alarmModel = db.alarmModel();
         allAlarms = alarmModel.getAllAlarms();
+    }
+
+    public static AlarmRepository getInstance(Application application) {
+        if (sAlarmRepository == null) {
+            sAlarmRepository = new AlarmRepository(application);
+        }
+        return sAlarmRepository;
     }
 
     // Observed LiveData will notify the observer when data has changed

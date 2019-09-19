@@ -16,17 +16,16 @@
 
 package de.fau.cs.mad.carwatch.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.pm.PermissionInfoCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +65,9 @@ public class Utils {
     public static boolean allPermissionsGranted(Context context) {
         for (String permission : getRequiredPermissions(context)) {
             if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                if (permission.equals(Manifest.permission.USE_FULL_SCREEN_INTENT)) {
+                    continue;
+                }
                 return false;
             }
         }
@@ -74,18 +76,11 @@ public class Utils {
 
     private static String[] getRequiredPermissions(Context context) {
         try {
-            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
-            PermissionInfo[] permissionInfos = info.permissions;
-            List<String> allNeededPermissions = new ArrayList<>();
-
-            if (permissionInfos != null) {
-                for (PermissionInfo pi : permissionInfos) {
-                    if (PermissionInfoCompat.getProtection(pi) == PermissionInfo.PROTECTION_DANGEROUS) {
-                        allNeededPermissions.add(pi.name);
-                    }
-                }
-            }
-            return (String[]) allNeededPermissions.toArray();
+            PackageInfo info = context
+                    .getPackageManager()
+                    .getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
+            String[] ps = info.requestedPermissions;
+            return (ps != null && ps.length > 0) ? ps : new String[0];
         } catch (Exception e) {
             return new String[0];
         }

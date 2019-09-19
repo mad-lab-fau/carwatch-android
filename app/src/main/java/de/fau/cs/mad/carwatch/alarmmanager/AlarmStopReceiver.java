@@ -36,7 +36,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             alarmSource = AlarmSource.SOURCE_UNKNOWN;
         }
 
-        AlarmRepository repository = new AlarmRepository((Application) context.getApplicationContext());
+        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
         try {
             Alarm alarm = repository.getAlarmById(alarmId);
             if (alarm != null) {

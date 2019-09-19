@@ -27,18 +27,19 @@ public class TimerHandler {
 
 
     public static void scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
+        int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
         if (salivaId < Constants.SALIVA_TIMES.length) {
             if (Constants.SALIVA_TIMES[salivaId] == 0) {
-                scheduleSalivaCountdown(context, alarmId, salivaId);
+                scheduleSalivaCountdown(context, timerId, salivaId);
             } else {
                 DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
-                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId);
+                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, timerId, salivaId);
             }
         }
     }
 
     @SuppressLint("WrongConstant")
-    public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId) {
+    public static void scheduleSalivaCountdown(Context context, int timerId, int salivaId) {
 
         long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();
 
@@ -53,33 +54,33 @@ public class TimerHandler {
             }
         }
 
-        Notification notification = buildCountdownNotification(context, alarmId, salivaId, when);
+        Notification notification = buildCountdownNotification(context, timerId, salivaId, when);
 
         if (alarmManager != null) {
-            PendingIntent pendingIntent = getTinerPendingIntent(context, alarmId, salivaId);
+            PendingIntent pendingIntent = getTimerPendingIntent(context, timerId, salivaId);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, when, pendingIntent);
         }
 
         if (notificationManager != null) {
-            notificationManager.notify(alarmId, notification);
+            notificationManager.notify(timerId, notification);
         }
     }
 
 
-    public static void cancelTimer(Context context, int alarmId) {
+    public static void cancelTimer(Context context, int timerId) {
         // Dismiss notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Log.d(TAG, "Cancelling alarm " + alarmId);
-
-        if (notificationManager != null) {
-            notificationManager.cancel(alarmId);
-        }
-
         // Get PendingIntent to TimerReceiver Broadcast channel
         Intent intent = new Intent(context, TimerReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_NO_CREATE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, timerId, intent, PendingIntent.FLAG_NO_CREATE);
+
+        Log.d(TAG, "Cancelling timer " + timerId);
+
+        if (notificationManager != null) {
+            notificationManager.cancel(timerId);
+        }
 
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
@@ -91,9 +92,9 @@ public class TimerHandler {
     }
 
 
-    private static Notification buildCountdownNotification(Context context, int alarmId, int salivaId, long when) {
+    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
         Intent contentIntent = new Intent(context, ScannerActivity.class);
-        contentIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        contentIntent.putExtra(Constants.EXTRA_ALARM_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -113,13 +114,23 @@ public class TimerHandler {
         return builder.build();
     }
 
-    private static PendingIntent getTinerPendingIntent(Context context, int alarmId, int salivaId) {
+    private static PendingIntent getTimerPendingIntent(Context context, int timerId, int salivaId) {
         // Get PendingIntent to TimerReceiver Broadcast
         Intent intent = new Intent(context, TimerReceiver.class);
-        intent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        intent.putExtra(Constants.EXTRA_ALARM_ID, timerId);
         intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
-        return PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(context, timerId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+
+    // kills all timers for a alarm
+    public static void killAllTimersForAlarm(Context context, int alarmId) {
+        int timerId = alarmId;
+        for (int ignored : Constants.SALIVA_TIMES) {
+            TimerHandler.cancelTimer(context, timerId);
+            timerId += Constants.ALARM_OFFSET_TIMER;
+        }
     }
 
 }

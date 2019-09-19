@@ -9,19 +9,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-
-import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -58,13 +54,10 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
         final TextView noAlarmsTextView = root.findViewById(R.id.tv_no_alarms);
 
         // Add an observer on the LiveData returned by getAllAlarms.
-        alarmViewModel.getAllAlarms().observe(this, new Observer<List<Alarm>>() {
-            @Override
-            public void onChanged(@Nullable final List<Alarm> alarms) {
-                // Update the cached copy of the words in the adapter.
-                adapter.setAlarms(alarms);
-                noAlarmsTextView.setVisibility(alarms.size() == 0 ? View.VISIBLE : View.GONE);
-            }
+        alarmViewModel.getAllAlarms().observe(this, alarms -> {
+            // Update the cached copy of the words in the adapter.
+            adapter.setAlarms(alarms);
+            noAlarmsTextView.setVisibility(alarms.size() == 0 ? View.VISIBLE : View.GONE);
         });
 
         FloatingActionButton fab = root.findViewById(R.id.fab);
