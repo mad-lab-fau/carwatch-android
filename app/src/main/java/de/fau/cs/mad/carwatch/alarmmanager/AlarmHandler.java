@@ -166,7 +166,7 @@ public class AlarmHandler {
     }
 
     /**
-     * Cancel alarm notification and TimeShiftIntent using AlarmManager
+     * Cancel alarm notification AlarmManager
      *
      * @param alarm Alarm to cancel
      */
@@ -205,6 +205,23 @@ public class AlarmHandler {
         if (snackBarAnchor != null) {
             // Show snackbar to notify user
             Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_cancelled), Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public static void cancelAlarmAtTime(Context context, int alarmId) {
+        // Get PendingIntent to AlarmReceiver Broadcast channel
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_NO_CREATE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Log.d(TAG, "Cancelling alarm " + alarmId);
+        Log.d(TAG, "Cancelling alarm " + pendingIntent);
+
+        // PendingIntent may be null if the alarm hasn't been set
+        if (alarmManager != null && pendingIntent != null) {
+
+            alarmManager.cancel(pendingIntent);
         }
     }
 
@@ -268,8 +285,17 @@ public class AlarmHandler {
         // cancel everything that's there: all alarms, all hidden alarms, all timer alarms...
         for (Alarm alarm : repo.getAllAlarms().getValue()) {
             alarm.setActive(false);
-            TimerHandler.killAllTimersForAlarm(application, alarm.getId());
+
+            TimerHandler.cancelTimer(application, alarm.getId());
+            killAllOngoingAlarms(application, alarm.getId());
             repo.update(alarm);
+        }
+    }
+
+    private static void killAllOngoingAlarms(Context context, int alarmId) {
+        for (int ignored : Constants.SALIVA_TIMES) {
+            cancelAlarmAtTime(context, alarmId);
+            alarmId += Constants.ALARM_OFFSET;
         }
     }
 }

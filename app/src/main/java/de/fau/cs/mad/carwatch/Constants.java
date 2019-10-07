@@ -43,7 +43,8 @@ public final class Constants {
 
     public static final int EXTRA_ALARM_ID_DEFAULT = -1;
     public static final int EXTRA_SALIVA_ID_DEFAULT = 0;
-    public static final int ALARM_OFFSET_TIMER = Short.MAX_VALUE;
+    public static final int ALARM_OFFSET = Short.MAX_VALUE;
+    public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
     public static final String ACTION_SNOOZE_ALARM = "Snooze Alarm";
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
