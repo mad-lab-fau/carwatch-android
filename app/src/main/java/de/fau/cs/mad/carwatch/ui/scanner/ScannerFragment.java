@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.ui.scanner;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +36,7 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
-public class ScannerFragment extends Fragment implements View.OnClickListener {
+public class ScannerFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     private static final String TAG = ScannerFragment.class.getSimpleName();
 
@@ -183,9 +184,10 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
                         ArrayList<BarcodeField> barcodeFieldList = new ArrayList<>();
                         barcodeFieldList.add(new BarcodeField("Raw Value", barcode.getRawValue()));
                         Log.d(TAG, "Detected Barcodes: " + barcodeFieldList);
-                        BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList);
+                        BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList, this);
                         // TODO check if correct barcode
                         cancelTimer(alarmId, salivaId, barcode.getRawValue());
+
                     }
                 });
     }
@@ -205,6 +207,13 @@ public class ScannerFragment extends Fragment implements View.OnClickListener {
             }
 
             TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (getActivity() != null) {
+            getActivity().finish();
         }
     }
 }

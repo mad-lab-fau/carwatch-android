@@ -47,9 +47,14 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
     private static final String TAG = "BarcodeResultFragment";
     private static final String ARG_BARCODE_FIELD_LIST = "arg_barcode_field_list";
 
-    public static void show(
-            FragmentManager fragmentManager, ArrayList<BarcodeField> barcodeFieldArrayList) {
-        BarcodeResultFragment barcodeResultFragment = new BarcodeResultFragment();
+    private DialogInterface.OnDismissListener dismissListener;
+
+    public BarcodeResultFragment(DialogInterface.OnDismissListener dismissListener) {
+        this.dismissListener = dismissListener;
+    }
+
+    public static void show(FragmentManager fragmentManager, ArrayList<BarcodeField> barcodeFieldArrayList, DialogInterface.OnDismissListener dismissListener) {
+        BarcodeResultFragment barcodeResultFragment = new BarcodeResultFragment(dismissListener);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(ARG_BARCODE_FIELD_LIST, barcodeFieldArrayList);
         barcodeResultFragment.setArguments(bundle);
@@ -96,6 +101,7 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
                     .get(WorkflowModel.class)
                     .setWorkflowState(WorkflowState.DETECTING);
         }
+        dismissListener.onDismiss(getDialog());
         super.onDismiss(dialogInterface);
     }
 }
