@@ -6,9 +6,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -31,12 +31,12 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
         void onSwipeRight();
     }
 
-    private TextView leftText;
-    private TextView rightText;
+    private TextView leftTextView;
+    private TextView rightTextView;
     private ImageView slidingButton;
 
-    private Drawable snoozeDrawable;
-    private Drawable stopDrawable;
+    private Drawable leftDrawable;
+    private Drawable rightDrawable;
     private Drawable ringDrawable;
 
     private float initialX = 0;
@@ -61,13 +61,29 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
 
         inflate(context, R.layout.widget_swipe_button, this);
 
-        leftText = findViewById(R.id.tv_left);
-        rightText = findViewById(R.id.tv_right);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SwipeButton);
+
+        leftTextView = findViewById(R.id.tv_left);
+        rightTextView = findViewById(R.id.tv_right);
         slidingButton = findViewById(R.id.iv_slide);
 
-        snoozeDrawable = ContextCompat.getDrawable(context, R.drawable.ic_snooze_black_24dp);
-        stopDrawable = ContextCompat.getDrawable(context, R.drawable.ic_stop_black_24dp);
-        ringDrawable = ContextCompat.getDrawable(context, R.drawable.ic_ring_black_24dp);
+        String leftText = attributes.getString(R.styleable.SwipeButton_textLeft);
+        if (leftText == null) {
+            leftText = context.getString(R.string.snooze);
+        }
+        String rightText = attributes.getString(R.styleable.SwipeButton_textRight);
+        if (rightText == null) {
+            rightText = context.getString(R.string.stop);
+        }
+
+        leftTextView.setText(leftText);
+        rightTextView.setText(rightText);
+
+        leftDrawable = ContextCompat.getDrawable(context, attributes.getResourceId(R.styleable.SwipeButton_iconLeft, R.drawable.ic_snooze_black_24dp));
+        rightDrawable = ContextCompat.getDrawable(context, attributes.getResourceId(R.styleable.SwipeButton_iconRight, R.drawable.ic_stop_black_24dp));
+        ringDrawable = ContextCompat.getDrawable(context, attributes.getResourceId(R.styleable.SwipeButton_iconCenter, R.drawable.ic_ring_black_24dp));
+
+        attributes.recycle();
 
         setOnTouchListener(this);
     }
@@ -100,26 +116,26 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
         if (motionEvent.getX() > initialX + slidingButton.getWidth() / 2.0f && motionEvent.getX() + slidingButton.getWidth() / 2.0f < getWidth()) {
             slidingButton.setX(motionEvent.getX() - slidingButton.getWidth() / 2.0f);
             float alpha = 2.0f - 2.0f * (slidingButton.getX() + slidingButton.getWidth() / 2.0f) / getWidth();
-            rightText.setAlpha(alpha);
+            rightTextView.setAlpha(alpha);
         }
 
         // move to left
         if (motionEvent.getX() < initialX + slidingButton.getWidth() / 2.0f && motionEvent.getX() - slidingButton.getWidth() / 2.0f > 0) {
             slidingButton.setX(motionEvent.getX() - slidingButton.getWidth() / 2.0f);
             float alpha = 2.0f * (slidingButton.getX() + slidingButton.getWidth() / 2.0f) / getWidth();
-            leftText.setAlpha(alpha);
+            leftTextView.setAlpha(alpha);
         }
 
         // move out of right bounds
         if (motionEvent.getX() + slidingButton.getWidth() / 2.0f > getWidth() && slidingButton.getX() + slidingButton.getWidth() / 2.0f < getWidth()) {
             slidingButton.setX(getWidth() - slidingButton.getWidth());
-            rightText.setAlpha(0.0f);
+            rightTextView.setAlpha(0.0f);
         }
 
         // move out of left bounds
         if (motionEvent.getX() < slidingButton.getWidth() / 2.0f && slidingButton.getX() > 0.0f) {
             slidingButton.setX(0.0f);
-            leftText.setAlpha(0.0f);
+            leftTextView.setAlpha(0.0f);
         }
     }
 
@@ -143,12 +159,9 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
     private void moveButtonBack(boolean isRight) {
         final ValueAnimator positionAnimator = ValueAnimator.ofFloat(slidingButton.getX(), (getWidth() - slidingButton.getWidth()) / 2.0f);
         positionAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        positionAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float x = (Float) positionAnimator.getAnimatedValue();
-                slidingButton.setX(x);
-            }
+        positionAnimator.addUpdateListener(valueAnimator -> {
+            float x = (Float) positionAnimator.getAnimatedValue();
+            slidingButton.setX(x);
         });
 
         positionAnimator.addListener(new AnimatorListenerAdapter() {
@@ -159,7 +172,7 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
             }
         });
 
-        ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(isRight ? rightText : leftText, "alpha", 1.0f);
+        ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(isRight ? rightTextView : leftTextView, "alpha", 1.0f);
         positionAnimator.setDuration(200);
 
         AnimatorSet animatorSet = new AnimatorSet();
@@ -180,7 +193,7 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationEnd(animation);
-                slidingButton.setImageDrawable(isRight ? stopDrawable : snoozeDrawable);
+                slidingButton.setImageDrawable(isRight ? rightDrawable : leftDrawable);
             }
 
             @Override

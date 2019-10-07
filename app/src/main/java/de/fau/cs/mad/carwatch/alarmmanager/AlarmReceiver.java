@@ -95,7 +95,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.alarm_notification_text))
-                .addAction(R.drawable.ic_snooze_white_24dp, context.getString(R.string.snooze), snoozeIntent)
+                // Snooze function disabled
+                //.addAction(R.drawable.ic_snooze_white_24dp, context.getString(R.string.snooze), snoozeIntent)
                 .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
