@@ -89,7 +89,6 @@ public class AlarmHandler {
                     nextAlarmRing = time;
                 }
 
-                // TODO Currently: fixed hidden delta for repeating alarms... change? Leave as it is? Disable repeating function?
                 if (alarm.hasHiddenTime()) {
                     time = time.minusMinutes(alarm.getHiddenDelta());
                     Log.d(TAG, "Condition " + Condition.UNKNOWN_ALARM + "! Setting hidden repeating alarm for " + time);

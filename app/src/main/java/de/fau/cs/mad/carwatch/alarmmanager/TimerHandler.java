@@ -8,15 +8,20 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.ScannerActivity;
 
 public class TimerHandler {
@@ -35,6 +40,22 @@ public class TimerHandler {
                 alarmId += Constants.ALARM_OFFSET;
                 DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
                 AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId);
+            }
+        } else {
+            try {
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+                int dayId = sp.getInt(Constants.PREF_DAY_ID, 0);
+
+                // create Json object and log information
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_DAY_ID, dayId);
+                LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
+                
+                // one day was completed
+                dayId++;
+                sp.edit().putInt(Constants.PREF_DAY_ID, dayId).apply();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     }

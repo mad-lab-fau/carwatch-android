@@ -78,9 +78,6 @@ public class Alarm implements Parcelable {
 
     public void setHasHiddenTime(boolean hasHiddenTime) {
         this.hasHiddenTime = hasHiddenTime;
-        if (this.hasHiddenTime && this.hiddenDelta == 0) {
-            this.hiddenDelta = 30 + (int) (Math.random() * 30);
-        }
     }
 
     public boolean hasHiddenTime() {

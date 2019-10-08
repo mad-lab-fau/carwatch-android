@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putBoolean(Constants.PREF_FIRST_RUN, false)
                             .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                            .putInt(Constants.PREF_DAY_ID, 0)
                             .apply();
                 });
 

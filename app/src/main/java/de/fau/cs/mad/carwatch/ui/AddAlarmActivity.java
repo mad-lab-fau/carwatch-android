@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
@@ -78,12 +79,23 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
             deleteButton.hide();
             setInitialAlarmTime();
             repeatTextView.setText(R.string.never);
+        }
 
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-            String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
-            if (subjectId != null) {
-                alarm.setHasHiddenTime(SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
+        int dayId = sp.getInt(Constants.PREF_DAY_ID, 0);
+
+        if (subjectId != null && SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM) {
+            int hiddenDelta;
+            if (dayId >= 0 && dayId < Constants.DELTA_HIDDEN_ALARMS.length) {
+                hiddenDelta = Constants.DELTA_HIDDEN_ALARMS[dayId];
+            } else {
+                hiddenDelta = Constants.DELTA_HIDDEN_ALARMS[Constants.DELTA_HIDDEN_ALARMS.length - 1];
             }
+
+            Log.e(TAG, "HIDDEN DELTA " + hiddenDelta);
+
+            alarm.setHiddenDelta(hiddenDelta);
         }
 
         addSetTimeLayoutListener();

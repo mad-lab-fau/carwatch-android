@@ -11,19 +11,19 @@ public final class Constants {
      */
     public static final int TIMER_DURATION = 1;
 
+    public static final int[] DELTA_HIDDEN_ALARMS = {21, 39};
+
     /**
      * Time to the next saliva sample in minutes
      */
     public static final int[] SALIVA_TIMES = {0, 1, 1, 1};
 
-    public static final String KEY_ALARM_TIME = "alarm_time";
-    public static final String KEY_ALARM_ENABLED = "alarm_enabled";
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
     public static final String PREF_FIRST_RUN = "first_run";
     public static final String PREF_SUBJECT_ID = "subject_id";
     public static final String PREF_SNOOZE_DURATION = "snooze_duration";
-    public static final String PREF_SALIVA_ID = "saliva_id";
+    public static final String PREF_DAY_ID = "day_id";
 
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
@@ -57,6 +57,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_ALARM_SNOOZE = "alarm_snooze";
     public static final String LOGGER_ACTION_ALARM_STOP = "alarm_stop";
     public static final String LOGGER_ACTION_BARCODE_SCANNED = "barcode_scanned";
+    public static final String LOGGER_ACTION_DAY_FINISHED = "day_finished";
 
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
@@ -69,6 +70,7 @@ public final class Constants {
     public static final String LOGGER_EXTRA_ALARM_SOURCE = "source"; // int
     public static final String LOGGER_EXTRA_SALIVA_ID = "saliva_id"; // int
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
+    public static final String LOGGER_EXTRA_DAY_ID = "day_id"; // int
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
