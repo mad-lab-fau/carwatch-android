@@ -36,7 +36,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'androidx.preference:preference:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
+    implementation 'com.google.android.material:material:1.1.0-beta01'
     implementation 'joda-time:joda-time:2.10.3'
     implementation 'com.orhanobut:logger:2.2.0'
     implementation group: 'org.zeroturnaround', name: 'zt-zip', version: '1.8'
