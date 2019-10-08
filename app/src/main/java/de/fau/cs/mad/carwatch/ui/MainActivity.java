@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 sharingIntent.setData(uri);
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
                 startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
+                break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
