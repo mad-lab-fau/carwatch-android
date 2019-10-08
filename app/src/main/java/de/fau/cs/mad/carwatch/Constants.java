@@ -13,6 +13,8 @@ public final class Constants {
 
     public static final int[] DELTA_HIDDEN_ALARMS = {21, 39};
 
+    public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
+
     /**
      * Time to the next saliva sample in minutes
      */
@@ -38,10 +40,12 @@ public final class Constants {
     public static final String EXTRA_EDIT = "extra_edit";
     public static final String EXTRA_DELETE = "extra_delete";
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
+    public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
     public static final String EXTRA_SOURCE = "extra_source";
 
     public static final int EXTRA_ALARM_ID_DEFAULT = -1;
+    public static final int EXTRA_TIMER_ID_DEFAULT = -1;
     public static final int EXTRA_SALIVA_ID_DEFAULT = 0;
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
