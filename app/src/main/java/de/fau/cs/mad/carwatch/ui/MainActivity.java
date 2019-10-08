@@ -12,6 +12,7 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -19,10 +20,13 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Objects;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -40,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
 
+    private CoordinatorLayout coordinatorLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
             showSubjectIdDialog();
         }
+
+        coordinatorLayout = findViewById(R.id.coordinator);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
@@ -104,7 +112,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menu_share:
                 String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
-                File zipFile = LoggerUtil.zipDirectory(this, subjectId);
+                File zipFile;
+
+                try {
+                    zipFile = LoggerUtil.zipDirectory(this, subjectId);
+                } catch (FileNotFoundException e) {
+                    Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
+                    return super.onOptionsItemSelected(item);
+                }
+
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 Uri uri = GenericFileProvider.getUriForFile(this,

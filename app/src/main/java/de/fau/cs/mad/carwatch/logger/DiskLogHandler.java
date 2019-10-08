@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -173,16 +174,16 @@ public class DiskLogHandler extends Handler {
     }
 
 
-    public static File zipDirectory(Context context, String subjectId) {
+    public static File zipDirectory(Context context, String subjectId) throws FileNotFoundException {
         File directory = getDirectory(context);
         File root = getRootDirectory(context);
         String filename = subjectId == null ? "logs.zip" : String.format("logs_%s.zip", subjectId);
         File file = new File(root, filename);
-        if (directory != null) {
+        if (directory != null && directory.list().length > 0) {
             ZipUtil.pack(directory, file);
             return file;
         }
 
-        return null;
+        throw new FileNotFoundException("No log files to zip!");
     }
 }

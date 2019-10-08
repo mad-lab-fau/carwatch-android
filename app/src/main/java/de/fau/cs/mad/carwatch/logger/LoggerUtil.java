@@ -9,6 +9,7 @@ import com.orhanobut.logger.Logger;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class LoggerUtil {
 
@@ -38,7 +39,7 @@ public class LoggerUtil {
     }
 
 
-    public static File zipDirectory(Context context, String subjectId) {
+    public static File zipDirectory(Context context, String subjectId) throws FileNotFoundException {
         return DiskLogHandler.zipDirectory(context, subjectId);
     }
 
