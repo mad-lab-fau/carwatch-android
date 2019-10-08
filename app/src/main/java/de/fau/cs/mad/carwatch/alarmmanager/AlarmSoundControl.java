@@ -48,6 +48,7 @@ public class AlarmSoundControl {
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
                 mediaPlayer.prepare();
                 mediaPlayer.start();
+                mediaPlayer.setOnCompletionListener(MediaPlayer::start);
             }
 
         } catch (IOException e) {
