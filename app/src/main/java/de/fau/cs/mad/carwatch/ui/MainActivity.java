@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -113,27 +112,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menu_share:
                 String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
-                File zipFile;
 
                 try {
-                    zipFile = LoggerUtil.zipDirectory(this, subjectId);
+                    File zipFile = LoggerUtil.zipDirectory(this, subjectId);
+                    createFileShareDialog(zipFile);
                 } catch (FileNotFoundException e) {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
-                    return super.onOptionsItemSelected(item);
                 }
-
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                Uri uri = GenericFileProvider.getUriForFile(this,
-                        getApplicationContext().getPackageName() +
-                                ".logger.fileprovider",
-                        zipFile);
-                sharingIntent.setType("application/octet-stream");
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                // TODO change email address
-                sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"carwatch_logs@gmail.com"});
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
-                startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
                 break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -164,6 +149,21 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         dialogBuilder.show();
+    }
+
+    private void createFileShareDialog(File zipFile) {
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        Uri uri = GenericFileProvider.getUriForFile(this,
+                getApplicationContext().getPackageName() +
+                        ".logger.fileprovider",
+                zipFile);
+        sharingIntent.setType("application/octet-stream");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        // TODO change email address
+        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"carwatch_logs@gmail.com"});
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
+        startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
     }
 
 }
