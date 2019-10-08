@@ -106,19 +106,16 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
     }
 
     private void addDeleteButtonListener() {
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent replyIntent = new Intent();
+        deleteButton.setOnClickListener(view -> {
+            Intent replyIntent = new Intent();
 
-                alarmViewModel.delete(alarm);
-                alarm.setActive(false);
-                replyIntent.putExtra(Constants.EXTRA_DELETE, true);
-                replyIntent.putExtra(Constants.EXTRA_ALARM, alarm);
+            alarmViewModel.delete(alarm);
+            alarm.setActive(false);
+            replyIntent.putExtra(Constants.EXTRA_DELETE, true);
+            replyIntent.putExtra(Constants.EXTRA_ALARM, alarm);
 
-                setResult(RESULT_OK, replyIntent);
-                finish();
-            }
+            setResult(RESULT_OK, replyIntent);
+            finish();
         });
     }
 
@@ -129,26 +126,20 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
         // Get layout view
         RelativeLayout setTimeButton = findViewById(R.id.add_alarm_time_layout);
 
-        setTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DateTime time;
-                if (alarm.getTime() == null) {
-                    time = DateTime.now();
-                } else {
-                    time = alarm.getTime();
-                }
-
-                TimePickerDialog timePicker = new TimePickerDialog(AddAlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
-                        alarm.setTime(selectedTime.toDateTimeToday());
-                        timeTextView.setText(selectedTime.toString("HH:mm"));
-                    }
-                }, time.getHourOfDay(), time.getMinuteOfHour(), true);
-                timePicker.show();
+        setTimeButton.setOnClickListener(view -> {
+            DateTime time;
+            if (alarm.getTime() == null) {
+                time = DateTime.now();
+            } else {
+                time = alarm.getTime();
             }
+
+            TimePickerDialog timePicker = new TimePickerDialog(AddAlarmActivity.this, (timePicker1, selectedHour, selectedMinute) -> {
+                LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
+                alarm.setTime(selectedTime.toDateTimeToday());
+                timeTextView.setText(selectedTime.toString("HH:mm"));
+            }, time.getHourOfDay(), time.getMinuteOfHour(), true);
+            timePicker.show();
         });
     }
 
@@ -159,16 +150,13 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
         // Get layout view
         RelativeLayout setRepeatButton = findViewById(R.id.add_alarm_repeat_layout);
 
-        setRepeatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RepeatDaysDialogFragment setRepeatDaysDialogFragment = new RepeatDaysDialogFragment(AddAlarmActivity.this);
+        setRepeatButton.setOnClickListener(view -> {
+            RepeatDaysDialogFragment setRepeatDaysDialogFragment = new RepeatDaysDialogFragment(AddAlarmActivity.this);
 
-                Bundle args = getBundle();
-                setRepeatDaysDialogFragment.setArguments(args);
-                // Display dialog
-                setRepeatDaysDialogFragment.show(getSupportFragmentManager(), RepeatDaysDialogFragment.class.getSimpleName());
-            }
+            Bundle args = getBundle();
+            setRepeatDaysDialogFragment.setArguments(args);
+            // Display dialog
+            setRepeatDaysDialogFragment.show(getSupportFragmentManager(), RepeatDaysDialogFragment.class.getSimpleName());
         });
     }
 
