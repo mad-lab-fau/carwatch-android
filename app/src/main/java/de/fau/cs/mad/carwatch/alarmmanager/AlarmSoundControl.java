@@ -5,9 +5,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 
 import java.io.IOException;
+
+import de.fau.cs.mad.carwatch.Constants;
 
 /**
  * Singleton class to control Alarm Ringing Sound
@@ -19,6 +24,7 @@ public class AlarmSoundControl {
     private static AlarmSoundControl sInstance;
 
     private MediaPlayer mediaPlayer;
+    Vibrator vibrator;
 
     private AlarmSoundControl() {
     }
@@ -40,6 +46,7 @@ public class AlarmSoundControl {
         try {
             mediaPlayer.setDataSource(context, getAlarmUri());
             AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
             if (audioManager != null) {
                 if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) == 0) {
@@ -48,6 +55,13 @@ public class AlarmSoundControl {
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
                 mediaPlayer.prepare();
                 mediaPlayer.start();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createWaveform(Constants.VIBRATION_PATTERN, 0));
+                } else {
+                    vibrator.vibrate(Constants.VIBRATION_PATTERN, 0);
+                }
+
                 mediaPlayer.setOnCompletionListener(MediaPlayer::start);
             }
 
@@ -60,8 +74,14 @@ public class AlarmSoundControl {
      * Stop Alarm Sound currently playing
      */
     public void stopAlarmSound() {
-        if (mediaPlayer != null) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = new MediaPlayer();
+        }
+
+        if (vibrator != null) {
+            vibrator.cancel();
         }
     }
 
