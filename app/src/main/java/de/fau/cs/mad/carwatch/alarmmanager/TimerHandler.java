@@ -67,7 +67,6 @@ public class TimerHandler {
     @SuppressLint("WrongConstant")
     public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId) {
         int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
-
         long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -123,7 +122,7 @@ public class TimerHandler {
 
     private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
         Intent contentIntent = new Intent(context, ScannerActivity.class);
-        contentIntent.putExtra(Constants.EXTRA_ALARM_ID, timerId);
+        contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -146,7 +145,7 @@ public class TimerHandler {
     private static PendingIntent getTimerPendingIntent(Context context, int timerId, int salivaId) {
         // Get PendingIntent to TimerReceiver Broadcast
         Intent intent = new Intent(context, TimerReceiver.class);
-        intent.putExtra(Constants.EXTRA_ALARM_ID, timerId);
+        intent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
         return PendingIntent.getBroadcast(context, timerId, intent, PendingIntent.FLAG_UPDATE_CURRENT);

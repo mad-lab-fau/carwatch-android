@@ -40,22 +40,23 @@ public class TimerReceiver extends BroadcastReceiver {
             }
         }
 
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
+        int timerId = intent.getIntExtra(Constants.EXTRA_TIMER_ID, Constants.EXTRA_TIMER_ID_DEFAULT);
         int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
 
-        Notification notification = buildAlarmNotification(context, alarmId, salivaId);
+        Notification notification = buildAlarmNotification(context, timerId, salivaId);
 
         // Play alarm ringing sound
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.playAlarmSound(context);
 
         if (notificationManager != null) {
-            notificationManager.notify(alarmId, notification);
+            notificationManager.notify(timerId, notification);
         }
     }
 
 
-    private static Notification buildAlarmNotification(Context context, int alarmId, int salivaId) {
+    private static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
+        int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, ScannerActivity.class);
         fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
