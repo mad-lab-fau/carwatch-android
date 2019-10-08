@@ -135,24 +135,28 @@ public class AlarmHandler {
         }
 
         if (!alarm.isRepeating()) {
-            Period timeDiff = new Period(DateTime.now(), alarm.getTimeToNextRing());
-            if (snackBarAnchor != null) {
-                String timeDiffString = formatter.print(timeDiff);
+            showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
+        }
+    }
 
-                if (Locale.getDefault().getLanguage().equals("de")) {
-                    if (timeDiffString.length() == 0) {
-                        timeDiffString += "jetzt";
-                    } else {
-                        timeDiffString = "in " + timeDiffString;
-                    }
+    public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
+        Period timeDiff = new Period(DateTime.now(), time);
+        if (snackBarAnchor != null) {
+            String timeDiffString = formatter.print(timeDiff);
+
+            if (Locale.getDefault().getLanguage().equals("de")) {
+                if (timeDiffString.length() == 0) {
+                    timeDiffString += "jetzt";
                 } else {
-                    if (timeDiffString.length() != 0) {
-                        timeDiffString += " from ";
-                    }
+                    timeDiffString = "in " + timeDiffString;
                 }
-
-                Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
+            } else {
+                if (timeDiffString.length() != 0) {
+                    timeDiffString += " from ";
+                }
             }
+
+            Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -166,11 +170,21 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId, View snackbarAnchor) {
         PendingIntent pendingIntent = getPendingIntent(context, alarmId, salivaId);
         PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId, salivaId);
 
-        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow);
+        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
+    }
+
+    /**
+     * Schedule alarm notification based on absolute time
+     *
+     * @param timeToRing time to next alarm
+     * @param alarmId    ID of alarm to ring
+     */
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
+        scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
     }
 
     /**
@@ -180,12 +194,23 @@ public class AlarmHandler {
      * @param alarmId    ID of alarm to ring
      */
     public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow) {
+        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, null);
+    }
+
+    /**
+     * Schedule alarm notification based on absolute time
+     *
+     * @param timeToRing time to next alarm
+     * @param alarmId    ID of alarm to ring
+     */
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
         Log.d(TAG, "Setting timed alarm " + alarmId + " at " + timeToRing);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(timeToRing.getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
+            showAlarmSetMessage(context, snackbarAnchor, timeToRing);
         }
     }
 

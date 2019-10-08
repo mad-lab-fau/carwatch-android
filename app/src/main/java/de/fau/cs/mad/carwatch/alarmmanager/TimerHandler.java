@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 
 import androidx.core.app.NotificationCompat;
 
@@ -30,8 +31,7 @@ public class TimerHandler {
 
     private static final String CHANNEL_ID = "TimerHandlerChannel";
 
-
-    public static void scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
+    public static void scheduleSalivaTimer(Context context, int alarmId, int salivaId, View snackbarAnchor) {
         if (salivaId < Constants.SALIVA_TIMES.length) {
             if (Constants.SALIVA_TIMES[salivaId] == 0) {
                 // first saliva sample => directly schedule barcode scan timer
@@ -39,7 +39,7 @@ public class TimerHandler {
             } else {
                 alarmId += Constants.ALARM_OFFSET;
                 DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
-                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId);
+                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, snackbarAnchor);
             }
         } else {
             try {
@@ -50,7 +50,7 @@ public class TimerHandler {
                 JSONObject json = new JSONObject();
                 json.put(Constants.LOGGER_EXTRA_DAY_ID, dayId);
                 LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
-                
+
                 // one day was completed
                 dayId++;
                 sp.edit().putInt(Constants.PREF_DAY_ID, dayId).apply();
@@ -58,6 +58,10 @@ public class TimerHandler {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
+        scheduleSalivaTimer(context, alarmId, salivaId, null);
     }
 
     @SuppressLint("WrongConstant")
