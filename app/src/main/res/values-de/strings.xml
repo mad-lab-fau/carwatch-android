@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CAR Watch</string>
+    <string name="action_alarm_save">Alarm speichern</string>
+    <string name="add_alarm">Neuen Alarm hinzufügen</string>
+    <string name="alarm">Alarm</string>
+    <string name="alarm_cancelled">Alarm deaktiviert.</string>
+    <string name="alarm_deleted">Alarm gelöscht.</string>
+    <string name="alarm_not_saved">Alarm nicht gespeichert.</string>
+    <string name="alarm_notification_text">Alarm!</string>
+    <string name="alarm_saved">Alarm gespeichert.</string>
+    <string name="alarm_set">Der Wecker klingelt %s.</string>
+    <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
+    <string name="cancel">Abbrecheen</string>
+    <string name="edit_alarm">Alarm bearbeiten</string>
+    <string name="menu_kill">Kill</string>
+    <string name="menu_settings">Einstellungen</string>
+    <string name="menu_share">Logs teilen …</string>
+    <string name="message_subject_id">Bitte geben Sie den Code ein, den Sie in der Online-Umfrage generiert haben.</string>
+    <string name="never">nie</string>
+    <string name="everyday">täglich</string>
+    <string name="weekends">Wochenende</string>
+    <string name="weekdays">Werktage</string>
+    <string name="no_alarms">Keine Alarme. Klicken Sie auf \'+\', um einen Alarm hinzuzufügen.</string>
+    <string name="no_repeat">nicht wiederholen</string>
+    <string name="not_set">Nicht gesetzt</string>
+    <string name="ok">OK</string>
+    <string name="prompt_point_at_a_barcode">Halten Sie Ihre Kamera auf einen Barcode</string>
+    <string name="prompt_scanning">Scanning&#8230;</string>
+    <string name="repeat">Wiederholen</string>
+    <string name="set_repeat">Wiederholen:</string>
+    <string name="set_time">Zeit</string>
+    <string name="snooze">Snooze</string>
+    <string name="stop">Stop</string>
+    <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d!</string>
+    <string name="timer_over_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d JETZT!!!</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_dashboard">Alarm</string>
+    <string name="title_home">Home</string>
+    <string name="title_notifications">Scan</string>
+    <string name="title_subject_id">Code eingeben</string>
+    <string name="snooze_duration">Snoozedauer</string>
+    <string name="user_credentials">Benutzerinformationen</string>
+
+
+    <string-array name="days_of_week">
+        <item>Montag</item>
+        <item>Dienstag</item>
+        <item>Mittwoch</item>
+        <item>Donnerstag</item>
+        <item>Freitag</item>
+        <item>Samstag</item>
+        <item>Sonntag</item>
+    </string-array>
+</resources>

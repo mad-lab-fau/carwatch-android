@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Locale;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -40,14 +41,28 @@ public class AlarmHandler {
 
     private static final String TAG = AlarmHandler.class.getSimpleName();
 
-    private static PeriodFormatter formatter = new PeriodFormatterBuilder()
-            .appendHours()
-            .appendSuffix(" hour", " hours")
-            .appendSeparatorIfFieldsBefore(" from ")
-            .appendMinutes()
-            .appendSuffix(" minute", " minutes")
-            .appendSeparatorIfFieldsBefore(" from ")
-            .toFormatter();
+    private static PeriodFormatter formatter;
+
+    static {
+        if (Locale.getDefault().getLanguage().equals("de")) {
+            formatter = new PeriodFormatterBuilder()
+                    .appendHours()
+                    .appendSuffix(" Stunde", " Stunden")
+                    .appendSeparator(" und ")
+                    .appendMinutes()
+                    .appendSuffix(" Minute", " Minuten")
+                    .toFormatter();
+        } else {
+            formatter = new PeriodFormatterBuilder()
+                    .appendHours()
+                    .appendSuffix(" hour", " hours")
+                    .appendSeparator(" and ")
+                    .appendMinutes()
+                    .appendSuffix(" minute", " minutes")
+                    .toFormatter();
+        }
+    }
+
 
     public static void scheduleAlarm(@NonNull Context context, Alarm alarm) {
         scheduleAlarm(context, alarm, null);
@@ -122,7 +137,21 @@ public class AlarmHandler {
         if (!alarm.isRepeating()) {
             Period timeDiff = new Period(DateTime.now(), alarm.getTimeToNextRing());
             if (snackBarAnchor != null) {
-                Snackbar.make(snackBarAnchor, "Alarm set for " + formatter.print(timeDiff) + "now.", Snackbar.LENGTH_SHORT).show();
+                String timeDiffString = formatter.print(timeDiff);
+
+                if (Locale.getDefault().getLanguage().equals("de")) {
+                    if (timeDiffString.length() == 0) {
+                        timeDiffString += "jetzt";
+                    } else {
+                        timeDiffString = "in " + timeDiffString;
+                    }
+                } else {
+                    if (timeDiffString.length() != 0) {
+                        timeDiffString += " from ";
+                    }
+                }
+
+                Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
             }
         }
     }
@@ -219,7 +248,6 @@ public class AlarmHandler {
 
         // PendingIntent may be null if the alarm hasn't been set
         if (alarmManager != null && pendingIntent != null) {
-
             alarmManager.cancel(pendingIntent);
         }
     }

@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.db;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
+import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.converter.BooleanArrayConverter;
 import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 
@@ -121,11 +123,6 @@ public class Alarm implements Parcelable {
 
     // Ignored Members
 
-    // Used to get user-readable String representation of activeDays
-    @Ignore
-    private static final String[] daysOfWeek =
-            {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-
     @Ignore
     public Alarm(DateTime time, boolean hasHiddenTime, int hiddenDelta, boolean active, boolean[] activeDays) {
         this.time = time;
@@ -144,18 +141,21 @@ public class Alarm implements Parcelable {
     }
 
     @Ignore
-    public String getStringOfActiveDays() {
-        return getStringOfActiveDays(activeDays);
+    public String getStringOfActiveDays(Context context) {
+        return getStringOfActiveDays(context, activeDays);
     }
 
     /**
      * Get a simple user-readable representation of activeDays
      *
+     * @param context    The current context
      * @param activeDays boolean array of days alarm is active
      * @return a String of alarm's active days
      */
     @Ignore
-    public static String getStringOfActiveDays(boolean[] activeDays) {
+    public static String getStringOfActiveDays(Context context, boolean[] activeDays) {
+        String[] daysOfWeek = context.getResources().getStringArray(R.array.days_of_week);
+
         // Build string based on which indices are true in activeDays
         StringBuilder builder = new StringBuilder();
         int activeCount = 0;
@@ -168,18 +168,18 @@ public class Alarm implements Parcelable {
         }
 
         if (activeCount == daysOfWeek.length) {
-            return "everyday";
+            return context.getString(R.string.everyday);
         } else if (activeCount == 0) {
-            return "never";
+            return context.getString(R.string.never);
         }
 
         boolean satInArray = activeDays[daysOfWeek.length - 2]; // "Saturday" in activeDays
         boolean sunInArray = activeDays[daysOfWeek.length - 1]; // "Sunday" in activeDays
 
         if (satInArray && sunInArray && activeCount == 2) {
-            return "weekends";
+            return context.getString(R.string.weekends);
         } else if (!satInArray && !sunInArray && activeCount == 5) {
-            return "weekdays";
+            return context.getString(R.string.weekdays);
         }
 
         if (builder.length() > 1) {

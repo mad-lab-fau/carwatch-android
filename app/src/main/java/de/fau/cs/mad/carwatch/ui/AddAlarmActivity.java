@@ -4,7 +4,6 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
@@ -70,7 +69,7 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
 
         if (alarm != null) {
             timeTextView.setText(alarm.getStringTime());
-            repeatTextView.setText(alarm.getStringOfActiveDays());
+            repeatTextView.setText(alarm.getStringOfActiveDays(this));
             setTitle(R.string.edit_alarm);
             addDeleteButtonListener();
         } else {
@@ -92,8 +91,6 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
             } else {
                 hiddenDelta = Constants.DELTA_HIDDEN_ALARMS[Constants.DELTA_HIDDEN_ALARMS.length - 1];
             }
-
-            Log.e(TAG, "HIDDEN DELTA " + hiddenDelta);
 
             alarm.setHiddenDelta(hiddenDelta);
         }
@@ -188,7 +185,7 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
      */
     public void onDialogComplete(boolean[] selectedDays) {
         alarm.setActiveDays(selectedDays);
-        String formattedActiveDays = Alarm.getStringOfActiveDays(alarm.getActiveDays());
+        String formattedActiveDays = Alarm.getStringOfActiveDays(this, alarm.getActiveDays());
         repeatTextView.setText(formattedActiveDays);
     }
 

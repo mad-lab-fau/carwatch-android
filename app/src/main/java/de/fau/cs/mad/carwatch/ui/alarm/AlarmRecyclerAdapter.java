@@ -90,7 +90,7 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
         // Set repeatTextView text
         if (alarm.isRepeating()) {
-            String repetitionText = alarm.getStringOfActiveDays();
+            String repetitionText = alarm.getStringOfActiveDays(context);
             viewHolder.repetitionTextView.setText(repetitionText);
         } else {
             viewHolder.repetitionTextView.setText(resources.getString(R.string.no_repeat));
