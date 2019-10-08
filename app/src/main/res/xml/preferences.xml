@@ -3,11 +3,10 @@
     <PreferenceCategory
         android:key="cat_user_credentials"
         android:order="10"
-        android:title="User Credentials">
+        android:title="@string/user_credentials">
 
-        <!-- TODO REMOVE CODE BEFORE PUBLISHING!!!!!-->
         <EditTextPreference
-            android:defaultValue="0406HR94"
+            android:defaultValue="1234AB56"
             android:key="subject_id"
             android:summary="@string/message_subject_id"
             android:title="@string/title_subject_id" />
@@ -18,14 +17,14 @@
     <PreferenceCategory
         android:key="cat_snooze_duration"
         android:order="20"
-        android:title="Snooze Duration">
+        android:title="@string/snooze_duration">
 
         <ListPreference
             android:defaultValue="5"
             android:entries="@array/snooze_duration_names"
             android:entryValues="@array/snooze_duration_values"
             android:key="snooze_duration"
-            android:title="Snooze Duration" />
+            android:title="@string/snooze_duration" />
 
     </PreferenceCategory>
 
