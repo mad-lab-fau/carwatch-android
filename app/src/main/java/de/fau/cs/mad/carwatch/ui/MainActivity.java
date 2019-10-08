@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -125,11 +126,12 @@ public class MainActivity extends AppCompatActivity {
                 sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 Uri uri = GenericFileProvider.getUriForFile(this,
                         getApplicationContext().getPackageName() +
-                                ".logger.provider",
+                                ".logger.fileprovider",
                         zipFile);
                 sharingIntent.setType("application/octet-stream");
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                sharingIntent.setData(uri);
+                // TODO change email address
+                sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"carwatch_logs@gmail.com"});
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
                 startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
                 break;

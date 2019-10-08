@@ -82,7 +82,7 @@
 
         <provider
             android:name=".logger.GenericFileProvider"
-            android:authorities="${applicationId}.logger.provider"
+            android:authorities="de.fau.cs.mad.carwatch.logger.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
