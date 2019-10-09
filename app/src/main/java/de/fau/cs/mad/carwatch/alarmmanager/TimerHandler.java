@@ -43,6 +43,10 @@ public class TimerHandler {
                 AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, snackbarAnchor);
                 return timeToRing.getMillis();
             }
+        } else if (salivaId == Constants.EXTRA_SALIVA_ID_EVENING) {
+            // first saliva sample => directly schedule barcode scan timer
+            scheduleSalivaCountdown(context, alarmId, salivaId);
+            return 0;
         } else {
             try {
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);

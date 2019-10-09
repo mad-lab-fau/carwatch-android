@@ -209,8 +209,8 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
                 e.printStackTrace();
             }
 
+            TimerHandler.cancelTimer(getContext(), alarmId);
             if (alarmId != Constants.EXTRA_ALARM_ID_EVENING) {
-                TimerHandler.cancelTimer(getContext(), alarmId);
                 alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
             }
         }

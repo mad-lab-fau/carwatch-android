@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.ScannerActivity;
@@ -79,6 +80,8 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .setIcon(icon)
                 .setMessage(getString(R.string.evening_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    TimerHandler.scheduleSalivaTimer(getContext(), Constants.EXTRA_ALARM_ID_EVENING, Constants.EXTRA_SALIVA_ID_EVENING);
+
                     Intent intent = new Intent(getContext(), ScannerActivity.class);
                     intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
                     intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_EVENING);

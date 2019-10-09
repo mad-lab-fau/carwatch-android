@@ -355,6 +355,10 @@ public class AlarmHandler {
         // cancel a potential alarm session from spontaneous awakening (has a special id)
         TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
         killAllOngoingAlarms(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
+
+        // cancel a potential alarm session from evening (has a special id)
+        TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_EVENING);
+        killAllOngoingAlarms(application, Constants.EXTRA_ALARM_ID_EVENING);
     }
 
     private static void killAllOngoingAlarms(Context context, int alarmId) {
