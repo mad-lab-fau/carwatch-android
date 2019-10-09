@@ -126,12 +126,17 @@ public class TimerHandler {
     }
 
 
-    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
+    public static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
         Intent contentIntent = new Intent(context, ScannerActivity.class);
         contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String contentText =
+                salivaId == Constants.EXTRA_SALIVA_ID_EVENING ?
+                        context.getString(R.string.timer_notification_text_evening) :
+                        context.getString(R.string.timer_notification_text, salivaId);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -143,7 +148,36 @@ public class TimerHandler {
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(context.getString(R.string.timer_notification_text, salivaId));
+                .setContentText(contentText);
+
+        return builder.build();
+    }
+
+    public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
+        int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
+        // Full screen Intent
+        Intent fullScreenIntent = new Intent(context, ScannerActivity.class);
+        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
+                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String contentText =
+                salivaId == Constants.EXTRA_SALIVA_ID_EVENING ?
+                        context.getString(R.string.timer_over_notification_text_evening) :
+                        context.getString(R.string.timer_over_notification_text, salivaId);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setOngoing(true)
+                .setVibrate(Constants.VIBRATION_PATTERN)
+                .setSmallIcon(R.drawable.ic_alarm_white_24dp)
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(contentText)
+                .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();
     }

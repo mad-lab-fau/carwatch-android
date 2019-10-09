@@ -6,7 +6,9 @@
     <string name="cancel">Cancel</string>
     <string name="alarm_notification_text">Alarm!</string>
     <string name="timer_notification_text">Please take saliva sample #%1$d!</string>
+    <string name="timer_notification_text_evening">Please take the evening saliva sample!</string>
     <string name="timer_over_notification_text">Please take saliva sample #%1$d NOW!!!</string>
+    <string name="timer_over_notification_text_evening">Please take evening saliva sample NOW!!!</string>
 
     <!-- Activity Titles -->
     <string name="title_activity_settings">Settings</string>

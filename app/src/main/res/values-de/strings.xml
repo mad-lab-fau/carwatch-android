@@ -34,7 +34,9 @@
     <string name="snooze">Snooze</string>
     <string name="stop">Stop</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d!</string>
+    <string name="timer_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe!</string>
     <string name="timer_over_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d JETZT!!!</string>
+    <string name="timer_over_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe JETZT!!!</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_dashboard">Alarm</string>
     <string name="title_wakeup">Aufstehen</string>
