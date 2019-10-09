@@ -77,6 +77,8 @@
     <string name="evening_message">Good Evening!\nAre you going to bed?</string>
 
     <string name="feedback_thanks">Thank you for your feedback!</string>
+    <string name="good_night">Thank you and good night!</string>
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

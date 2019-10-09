@@ -219,12 +219,8 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     @Override
     public void onDismiss(DialogInterface dialog) {
         if (getActivity() != null) {
-            Intent intent = null;
-            Log.e(TAG, "alarm time " + alarmTime);
-            if (alarmTime != 0) {
-                intent = new Intent();
-                intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
-            }
+            Intent intent = new Intent();
+            intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         }

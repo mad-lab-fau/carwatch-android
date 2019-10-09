@@ -188,23 +188,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        Log.e(TAG, "ON RESULT " + (requestCode == Constants.REQUEST_CODE_SCAN) + ", " + resultCode);
-
-        if (requestCode == Constants.REQUEST_CODE_SCAN) {
-            if (resultCode == RESULT_OK) {
-                Intent intent = getIntent();
-                Log.e(TAG, "intent " + intent);
-                if (intent != null) {
-                    long alarmTime = intent.getLongExtra(Constants.EXTRA_ALARM_TIME, 0);
-                    DateTime time = new DateTime(alarmTime);
-                    AlarmHandler.showAlarmSetMessage(this, coordinatorLayout, time);
-                }
-            }
-        }
-    }
-
 }

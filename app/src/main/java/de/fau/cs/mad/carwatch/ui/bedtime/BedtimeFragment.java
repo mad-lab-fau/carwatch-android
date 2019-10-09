@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui.bedtime;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -88,5 +90,20 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                     startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
                 })
                 .show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (getActivity() == null) {
+            return;
+        }
+
+        if (requestCode == Constants.REQUEST_CODE_SCAN) {
+            if (resultCode == Activity.RESULT_OK) {
+                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night), Snackbar.LENGTH_SHORT).show();
+
+            }
+        }
     }
 }

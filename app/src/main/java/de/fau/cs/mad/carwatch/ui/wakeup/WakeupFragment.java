@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui.wakeup;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,16 +10,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
@@ -88,5 +92,22 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
                 })
                 .show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (getActivity() == null || data == null) {
+            return;
+        }
+
+        if (requestCode == Constants.REQUEST_CODE_SCAN) {
+            if (resultCode == Activity.RESULT_OK) {
+                long alarmTime = data.getLongExtra(Constants.EXTRA_ALARM_TIME, 0);
+                DateTime time = new DateTime(alarmTime);
+                AlarmHandler.showAlarmSetMessage(getContext(), getActivity().findViewById(R.id.coordinator), time);
+
+            }
+        }
     }
 }
