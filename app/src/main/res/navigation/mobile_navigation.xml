@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_wakeup">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="de.fau.cs.mad.carwatch.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_wakeup"
+        android:name="de.fau.cs.mad.carwatch.ui.wakeup.WakeupFragment"
+        android:label="@string/title_wakeup"
+        tools:layout="@layout/fragment_wakeup" />
 
     <fragment
         android:id="@+id/navigation_alarm"
@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_alarm" />
 
     <fragment
-        android:id="@+id/navigation_scanner"
-        android:name="de.fau.cs.mad.carwatch.ui.scanner.ScannerFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_scanner" />
+        android:id="@+id/navigation_bedtime"
+        android:name="de.fau.cs.mad.carwatch.ui.bedtime.BedtimeFragment"
+        android:label="@string/title_bedtime"
+        tools:layout="@layout/fragment_bedtime" />
 </navigation>

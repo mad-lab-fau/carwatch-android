@@ -2,7 +2,9 @@ package de.fau.cs.mad.carwatch.ui.scanner;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,8 +42,8 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
 
     private static final String TAG = ScannerFragment.class.getSimpleName();
 
-    private int alarmId;
-    private int salivaId;
+    private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
 
     private CameraSource cameraSource;
     private CameraSourcePreview preview;
@@ -51,6 +53,8 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
 
     private WorkflowModel workflowModel;
     private WorkflowState currentWorkflowState;
+
+    long alarmTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -193,8 +197,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     }
 
     private void cancelTimer(int alarmId, int salivaId, String barcodeValue) {
-        if (getContext() != null && this.alarmId != -1) {
-            TimerHandler.cancelTimer(getContext(), alarmId);
+        if (getContext() != null && alarmId != Constants.EXTRA_ALARM_ID_DEFAULT) {
             // create Json object and log information
             try {
                 JSONObject json = new JSONObject();
@@ -206,13 +209,23 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
                 e.printStackTrace();
             }
 
-            TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
+            if (alarmId != Constants.EXTRA_ALARM_ID_EVENING) {
+                TimerHandler.cancelTimer(getContext(), alarmId);
+                alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
+            }
         }
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         if (getActivity() != null) {
+            Intent intent = null;
+            Log.e(TAG, "alarm time " + alarmTime);
+            if (alarmTime != 0) {
+                intent = new Intent();
+                intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
+            }
+            getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         }
     }

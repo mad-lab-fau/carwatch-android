@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home" />
+        android:id="@+id/navigation_wakeup"
+        android:icon="@drawable/ic_wakeup_24dp"
+        android:title="@string/title_wakeup" />
 
     <item
         android:id="@+id/navigation_alarm"
@@ -12,8 +12,8 @@
         android:title="@string/title_dashboard" />
 
     <item
-        android:id="@+id/navigation_scanner"
-        android:icon="@drawable/ic_scanner_black_24dp"
-        android:title="@string/title_notifications" />
+        android:id="@+id/navigation_bedtime"
+        android:icon="@drawable/ic_bedtime_24dp"
+        android:title="@string/title_bedtime" />
 
 </menu>

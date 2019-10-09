@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.alarmmanager;
 
 import android.app.AlarmManager;
 import android.app.Application;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -160,8 +161,8 @@ public class AlarmHandler {
         }
     }
 
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId) {
-        scheduleAlarmAtTime(context, timeToRing, alarmId, -1);
+    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId) {
+        return scheduleAlarmAtTime(context, timeToRing, alarmId, -1);
     }
 
     /**
@@ -170,11 +171,11 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId, View snackbarAnchor) {
+    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId, View snackbarAnchor) {
         PendingIntent pendingIntent = getPendingIntent(context, alarmId, salivaId);
         PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId, salivaId);
 
-        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
+        return scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
     }
 
     /**
@@ -183,8 +184,8 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
-        scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
+    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
+        return scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
     }
 
     /**
@@ -193,8 +194,8 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow) {
-        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, null);
+    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow) {
+        return scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, null);
     }
 
     /**
@@ -203,7 +204,7 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
+    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
         Log.d(TAG, "Setting timed alarm " + alarmId + " at " + timeToRing);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -211,7 +212,10 @@ public class AlarmHandler {
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(timeToRing.getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
             showAlarmSetMessage(context, snackbarAnchor, timeToRing);
+            return timeToRing.getMillis();
         }
+
+        return 0;
     }
 
     public static void cancelAlarm(Context context, Alarm alarm) {
@@ -266,7 +270,9 @@ public class AlarmHandler {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_NO_CREATE);
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Log.d(TAG, "Cancelling alarm " + alarmId);
         Log.d(TAG, "Cancelling alarm " + pendingIntent);
@@ -274,6 +280,10 @@ public class AlarmHandler {
         // PendingIntent may be null if the alarm hasn't been set
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
+        }
+
+        if (notificationManager != null) {
+            notificationManager.cancel(alarmId);
         }
     }
 
@@ -338,15 +348,19 @@ public class AlarmHandler {
         for (Alarm alarm : repo.getAllAlarms().getValue()) {
             alarm.setActive(false);
 
-            TimerHandler.cancelTimer(application, alarm.getId());
             killAllOngoingAlarms(application, alarm.getId());
             repo.update(alarm);
         }
+
+        // cancel a potential alarm session from spontaneous awakening (has a special id)
+        TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
+        killAllOngoingAlarms(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
     }
 
     private static void killAllOngoingAlarms(Context context, int alarmId) {
         for (int ignored : Constants.SALIVA_TIMES) {
             cancelAlarmAtTime(context, alarmId);
+            TimerHandler.cancelTimer(context, alarmId);
             alarmId += Constants.ALARM_OFFSET;
         }
     }

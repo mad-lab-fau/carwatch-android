@@ -30,12 +30,14 @@ public final class Constants {
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
-
     public static final int REQUEST_CODE_NEW_ALARM = 1;
     public static final int REQUEST_CODE_EDIT_ALARM = 2;
 
+    public static final int REQUEST_CODE_SCAN = 0xCAFE;
+
 
     public static final String EXTRA_ALARM = "extra_alarm";
+    public static final String EXTRA_ALARM_TIME = "extra_alarm_time";
     public static final String EXTRA_BUNDLE = "extra_bundle";
     public static final String EXTRA_EDIT = "extra_edit";
     public static final String EXTRA_DELETE = "extra_delete";
@@ -44,9 +46,14 @@ public final class Constants {
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
     public static final String EXTRA_SOURCE = "extra_source";
 
+    public static final int EXTRA_ALARM_ID_SPONTANEOUS = 4711;
     public static final int EXTRA_ALARM_ID_DEFAULT = -1;
     public static final int EXTRA_TIMER_ID_DEFAULT = -1;
     public static final int EXTRA_SALIVA_ID_DEFAULT = 0;
+
+    public static final int EXTRA_ALARM_ID_EVENING = 815;
+    public static final int EXTRA_SALIVA_ID_EVENING = 383;
+
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
@@ -60,7 +67,9 @@ public final class Constants {
     public static final String LOGGER_ACTION_ALARM_RING = "alarm_ring";
     public static final String LOGGER_ACTION_ALARM_SNOOZE = "alarm_snooze";
     public static final String LOGGER_ACTION_ALARM_STOP = "alarm_stop";
+    public static final String LOGGER_ACTION_EVENING_SALIVETTE = "evening_salivette";
     public static final String LOGGER_ACTION_BARCODE_SCANNED = "barcode_scanned";
+    public static final String LOGGER_ACTION_SPONTANEOUS_AWAKENING = "spontaneous_awakening";
     public static final String LOGGER_ACTION_DAY_FINISHED = "day_finished";
 
     // Extras that can be added to the Logger

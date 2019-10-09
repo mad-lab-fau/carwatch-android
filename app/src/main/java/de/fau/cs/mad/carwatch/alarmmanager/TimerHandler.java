@@ -29,17 +29,19 @@ public class TimerHandler {
 
     private static final String TAG = TimerHandler.class.getSimpleName();
 
-    private static final String CHANNEL_ID = "TimerHandlerChannel";
+    private static final String CHANNEL_ID = TAG + "Channel";
 
-    public static void scheduleSalivaTimer(Context context, int alarmId, int salivaId, View snackbarAnchor) {
+    public static long scheduleSalivaTimer(Context context, int alarmId, int salivaId, View snackbarAnchor) {
         if (salivaId < Constants.SALIVA_TIMES.length) {
             if (Constants.SALIVA_TIMES[salivaId] == 0) {
                 // first saliva sample => directly schedule barcode scan timer
                 scheduleSalivaCountdown(context, alarmId, salivaId);
+                return 0;
             } else {
                 alarmId += Constants.ALARM_OFFSET;
                 DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
                 AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, snackbarAnchor);
+                return timeToRing.getMillis();
             }
         } else {
             try {
@@ -57,11 +59,12 @@ public class TimerHandler {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            return 0;
         }
     }
 
-    public static void scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
-        scheduleSalivaTimer(context, alarmId, salivaId, null);
+    public static long scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
+        return scheduleSalivaTimer(context, alarmId, salivaId, null);
     }
 
     @SuppressLint("WrongConstant")
@@ -103,15 +106,14 @@ public class TimerHandler {
         Intent intent = new Intent(context, TimerReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, timerId, intent, PendingIntent.FLAG_NO_CREATE);
 
-        Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + alarmId);
-        Log.d(TAG, "Cancelling timer " + pendingIntent);
+        if (alarmManager != null && pendingIntent != null) {
+            alarmManager.cancel(pendingIntent);
+            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + alarmId);
+            Log.d(TAG, "Cancelling timer " + pendingIntent);
+        }
 
         if (notificationManager != null) {
             notificationManager.cancel(timerId);
-        }
-
-        if (alarmManager != null && pendingIntent != null) {
-            alarmManager.cancel(pendingIntent);
         }
 
         // Play alarm ringing sound

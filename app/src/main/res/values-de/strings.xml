@@ -14,6 +14,7 @@
     <string name="cancel">Abbrecheen</string>
     <string name="edit_alarm">Alarm bearbeiten</string>
     <string name="menu_kill">Kill</string>
+    <string name="menu_scan">Scan</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_share">Logs teilen …</string>
     <string name="message_subject_id">Bitte geben Sie den Code ein, den Sie in der Online-Umfrage generiert haben.</string>
@@ -36,8 +37,8 @@
     <string name="timer_over_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d JETZT!!!</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_dashboard">Alarm</string>
-    <string name="title_home">Home</string>
-    <string name="title_notifications">Scan</string>
+    <string name="title_wakeup">Aufstehen</string>
+    <string name="title_bedtime">Bettzeit</string>
     <string name="title_subject_id">Code eingeben</string>
     <string name="snooze_duration">Snoozedauer</string>
     <string name="user_credentials">Benutzerinformationen</string>
@@ -52,4 +53,18 @@
         <item>Samstag</item>
         <item>Sonntag</item>
     </string-array>
+    <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
+
+    <string name="wakeup_title">Den Morgen beginnen</string>
+    <string name="wakeup_text">Wir beginnen nun mit dem Morgenprozedere</string>
+    <string name="wakeup_message">Guten Morgen!\nSind Sie gerade aufgewacht?</string>
+
+    <string name="evening_title">Die Nacht beginnen</string>
+    <string name="evening_text">Wir beginnen nun mit dem Abendprozedere.</string>
+    <string name="evening_message">Guten Abend!\nSind Sie dabei, ins Bett zu gehen?</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+
+    <string name="title_activity_scan">Barcode einscannen</string>
 </resources>

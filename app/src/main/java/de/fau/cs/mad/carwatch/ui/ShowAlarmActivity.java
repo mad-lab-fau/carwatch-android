@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.WindowManager;
 
@@ -23,7 +24,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
     private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
 
-    Vibrator vibrator;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,11 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         if (vibrator != null) {
-            vibrator.vibrate(Constants.VIBRATION_PATTERN, 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createWaveform(Constants.VIBRATION_PATTERN, 0));
+            } else {
+                vibrator.vibrate(Constants.VIBRATION_PATTERN, 0);
+            }
         }
     }
 

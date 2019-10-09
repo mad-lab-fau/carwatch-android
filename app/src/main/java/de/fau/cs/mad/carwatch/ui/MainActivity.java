@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
+import org.joda.time.DateTime;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Objects;
@@ -40,11 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final int[] NAV_IDS = {R.id.navigation_wakeup, R.id.navigation_alarm, R.id.navigation_bedtime};
+
     private static DiskLogAdapter sAdapter;
 
     private SharedPreferences sharedPreferences;
 
     private CoordinatorLayout coordinatorLayout;
+
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +71,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_alarm, R.id.navigation_scanner).build();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(NAV_IDS).build();
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.navigate(R.id.navigation_alarm);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        // TODO navigate based on current time
+        navigate(R.id.navigation_alarm);
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
@@ -80,6 +89,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
             Logger.addLogAdapter(sAdapter);
+        }
+    }
+
+    public void navigate(int navId) {
+        for (int id : NAV_IDS) {
+            if (id == navId) {
+                navController.navigate(navId);
+                return;
+            }
         }
     }
 
@@ -106,10 +124,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // TODO REMOVE (OR HIDE BETTER)
-            case R.id.menu_kill:
-                AlarmHandler.killAll(getApplication());
-                break;
             case R.id.menu_share:
                 String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
 
@@ -119,6 +133,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (FileNotFoundException e) {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
                 }
+                break;
+            // TODO REMOVE (OR HIDE BETTER)
+            case R.id.menu_kill:
+                AlarmHandler.killAll(getApplication());
+                break;
+            case R.id.menu_scan:
+                startActivity(new Intent(this, ScannerActivity.class));
                 break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -165,6 +186,25 @@ public class MainActivity extends AppCompatActivity {
         sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"carwatch_logs@gmail.com"});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.e(TAG, "ON RESULT " + (requestCode == Constants.REQUEST_CODE_SCAN) + ", " + resultCode);
+
+        if (requestCode == Constants.REQUEST_CODE_SCAN) {
+            if (resultCode == RESULT_OK) {
+                Intent intent = getIntent();
+                Log.e(TAG, "intent " + intent);
+                if (intent != null) {
+                    long alarmTime = intent.getLongExtra(Constants.EXTRA_ALARM_TIME, 0);
+                    DateTime time = new DateTime(alarmTime);
+                    AlarmHandler.showAlarmSetMessage(this, coordinatorLayout, time);
+                }
+            }
+        }
     }
 
 }

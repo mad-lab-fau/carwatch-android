@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_morning"
+            android:layout_width="@dimen/home_icon_size"
+            android:layout_height="@dimen/home_icon_size"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/tv_evening"
+            android:tint="@color/colorPrimaryLight"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_wakeup_24dp" />
+
+        <TextView
+            android:id="@+id/tv_evening"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wakeup_message"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/button_container"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin" />
+
+        <LinearLayout
+            android:id="@+id/button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true">
+
+            <Button
+                android:id="@+id/button_yes"
+                android:layout_width="wrap_content"
+                android:text="@string/yes"
+                android:layout_margin="8dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/button_no"
+                android:layout_width="wrap_content"
+                android:text="@string/no"
+                android:layout_margin="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

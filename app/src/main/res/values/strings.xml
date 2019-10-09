@@ -10,24 +10,27 @@
 
     <!-- Activity Titles -->
     <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_scan">Scan Barcode</string>
 
     <!-- Menu -->
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share Logs …</string>
     <string name="menu_kill">Kill</string>
+    <string name="menu_scan">Scan</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>
     <string name="snooze">Snooze</string>
-    <string name="title_home">Home</string>
 
     <!-- App Bar Titles -->
     <string name="title_dashboard">Alarm</string>
-    <string name="title_notifications">Scan</string>
-    <string name="no_alarms">No alarms yet.  Click \'+\' to add an alarm.</string>
+    <string name="title_wakeup">Wakeup</string>
+    <string name="title_bedtime">Bedtime</string>
+
 
     <string name="alarm">Alarm</string>
 
+    <string name="no_alarms">No alarms yet.  Click \'+\' to add an alarm.</string>
     <string name="add_alarm">Add New Alarm</string>
     <string name="edit_alarm">Edit Alarm</string>
     <string name="set_time">Time</string>
@@ -61,6 +64,19 @@
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Point your camera at a barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
+
+    <!-- Home Fragment -->
+    <string name="wakeup_title">Start Morning</string>
+    <string name="wakeup_text">We will now begin with the morning procedure.</string>
+    <string name="wakeup_message">Good Morning!\nDid you just wake up?</string>
+
+    <string name="evening_title">Start Night</string>
+    <string name="evening_text">We will now begin with the evening procedure.</string>
+    <string name="evening_message">Good Evening!\nAre you going to bed?</string>
+
+    <string name="feedback_thanks">Thank you for your feedback!</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 
     <string-array name="days_of_week">

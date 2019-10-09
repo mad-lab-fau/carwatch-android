@@ -50,6 +50,7 @@
 
         <activity
             android:name=".ui.ScannerActivity"
+            android:label="@string/title_activity_scan"
             android:parentActivityName=".ui.MainActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
