@@ -14,6 +14,7 @@
     </PreferenceCategory>
 
 
+    <!--
     <PreferenceCategory
         android:key="cat_snooze_duration"
         android:order="20"
@@ -27,5 +28,6 @@
             android:title="@string/snooze_duration" />
 
     </PreferenceCategory>
+    -->
 
 </PreferenceScreen>
