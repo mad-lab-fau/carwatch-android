@@ -29,6 +29,7 @@ public class AlertActivity extends AppCompatActivity {
                 .setIcon(icon)
                 .setMessage(getString(R.string.warning_already_taken_wakeup))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    finish();
                 })
                 .show();
     }
