@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 public final class Constants {
@@ -14,6 +15,13 @@ public final class Constants {
     public static final int[] DELTA_HIDDEN_ALARMS = {21, 39};
 
     public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
+
+    public static final DateTime[] MORNING_TIMES = {new LocalTime(5, 0).toDateTimeToday(), new LocalTime(12, 0).toDateTimeToday()};
+    public static final DateTime[] EVENING_TIMES = {new LocalTime(20, 0).toDateTimeToday(), new LocalTime(5, 0).toDateTimeToday().plusDays(1)};
+
+    // TODO remove before publishing
+    public static final DateTime TEST_TIME = DateTime.now();
+    //public static final DateTime TEST_TIME = new LocalTime(20, 0).toDateTimeToday();
 
     /**
      * Time to the next saliva sample in minutes

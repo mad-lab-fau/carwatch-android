@@ -26,6 +26,7 @@ import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         // TODO navigate based on current time
-        navigate(R.id.navigation_alarm);
+        navigate();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
@@ -99,6 +100,21 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    public void navigate() {
+        if (checkInterval(Constants.TEST_TIME, Constants.MORNING_TIMES)) {
+            navController.navigate(R.id.navigation_wakeup);
+        } else if (checkInterval(Constants.TEST_TIME, Constants.EVENING_TIMES)) {
+            navController.navigate(R.id.navigation_bedtime);
+        } else {
+            navController.navigate(R.id.navigation_alarm);
+        }
+    }
+
+
+    private boolean checkInterval(DateTime time, DateTime[] interval) {
+        return new Interval(interval[0], interval[1]).contains(time);
     }
 
     @Override
