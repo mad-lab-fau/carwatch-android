@@ -34,6 +34,9 @@ public class TimerHandler {
 
     public static long scheduleSalivaTimer(Context context, int alarmId, int salivaId, View snackbarAnchor) {
         if (salivaId < Constants.SALIVA_TIMES.length) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarmId).apply();
+
             if (Constants.SALIVA_TIMES[salivaId] == 0) {
                 // first saliva sample => directly schedule barcode scan timer
                 scheduleSalivaCountdown(context, alarmId, salivaId);
@@ -64,8 +67,12 @@ public class TimerHandler {
 
             // one day was completed
             // save the day the saliva sample was taken in order to prevent abuse
-            dayId++;
-            sp.edit().putInt(Constants.PREF_DAY_COUNTER, dayId).putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis()).apply();
+            sp.edit()
+                    .putInt(Constants.PREF_DAY_COUNTER, ++dayId)
+                    .putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
+                    .putInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT)
+                    .apply();
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -81,6 +81,13 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
+        int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
+        if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
+            // There's already a saliva procedure running at the moment
+            Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing % Constants.ALARM_OFFSET + " already running at the moment!");
+            return;
+        }
+
         if (time.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
             Intent i = new Intent(context, AlertActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

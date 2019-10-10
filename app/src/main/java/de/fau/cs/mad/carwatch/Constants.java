@@ -30,12 +30,13 @@ public final class Constants {
 
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
-    public static final String PREF_FIRST_RUN = "first_run";
-    public static final String PREF_SUBJECT_ID = "subject_id";
-    public static final String PREF_SNOOZE_DURATION = "snooze_duration";
-    public static final String PREF_DAY_COUNTER = "day_counter";
-    public static final String PREF_MORNING_TAKEN = "morning_taken";
-    public static final String PREF_EVENING_TAKEN = "evening_taken";
+    public static final String PREF_FIRST_RUN = "first_run"; // boolean
+    public static final String PREF_SUBJECT_ID = "subject_id"; // int
+    public static final String PREF_SNOOZE_DURATION = "snooze_duration"; // int (min)
+    public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
+    public static final String PREF_MORNING_TAKEN = "morning_taken"; // long (day)
+    public static final String PREF_MORNING_ONGOING = "morning_ongoing"; // int (alarmId)
+    public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
 
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
