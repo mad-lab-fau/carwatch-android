@@ -53,6 +53,13 @@
             android:taskAffinity="" />
 
         <activity
+            android:name=".ui.AlertActivity"
+            android:parentActivityName=".ui.MainActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.Translucent"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.ScannerActivity"
             android:label="@string/title_activity_scan"
             android:parentActivityName=".ui.MainActivity"

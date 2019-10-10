@@ -48,24 +48,26 @@ public class TimerHandler {
             // evening saliva sample => directly schedule barcode scan timer
             scheduleSalivaCountdown(context, alarmId, salivaId);
             return 0;
-        } else {
-            try {
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-                int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        }
+        return 0;
+    }
 
-                // create Json object and log information
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_DAY_COUNTER, dayId);
-                LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
+    public static void finishTimer(Context context) {
+        try {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
 
-                // one day was completed
-                // save the day the saliva sample was taken in order to prevent abuse
-                dayId++;
-                sp.edit().putInt(Constants.PREF_DAY_COUNTER, dayId).putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis()).apply();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return 0;
+            // create Json object and log information
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_DAY_COUNTER, dayId);
+            LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
+
+            // one day was completed
+            // save the day the saliva sample was taken in order to prevent abuse
+            dayId++;
+            sp.edit().putInt(Constants.PREF_DAY_COUNTER, dayId).putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis()).apply();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

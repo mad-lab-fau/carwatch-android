@@ -197,7 +197,11 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     }
 
     private void cancelTimer(int alarmId, int salivaId, String barcodeValue) {
-        if (getContext() != null && alarmId != Constants.EXTRA_ALARM_ID_DEFAULT) {
+        if (getContext() == null) {
+            return;
+        }
+
+        if (alarmId != Constants.EXTRA_ALARM_ID_DEFAULT) {
             // create Json object and log information
             try {
                 JSONObject json = new JSONObject();
@@ -210,8 +214,12 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
             }
 
             TimerHandler.cancelTimer(getContext(), alarmId);
-            if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && salivaId != Constants.SALIVA_TIMES.length - 1) {
-                alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
+            if (alarmId != Constants.EXTRA_ALARM_ID_EVENING) {
+                if (salivaId != Constants.SALIVA_TIMES.length - 1) {
+                    alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
+                } else {
+                    TimerHandler.finishTimer(getContext());
+                }
             }
         }
     }
