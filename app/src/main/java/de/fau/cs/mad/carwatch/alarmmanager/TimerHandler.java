@@ -17,6 +17,7 @@ import android.view.View;
 import androidx.core.app.NotificationCompat;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,22 +45,23 @@ public class TimerHandler {
                 return timeToRing.getMillis();
             }
         } else if (salivaId == Constants.EXTRA_SALIVA_ID_EVENING) {
-            // first saliva sample => directly schedule barcode scan timer
+            // evening saliva sample => directly schedule barcode scan timer
             scheduleSalivaCountdown(context, alarmId, salivaId);
             return 0;
         } else {
             try {
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-                int dayId = sp.getInt(Constants.PREF_DAY_ID, 0);
+                int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
 
                 // create Json object and log information
                 JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_DAY_ID, dayId);
+                json.put(Constants.LOGGER_EXTRA_DAY_COUNTER, dayId);
                 LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
 
                 // one day was completed
+                // save the day the saliva sample was taken in order to prevent abuse
                 dayId++;
-                sp.edit().putInt(Constants.PREF_DAY_ID, dayId).apply();
+                sp.edit().putInt(Constants.PREF_DAY_COUNTER, dayId).putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis()).apply();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -182,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     sharedPreferences.edit()
                             .putBoolean(Constants.PREF_FIRST_RUN, false)
                             .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                            .putInt(Constants.PREF_DAY_ID, 0)
+                            .putInt(Constants.PREF_DAY_COUNTER, 0)
                             .apply();
                 });
 

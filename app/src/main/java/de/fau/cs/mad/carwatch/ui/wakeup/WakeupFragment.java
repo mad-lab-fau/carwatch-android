@@ -2,8 +2,10 @@ package de.fau.cs.mad.carwatch.ui.wakeup;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,13 +71,22 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
 
-                showWakeupDialog();
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                DateTime date = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
+                if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
+                    showWakeupWarningDialog();
+                } else {
+                    showWakeupDialog();
+                }
                 break;
         }
     }
 
 
     private void showWakeupDialog() {
+        if (getContext() == null) {
+            return;
+        }
         Drawable icon = getResources().getDrawable(R.drawable.ic_wakeup_24dp);
         icon.setTint(getResources().getColor(R.color.colorPrimary));
 
@@ -90,6 +102,23 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
                     intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
                     startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
+                })
+                .show();
+    }
+
+    private void showWakeupWarningDialog() {
+        if (getContext() == null) {
+            return;
+        }
+        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(getString(R.string.warning_title))
+                .setCancelable(false)
+                .setIcon(icon)
+                .setMessage(getString(R.string.warning_already_taken_wakeup))
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                 })
                 .show();
     }

@@ -210,7 +210,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
             }
 
             TimerHandler.cancelTimer(getContext(), alarmId);
-            if (alarmId != Constants.EXTRA_ALARM_ID_EVENING) {
+            if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && salivaId != Constants.SALIVA_TIMES.length - 1) {
                 alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
             }
         }

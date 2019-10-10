@@ -82,7 +82,7 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
-        int dayId = sp.getInt(Constants.PREF_DAY_ID, 0);
+        int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
 
         if (subjectId != null && SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM) {
             int hiddenDelta;
