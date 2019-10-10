@@ -57,14 +57,20 @@
     </string-array>
     <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
     <string name="good_night">Vielen Dank und Gute Nacht!</string>
+    <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
+    <string name="lights_out">Licht aus!</string>
+
+    <string name="warning_title">Warnung</string>
+    <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
+    <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>
 
     <string name="wakeup_title">Den Morgen beginnen</string>
     <string name="wakeup_text">Wir beginnen nun mit dem Morgenprozedere</string>
     <string name="wakeup_message">Guten Morgen!\nSind Sie gerade aufgewacht?</string>
 
-    <string name="evening_title">Die Nacht beginnen</string>
-    <string name="evening_text">Wir beginnen nun mit dem Abendprozedere.</string>
-    <string name="evening_message">Guten Abend!\nSind Sie dabei, ins Bett zu gehen?</string>
+    <string name="bedtime_title">Die Nacht beginnen</string>
+    <string name="bedtime_text">Wir beginnen nun mit dem Abendprozedere.</string>
+    <string name="bedtime_message">Guten Abend!\nSind Sie dabei, ins Bett zu gehen?</string>
 
     <string name="yes">Ja</string>
     <string name="no">Nein</string>

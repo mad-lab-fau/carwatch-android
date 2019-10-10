@@ -10,13 +10,26 @@
         <item name="colorSecondary">@color/colorAccent</item>
         <item name="colorOnSecondary">@color/colorWhite</item>
 
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTheme">
+            @style/ThemeOverlay.MaterialComponents.MaterialAlertDialog
+        </item>
     </style>
 
     <!-- Settings item theme. -->
     <style name="settingsItem">
         <item name="android:layout_height">64dp</item>
         <item name="android:padding">14dp</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Button.OutlinedButton.Accent" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="backgroundTint">@color/button_outline_accent_selector</item>
+        <item name="rippleColor">@color/button_outline_accent_ripple_color</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Button.Accent" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/button_accent_selector</item>
+        <item name="rippleColor">@color/button_accent_ripple_color</item>
     </style>
 
 </resources>
