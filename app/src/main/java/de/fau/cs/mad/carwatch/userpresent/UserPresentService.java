@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -24,6 +25,9 @@ public class UserPresentService extends Service {
     private static final int NOTIFICATION_ID = 1994;
     private static final String CHANNEL_ID = TAG + "Channel";
 
+    public static boolean serviceRunning = false;
+    public static boolean receiverRegistered = false;
+
     private UserPresentReceiver userPresentReceiver;
 
     @Override
@@ -38,13 +42,15 @@ public class UserPresentService extends Service {
         createNotificationChannel();
         Notification notification = createNotification();
         startForeground(NOTIFICATION_ID, notification);
+        serviceRunning = true;
 
-        if (userPresentReceiver != null) {
+        if (userPresentReceiver != null && !receiverRegistered) {
             IntentFilter screenTimeFilter = new IntentFilter();
             screenTimeFilter.addAction(Intent.ACTION_SCREEN_ON);
             screenTimeFilter.addAction(Intent.ACTION_SCREEN_OFF);
             screenTimeFilter.addAction(Intent.ACTION_USER_PRESENT);
             registerReceiver(userPresentReceiver, screenTimeFilter);
+            receiverRegistered = true;
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -54,10 +60,12 @@ public class UserPresentService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (userPresentReceiver != null) {
+        if (userPresentReceiver != null && receiverRegistered) {
             unregisterReceiver(userPresentReceiver);
+            receiverRegistered = false;
         }
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH);
+        serviceRunning = false;
     }
 
     @Override
@@ -65,6 +73,15 @@ public class UserPresentService extends Service {
         return null; // service cannot run as bound service
     }
 
+    public static void startService(Context context) {
+        Intent serviceIntent = new Intent(context, UserPresentService.class);
+        context.startService(serviceIntent);
+    }
+
+    public static void stopService(Context context) {
+        Intent serviceIntent = new Intent(context, UserPresentService.class);
+        context.stopService(serviceIntent);
+    }
 
     private Notification createNotification() {
         Intent notificationIntent = new Intent(this, MainActivity.class);

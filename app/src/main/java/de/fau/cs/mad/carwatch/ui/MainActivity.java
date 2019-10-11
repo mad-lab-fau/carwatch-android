@@ -54,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
 
-    private boolean serviceRunning = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,13 +161,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.menu_service:
-                Intent serviceIntent = new Intent(this, UserPresentService.class);
-                if (serviceRunning) {
-                    stopService(serviceIntent);
+                if (UserPresentService.serviceRunning) {
+                    UserPresentService.stopService(this);
                 } else {
-                    startService(serviceIntent);
+                    UserPresentService.startService(this);
                 }
-                serviceRunning = !serviceRunning;
                 break;
         }
         return super.onOptionsItemSelected(item);
