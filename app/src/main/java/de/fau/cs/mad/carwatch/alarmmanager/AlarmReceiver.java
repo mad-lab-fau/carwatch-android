@@ -26,7 +26,7 @@ import static android.os.Build.VERSION_CODES;
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
-    private final String CHANNEL_ID = "AlarmReceiverChannel";
+    private final String CHANNEL_ID = TAG + "Channel";
 
     @SuppressLint("WrongConstant")
     @Override
