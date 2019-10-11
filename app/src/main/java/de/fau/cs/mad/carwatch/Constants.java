@@ -85,6 +85,9 @@ public final class Constants {
     public static final String LOGGER_ACTION_SPONTANEOUS_AWAKENING = "spontaneous_awakening";
     public static final String LOGGER_ACTION_LIGHTS_OUT = "lights_out";
     public static final String LOGGER_ACTION_DAY_FINISHED = "day_finished";
+    public static final String LOGGER_ACTION_SCREEN_OFF = "screen_off";
+    public static final String LOGGER_ACTION_SCREEN_ON = "screen_on";
+    public static final String LOGGER_ACTION_USER_PRESENT = "user_present";
 
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int

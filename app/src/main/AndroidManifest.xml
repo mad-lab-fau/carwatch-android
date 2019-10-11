@@ -3,6 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="de.fau.cs.mad.carwatch">
 
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -55,6 +64,7 @@
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="" />
+
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />
@@ -68,10 +78,16 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <receiver
+            android:name=".userpresent.UserPresentReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
         <receiver
             android:name=".userpresent.BootCompletedReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
         <receiver
             android:name=".alarmmanager.AlarmReceiver"
             android:enabled="true"
@@ -83,7 +99,6 @@
                 <action android:name="Stop Alarm" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".alarmmanager.AlarmSnoozeReceiver"
             android:enabled="true">
@@ -91,19 +106,16 @@
                 <action android:name="Snooze Alarm" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
             android:exported="true" />
+
+        <service
+            android:name=".userpresent.UserPresentService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
 </manifest>

@@ -37,6 +37,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private CoordinatorLayout coordinatorLayout;
 
     private NavController navController;
+
+    private boolean serviceRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +161,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.menu_service:
+                Intent serviceIntent = new Intent(this, UserPresentService.class);
+                if (serviceRunning) {
+                    stopService(serviceIntent);
+                } else {
+                    startService(serviceIntent);
+                }
+                serviceRunning = !serviceRunning;
                 break;
         }
         return super.onOptionsItemSelected(item);
