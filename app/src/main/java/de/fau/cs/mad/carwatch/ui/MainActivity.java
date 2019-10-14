@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 zipFile);
         sharingIntent.setType("application/octet-stream");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        sharingIntent.putExtra(Intent.EXTRA_EMAIL, Constants.SHARE_EMAIL_ADDRESS);
+        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{Constants.SHARE_EMAIL_ADDRESS});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
     }
