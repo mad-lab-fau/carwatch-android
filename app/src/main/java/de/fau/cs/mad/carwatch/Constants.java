@@ -31,8 +31,6 @@ public final class Constants {
     // TODO change times
     public static final int[] SALIVA_TIMES = {0, 1, 1, 1};
 
-    public static final String SHARE_EMAIL_ADDRESS = "CAR_Studie2019@gmx.de";
-
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
     public static final String PREF_FIRST_RUN = "first_run"; // boolean
@@ -88,6 +86,8 @@ public final class Constants {
     public static final String LOGGER_ACTION_SPONTANEOUS_AWAKENING = "spontaneous_awakening";
     public static final String LOGGER_ACTION_LIGHTS_OUT = "lights_out";
     public static final String LOGGER_ACTION_DAY_FINISHED = "day_finished";
+    public static final String LOGGER_ACTION_SERVICE_STARTED = "service_started";
+    public static final String LOGGER_ACTION_SERVICE_STOPPED = "service_stopped";
     public static final String LOGGER_ACTION_SCREEN_OFF = "screen_off";
     public static final String LOGGER_ACTION_SCREEN_ON = "screen_on";
     public static final String LOGGER_ACTION_USER_PRESENT = "user_present";

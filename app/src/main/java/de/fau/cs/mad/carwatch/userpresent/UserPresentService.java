@@ -14,7 +14,11 @@ import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 
+import org.json.JSONObject;
+
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 
 public class UserPresentService extends Service {
@@ -43,6 +47,7 @@ public class UserPresentService extends Service {
         Notification notification = createNotification();
         startForeground(NOTIFICATION_ID, notification);
         serviceRunning = true;
+        LoggerUtil.log(Constants.LOGGER_ACTION_SERVICE_STARTED, new JSONObject());
 
         if (userPresentReceiver != null && !receiverRegistered) {
             IntentFilter screenTimeFilter = new IntentFilter();
@@ -66,6 +71,7 @@ public class UserPresentService extends Service {
         }
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH);
         serviceRunning = false;
+        LoggerUtil.log(Constants.LOGGER_ACTION_SERVICE_STOPPED, new JSONObject());
     }
 
     @Override
