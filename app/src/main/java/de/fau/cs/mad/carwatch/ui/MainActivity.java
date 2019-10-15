@@ -197,8 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 zipFile);
         sharingIntent.setType("application/octet-stream");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        // TODO change email address
-        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"carwatch_logs@gmail.com"});
+        sharingIntent.putExtra(Intent.EXTRA_EMAIL, Constants.SHARE_EMAIL_ADDRESS);
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
     }
