@@ -95,6 +95,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_USER_PRESENT = "user_present";
     public static final String LOGGER_ACTION_PHONE_BOOT_INIT = "phone_boot_init";
     public static final String LOGGER_ACTION_PHONE_BOOT_COMPLETE = "phone_boot_complete";
+    public static final String LOGGER_ACTION_SUBJECT_ID_SET = "subject_id_set";
 
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
@@ -108,6 +109,7 @@ public final class Constants {
     public static final String LOGGER_EXTRA_SALIVA_ID = "saliva_id"; // int
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
+    public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);

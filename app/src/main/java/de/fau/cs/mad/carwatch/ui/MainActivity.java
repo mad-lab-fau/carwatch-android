@@ -27,6 +27,8 @@ import com.orhanobut.logger.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -207,6 +209,15 @@ public class MainActivity extends AppCompatActivity {
                         .putString(Constants.PREF_SUBJECT_ID, subjectId)
                         .putInt(Constants.PREF_DAY_COUNTER, 0)
                         .apply();
+
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                    LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 dialog.dismiss();
             } else {
                 warningDialog.show();

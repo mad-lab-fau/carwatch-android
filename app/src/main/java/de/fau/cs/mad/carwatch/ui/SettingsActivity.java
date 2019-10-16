@@ -2,7 +2,6 @@ package de.fau.cs.mad.carwatch.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -10,8 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -61,6 +64,14 @@ public class SettingsActivity extends AppCompatActivity {
                             .setPositiveButton(R.string.ok, (dialog, which) -> {
                             })
                             .show();
+                } else {
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                        LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 return isValid;
             });
