@@ -19,6 +19,8 @@ public final class Constants {
     public static final DateTime[] MORNING_TIMES = {new LocalTime(5, 0).toDateTimeToday(), new LocalTime(12, 0).toDateTimeToday()};
     public static final DateTime[] EVENING_TIMES = {new LocalTime(20, 0).toDateTimeToday(), new LocalTime(5, 0).toDateTimeToday().plusDays(1)};
 
+    public static final int[] BARCODE_RANGE = {65833253, 65833255};
+
     public static final String SHARE_EMAIL_ADDRESS = "CAR_Studie2019@gmx.de";
 
     // TODO remove before publishing

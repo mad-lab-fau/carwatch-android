@@ -183,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog warningDialog =
                 new AlertDialog.Builder(this)
                         .setCancelable(false)
-                        .setTitle(getString(R.string.title_invalid_id))
-                        .setMessage(getString(R.string.message_invalid_id))
+                        .setTitle(getString(R.string.title_invalid_subject_id))
+                        .setMessage(getString(R.string.message_invalid_subject_id))
                         .setPositiveButton(R.string.ok, (dialog, which) -> {
                         })
                         .create();

@@ -12,11 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.gms.common.internal.Objects;
 import com.google.android.material.chip.Chip;
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +31,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
+import de.fau.cs.mad.carwatch.barcodedetection.BarcodeIdCheck;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSource;
@@ -38,7 +42,7 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
-public class ScannerFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
+public class ScannerFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener, Observer<FirebaseVisionBarcode> {
 
     private static final String TAG = ScannerFragment.class.getSimpleName();
 
@@ -180,20 +184,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
                     }
                 });
 
-        workflowModel.detectedBarcode.observe(
-                this,
-                barcode -> {
-                    if (barcode != null) {
-
-                        ArrayList<BarcodeField> barcodeFieldList = new ArrayList<>();
-                        barcodeFieldList.add(new BarcodeField("Raw Value", barcode.getRawValue()));
-                        Log.d(TAG, "Detected Barcodes: " + barcodeFieldList);
-                        BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList, this);
-                        // TODO check if correct barcode
-                        cancelTimer(alarmId, salivaId, barcode.getRawValue());
-
-                    }
-                });
+        workflowModel.detectedBarcode.observe(this, this);
     }
 
     private void cancelTimer(int alarmId, int salivaId, String barcodeValue) {
@@ -232,5 +223,34 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         }
+    }
+
+    @Override
+    public void onChanged(FirebaseVisionBarcode barcode) {
+        if (barcode != null) {
+            ArrayList<BarcodeField> barcodeFieldList = new ArrayList<>();
+            barcodeFieldList.add(new BarcodeField("Raw Value", barcode.getRawValue()));
+            Log.d(TAG, "Detected Barcodes: " + barcodeFieldList);
+
+            if (barcode.getRawValue() != null && BarcodeIdCheck.isValidBarcode(Integer.parseInt(barcode.getRawValue()))) {
+                BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList, this);
+                cancelTimer(alarmId, salivaId, barcode.getRawValue());
+            } else {
+                showInvalidBarcodeDialog();
+            }
+        }
+    }
+
+    private void showInvalidBarcodeDialog() {
+        if (getContext() == null) {
+            return;
+        }
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_invalid_barcode)
+                .setMessage(R.string.message_invalid_barcode)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    workflowModel.workflowState.setValue(WorkflowState.DETECTING);
+                }).show();
     }
 }

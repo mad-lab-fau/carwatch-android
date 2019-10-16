@@ -67,12 +67,14 @@
         \n2nd Digit: First letter of mother\'s first name
         \n3rd and 4th Digits: Day of birth date (01-31)
         \n5th Digit: Last letter of last name</string>
-    <string name="title_invalid_id">Invalid Subject ID</string>
-    <string name="message_invalid_id">Invalid Subject ID! Please try again.</string>
+    <string name="title_invalid_subject_id">Invalid Subject ID</string>
+    <string name="message_invalid_subject_id">Invalid Subject ID! Please try again.</string>
 
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Point your camera at a barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
+    <string name="title_invalid_barcode">Invalid Barcode</string>
+    <string name="message_invalid_barcode">Invalid Barcode! Please scan the correct barcode label on the salivette.</string>
 
     <!-- Wakeup Fragment -->
     <string name="wakeup_title">Start Morning</string>

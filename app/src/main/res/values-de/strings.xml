@@ -85,6 +85,8 @@
     <string name="title_activity_scan">Barcode einscannen</string>
 
     <string name="app_active">CAR Watch Service ist aktiv.</string>
-    <string name="title_invalid_id">Ungültiger Probanden-Code</string>
-    <string name="message_invalid_id">Ungültiger Probanden-Code! Bitte versuchen Sie es erneut.</string>
+    <string name="title_invalid_subject_id">Ungültiger Probanden-Code</string>
+    <string name="message_invalid_subject_id">Ungültiger Probanden-Code! Bitte versuchen Sie es erneut.</string>
+    <string name="title_invalid_barcode">Ungültiger Barcode</string>
+    <string name="message_invalid_barcode">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
 </resources>
