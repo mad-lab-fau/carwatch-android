@@ -77,7 +77,14 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
                     showWakeupWarningDialog();
                 } else {
-                    showWakeupDialog();
+                    // no morning procedure ongoing yet
+                    if (sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT) == Constants.EXTRA_ALARM_ID_DEFAULT) {
+                        showWakeupDialog();
+                    } else {
+                        if (getActivity() != null) {
+                            Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
                 }
                 break;
         }

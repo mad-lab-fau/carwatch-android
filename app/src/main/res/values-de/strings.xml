@@ -89,4 +89,5 @@
     <string name="message_invalid_subject_id">Ungültiger Probanden-Code! Bitte versuchen Sie es erneut.</string>
     <string name="title_invalid_barcode">Ungültiger Barcode</string>
     <string name="message_invalid_barcode">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
+    <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
 </resources>
