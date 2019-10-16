@@ -30,6 +30,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.ScannerActivity;
+import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
@@ -158,6 +159,9 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         if (requestCode == Constants.REQUEST_CODE_SCAN) {
             if (resultCode == Activity.RESULT_OK) {
                 bedtimeViewModel.setSalivaTaken(true);
+                if (!UserPresentService.serviceRunning) {
+                    UserPresentService.startService(getContext());
+                }
             }
         }
     }

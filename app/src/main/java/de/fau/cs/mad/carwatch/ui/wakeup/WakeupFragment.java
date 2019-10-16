@@ -30,6 +30,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.ScannerActivity;
+import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class WakeupFragment extends Fragment implements View.OnClickListener {
 
@@ -96,6 +97,10 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 .setIcon(icon)
                 .setMessage(getString(R.string.wakeup_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    if (UserPresentService.serviceRunning) {
+                        UserPresentService.stopService(getContext());
+                    }
+
                     TimerHandler.scheduleSalivaTimer(getContext(), Constants.EXTRA_ALARM_ID_SPONTANEOUS, Constants.EXTRA_SALIVA_ID_DEFAULT);
 
                     Intent intent = new Intent(getContext(), ScannerActivity.class);
@@ -135,7 +140,6 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 long alarmTime = data.getLongExtra(Constants.EXTRA_ALARM_TIME, 0);
                 DateTime time = new DateTime(alarmTime);
                 AlarmHandler.showAlarmSetMessage(getContext(), getActivity().findViewById(R.id.coordinator), time);
-
             }
         }
     }

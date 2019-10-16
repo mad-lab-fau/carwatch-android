@@ -37,6 +37,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.userpresent.BootService;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int[] NAV_IDS = {R.id.navigation_wakeup, R.id.navigation_alarm, R.id.navigation_bedtime};
 
-    private static DiskLogAdapter sAdapter;
+    public static DiskLogAdapter sAdapter;
 
     private SharedPreferences sharedPreferences;
 
@@ -75,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        // TODO navigate based on current time
         navigate();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -159,6 +159,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
+            case R.id.menu_service:
+                /*if (UserPresentService.serviceRunning) {
+                    UserPresentService.stopService(this);
+                } else {
+                    UserPresentService.startService(this);
+                }*/
+                BootService.enqueueWork(this);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -197,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 zipFile);
         sharingIntent.setType("application/octet-stream");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        sharingIntent.putExtra(Intent.EXTRA_EMAIL, Constants.SHARE_EMAIL_ADDRESS);
+        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{Constants.SHARE_EMAIL_ADDRESS});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
     }

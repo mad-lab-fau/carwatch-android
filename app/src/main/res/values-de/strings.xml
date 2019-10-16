@@ -76,4 +76,6 @@
     <string name="no">Nein</string>
 
     <string name="title_activity_scan">Barcode einscannen</string>
+
+    <string name="app_active">CAR Watch Service ist aktiv.</string>
 </resources>
