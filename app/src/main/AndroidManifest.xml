@@ -6,11 +6,11 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="false"
@@ -20,13 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -40,22 +40,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.fau.cs.mad.carwatch.ui.MainActivity" />
         </activity>
+
         <activity
             android:name=".ui.AddAlarmActivity"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.ShowAlarmActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity="" />
+
         <activity
             android:name=".ui.AlertActivity"
             android:launchMode="singleInstance"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Translucent" />
+
         <activity
             android:name=".ui.ScannerActivity"
             android:excludeFromRecents="true"
@@ -82,16 +86,23 @@
         <receiver
             android:name=".userpresent.UserPresentReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <receiver
             android:name=".userpresent.BootCompletedReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter android:priority="800">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".alarmmanager.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
+
         <receiver
             android:name=".alarmmanager.AlarmStopReceiver"
             android:enabled="true">
@@ -99,6 +110,7 @@
                 <action android:name="Stop Alarm" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".alarmmanager.AlarmSnoozeReceiver"
             android:enabled="true">
@@ -106,16 +118,21 @@
                 <action android:name="Snooze Alarm" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
+            android:name=".userpresent.BootService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+
+        <service
             android:name=".userpresent.UserPresentService"
             android:enabled="true"
             android:exported="true" />
     </application>
-
 
 </manifest>
