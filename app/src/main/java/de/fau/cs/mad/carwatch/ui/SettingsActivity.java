@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -30,6 +31,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences, rootKey);
@@ -44,7 +46,9 @@ public class SettingsActivity extends AppCompatActivity {
                     return false;
                 }
 
-                boolean isValid = SubjectIdCheck.isValidSubjectId((String) newValue);
+                String subjectId = ((String) newValue).toLowerCase();
+
+                boolean isValid = SubjectIdCheck.isValidSubjectId(subjectId);
 
                 if (!isValid) {
                     if (getContext() == null) {
@@ -79,6 +83,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (Constants.PREF_SUBJECT_ID.equals(key)) {
+                sharedPreferences
+                        .edit()
+                        .putString(key, sharedPreferences.getString(key, "").toLowerCase())
+                        .apply();
+            }
         }
     }
 }
