@@ -60,8 +60,15 @@
 
     <!-- Subject ID Dialog -->
     <string name="title_subject_id">Enter Code</string>
-    <string name="message_subject_id">Please enter the Code you generated in the online survey.</string>
-
+    <string name="message_subject_id_short">Please enter the Code you generated in the online survey.</string>
+    <string name="message_subject_id">Please enter the Code you generated in the online survey.
+        \nHint:
+        \n1st Digit: First letter of first name
+        \n2nd Digit: First letter of mother\'s first name
+        \n3rd and 4th Digits: Day of birth date (01-31)
+        \n5th Digit: Last letter of last name</string>
+    <string name="title_invalid_id">Invalid Subject ID</string>
+    <string name="message_invalid_id">Invalid Subject ID! Please try again.</string>
 
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Point your camera at a barcode</string>

@@ -11,15 +11,15 @@ public class SubjectMap {
     private static HashMap<String, Condition> sSubjectMap = new HashMap<>();
 
     static {
-        sSubjectMap.put("TBED1A", KNOWN_ALARM);
-        sSubjectMap.put("TBED1B", KNOWN_ALARM);
-        sSubjectMap.put("TBED1C", KNOWN_ALARM);
-        sSubjectMap.put("TBED2A", UNKNOWN_ALARM);
-        sSubjectMap.put("TBED2B", UNKNOWN_ALARM);
-        sSubjectMap.put("TBED2C", UNKNOWN_ALARM);
-        sSubjectMap.put("TBED3A", SPONTANEOUS);
-        sSubjectMap.put("TBED3B", SPONTANEOUS);
-        sSubjectMap.put("TBED3C", SPONTANEOUS);
+        sSubjectMap.put("TB01A", KNOWN_ALARM);
+        sSubjectMap.put("TB01B", KNOWN_ALARM);
+        sSubjectMap.put("TB01C", KNOWN_ALARM);
+        sSubjectMap.put("TB02A", UNKNOWN_ALARM);
+        sSubjectMap.put("TB02B", UNKNOWN_ALARM);
+        sSubjectMap.put("TB02C", UNKNOWN_ALARM);
+        sSubjectMap.put("TB03A", SPONTANEOUS);
+        sSubjectMap.put("TB03B", SPONTANEOUS);
+        sSubjectMap.put("TB03C", SPONTANEOUS);
     }
 
     public static Condition getConditionForSubject(String subjectId) {

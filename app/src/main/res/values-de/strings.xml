@@ -17,7 +17,14 @@
     <string name="menu_scan">Scan</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_share">Logs teilen …</string>
-    <string name="message_subject_id">Bitte geben Sie den Code ein, den Sie in der Online-Umfrage generiert haben.</string>
+    <string name="message_subject_id_short">Bitte geben Sie den Code ein, den Sie in der Online-Umfrage generiert haben.</string>
+    <string name="message_subject_id">Bitte geben Sie den Code ein, den Sie in der Online-Umfrage generiert haben.\n
+        Hinweis:\n
+        1. Stelle: Erster Buchstabe des Vornamens\n
+        2. Stelle: Erster Buchstebe des Vornamens der Mutter\n
+        3. und 4. Stelle: Tag des Geburtstags (01 - 31)\n
+        5. Stelle: Letzter Buchstabe des Nachnamens
+    </string>
     <string name="never">nie</string>
     <string name="everyday">täglich</string>
     <string name="weekends">Wochenende</string>
@@ -78,4 +85,6 @@
     <string name="title_activity_scan">Barcode einscannen</string>
 
     <string name="app_active">CAR Watch Service ist aktiv.</string>
+    <string name="title_invalid_id">Ungültiger Probanden-Code</string>
+    <string name="message_invalid_id">Ungültiger Probanden-Code! Bitte versuchen Sie es erneut.</string>
 </resources>

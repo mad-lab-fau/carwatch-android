@@ -6,13 +6,13 @@
         android:title="@string/user_credentials">
 
         <EditTextPreference
-            android:defaultValue="1234AB56"
             android:key="subject_id"
-            android:summary="@string/message_subject_id"
+            android:defaultValue="AB12C"
+            android:summary="@string/message_subject_id_short"
+            android:dialogMessage="@string/message_subject_id"
             android:title="@string/title_subject_id" />
 
     </PreferenceCategory>
-
 
     <!--
     <PreferenceCategory

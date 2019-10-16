@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -37,6 +38,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
 import de.fau.cs.mad.carwatch.userpresent.BootService;
 import de.fau.cs.mad.carwatch.util.Utils;
 
@@ -178,22 +180,40 @@ public class MainActivity extends AppCompatActivity {
         final EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
         editText.setText(sharedPreferences.getString(Constants.PREF_SUBJECT_ID, ""));
 
-        dialogBuilder
-                .setCancelable(false)
-                .setTitle(getString(R.string.title_subject_id))
-                .setMessage(getString(R.string.message_subject_id))
-                .setView(dialogView)
-                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
-                    String subjectId = editText.getText().toString();
+        AlertDialog warningDialog =
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setTitle(getString(R.string.title_invalid_id))
+                        .setMessage(getString(R.string.message_invalid_id))
+                        .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        })
+                        .create();
 
-                    sharedPreferences.edit()
-                            .putBoolean(Constants.PREF_FIRST_RUN, false)
-                            .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                            .putInt(Constants.PREF_DAY_COUNTER, 0)
-                            .apply();
-                });
+        AlertDialog subjectIdDialog =
+                dialogBuilder
+                        .setCancelable(false)
+                        .setTitle(getString(R.string.title_subject_id))
+                        .setMessage(getString(R.string.message_subject_id))
+                        .setView(dialogView)
+                        .setPositiveButton(R.string.ok, null)
+                        .create();
 
-        dialogBuilder.show();
+        subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String subjectId = editText.getText().toString();
+
+            if (SubjectIdCheck.isValidSubjectId(subjectId)) {
+                sharedPreferences.edit()
+                        .putBoolean(Constants.PREF_FIRST_RUN, false)
+                        .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                        .putInt(Constants.PREF_DAY_COUNTER, 0)
+                        .apply();
+                dialog.dismiss();
+            } else {
+                warningDialog.show();
+            }
+        }));
+
+        subjectIdDialog.show();
     }
 
     private void createFileShareDialog(File zipFile) {
