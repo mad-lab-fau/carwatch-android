@@ -149,7 +149,7 @@ public class AlarmRepository {
         }
     }
 
-    private static class GetByIdAsyncTask extends android.os.AsyncTask<Integer, Void, Alarm> {
+    private static class GetByIdAsyncTask extends AsyncTask<Integer, Void, Alarm> {
 
         private AlarmDao alarmModel;
 

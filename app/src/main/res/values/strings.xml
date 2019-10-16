@@ -89,6 +89,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
+    <string name="app_active">CAR Watch Service is active.</string>
 
     <string-array name="days_of_week">
         <item>Monday</item>

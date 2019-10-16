@@ -19,6 +19,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.ShowAlarmActivity;
+import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 import static android.os.Build.VERSION;
 import static android.os.Build.VERSION_CODES;
@@ -26,7 +27,7 @@ import static android.os.Build.VERSION_CODES;
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
-    private final String CHANNEL_ID = "AlarmReceiverChannel";
+    private final String CHANNEL_ID = TAG + "Channel";
 
     @SuppressLint("WrongConstant")
     @Override
@@ -39,6 +40,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
                 notificationManager.createNotificationChannel(channel);
             }
+        }
+
+        // stop user present service if running
+        if (UserPresentService.serviceRunning) {
+            UserPresentService.stopService(context);
         }
 
         boolean isHidden = false;
