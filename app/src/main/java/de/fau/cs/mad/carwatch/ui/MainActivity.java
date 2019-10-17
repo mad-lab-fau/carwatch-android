@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // show only when night mode was disabled (otherwise it will throw an exception because the activity behind the dialog is recreated to apply the new theme)
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO && sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
+        if ((AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO || AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) && sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
             // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }

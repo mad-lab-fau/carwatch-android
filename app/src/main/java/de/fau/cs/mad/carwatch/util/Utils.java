@@ -65,9 +65,12 @@ public class Utils {
     public static boolean allPermissionsGranted(Context context) {
         for (String permission : getRequiredPermissions(context)) {
             if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                if (permission.equals(Manifest.permission.USE_FULL_SCREEN_INTENT)) {
-                    continue;
+                switch (permission) {
+                    case Manifest.permission.USE_FULL_SCREEN_INTENT:
+                    case Manifest.permission.FOREGROUND_SERVICE:
+                        continue;
                 }
+                Log.e(TAG, permission);
                 return false;
             }
         }
