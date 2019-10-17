@@ -14,6 +14,8 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -106,6 +108,15 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                     if (UserPresentService.serviceRunning) {
                         UserPresentService.stopService(getContext());
+                    }
+
+                    // disable night mode
+                    if (getActivity() != null) {
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                        sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false).apply();
+                        AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
+                        delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                        delegate.applyDayNight();
                     }
 
                     TimerHandler.scheduleSalivaTimer(getContext(), Constants.EXTRA_ALARM_ID_SPONTANEOUS, Constants.EXTRA_SALIVA_ID_DEFAULT);

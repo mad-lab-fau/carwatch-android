@@ -13,6 +13,7 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -66,9 +67,18 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
+        // show only when night mode was disabled (otherwise it will throw an exception because the activity behind the dialog is recreated to apply the new theme)
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO && sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
+
+        // disable night mode per default
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        AppCompatDelegate delegate = getDelegate();
+        AppCompatDelegate.setDefaultNightMode(sharedPreferences.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        delegate.applyDayNight();
 
         coordinatorLayout = findViewById(R.id.coordinator);
 

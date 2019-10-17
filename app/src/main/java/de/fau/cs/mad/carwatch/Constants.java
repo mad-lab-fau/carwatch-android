@@ -19,7 +19,7 @@ public final class Constants {
     public static final DateTime[] MORNING_TIMES = {new LocalTime(5, 0).toDateTimeToday(), new LocalTime(12, 0).toDateTimeToday()};
     public static final DateTime[] EVENING_TIMES = {new LocalTime(20, 0).toDateTimeToday(), new LocalTime(5, 0).toDateTimeToday().plusDays(1)};
 
-    public static final int[] BARCODE_RANGE = {65833253, 65833255};
+    public static final int[] BARCODE_RANGE = {6583320, 6583330};
 
     public static final String SHARE_EMAIL_ADDRESS = "CAR_Studie2019@gmx.de";
 
@@ -43,6 +43,7 @@ public final class Constants {
     public static final String PREF_MORNING_ONGOING = "morning_ongoing"; // int (alarmId)
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
+    public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean
 
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;

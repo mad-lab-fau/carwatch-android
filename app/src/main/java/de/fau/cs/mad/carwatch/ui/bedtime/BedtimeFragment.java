@@ -14,6 +14,8 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -70,6 +72,8 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+
         switch (v.getId()) {
             case R.id.button_no:
                 if (getActivity() != null) {
@@ -87,7 +91,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
 
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+
                 DateTime date = new DateTime(sp.getLong(Constants.PREF_EVENING_TAKEN, 0));
                 if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
                     showBedtimeWarningDialog();
@@ -97,12 +101,22 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.button_lights_out_outline:
-                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night_saliva), Snackbar.LENGTH_SHORT).show();
+                if (getActivity() != null) {
+                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night_saliva), Snackbar.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.button_lights_out:
-                JSONObject json = new JSONObject();
-                LoggerUtil.log(Constants.LOGGER_ACTION_LIGHTS_OUT, json);
-                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night), Snackbar.LENGTH_SHORT).show();
+                if (getActivity() != null) {
+                    JSONObject json = new JSONObject();
+                    LoggerUtil.log(Constants.LOGGER_ACTION_LIGHTS_OUT, json);
+                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night), Snackbar.LENGTH_SHORT).show();
+
+                    // enable night mode
+                    sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, true).apply();
+                    AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
+                    delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    delegate.applyDayNight();
+                }
                 break;
         }
     }
