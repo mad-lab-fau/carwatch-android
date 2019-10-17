@@ -25,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -228,12 +227,11 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     @Override
     public void onChanged(FirebaseVisionBarcode barcode) {
         if (barcode != null) {
-            ArrayList<BarcodeField> barcodeFieldList = new ArrayList<>();
-            barcodeFieldList.add(new BarcodeField("Raw Value", barcode.getRawValue()));
-            Log.d(TAG, "Detected Barcodes: " + barcodeFieldList);
+            BarcodeField barcodeField = new BarcodeField("Raw Value", barcode.getRawValue());
+            Log.d(TAG, "Detected Barcode: " + barcode.getRawValue());
 
             if (barcode.getRawValue() != null && BarcodeIdCheck.isValidBarcode(Integer.parseInt(barcode.getRawValue()))) {
-                BarcodeResultFragment.show(getChildFragmentManager(), barcodeFieldList, this);
+                BarcodeResultFragment.show(getChildFragmentManager(), barcodeField, this);
                 cancelTimer(alarmId, salivaId, barcode.getRawValue());
             } else {
                 showInvalidBarcodeDialog();

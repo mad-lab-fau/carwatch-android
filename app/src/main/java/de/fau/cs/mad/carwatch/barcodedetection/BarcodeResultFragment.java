@@ -32,8 +32,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.util.ArrayList;
-
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel;
 
@@ -45,7 +43,7 @@ import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.Workf
 public class BarcodeResultFragment extends BottomSheetDialogFragment {
 
     private static final String TAG = "BarcodeResultFragment";
-    private static final String ARG_BARCODE_FIELD_LIST = "arg_barcode_field_list";
+    private static final String ARG_BARCODE_FIELD = "arg_barcode_field";
 
     private DialogInterface.OnDismissListener dismissListener;
 
@@ -53,10 +51,10 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
         this.dismissListener = dismissListener;
     }
 
-    public static void show(FragmentManager fragmentManager, ArrayList<BarcodeField> barcodeFieldArrayList, DialogInterface.OnDismissListener dismissListener) {
+    public static void show(FragmentManager fragmentManager, BarcodeField barcodeField, DialogInterface.OnDismissListener dismissListener) {
         BarcodeResultFragment barcodeResultFragment = new BarcodeResultFragment(dismissListener);
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(ARG_BARCODE_FIELD_LIST, barcodeFieldArrayList);
+        bundle.putParcelable(ARG_BARCODE_FIELD, barcodeField);
         barcodeResultFragment.setArguments(bundle);
         barcodeResultFragment.show(fragmentManager, TAG);
     }
@@ -76,19 +74,19 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
             @Nullable ViewGroup viewGroup,
             @Nullable Bundle bundle) {
         View view = layoutInflater.inflate(R.layout.barcode_bottom_sheet, viewGroup);
-        ArrayList<BarcodeField> barcodeFieldList;
+        BarcodeField barcodeField;
         Bundle arguments = getArguments();
-        if (arguments != null && arguments.containsKey(ARG_BARCODE_FIELD_LIST)) {
-            barcodeFieldList = arguments.getParcelableArrayList(ARG_BARCODE_FIELD_LIST);
+        if (arguments != null && arguments.containsKey(ARG_BARCODE_FIELD)) {
+            barcodeField = arguments.getParcelable(ARG_BARCODE_FIELD);
         } else {
             Log.e(TAG, "No barcode field list passed in!");
-            barcodeFieldList = new ArrayList<>();
+            barcodeField = new BarcodeField("", "");
         }
 
         RecyclerView fieldRecyclerView = view.findViewById(R.id.barcode_field_recycler_view);
         fieldRecyclerView.setHasFixedSize(true);
         fieldRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        fieldRecyclerView.setAdapter(new BarcodeFieldAdapter(barcodeFieldList));
+        fieldRecyclerView.setAdapter(new BarcodeFieldAdapter(barcodeField));
 
         return view;
     }

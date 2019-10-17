@@ -24,11 +24,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
 import de.fau.cs.mad.carwatch.R;
 
-import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeFieldAdapter.*;
+import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeFieldAdapter.BarcodeFieldViewHolder;
 
 /**
  * Presents a list of field info in the detected barcode.
@@ -58,10 +56,10 @@ class BarcodeFieldAdapter extends RecyclerView.Adapter<BarcodeFieldViewHolder> {
         }
     }
 
-    private final List<BarcodeField> barcodeFieldList;
+    private final BarcodeField barcodeField;
 
-    BarcodeFieldAdapter(List<BarcodeField> barcodeFieldList) {
-        this.barcodeFieldList = barcodeFieldList;
+    BarcodeFieldAdapter(BarcodeField barcodeField) {
+        this.barcodeField = barcodeField;
     }
 
     @Override
@@ -72,11 +70,11 @@ class BarcodeFieldAdapter extends RecyclerView.Adapter<BarcodeFieldViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull BarcodeFieldViewHolder holder, int position) {
-        holder.bindBarcodeField(barcodeFieldList.get(position));
+        holder.bindBarcodeField(barcodeField);
     }
 
     @Override
     public int getItemCount() {
-        return barcodeFieldList.size();
+        return 1;
     }
 }
