@@ -264,9 +264,8 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
                     workflowModel.workflowState.setValue(WorkflowState.DETECTING);
                 }).show();
     }
-
-
-    public void showBarcodeAlreadyScannedDialog() {
+    
+    private void showBarcodeAlreadyScannedDialog() {
         if (getContext() == null) {
             return;
         }
