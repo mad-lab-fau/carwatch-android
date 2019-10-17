@@ -70,7 +70,6 @@ public class Utils {
                     case Manifest.permission.FOREGROUND_SERVICE:
                         continue;
                 }
-                Log.e(TAG, permission);
                 return false;
             }
         }

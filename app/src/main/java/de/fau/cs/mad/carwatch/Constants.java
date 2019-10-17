@@ -19,7 +19,7 @@ public final class Constants {
     public static final DateTime[] MORNING_TIMES = {new LocalTime(5, 0).toDateTimeToday(), new LocalTime(12, 0).toDateTimeToday()};
     public static final DateTime[] EVENING_TIMES = {new LocalTime(20, 0).toDateTimeToday(), new LocalTime(5, 0).toDateTimeToday().plusDays(1)};
 
-    public static final int[] BARCODE_RANGE = {6583320, 6583330};
+    public static final int[] BARCODE_RANGE = {0, 30104};
 
     public static final String SHARE_EMAIL_ADDRESS = "CAR_Studie2019@gmx.de";
 
@@ -31,7 +31,7 @@ public final class Constants {
      * Time to the next saliva sample in minutes
      */
     // TODO change times
-    public static final int[] SALIVA_TIMES = {0, 1, 1, 1};
+    public static final int[] SALIVA_TIMES = {0, 15, 15, 15};
 
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
