@@ -5,7 +5,9 @@ import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.collection.ArraySet;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -25,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Set;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -227,10 +231,19 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     @Override
     public void onChanged(FirebaseVisionBarcode barcode) {
         if (barcode != null) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
             BarcodeField barcodeField = new BarcodeField("Raw Value", barcode.getRawValue());
             Log.d(TAG, "Detected Barcode: " + barcode.getRawValue());
 
-            if (barcode.getRawValue() != null && BarcodeIdCheck.isValidBarcode(Integer.parseInt(barcode.getRawValue()))) {
+            Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
+            Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
+
+            if (scannedBarcodes.contains(barcode.getRawValue())) {
+                showBarcodeAlreadyScannedDialog();
+            } else if (barcode.getRawValue() != null && BarcodeIdCheck.isValidBarcode(Integer.parseInt(barcode.getRawValue()))) {
+                scannedBarcodes.add(barcode.getRawValue());
+                sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
+
                 BarcodeResultFragment.show(getChildFragmentManager(), barcodeField, this);
                 cancelTimer(alarmId, salivaId, barcode.getRawValue());
             } else {
@@ -244,8 +257,22 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
             return;
         }
         new AlertDialog.Builder(getContext())
-                .setTitle(R.string.title_invalid_barcode)
-                .setMessage(R.string.message_invalid_barcode)
+                .setTitle(R.string.title_barcode_invalid)
+                .setMessage(R.string.message_barcode_invalid)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    workflowModel.workflowState.setValue(WorkflowState.DETECTING);
+                }).show();
+    }
+
+
+    public void showBarcodeAlreadyScannedDialog() {
+        if (getContext() == null) {
+            return;
+        }
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_barcode_already_scanned)
+                .setMessage(R.string.message_barcode_already_scanned)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
                     workflowModel.workflowState.setValue(WorkflowState.DETECTING);

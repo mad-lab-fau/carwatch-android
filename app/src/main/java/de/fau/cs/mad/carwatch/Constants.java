@@ -42,6 +42,7 @@ public final class Constants {
     public static final String PREF_MORNING_TAKEN = "morning_taken"; // long (day)
     public static final String PREF_MORNING_ONGOING = "morning_ongoing"; // int (alarmId)
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
+    public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
 
     public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
