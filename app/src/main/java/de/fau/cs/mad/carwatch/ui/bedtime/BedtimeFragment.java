@@ -122,7 +122,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .setIcon(icon)
                 .setMessage(getString(R.string.bedtime_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                    TimerHandler.scheduleSalivaTimer(getContext(), Constants.EXTRA_ALARM_ID_EVENING, Constants.EXTRA_SALIVA_ID_EVENING);
+                    TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, Constants.EXTRA_SALIVA_ID_EVENING);
 
                     Intent intent = new Intent(getContext(), ScannerActivity.class);
                     intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);

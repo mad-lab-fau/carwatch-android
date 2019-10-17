@@ -358,16 +358,14 @@ public class AlarmHandler {
     public static void killAll(Application application) {
         AlarmRepository repo = AlarmRepository.getInstance(application);
 
-        if (repo.getAllAlarms() == null || repo.getAllAlarms().getValue() == null) {
-            return;
-        }
+        if (repo.getAllAlarms() != null && repo.getAllAlarms().getValue() != null) {
+            // cancel everything that's there: all alarms, all hidden alarms, all timer alarms...
+            for (Alarm alarm : repo.getAllAlarms().getValue()) {
+                alarm.setActive(false);
 
-        // cancel everything that's there: all alarms, all hidden alarms, all timer alarms...
-        for (Alarm alarm : repo.getAllAlarms().getValue()) {
-            alarm.setActive(false);
-
-            killAllOngoingAlarms(application, alarm.getId());
-            repo.update(alarm);
+                killAllOngoingAlarms(application, alarm.getId());
+                repo.update(alarm);
+            }
         }
 
         // cancel a potential alarm session from spontaneous awakening (has a special id)
