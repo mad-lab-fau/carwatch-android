@@ -232,20 +232,27 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     public void onChanged(FirebaseVisionBarcode barcode) {
         if (barcode != null) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-            BarcodeField barcodeField = new BarcodeField("Raw Value", barcode.getRawValue());
-            Log.d(TAG, "Detected Barcode: " + barcode.getRawValue());
+
+            String barcodeVal = barcode.getRawValue();
+            if (barcodeVal != null && barcodeVal.length() > 1) {
+                // remove last digits since it's a check number
+                barcodeVal = barcodeVal.substring(0, barcodeVal.length() - 1);
+            }
+
+            Log.d(TAG, "Detected Barcode: " + barcodeVal);
+            BarcodeField barcodeField = new BarcodeField("Raw Value", barcodeVal);
 
             Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
 
-            if (scannedBarcodes.contains(barcode.getRawValue())) {
+            if (scannedBarcodes.contains(barcodeVal)) {
                 showBarcodeAlreadyScannedDialog();
-            } else if (barcode.getRawValue() != null && BarcodeIdCheck.isValidBarcode(Integer.parseInt(barcode.getRawValue()))) {
-                scannedBarcodes.add(barcode.getRawValue());
+            } else if (barcodeVal != null && BarcodeIdCheck.isValidBarcode(Integer.parseInt(barcodeVal))) {
+                scannedBarcodes.add(barcodeVal);
                 sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
 
                 BarcodeResultFragment.show(getChildFragmentManager(), barcodeField, this);
-                cancelTimer(alarmId, salivaId, barcode.getRawValue());
+                cancelTimer(alarmId, salivaId, barcodeVal);
             } else {
                 showInvalidBarcodeDialog();
             }
@@ -264,7 +271,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
                     workflowModel.workflowState.setValue(WorkflowState.DETECTING);
                 }).show();
     }
-    
+
     private void showBarcodeAlreadyScannedDialog() {
         if (getContext() == null) {
             return;
