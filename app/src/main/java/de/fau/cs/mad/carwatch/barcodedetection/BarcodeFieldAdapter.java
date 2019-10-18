@@ -51,8 +51,8 @@ class BarcodeFieldAdapter extends RecyclerView.Adapter<BarcodeFieldViewHolder> {
         }
 
         void bindBarcodeField(BarcodeField barcodeField) {
-            labelView.setText(barcodeField.label);
-            valueView.setText(barcodeField.value);
+            labelView.setText(barcodeField.getLabel());
+            valueView.setText(barcodeField.getValue());
         }
     }
 
