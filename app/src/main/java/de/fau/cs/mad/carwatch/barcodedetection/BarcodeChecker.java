@@ -11,12 +11,12 @@ public class BarcodeChecker {
     public enum BarcodeCheck {
         VALID,
         INVALID,
-        ALREADY_SCANNED
+        DUPLICATE_BARCODE
     }
 
     public static BarcodeCheck isValidBarcode(String barcode, Set<String> scannedBarcodes) {
         if (scannedBarcodes.contains(barcode)) {
-            return ALREADY_SCANNED;
+            return DUPLICATE_BARCODE;
         }
 
         int barcodeVal = Integer.parseInt(barcode);

@@ -251,9 +251,23 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                     cancelTimer(alarmId, salivaId, barcode.getValue());
                     break;
                 case INVALID:
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_SALIVA_ID, barcode.getValue());
+                        LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     showInvalidBarcodeDialog();
                     break;
-                case ALREADY_SCANNED:
+                case DUPLICATE_BARCODE:
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_SALIVA_ID, barcode.getValue());
+                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     showBarcodeAlreadyScannedDialog();
                     break;
             }
