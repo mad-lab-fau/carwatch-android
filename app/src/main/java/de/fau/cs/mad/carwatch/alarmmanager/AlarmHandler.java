@@ -356,6 +356,8 @@ public class AlarmHandler {
     }
 
     public static void killAll(Application application) {
+        LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_KILLALL, new JSONObject());
+
         AlarmRepository repo = AlarmRepository.getInstance(application);
 
         if (repo.getAllAlarms() != null && repo.getAllAlarms().getValue() != null) {
