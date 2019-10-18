@@ -93,4 +93,6 @@
     <string name="title_barcode_already_scanned">Barcode bereits gescannt</string>
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits gescannt. Bitte scannen Sie den Barcode auf der korrekten Salivette.</string>
     <string name="hint_clicks_kill_alarms">Noch %1$d Klicks, um alle Alarme zu beenden.</string>
+    <string name="title_kill_alarms">Achtung</string>
+    <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
 </resources>

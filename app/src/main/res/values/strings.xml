@@ -69,6 +69,8 @@
         \n5th Digit: Last letter of last name</string>
     <string name="title_invalid_subject_id">Invalid Subject ID</string>
     <string name="message_invalid_subject_id">Invalid Subject ID! Please try again.</string>
+    <string name="title_kill_alarms">Warning</string>
+    <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Point your camera at a barcode</string>
@@ -98,7 +100,7 @@
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
 
-    <string name="hint_clicks_kill_alarms">%1$d clicks to kill all alarms.</string>
+    <string name="hint_clicks_kill_alarms">%1$d more clicks to kill all alarms.</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

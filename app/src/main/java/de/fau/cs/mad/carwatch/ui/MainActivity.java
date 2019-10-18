@@ -170,7 +170,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_kill:
                 clickCounter++;
                 if (clickCounter >= CLICK_THRESHOLD_KILL) {
-                    AlarmHandler.killAll(getApplication());
+                    showKillWarningDialog();
+                    clickCounter = 0;
                 } else if (clickCounter >= CLICK_THRESHOLD_TOAST) {
                     Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
                 }
@@ -236,6 +237,17 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         subjectIdDialog.show();
+    }
+
+    public void showKillWarningDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(getString(R.string.title_kill_alarms))
+                .setMessage(getString(R.string.message_kill_alarms))
+                .setPositiveButton(R.string.yes, (dialog, which) -> AlarmHandler.killAll(getApplication()))
+                .setNegativeButton(R.string.cancel, ((dialog, which) -> {
+                }))
+                .show();
     }
 
     private void createFileShareDialog(File zipFile) {
