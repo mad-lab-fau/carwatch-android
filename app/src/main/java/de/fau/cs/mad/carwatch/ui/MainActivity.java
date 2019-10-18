@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 AlarmHandler.killAll(getApplication());
                 break;
             case R.id.menu_scan:
-                startActivity(new Intent(this, ScannerActivity.class));
+                startActivity(new Intent(this, BarcodeActivity.class));
                 break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));

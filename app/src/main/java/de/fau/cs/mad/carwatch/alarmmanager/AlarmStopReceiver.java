@@ -21,7 +21,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.AlertActivity;
-import de.fau.cs.mad.carwatch.ui.ScannerActivity;
+import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 /**
@@ -70,9 +70,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             e.printStackTrace();
         }
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        DateTime time = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
-
         Log.d(TAG, "Stopping Alarm: " + alarmId);
 
         // Dismiss notification
@@ -81,6 +78,9 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
+
         int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
         if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
             // There's already a saliva procedure running at the moment
@@ -88,14 +88,14 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (time.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
+        if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
             Intent i = new Intent(context, AlertActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
             return;
         }
 
-        Intent scannerIntent = new Intent(context, ScannerActivity.class);
+        Intent scannerIntent = new Intent(context, BarcodeActivity.class);
         scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

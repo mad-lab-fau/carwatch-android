@@ -37,17 +37,30 @@ public class BarcodeField implements Parcelable {
                 }
             };
 
-    final String label;
-    final String value;
+    private final String label;
+    private final String value;
 
     public BarcodeField(String label, String value) {
         this.label = label;
+
+        if (value != null && value.length() > 1) {
+            // remove last digits since it's a check number
+            value = value.substring(0, value.length() - 1);
+        }
         this.value = value;
     }
 
     private BarcodeField(Parcel in) {
         label = in.readString();
         value = in.readString();
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

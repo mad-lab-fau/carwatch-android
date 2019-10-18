@@ -31,7 +31,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
-import de.fau.cs.mad.carwatch.ui.ScannerActivity;
+import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class WakeupFragment extends Fragment implements View.OnClickListener {
@@ -121,7 +121,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
 
                     TimerHandler.scheduleSalivaTimer(getContext(), Constants.EXTRA_ALARM_ID_SPONTANEOUS, Constants.EXTRA_SALIVA_ID_DEFAULT);
 
-                    Intent intent = new Intent(getContext(), ScannerActivity.class);
+                    Intent intent = new Intent(getContext(), BarcodeActivity.class);
                     intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
                     intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
                     startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);

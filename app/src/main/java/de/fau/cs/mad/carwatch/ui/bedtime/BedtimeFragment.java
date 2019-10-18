@@ -31,7 +31,7 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
-import de.fau.cs.mad.carwatch.ui.ScannerActivity;
+import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
@@ -138,7 +138,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                     TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, Constants.EXTRA_SALIVA_ID_EVENING);
 
-                    Intent intent = new Intent(getContext(), ScannerActivity.class);
+                    Intent intent = new Intent(getContext(), BarcodeActivity.class);
                     intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
                     intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_EVENING);
                     startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);

@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.ui.ScannerActivity;
+import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 
 public class TimerHandler {
 
@@ -138,7 +138,7 @@ public class TimerHandler {
 
 
     public static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
-        Intent contentIntent = new Intent(context, ScannerActivity.class);
+        Intent contentIntent = new Intent(context, BarcodeActivity.class);
         contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
@@ -167,7 +167,7 @@ public class TimerHandler {
     public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         // Full screen Intent
-        Intent fullScreenIntent = new Intent(context, ScannerActivity.class);
+        Intent fullScreenIntent = new Intent(context, BarcodeActivity.class);
         fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,

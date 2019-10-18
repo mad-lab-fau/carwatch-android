@@ -61,7 +61,7 @@
             android:theme="@style/AppTheme.Translucent" />
 
         <activity
-            android:name=".ui.ScannerActivity"
+            android:name=".ui.BarcodeActivity"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_scan"
             android:launchMode="singleTask"

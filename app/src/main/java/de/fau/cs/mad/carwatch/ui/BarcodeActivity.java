@@ -11,11 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
-import de.fau.cs.mad.carwatch.ui.scanner.ScannerFragment;
+import de.fau.cs.mad.carwatch.ui.barcode.BarcodeFragment;
 
-public class ScannerActivity extends AppCompatActivity {
+public class BarcodeActivity extends AppCompatActivity {
 
-    private static final String TAG = ScannerActivity.class.getSimpleName();
+    private static final String TAG = BarcodeActivity.class.getSimpleName();
 
     private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
     private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
@@ -23,7 +23,7 @@ public class ScannerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scanner);
+        setContentView(R.layout.activity_barcode);
 
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
@@ -36,7 +36,7 @@ public class ScannerActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        ScannerFragment fragment = new ScannerFragment();
+        BarcodeFragment fragment = new BarcodeFragment();
         fragment.setAlarmId(alarmId);
         fragment.setSalivaId(salivaId);
 

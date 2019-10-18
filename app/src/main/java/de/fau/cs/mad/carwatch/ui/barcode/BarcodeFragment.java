@@ -1,4 +1,4 @@
-package de.fau.cs.mad.carwatch.ui.scanner;
+package de.fau.cs.mad.carwatch.ui.barcode;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
@@ -33,8 +33,8 @@ import java.util.Set;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
+import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
-import de.fau.cs.mad.carwatch.barcodedetection.BarcodeIdCheck;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSource;
@@ -43,11 +43,12 @@ import de.fau.cs.mad.carwatch.barcodedetection.camera.GraphicOverlay;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
+import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheck;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
-public class ScannerFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener, Observer<FirebaseVisionBarcode> {
+public class BarcodeFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener, Observer<FirebaseVisionBarcode> {
 
-    private static final String TAG = ScannerFragment.class.getSimpleName();
+    private static final String TAG = BarcodeFragment.class.getSimpleName();
 
     private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
     private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
@@ -66,7 +67,7 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_scanner, container, false);
+        View root = inflater.inflate(R.layout.fragment_barcode, container, false);
 
         preview = root.findViewById(R.id.camera_preview);
         graphicOverlay = root.findViewById(R.id.camera_preview_graphic_overlay);
@@ -229,32 +230,32 @@ public class ScannerFragment extends Fragment implements View.OnClickListener, D
     }
 
     @Override
-    public void onChanged(FirebaseVisionBarcode barcode) {
-        if (barcode != null) {
+    public void onChanged(FirebaseVisionBarcode firebaseVisionBarcode) {
+        if (firebaseVisionBarcode != null) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-            String barcodeVal = barcode.getRawValue();
-            if (barcodeVal != null && barcodeVal.length() > 1) {
-                // remove last digits since it's a check number
-                barcodeVal = barcodeVal.substring(0, barcodeVal.length() - 1);
-            }
-
-            Log.d(TAG, "Detected Barcode: " + barcodeVal);
-            BarcodeField barcodeField = new BarcodeField("Raw Value", barcodeVal);
-
+            BarcodeField barcode = new BarcodeField("Barcode", firebaseVisionBarcode.getRawValue());
             Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
+
+            Log.d(TAG, "Detected Barcode: " + barcode.getValue());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
 
-            if (scannedBarcodes.contains(barcodeVal)) {
-                showBarcodeAlreadyScannedDialog();
-            } else if (barcodeVal != null && BarcodeIdCheck.isValidBarcode(Integer.parseInt(barcodeVal))) {
-                scannedBarcodes.add(barcodeVal);
-                sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
+            BarcodeCheck check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
 
-                BarcodeResultFragment.show(getChildFragmentManager(), barcodeField, this);
-                cancelTimer(alarmId, salivaId, barcodeVal);
-            } else {
-                showInvalidBarcodeDialog();
+            switch (check) {
+                case VALID:
+                    scannedBarcodes.add(barcode.getValue());
+                    sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
+
+                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
+                    cancelTimer(alarmId, salivaId, barcode.getValue());
+                    break;
+                case INVALID:
+                    showInvalidBarcodeDialog();
+                    break;
+                case ALREADY_SCANNED:
+                    showBarcodeAlreadyScannedDialog();
+                    break;
             }
         }
     }
