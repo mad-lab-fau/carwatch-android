@@ -17,7 +17,7 @@
     <!-- Menu -->
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share Logs …</string>
-    <string name="menu_kill">Kill</string>
+    <string name="menu_kill">Kill Alarms</string>
     <string name="menu_scan">Scan</string>
 
     <!-- Notification -->
@@ -97,6 +97,8 @@
     <string name="good_night">Thank you and good night!</string>
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
+
+    <string name="hint_clicks_kill_alarms">%1$d clicks to kill all alarms.</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

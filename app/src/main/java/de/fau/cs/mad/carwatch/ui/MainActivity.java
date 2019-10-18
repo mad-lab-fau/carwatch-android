@@ -42,7 +42,6 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
-import de.fau.cs.mad.carwatch.userpresent.BootService;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
 
+    private int clickCounter = 0;
+    private static final int CLICK_THRESHOLD_TOAST = 5;
+    private static final int CLICK_THRESHOLD_KILL = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
             // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
+
+        clickCounter = 0;
 
         // disable night mode per default
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -162,24 +167,21 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
-            // TODO REMOVE (OR HIDE BETTER)
             case R.id.menu_kill:
-                AlarmHandler.killAll(getApplication());
+                clickCounter++;
+                if (clickCounter >= CLICK_THRESHOLD_KILL) {
+                    AlarmHandler.killAll(getApplication());
+                } else if (clickCounter >= CLICK_THRESHOLD_TOAST) {
+                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
+                }
                 break;
-            case R.id.menu_scan:
+            /*case R.id.menu_scan:
                 startActivity(new Intent(this, BarcodeActivity.class));
                 break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.menu_service:
-                /*if (UserPresentService.serviceRunning) {
-                    UserPresentService.stopService(this);
-                } else {
-                    UserPresentService.startService(this);
-                }*/
-                BootService.enqueueWork(this);
-                break;
+                */
         }
         return super.onOptionsItemSelected(item);
     }
