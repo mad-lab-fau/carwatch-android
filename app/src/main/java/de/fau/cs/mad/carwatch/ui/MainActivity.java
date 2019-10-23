@@ -42,6 +42,7 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
+import de.fau.cs.mad.carwatch.subject.SubjectMap;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -225,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject json = new JSONObject();
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                    json.put(Constants.LOGGER_EXTRA_SUBJECT_CONDITION, SubjectMap.getConditionForSubject(subjectId));
                     LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
                 } catch (JSONException e) {
                     e.printStackTrace();

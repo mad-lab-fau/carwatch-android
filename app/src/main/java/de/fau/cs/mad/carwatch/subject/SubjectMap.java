@@ -23,6 +23,6 @@ public class SubjectMap {
     }
 
     public static Condition getConditionForSubject(String subjectId) {
-        return sSubjectMap.get(subjectId);
+        return sSubjectMap.get(subjectId.toUpperCase());
     }
 }

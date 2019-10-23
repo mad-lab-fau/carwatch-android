@@ -115,6 +115,7 @@ public final class Constants {
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
     public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
+    public static final String LOGGER_EXTRA_SUBJECT_CONDITION = "subject_condition"; // String
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
