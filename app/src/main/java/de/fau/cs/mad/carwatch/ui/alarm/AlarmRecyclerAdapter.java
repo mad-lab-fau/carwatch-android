@@ -109,6 +109,8 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
             viewHolder.timeTextView.setTextColor(resources.getColor(R.color.colorAccent));
             viewHolder.repetitionTextView.setTextColor(resources.getColor(R.color.colorDarkText));
             if (!firstInit) {
+                // only if this is not the first time the alarm is called (when launching the fragment)
+                // => otherwise, the Snackbar message would always be shown when the user switches to this fragment...
                 updateAlarm(alarm);
             }
         } else {
