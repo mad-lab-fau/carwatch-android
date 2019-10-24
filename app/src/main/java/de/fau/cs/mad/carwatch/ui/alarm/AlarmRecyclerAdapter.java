@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Collections;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -37,6 +36,8 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
     private final String TAG = AlarmRecyclerAdapter.class.getSimpleName();
 
     private Fragment fragment;
+
+    private boolean firstInit = false;
 
     /**
      * View for each alarm
@@ -58,7 +59,7 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
     private Context context;
 
     // Data list (cached copy of alarms)
-    private List<Alarm> alarms = Collections.emptyList();
+    private List<Alarm> alarms = null;
     // To handle interactions with database
     private AlarmViewModel alarmViewModel;
     // View to display Snackbar messages
@@ -66,6 +67,7 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     public AlarmRecyclerAdapter(Fragment fragment, View snackBarAnchor) {
         this.fragment = fragment;
+        this.context = fragment.getContext();
         this.snackBarAnchor = snackBarAnchor;
         alarmViewModel = ViewModelProviders.of(fragment).get(AlarmViewModel.class);
 
@@ -81,8 +83,6 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     @Override
     public void onBindViewHolder(final @NonNull AlarmViewHolder viewHolder, int position) {
-        context = viewHolder.itemView.getContext();
-
         final Resources resources = context.getResources();
         final Alarm alarm = alarms.get(position);
 
@@ -108,6 +108,9 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
             viewHolder.activeSwitch.setChecked(true);
             viewHolder.timeTextView.setTextColor(resources.getColor(R.color.colorAccent));
             viewHolder.repetitionTextView.setTextColor(resources.getColor(R.color.colorDarkText));
+            if (!firstInit) {
+                updateAlarm(alarm);
+            }
         } else {
             viewHolder.activeSwitch.setChecked(false);
             viewHolder.timeTextView.setTextColor(resources.getColor(R.color.colorGrey500));
@@ -153,11 +156,19 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
      */
     public void setAlarms(List<Alarm> alarms) {
         Log.d(TAG, "updating alarms data-set");
+
+        // first time setting the alarms
+        firstInit = this.alarms == null;
+
         this.alarms = alarms;
         notifyDataSetChanged();
     }
 
     public void updateAlarm(Alarm alarm) {
+        if (alarms == null) {
+            return;
+        }
+
         for (int i = 0; i < alarms.size(); i++) {
             if (alarm.getId() == alarms.get(i).getId()) {
                 alarms.set(i, alarm);
@@ -172,11 +183,14 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     @Override
     public int getItemCount() {
-        return alarms.size();
+        return alarms == null ? 0 : alarms.size();
     }
 
     @Override
     public long getItemId(int position) {
+        if (alarms == null) {
+            return 0;
+        }
         return alarms.get(position).getId();
     }
 

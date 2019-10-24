@@ -203,6 +203,9 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_alarm_save) {
             Intent replyIntent = new Intent();
+
+            alarm.setActive(true);
+
             if (currRequestCode == Constants.REQUEST_CODE_EDIT_ALARM) {
                 alarmViewModel.update(alarm);
             } else {
