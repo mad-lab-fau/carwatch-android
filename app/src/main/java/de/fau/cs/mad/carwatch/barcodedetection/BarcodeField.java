@@ -38,20 +38,24 @@ public class BarcodeField implements Parcelable {
             };
 
     private final String label;
+    private final String rawValue;
     private final String value;
 
-    public BarcodeField(String label, String value) {
+    public BarcodeField(String label, String rawValue) {
         this.label = label;
+        this.rawValue = rawValue;
 
-        if (value != null && value.length() > 1) {
+        if (rawValue != null && rawValue.length() > 1) {
             // remove last digits since it's a check number
-            value = value.substring(0, value.length() - 1);
+            this.value = rawValue.substring(0, rawValue.length() - 1);
+        } else {
+            this.value = rawValue;
         }
-        this.value = value;
     }
 
     private BarcodeField(Parcel in) {
         label = in.readString();
+        rawValue = in.readString();
         value = in.readString();
     }
 
@@ -63,6 +67,10 @@ public class BarcodeField implements Parcelable {
         return value;
     }
 
+    public String getRawValue() {
+        return rawValue;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -71,6 +79,7 @@ public class BarcodeField implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(label);
+        dest.writeString(rawValue);
         dest.writeString(value);
     }
 }
