@@ -253,7 +253,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 case INVALID:
                     try {
                         JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_SALIVA_ID, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
                         LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -263,7 +263,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 case DUPLICATE_BARCODE:
                     try {
                         JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_SALIVA_ID, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
                         LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
                         e.printStackTrace();
