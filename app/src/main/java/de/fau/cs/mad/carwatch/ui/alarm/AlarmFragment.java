@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -84,10 +85,27 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
             if (data.hasExtra(Constants.EXTRA_ALARM)) {
                 Alarm alarm = data.getParcelableExtra(Constants.EXTRA_ALARM);
                 adapter.updateAlarm(alarm);
+
+                if (data.hasExtra(Constants.EXTRA_EDIT)) {
+                    showAlarmReminderDialog();
+                }
             }
         } else {
             Snackbar.make(coordinatorLayout, R.string.alarm_not_saved, Snackbar.LENGTH_SHORT).show();
         }
     }
 
+
+    private void showAlarmReminderDialog() {
+        if (getContext() == null) {
+            return;
+        }
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_alarm_reminder)
+                .setMessage(R.string.message_alarm_reminder)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+
+                }).show();
+    }
 }

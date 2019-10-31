@@ -200,7 +200,6 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_alarm_save) {
             Intent replyIntent = new Intent();
 
