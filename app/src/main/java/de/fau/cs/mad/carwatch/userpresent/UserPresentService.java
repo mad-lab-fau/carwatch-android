@@ -95,7 +95,7 @@ public class UserPresentService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_bedtime_24dp)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.app_active))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
