@@ -85,7 +85,6 @@ abstract class BarcodeGraphicBase extends GraphicOverlay.Graphic {
 
     public static RectF getBarcodeReticleBox(GraphicOverlay overlay) {
         // TODO box width and height hardcoded... can be tuned!
-        Context context = overlay.getContext();
         float overlayWidth = overlay.getWidth();
         float overlayHeight = overlay.getHeight();
         float boxWidth = overlayWidth * 80 / 100;
