@@ -69,11 +69,9 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fab:
-                Intent intent = new Intent(getContext(), AddAlarmActivity.class);
-                startActivityForResult(intent, Constants.REQUEST_CODE_NEW_ALARM);
-                break;
+        if (v.getId() == R.id.fab) {
+            Intent intent = new Intent(getContext(), AddAlarmActivity.class);
+            startActivityForResult(intent, Constants.REQUEST_CODE_NEW_ALARM);
         }
     }
 

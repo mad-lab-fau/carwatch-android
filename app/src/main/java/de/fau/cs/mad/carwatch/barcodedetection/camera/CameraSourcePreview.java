@@ -108,11 +108,10 @@ public class CameraSourcePreview extends FrameLayout {
         }
 
         // Match the width of the child view to its parent.
-        int childWidth = layoutWidth;
-        int childHeight = (int) (childWidth / previewSizeRatio);
+        int childHeight = (int) (layoutWidth / previewSizeRatio);
         if (childHeight <= layoutHeight) {
             for (int i = 0; i < getChildCount(); ++i) {
-                getChildAt(i).layout(0, 0, childWidth, childHeight);
+                getChildAt(i).layout(0, 0, layoutWidth, childHeight);
             }
         } else {
             // When the child view is too tall to be fitted in its parent: If the child view is static
@@ -123,9 +122,9 @@ public class CameraSourcePreview extends FrameLayout {
             for (int i = 0; i < getChildCount(); ++i) {
                 View childView = getChildAt(i);
                 if (childView.getId() == R.id.static_overlay_container) {
-                    childView.layout(0, 0, childWidth, layoutHeight);
+                    childView.layout(0, 0, layoutWidth, layoutHeight);
                 } else {
-                    childView.layout(0, -excessLenInHalf, childWidth, layoutHeight + excessLenInHalf);
+                    childView.layout(0, -excessLenInHalf, layoutWidth, layoutHeight + excessLenInHalf);
                 }
             }
         }

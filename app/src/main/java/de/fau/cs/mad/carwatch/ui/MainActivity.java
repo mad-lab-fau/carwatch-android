@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -190,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("InflateParams")
     private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);

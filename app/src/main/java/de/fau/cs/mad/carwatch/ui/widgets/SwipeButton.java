@@ -101,7 +101,7 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
                 moveButton(motionEvent);
                 return true;
             case MotionEvent.ACTION_UP:
-                releaseButton(motionEvent);
+                releaseButton();
                 return true;
         }
         return false;
@@ -139,7 +139,7 @@ public class SwipeButton extends RelativeLayout implements View.OnTouchListener 
         }
     }
 
-    private void releaseButton(MotionEvent motionEvent) {
+    private void releaseButton() {
         boolean isRight = slidingButton.getX() > getWidth() / 2.0f;
         if (active) {
             moveButtonBack(isRight);

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 import de.fau.cs.mad.carwatch.Constants;
 
@@ -37,7 +38,7 @@ public class DiskLogHandler extends Handler {
         this(getDefaultLooper(), context);
     }
 
-    public DiskLogHandler(Looper looper, Context context) {
+    private DiskLogHandler(Looper looper, Context context) {
         super(looper);
         this.context = context;
     }
@@ -179,7 +180,7 @@ public class DiskLogHandler extends Handler {
         File root = getRootDirectory(context);
         String filename = subjectId == null ? "logs.zip" : String.format("logs_%s.zip", subjectId);
         File file = new File(root, filename);
-        if (directory != null && directory.list().length > 0) {
+        if (directory != null && Objects.requireNonNull(directory.list()).length > 0) {
             ZipUtil.pack(directory, file);
             return file;
         }

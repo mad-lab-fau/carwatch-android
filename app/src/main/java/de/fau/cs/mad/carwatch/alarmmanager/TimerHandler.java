@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 
 import androidx.core.app.NotificationCompat;
 
@@ -31,29 +30,6 @@ public class TimerHandler {
     private static final String TAG = TimerHandler.class.getSimpleName();
 
     private static final String CHANNEL_ID = TAG + "Channel";
-
-    public static long scheduleSalivaTimer(Context context, int alarmId, int salivaId, View snackbarAnchor) {
-        if (salivaId < Constants.SALIVA_TIMES.length) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarmId).apply();
-
-            if (Constants.SALIVA_TIMES[salivaId] == 0) {
-                // first saliva sample => directly schedule barcode scan timer
-                scheduleSalivaCountdown(context, alarmId, salivaId);
-                return 0;
-            } else {
-                alarmId += Constants.ALARM_OFFSET;
-                DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
-                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, snackbarAnchor);
-                return timeToRing.getMillis();
-            }
-        } else if (salivaId == Constants.EXTRA_SALIVA_ID_EVENING) {
-            // evening saliva sample => directly schedule barcode scan timer
-            scheduleSalivaCountdown(context, alarmId, salivaId);
-            return 0;
-        }
-        return 0;
-    }
 
     public static void finishTimer(Context context) {
         try {
@@ -79,7 +55,26 @@ public class TimerHandler {
     }
 
     public static long scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
-        return scheduleSalivaTimer(context, alarmId, salivaId, null);
+        if (salivaId < Constants.SALIVA_TIMES.length) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarmId).apply();
+
+            if (Constants.SALIVA_TIMES[salivaId] == 0) {
+                // first saliva sample => directly schedule barcode scan timer
+                scheduleSalivaCountdown(context, alarmId, salivaId);
+                return 0;
+            } else {
+                alarmId += Constants.ALARM_OFFSET;
+                DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
+                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
+                return timeToRing.getMillis();
+            }
+        } else if (salivaId == Constants.EXTRA_SALIVA_ID_EVENING) {
+            // evening saliva sample => directly schedule barcode scan timer
+            scheduleSalivaCountdown(context, alarmId, salivaId);
+            return 0;
+        }
+        return 0;
     }
 
     @SuppressLint("WrongConstant")
@@ -137,7 +132,7 @@ public class TimerHandler {
     }
 
 
-    public static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
+    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
         Intent contentIntent = new Intent(context, BarcodeActivity.class);
         contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);

@@ -24,7 +24,7 @@ public class AlarmSoundControl {
     private static AlarmSoundControl sInstance;
 
     private MediaPlayer mediaPlayer;
-    Vibrator vibrator;
+    private Vibrator vibrator;
 
     private AlarmSoundControl() {
     }

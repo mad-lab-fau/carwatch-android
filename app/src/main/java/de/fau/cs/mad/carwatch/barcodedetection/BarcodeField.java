@@ -59,10 +59,6 @@ public class BarcodeField implements Parcelable {
         value = in.readString();
     }
 
-    public String getLabel() {
-        return label;
-    }
-
     public String getValue() {
         return value;
     }

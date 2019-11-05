@@ -17,16 +17,12 @@
 package de.fau.cs.mad.carwatch.barcodedetection.camera;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.annotation.MainThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * View model for handling application workflow based on camera preview.
@@ -69,7 +65,4 @@ public class WorkflowModel extends AndroidViewModel {
         return isCameraLive;
     }
 
-    private Context getContext() {
-        return getApplication().getApplicationContext();
-    }
 }

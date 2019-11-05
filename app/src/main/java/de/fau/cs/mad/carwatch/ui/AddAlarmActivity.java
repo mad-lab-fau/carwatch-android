@@ -61,8 +61,10 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
 
         if (intent.hasExtra(Constants.EXTRA_BUNDLE)) { // Activity called to edit an alarm.
             Bundle args = intent.getBundleExtra(Constants.EXTRA_BUNDLE);
-            alarm = args.getParcelable(Constants.EXTRA_ALARM);
-            currRequestCode = Constants.REQUEST_CODE_EDIT_ALARM;
+            if (args != null) {
+                alarm = args.getParcelable(Constants.EXTRA_ALARM);
+                currRequestCode = Constants.REQUEST_CODE_EDIT_ALARM;
+            }
         } else {
             currRequestCode = Constants.REQUEST_CODE_NEW_ALARM;
         }

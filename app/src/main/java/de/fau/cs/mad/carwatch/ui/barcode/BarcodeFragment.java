@@ -283,9 +283,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 .setTitle(R.string.title_barcode_invalid)
                 .setMessage(R.string.message_barcode_invalid)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    workflowModel.workflowState.setValue(WorkflowState.DETECTING);
-                }).show();
+                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
     private void showBarcodeAlreadyScannedDialog() {
@@ -296,9 +294,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 .setTitle(R.string.title_barcode_already_scanned)
                 .setMessage(R.string.message_barcode_already_scanned)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    workflowModel.workflowState.setValue(WorkflowState.DETECTING);
-                }).show();
+                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
     private void showQuestionnaireReminderDialog() {
@@ -309,9 +305,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 .setTitle(R.string.title_reminder_questionnaire)
                 .setMessage(R.string.message_reminder_questionnaire)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    finishActivity(this.alarmTime);
-                }).show();
+                .setPositiveButton(R.string.ok, (dialog, which) -> finishActivity(this.alarmTime)).show();
     }
 
     private void finishActivity(long alarmTime) {

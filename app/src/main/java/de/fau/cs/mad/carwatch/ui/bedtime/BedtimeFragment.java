@@ -30,16 +30,14 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = BedtimeFragment.class.getSimpleName();
 
-    private Button yesButton;
-    private Button noButton;
     private Button lightsOutButtonOutline;
     private Button lightsOutButton;
 
@@ -52,13 +50,13 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
         bedtimeViewModel = ViewModelProviders.of(this).get(BedtimeViewModel.class);
 
-        yesButton = root.findViewById(R.id.button_yes);
-        noButton = root.findViewById(R.id.button_no);
-        lightsOutButtonOutline = root.findViewById(R.id.button_lights_out_outline);
-        lightsOutButton = root.findViewById(R.id.button_lights_out);
-
+        Button yesButton = root.findViewById(R.id.button_yes);
+        Button noButton = root.findViewById(R.id.button_no);
         yesButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
+
+        lightsOutButtonOutline = root.findViewById(R.id.button_lights_out_outline);
+        lightsOutButton = root.findViewById(R.id.button_lights_out);
         lightsOutButton.setOnClickListener(this);
         lightsOutButtonOutline.setOnClickListener(this);
 

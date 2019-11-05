@@ -30,7 +30,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import de.fau.cs.mad.carwatch.R;
@@ -48,7 +47,7 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
 
     private DialogInterface.OnDismissListener dismissListener;
 
-    public BarcodeResultFragment(DialogInterface.OnDismissListener dismissListener) {
+    private BarcodeResultFragment(DialogInterface.OnDismissListener dismissListener) {
         this.dismissListener = dismissListener;
     }
 

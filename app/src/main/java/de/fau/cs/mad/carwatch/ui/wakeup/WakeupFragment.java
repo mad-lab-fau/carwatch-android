@@ -30,24 +30,21 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class WakeupFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = WakeupFragment.class.getSimpleName();
 
-    private Button yesButton;
-    private Button noButton;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_wakeup, container, false);
 
-        yesButton = root.findViewById(R.id.button_yes);
-        noButton = root.findViewById(R.id.button_no);
+        Button yesButton = root.findViewById(R.id.button_yes);
+        Button noButton = root.findViewById(R.id.button_no);
 
         yesButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
