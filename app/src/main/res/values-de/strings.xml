@@ -84,9 +84,12 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
 
-    <!-- Reminder Dialog -->
+    <!-- Reminder Dialogs -->
     <string name="title_alarm_reminder">Wecker gestellt</string>
     <string name="message_alarm_reminder">Bitte vergessen Sie nicht, alle anderen Wecker in Ihrer Standard-Weckerapp auszustellen!</string>
+
+    <string name="title_reminder_questionnaire">Erinnerung</string>
+    <string name="message_reminder_questionnaire">Bitte vergessen Sie nicht, in der Zwischenzeit die Fragebögen auszufüllen!</string>
 
     <string name="title_activity_scan">Barcode einscannen</string>
 

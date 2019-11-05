@@ -62,7 +62,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     private WorkflowModel workflowModel;
     private WorkflowState currentWorkflowState;
 
-    long alarmTime = 0;
+    private long alarmTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -221,12 +221,13 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (getActivity() != null) {
-            Intent intent = new Intent();
-            intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
-            getActivity().setResult(Activity.RESULT_OK, intent);
-            getActivity().finish();
+        if (salivaId == 0) {
+            // Show Reminder Dialog when scanning first saliva sample of the day
+            showQuestionnaireReminderDialog();
+        } else {
+            finishActivity(this.alarmTime);
         }
+
     }
 
     @Override
@@ -299,4 +300,27 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                     workflowModel.workflowState.setValue(WorkflowState.DETECTING);
                 }).show();
     }
+
+    private void showQuestionnaireReminderDialog() {
+        if (getContext() == null) {
+            return;
+        }
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_reminder_questionnaire)
+                .setMessage(R.string.message_reminder_questionnaire)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    finishActivity(this.alarmTime);
+                }).show();
+    }
+
+    private void finishActivity(long alarmTime) {
+        if (getActivity() != null) {
+            Intent intent = new Intent();
+            intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
+        }
+    }
+
 }
