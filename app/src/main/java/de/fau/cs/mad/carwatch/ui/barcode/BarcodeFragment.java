@@ -43,7 +43,7 @@ import de.fau.cs.mad.carwatch.barcodedetection.camera.GraphicOverlay;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
-import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheck;
+import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
 public class BarcodeFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener, Observer<FirebaseVisionBarcode> {
@@ -241,7 +241,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             Log.d(TAG, "Detected Barcode: " + barcode.getValue());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
 
-            BarcodeCheck check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
+            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
 
             switch (check) {
                 case VALID:
