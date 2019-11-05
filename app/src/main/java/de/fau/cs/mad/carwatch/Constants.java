@@ -23,10 +23,6 @@ public final class Constants {
 
     public static final String SHARE_EMAIL_ADDRESS = "CAR_Studie2019@gmx.de";
 
-    // TODO remove before publishing
-    public static final DateTime TEST_TIME = DateTime.now();
-    //public static final DateTime TEST_TIME = new LocalTime(20, 0).toDateTimeToday();
-
     /**
      * Time to the next saliva sample in minutes
      */
