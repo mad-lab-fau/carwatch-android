@@ -8,7 +8,7 @@ import static de.fau.cs.mad.carwatch.subject.Condition.UNKNOWN_ALARM;
 
 public class SubjectMap {
 
-    private static HashMap<String, Condition> sSubjectMap = new HashMap<>();
+    public static HashMap<String, Condition> sSubjectMap = new HashMap<>();
 
 
     // DEBUG CODES
@@ -129,7 +129,7 @@ public class SubjectMap {
         sSubjectMap.put("EK27R", UNKNOWN_ALARM);
         sSubjectMap.put("MD22R", UNKNOWN_ALARM);
         sSubjectMap.put("EA09H", UNKNOWN_ALARM);
-        sSubjectMap.put("Sk12k", UNKNOWN_ALARM);
+        sSubjectMap.put("SK12K", UNKNOWN_ALARM);
         sSubjectMap.put("JE15A", UNKNOWN_ALARM);
         sSubjectMap.put("KA19E", KNOWN_ALARM);
         sSubjectMap.put("AS03C", SPONTANEOUS);

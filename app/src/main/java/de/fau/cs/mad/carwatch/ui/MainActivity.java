@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         .create();
 
         subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String subjectId = editText.getText().toString().toLowerCase();
+            String subjectId = editText.getText().toString().toUpperCase();
 
             if (SubjectIdCheck.isValidSubjectId(subjectId)) {
                 sharedPreferences.edit()

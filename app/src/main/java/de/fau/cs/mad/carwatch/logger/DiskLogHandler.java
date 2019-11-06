@@ -93,7 +93,7 @@ public class DiskLogHandler extends Handler {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
         if (subjectId != null) {
-            filename = "carwatch_" + subjectId + "_" + DateTime.now().toString("YYYYMMdd");
+            filename = "carwatch_" + subjectId.toLowerCase() + "_" + DateTime.now().toString("YYYYMMdd");
         } else {
             filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
         }

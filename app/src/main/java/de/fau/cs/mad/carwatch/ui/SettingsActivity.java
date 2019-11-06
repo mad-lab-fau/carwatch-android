@@ -50,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
                     return false;
                 }
 
-                String subjectId = ((String) newValue).toLowerCase();
+                String subjectId = ((String) newValue).toUpperCase();
 
                 boolean isValid = SubjectIdCheck.isValidSubjectId(subjectId);
 
@@ -99,7 +99,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (Constants.PREF_SUBJECT_ID.equals(key)) {
                 sharedPreferences
                         .edit()
-                        .putString(key, sharedPreferences.getString(key, "").toLowerCase())
+                        .putString(key, sharedPreferences.getString(key, "").toUpperCase())
                         .apply();
             }
         }
