@@ -88,6 +88,9 @@
     <string name="title_reminder_questionnaire">Reminder</string>
     <string name="message_reminder_questionnaire">Please remember to fill out the questionnaires in the meanwhile!</string>
 
+    <string name="title_reminder_nilspod">Wearing the Sensor?</string>
+    <string name="message_reminder_nilspod">Are you wearing the sensor? Please remember to wear the sensor throughout your time in bed on your non-dominant hand!</string>
+
     <!-- Wakeup Fragment -->
     <string name="wakeup_title">Start Morning</string>
     <string name="wakeup_text">We will now begin with the morning procedure.</string>
@@ -107,6 +110,7 @@
     <string name="good_night">Thank you and good night!</string>
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
+
 
     <string name="hint_clicks_kill_alarms">%1$d more clicks to kill all alarms.</string>
 

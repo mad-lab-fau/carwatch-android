@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -279,8 +280,13 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
         if (getContext() == null) {
             return;
         }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_barcode_invalid)
+                .setIcon(icon)
                 .setMessage(R.string.message_barcode_invalid)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
@@ -290,8 +296,13 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
         if (getContext() == null) {
             return;
         }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_barcode_already_scanned)
+                .setIcon(icon)
                 .setMessage(R.string.message_barcode_already_scanned)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
@@ -301,9 +312,14 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
         if (getContext() == null) {
             return;
         }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_help_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_reminder_questionnaire)
                 .setMessage(R.string.message_reminder_questionnaire)
+                .setIcon(icon)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> finishActivity(this.alarmTime)).show();
     }

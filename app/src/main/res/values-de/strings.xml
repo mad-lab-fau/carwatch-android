@@ -88,6 +88,9 @@
     <string name="title_alarm_reminder">Wecker gestellt</string>
     <string name="message_alarm_reminder">Bitte vergessen Sie nicht, alle anderen Wecker in Ihrer Standard-Weckerapp auszustellen!</string>
 
+    <string name="title_reminder_nilspod">Sensor angelegt?</string>
+    <string name="message_reminder_nilspod">Haben Sie den Sensor angelegt? Bitte vergessen Sie nicht, den Sensor für die gesamte Zeit im Bett an Ihrer nicht-dominanten Hand zu tragen!</string>
+
     <string name="title_reminder_questionnaire">Erinnerung</string>
     <string name="message_reminder_questionnaire">Bitte vergessen Sie nicht, in der Zwischenzeit die Fragebögen auszufüllen!</string>
 
