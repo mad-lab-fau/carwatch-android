@@ -10,3 +10,5 @@
 .externalNativeBuild
 .cxx
 release/
+
+.ipynb_checkpoints/
