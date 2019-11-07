@@ -195,19 +195,19 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
+    private static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
         return scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
     }
 
-    /**
+    /*
      * Schedule alarm notification based on absolute time
      *
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow) {
+    /*public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow) {
         return scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, null);
-    }
+    }*/
 
     /**
      * Schedule alarm notification based on absolute time
@@ -215,7 +215,7 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
+    private static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
         Log.d(TAG, "Setting timed alarm " + alarmId + " at " + timeToRing);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -284,7 +284,7 @@ public class AlarmHandler {
     }
 
 
-    public static void cancelAlarmAtTime(Context context, int alarmId) {
+    private static void cancelAlarmAtTime(Context context, int alarmId) {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_NO_CREATE);
@@ -356,6 +356,8 @@ public class AlarmHandler {
     }
 
     public static void killAll(Application application) {
+        LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_KILLALL, new JSONObject());
+
         AlarmRepository repo = AlarmRepository.getInstance(application);
 
         if (repo.getAllAlarms() != null && repo.getAllAlarms().getValue() != null) {

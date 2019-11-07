@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,7 +43,7 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
-import de.fau.cs.mad.carwatch.userpresent.BootService;
+import de.fau.cs.mad.carwatch.subject.SubjectMap;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
 
+    private int clickCounter = 0;
+    private static final int CLICK_THRESHOLD_TOAST = 5;
+    private static final int CLICK_THRESHOLD_KILL = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
             // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
+
+        clickCounter = 0;
 
         // disable night mode per default
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -115,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void navigate() {
-        if (checkInterval(Constants.TEST_TIME, Constants.MORNING_TIMES)) {
+        if (checkInterval(DateTime.now(), Constants.MORNING_TIMES)) {
             navController.navigate(R.id.navigation_wakeup);
-        } else if (checkInterval(Constants.TEST_TIME, Constants.EVENING_TIMES)) {
+        } else if (checkInterval(DateTime.now(), Constants.EVENING_TIMES)) {
             navController.navigate(R.id.navigation_bedtime);
         } else {
             navController.navigate(R.id.navigation_alarm);
@@ -162,29 +169,29 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
-            // TODO REMOVE (OR HIDE BETTER)
             case R.id.menu_kill:
-                AlarmHandler.killAll(getApplication());
-                break;
-            case R.id.menu_scan:
-                startActivity(new Intent(this, BarcodeActivity.class));
+                clickCounter++;
+                if (clickCounter >= CLICK_THRESHOLD_KILL) {
+                    showKillWarningDialog();
+                    clickCounter = 0;
+                } else if (clickCounter >= CLICK_THRESHOLD_TOAST) {
+                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            case R.id.menu_service:
-                /*if (UserPresentService.serviceRunning) {
-                    UserPresentService.stopService(this);
-                } else {
-                    UserPresentService.startService(this);
-                }*/
-                BootService.enqueueWork(this);
+            /*case R.id.menu_scan:
+                startActivity(new Intent(this, BarcodeActivity.class));
                 break;
+            */
+
         }
         return super.onOptionsItemSelected(item);
     }
 
 
+    @SuppressLint("InflateParams")
     private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
@@ -210,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         .create();
 
         subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String subjectId = editText.getText().toString().toLowerCase();
+            String subjectId = editText.getText().toString().toUpperCase();
 
             if (SubjectIdCheck.isValidSubjectId(subjectId)) {
                 sharedPreferences.edit()
@@ -222,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject json = new JSONObject();
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                    json.put(Constants.LOGGER_EXTRA_SUBJECT_CONDITION, SubjectMap.getConditionForSubject(subjectId));
                     LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -234,6 +242,17 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         subjectIdDialog.show();
+    }
+
+    public void showKillWarningDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(getString(R.string.title_kill_alarms))
+                .setMessage(getString(R.string.message_kill_alarms))
+                .setPositiveButton(R.string.yes, (dialog, which) -> AlarmHandler.killAll(getApplication()))
+                .setNegativeButton(R.string.cancel, ((dialog, which) -> {
+                }))
+                .show();
     }
 
     private void createFileShareDialog(File zipFile) {

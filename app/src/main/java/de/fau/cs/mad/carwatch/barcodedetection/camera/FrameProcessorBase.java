@@ -16,8 +16,6 @@
 
 package de.fau.cs.mad.carwatch.barcodedetection.camera;
 
-import android.os.SystemClock;
-
 import androidx.annotation.GuardedBy;
 
 import com.google.android.gms.tasks.Task;

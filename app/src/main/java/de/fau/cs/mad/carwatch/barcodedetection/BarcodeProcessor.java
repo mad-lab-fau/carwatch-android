@@ -78,10 +78,12 @@ public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarc
         // Picks the barcode, if exists, that covers the center of graphic overlay.
         FirebaseVisionBarcode barcodeInCenter = null;
         for (FirebaseVisionBarcode barcode : results) {
-            RectF box = graphicOverlay.translateRect(barcode.getBoundingBox());
-            if (box.contains(graphicOverlay.getWidth() / 2f, graphicOverlay.getHeight() / 2f)) {
-                barcodeInCenter = barcode;
-                break;
+            if (barcode.getBoundingBox() != null) {
+                RectF box = graphicOverlay.translateRect(barcode.getBoundingBox());
+                if (box.contains(graphicOverlay.getWidth() / 2f, graphicOverlay.getHeight() / 2f)) {
+                    barcodeInCenter = barcode;
+                    break;
+                }
             }
         }
 

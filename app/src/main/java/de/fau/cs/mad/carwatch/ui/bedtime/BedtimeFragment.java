@@ -30,16 +30,14 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = BedtimeFragment.class.getSimpleName();
 
-    private Button yesButton;
-    private Button noButton;
     private Button lightsOutButtonOutline;
     private Button lightsOutButton;
 
@@ -52,13 +50,13 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
         bedtimeViewModel = ViewModelProviders.of(this).get(BedtimeViewModel.class);
 
-        yesButton = root.findViewById(R.id.button_yes);
-        noButton = root.findViewById(R.id.button_no);
-        lightsOutButtonOutline = root.findViewById(R.id.button_lights_out_outline);
-        lightsOutButton = root.findViewById(R.id.button_lights_out);
-
+        Button yesButton = root.findViewById(R.id.button_yes);
+        Button noButton = root.findViewById(R.id.button_no);
         yesButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
+
+        lightsOutButtonOutline = root.findViewById(R.id.button_lights_out_outline);
+        lightsOutButton = root.findViewById(R.id.button_lights_out);
         lightsOutButton.setOnClickListener(this);
         lightsOutButtonOutline.setOnClickListener(this);
 
@@ -121,6 +119,24 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (getActivity() == null) {
+            return;
+        }
+
+        if (requestCode == Constants.REQUEST_CODE_SCAN) {
+            if (resultCode == Activity.RESULT_OK) {
+                bedtimeViewModel.setSalivaTaken(true);
+                if (!UserPresentService.serviceRunning) {
+                    UserPresentService.startService(getContext());
+                    showNilsPodHintDialog();
+                }
+            }
+        }
+    }
+
 
     private void showBedtimeDialog() {
         if (getContext() == null) {
@@ -163,20 +179,20 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (getActivity() == null) {
+    private void showNilsPodHintDialog() {
+        if (getContext() == null) {
             return;
         }
+        Drawable icon = getResources().getDrawable(R.drawable.ic_help_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
 
-        if (requestCode == Constants.REQUEST_CODE_SCAN) {
-            if (resultCode == Activity.RESULT_OK) {
-                bedtimeViewModel.setSalivaTaken(true);
-                if (!UserPresentService.serviceRunning) {
-                    UserPresentService.startService(getContext());
-                }
-            }
-        }
+        new AlertDialog.Builder(getContext())
+                .setTitle(getString(R.string.title_reminder_nilspod))
+                .setCancelable(false)
+                .setIcon(icon)
+                .setMessage(getString(R.string.message_reminder_nilspod))
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                })
+                .show();
     }
 }

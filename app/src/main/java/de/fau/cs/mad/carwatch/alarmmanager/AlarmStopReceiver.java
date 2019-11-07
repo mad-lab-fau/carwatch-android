@@ -49,6 +49,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
                 alarm.setActive(false);
                 if (alarm.hasHiddenTime()) {
                     alarm.setHiddenDelta(0);
+                    AlarmHandler.cancelAlarm(context, alarm);
                 }
                 repository.updateActive(alarm);
             }

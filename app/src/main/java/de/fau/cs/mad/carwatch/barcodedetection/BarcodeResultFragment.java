@@ -42,12 +42,12 @@ import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.Workf
  */
 public class BarcodeResultFragment extends BottomSheetDialogFragment {
 
-    private static final String TAG = "BarcodeResultFragment";
+    private static final String TAG = BarcodeResultFragment.class.getSimpleName();
     private static final String ARG_BARCODE_FIELD = "arg_barcode_field";
 
     private DialogInterface.OnDismissListener dismissListener;
 
-    public BarcodeResultFragment(DialogInterface.OnDismissListener dismissListener) {
+    private BarcodeResultFragment(DialogInterface.OnDismissListener dismissListener) {
         this.dismissListener = dismissListener;
     }
 
@@ -69,10 +69,7 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater layoutInflater,
-            @Nullable ViewGroup viewGroup,
-            @Nullable Bundle bundle) {
+    public View onCreateView(@NonNull LayoutInflater layoutInflater, @Nullable ViewGroup viewGroup, @Nullable Bundle bundle) {
         View view = layoutInflater.inflate(R.layout.barcode_bottom_sheet, viewGroup);
         BarcodeField barcodeField;
         Bundle arguments = getArguments();

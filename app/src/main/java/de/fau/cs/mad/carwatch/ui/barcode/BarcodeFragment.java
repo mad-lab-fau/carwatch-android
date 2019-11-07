@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -43,7 +44,7 @@ import de.fau.cs.mad.carwatch.barcodedetection.camera.GraphicOverlay;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
-import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheck;
+import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
 public class BarcodeFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener, Observer<FirebaseVisionBarcode> {
@@ -62,7 +63,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     private WorkflowModel workflowModel;
     private WorkflowState currentWorkflowState;
 
-    long alarmTime = 0;
+    private long alarmTime = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -221,12 +222,13 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (getActivity() != null) {
-            Intent intent = new Intent();
-            intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
-            getActivity().setResult(Activity.RESULT_OK, intent);
-            getActivity().finish();
+        if (salivaId == 0) {
+            // Show Reminder Dialog when scanning first saliva sample of the day
+            showQuestionnaireReminderDialog();
+        } else {
+            finishActivity(this.alarmTime);
         }
+
     }
 
     @Override
@@ -240,7 +242,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             Log.d(TAG, "Detected Barcode: " + barcode.getValue());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
 
-            BarcodeCheck check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
+            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
 
             switch (check) {
                 case VALID:
@@ -253,7 +255,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 case INVALID:
                     try {
                         JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_SALIVA_ID, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
                         LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -263,7 +265,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 case DUPLICATE_BARCODE:
                     try {
                         JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_SALIVA_ID, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
                         LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -278,25 +280,57 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
         if (getContext() == null) {
             return;
         }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_barcode_invalid)
+                .setIcon(icon)
                 .setMessage(R.string.message_barcode_invalid)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    workflowModel.workflowState.setValue(WorkflowState.DETECTING);
-                }).show();
+                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
     private void showBarcodeAlreadyScannedDialog() {
         if (getContext() == null) {
             return;
         }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_barcode_already_scanned)
+                .setIcon(icon)
                 .setMessage(R.string.message_barcode_already_scanned)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    workflowModel.workflowState.setValue(WorkflowState.DETECTING);
-                }).show();
+                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
+
+    private void showQuestionnaireReminderDialog() {
+        if (getContext() == null) {
+            return;
+        }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_help_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_reminder_questionnaire)
+                .setMessage(R.string.message_reminder_questionnaire)
+                .setIcon(icon)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> finishActivity(this.alarmTime)).show();
+    }
+
+    private void finishActivity(long alarmTime) {
+        if (getActivity() != null) {
+            Intent intent = new Intent();
+            intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
+        }
+    }
+
 }

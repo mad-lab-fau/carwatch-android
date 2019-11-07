@@ -36,7 +36,7 @@ public class BooleanArrayConverter {
             return "";
         }
         for (boolean item : arr) {
-            builder.append(item + ",");
+            builder.append(item).append(",");
         }
         if (builder.length() > 0) { // cut off trailing comma
             builder.setLength(builder.length() - 1);

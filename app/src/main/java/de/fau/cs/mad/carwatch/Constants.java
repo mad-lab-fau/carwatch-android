@@ -16,22 +16,21 @@ public final class Constants {
 
     public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
 
-    public static final DateTime[] MORNING_TIMES = {new LocalTime(5, 0).toDateTimeToday(), new LocalTime(12, 0).toDateTimeToday()};
-    public static final DateTime[] EVENING_TIMES = {new LocalTime(20, 0).toDateTimeToday(), new LocalTime(5, 0).toDateTimeToday().plusDays(1)};
-
-    public static final int[] BARCODE_RANGE = {0, 30104};
+    public static final DateTime[] MORNING_TIMES = {
+            new LocalTime(5, 0).toDateTimeToday(),
+            new LocalTime(12, 0).toDateTimeToday()
+    };
+    public static final DateTime[] EVENING_TIMES = {
+            new LocalTime(20, 0).toDateTimeToday(),
+            new LocalTime(5, 0).toDateTimeToday().plusDays(1)
+    };
 
     public static final String SHARE_EMAIL_ADDRESS = "CAR_Studie2019@gmx.de";
-
-    // TODO remove before publishing
-    public static final DateTime TEST_TIME = DateTime.now();
-    //public static final DateTime TEST_TIME = new LocalTime(20, 0).toDateTimeToday();
 
     /**
      * Time to the next saliva sample in minutes
      */
-    // TODO change times
-    public static final int[] SALIVA_TIMES = {0, 15, 15, 15};
+    public static final int[] SALIVA_TIMES = {0, 15, 15, 15, 15};
 
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
@@ -45,7 +44,6 @@ public final class Constants {
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
     public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean
 
-    public static final int REQUEST_CODE_ALARM = 0xBAD;
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
     public static final int REQUEST_CODE_NEW_ALARM = 1;
@@ -75,7 +73,7 @@ public final class Constants {
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
-    public static final String ACTION_SNOOZE_ALARM = "Snooze Alarm";
+    // public static final String ACTION_SNOOZE_ALARM = "Snooze Alarm";
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
 
@@ -85,6 +83,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_ALARM_RING = "alarm_ring";
     public static final String LOGGER_ACTION_ALARM_SNOOZE = "alarm_snooze";
     public static final String LOGGER_ACTION_ALARM_STOP = "alarm_stop";
+    public static final String LOGGER_ACTION_ALARM_KILLALL = "alarm_killall";
     public static final String LOGGER_ACTION_EVENING_SALIVETTE = "evening_salivette";
     public static final String LOGGER_ACTION_BARCODE_SCANNED = "barcode_scanned";
     public static final String LOGGER_ACTION_INVALID_BARCODE_SCANNED = "invalid_barcode_scanned";
@@ -114,6 +113,7 @@ public final class Constants {
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
     public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
+    public static final String LOGGER_EXTRA_SUBJECT_CONDITION = "subject_condition"; // String
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);

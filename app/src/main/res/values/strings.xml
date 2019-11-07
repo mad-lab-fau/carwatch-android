@@ -17,7 +17,7 @@
     <!-- Menu -->
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share Logs …</string>
-    <string name="menu_kill">Kill</string>
+    <string name="menu_kill">Kill Alarms</string>
     <string name="menu_scan">Scan</string>
 
     <!-- Notification -->
@@ -69,14 +69,27 @@
         \n5th Digit: Last letter of last name</string>
     <string name="title_invalid_subject_id">Invalid Subject ID</string>
     <string name="message_invalid_subject_id">Invalid Subject ID! Please try again.</string>
+    <string name="title_kill_alarms">Warning</string>
+    <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Point your camera at a barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
+    <string name="prompt_barcode_scan_successful">Barcode scan successful!</string>
+    <string name="text_barcode_scan_successful">Value: %1$s</string>
     <string name="title_barcode_invalid">Invalid Barcode</string>
     <string name="message_barcode_invalid">Invalid Barcode! Please scan the correct barcode label on the salivette.</string>
     <string name="title_barcode_already_scanned">Barcode already scanned</string>
     <string name="message_barcode_already_scanned">This Barcode was already scanned! Please scan the barcode label on the correct salivette.</string>
+
+    <!-- Reminder Dialogs -->
+    <string name="title_alarm_reminder">Alarm Set</string>
+    <string name="message_alarm_reminder">Please don\'t forget to turn off all regular alarms in your default alarm app!</string>
+    <string name="title_reminder_questionnaire">Reminder</string>
+    <string name="message_reminder_questionnaire">Please remember to fill out the questionnaires in the meanwhile!</string>
+
+    <string name="title_reminder_nilspod">Wearing the Sensor?</string>
+    <string name="message_reminder_nilspod">Are you wearing the sensor? Please remember to wear the sensor throughout your time in bed on your non-dominant hand!</string>
 
     <!-- Wakeup Fragment -->
     <string name="wakeup_title">Start Morning</string>
@@ -97,6 +110,9 @@
     <string name="good_night">Thank you and good night!</string>
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
+
+
+    <string name="hint_clicks_kill_alarms">%1$d more clicks to kill all alarms.</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

@@ -5,18 +5,17 @@
         android:id="@+id/menu_share"
         android:title="@string/menu_share" />
 
-    <!-- TODO remove before publishing -->
     <item
         android:id="@+id/menu_kill"
         android:title="@string/menu_kill" />
 
-    <item
+    <!--<item
         android:id="@+id/menu_scan"
-        android:title="@string/menu_scan" />
+        android:title="@string/menu_scan" />-->
 
-    <item
+    <!--<item
         android:id="@+id/menu_service"
-        android:title="Service" />
+        android:title="Service" />-->
 
     <item
         android:id="@+id/menu_settings"

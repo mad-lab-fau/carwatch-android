@@ -37,6 +37,7 @@ import static androidx.core.content.ContextCompat.checkSelfPermission;
 /**
  * Utility class to provide helper methods.
  */
+@SuppressWarnings("deprecation")
 public class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();

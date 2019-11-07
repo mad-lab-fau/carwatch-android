@@ -8,7 +8,7 @@ import com.orhanobut.logger.LogStrategy;
 
 public class LogFormatStrategy implements FormatStrategy {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.getProperty("line.separator") != null ? System.getProperty("line.separator") : "\n";
     private static final String NEW_LINE_REPLACEMENT = " <br> ";
     private static final String SEPARATOR = ";";
 

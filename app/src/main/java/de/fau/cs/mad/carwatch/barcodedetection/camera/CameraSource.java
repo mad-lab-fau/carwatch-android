@@ -176,11 +176,11 @@ public class CameraSource {
         }
     }
 
-    public void updateFlashMode(String flashMode) {
+    /*public void updateFlashMode(String flashMode) {
         Camera.Parameters parameters = camera.getParameters();
         parameters.setFlashMode(flashMode);
         camera.setParameters(parameters);
-    }
+    }*/
 
     /**
      * Returns the preview size that is currently in use by the underlying camera.

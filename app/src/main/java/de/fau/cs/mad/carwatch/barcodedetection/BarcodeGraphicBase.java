@@ -16,7 +16,6 @@
 
 package de.fau.cs.mad.carwatch.barcodedetection;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
@@ -47,8 +46,7 @@ abstract class BarcodeGraphicBase extends GraphicOverlay.Graphic {
         boxPaint = new Paint();
         boxPaint.setColor(ContextCompat.getColor(context, R.color.barcode_reticle_stroke));
         boxPaint.setStyle(Paint.Style.STROKE);
-        boxPaint.setStrokeWidth(
-                context.getResources().getDimensionPixelOffset(R.dimen.barcode_reticle_stroke_width));
+        boxPaint.setStrokeWidth(context.getResources().getDimensionPixelOffset(R.dimen.barcode_reticle_stroke_width));
 
         scrimPaint = new Paint();
         scrimPaint.setColor(ContextCompat.getColor(context, R.color.barcode_reticle_background));
@@ -56,8 +54,7 @@ abstract class BarcodeGraphicBase extends GraphicOverlay.Graphic {
         eraserPaint.setStrokeWidth(boxPaint.getStrokeWidth());
         eraserPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 
-        boxCornerRadius =
-                context.getResources().getDimensionPixelOffset(R.dimen.barcode_reticle_corner_radius);
+        boxCornerRadius = context.getResources().getDimensionPixelOffset(R.dimen.barcode_reticle_corner_radius);
 
         pathPaint = new Paint();
         pathPaint.setColor(Color.WHITE);
@@ -83,9 +80,8 @@ abstract class BarcodeGraphicBase extends GraphicOverlay.Graphic {
         canvas.drawRoundRect(boxRect, boxCornerRadius, boxCornerRadius, boxPaint);
     }
 
-    public static RectF getBarcodeReticleBox(GraphicOverlay overlay) {
+    private static RectF getBarcodeReticleBox(GraphicOverlay overlay) {
         // TODO box width and height hardcoded... can be tuned!
-        Context context = overlay.getContext();
         float overlayWidth = overlay.getWidth();
         float overlayHeight = overlay.getHeight();
         float boxWidth = overlayWidth * 80 / 100;

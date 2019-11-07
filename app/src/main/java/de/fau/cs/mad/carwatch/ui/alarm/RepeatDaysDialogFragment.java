@@ -1,7 +1,6 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.Objects;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -38,37 +39,27 @@ public class RepeatDaysDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activeDays = getArguments().getBooleanArray(Constants.KEY_ACTIVE_DAYS);
+        if (getArguments() != null) {
+            activeDays = getArguments().getBooleanArray(Constants.KEY_ACTIVE_DAYS);
+        }
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(Objects.requireNonNull(getContext()));
         // Set the dialog title
         builder.setTitle(R.string.set_repeat);
         // Specify the list array, the items to be selected by default (null for none),
         // and the listener through which to receive callbacks when items are selected
         builder.setMultiChoiceItems(R.array.days_of_week, activeDays,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int selectedDay,
-                                        boolean isChecked) {
-                        activeDays[selectedDay] = isChecked;
-                    }
-                });
+                (dialog, selectedDay, isChecked) -> activeDays[selectedDay] = isChecked);
         // Set the action buttons
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                // Return selectedDays to activity
-                saveSelectedDays(activeDays);
-            }
+        builder.setPositiveButton(R.string.ok, (dialog, id) -> {
+            // Return selectedDays to activity
+            saveSelectedDays(activeDays);
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-            }
+        builder.setNegativeButton(R.string.cancel, (dialog, id) -> {
         });
 
         return builder.create();

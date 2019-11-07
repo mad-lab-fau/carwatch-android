@@ -3,7 +3,6 @@ package de.fau.cs.mad.carwatch.userpresent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 

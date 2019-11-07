@@ -16,6 +16,7 @@
 
 package de.fau.cs.mad.carwatch.barcodedetection;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ class BarcodeFieldAdapter extends RecyclerView.Adapter<BarcodeFieldViewHolder> {
 
     static class BarcodeFieldViewHolder extends RecyclerView.ViewHolder {
 
+        private Context context;
+
         static BarcodeFieldViewHolder create(ViewGroup parent) {
             View view =
                     LayoutInflater.from(parent.getContext()).inflate(R.layout.barcode_field, parent, false);
@@ -46,13 +49,14 @@ class BarcodeFieldAdapter extends RecyclerView.Adapter<BarcodeFieldViewHolder> {
 
         private BarcodeFieldViewHolder(View view) {
             super(view);
+            context = view.getContext();
             labelView = view.findViewById(R.id.barcode_field_label);
             valueView = view.findViewById(R.id.barcode_field_value);
         }
 
         void bindBarcodeField(BarcodeField barcodeField) {
-            labelView.setText(barcodeField.getLabel());
-            valueView.setText(barcodeField.getValue());
+            labelView.setText(context.getString(R.string.prompt_barcode_scan_successful));
+            valueView.setText(context.getString(R.string.text_barcode_scan_successful, barcodeField.getRawValue()));
         }
     }
 

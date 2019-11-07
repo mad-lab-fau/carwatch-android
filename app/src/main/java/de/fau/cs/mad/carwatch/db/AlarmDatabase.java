@@ -23,7 +23,7 @@ public abstract class AlarmDatabase extends RoomDatabase {
     private static AlarmDatabase sInstance;
 
     @VisibleForTesting
-    public static final String DATABASE_NAME = "alarm-db";
+    private static final String DATABASE_NAME = "alarm-db";
 
     public abstract AlarmDao alarmModel();
 
