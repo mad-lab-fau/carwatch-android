@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,7 +50,13 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
             }
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN |
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+            );
         }
 
         SwipeButton swipeButton = findViewById(R.id.button_swipe);

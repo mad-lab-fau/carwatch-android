@@ -62,9 +62,12 @@
 
         <activity
             android:name=".ui.BarcodeActivity"
-            android:excludeFromRecents="true"
             android:label="@string/title_activity_scan"
+            android:excludeFromRecents="true"
             android:launchMode="singleTask"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:taskAffinity="" />

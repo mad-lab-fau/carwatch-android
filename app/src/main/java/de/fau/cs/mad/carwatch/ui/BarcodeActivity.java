@@ -40,7 +40,7 @@ public class BarcodeActivity extends AppCompatActivity {
         fragment.setAlarmId(alarmId);
         fragment.setSalivaId(salivaId);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
@@ -49,10 +49,19 @@ public class BarcodeActivity extends AppCompatActivity {
             if (keyguardManager != null) {
                 keyguardManager.requestDismissKeyguard(this, null);
             }
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
         } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN |
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+            );
         }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }

@@ -88,6 +88,8 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     public void onResume() {
         super.onResume();
 
+        Log.e(TAG, "ON RESUME");
+
         workflowModel.markCameraFrozen();
         currentWorkflowState = WorkflowState.NOT_STARTED;
         cameraSource.setFrameProcessor(new BarcodeProcessor(graphicOverlay, workflowModel));
@@ -222,12 +224,15 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (salivaId == 0) {
+        /*if (salivaId == 0) {
             // Show Reminder Dialog when scanning first saliva sample of the day
             showQuestionnaireReminderDialog();
         } else {
             finishActivity(this.alarmTime);
-        }
+        }*/
+
+        Log.e(TAG, "ON DISMISS");
+        finishActivity(this.alarmTime);
 
     }
 
@@ -244,13 +249,15 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
             BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
 
+            Log.d(TAG, "Barcode scan: " + check);
+
             switch (check) {
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
                     sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
 
-                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
                     cancelTimer(alarmId, salivaId, barcode.getValue());
+                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
                     break;
                 case INVALID:
                     try {
@@ -325,6 +332,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     }
 
     private void finishActivity(long alarmTime) {
+        Log.e(TAG, "FINISH ACTIVITY");
         if (getActivity() != null) {
             Intent intent = new Intent();
             intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
