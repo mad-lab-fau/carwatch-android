@@ -190,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            /*case R.id.menu_scan:
-                startActivity(new Intent(this, BarcodeActivity.class));
+            case R.id.menu_app_info:
+                showAppInfoDialog();
                 break;
-            */
+
 
         }
         return super.onOptionsItemSelected(item);

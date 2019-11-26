@@ -107,4 +107,8 @@
     <string name="hint_clicks_kill_alarms">Noch %1$d Klicks, um alle Alarme zu beenden.</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
+
+    <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_info">Info</string>
+
 </resources>
