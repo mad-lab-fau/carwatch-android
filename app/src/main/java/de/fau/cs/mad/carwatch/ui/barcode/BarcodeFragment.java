@@ -248,6 +248,17 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             Log.d(TAG, "Barcode scan: " + check);
 
             switch (check) {
+                case DUPLICATE_BARCODE:
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
+                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //showBarcodeAlreadyScannedDialog();
+                    // call through
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
                     sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
@@ -264,17 +275,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                         e.printStackTrace();
                     }
                     showInvalidBarcodeDialog();
-                    break;
-                case DUPLICATE_BARCODE:
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
-                        json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
-                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    showBarcodeAlreadyScannedDialog();
                     break;
             }
         }
