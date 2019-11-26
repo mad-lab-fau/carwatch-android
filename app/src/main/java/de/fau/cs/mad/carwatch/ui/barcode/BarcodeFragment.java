@@ -88,8 +88,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     public void onResume() {
         super.onResume();
 
-        Log.e(TAG, "ON RESUME");
-
         workflowModel.markCameraFrozen();
         currentWorkflowState = WorkflowState.NOT_STARTED;
         cameraSource.setFrameProcessor(new BarcodeProcessor(graphicOverlay, workflowModel));
@@ -132,6 +130,10 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             try {
                 workflowModel.markCameraLive();
                 preview.start(cameraSource);
+
+                JSONObject json = new JSONObject();
+                LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCAN_INIT, json);
+
             } catch (IOException e) {
                 Log.e(TAG, "Failed to start camera preview!", e);
                 cameraSource.release();
@@ -224,15 +226,12 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        /*if (salivaId == 0) {
+        if (salivaId == 0) {
             // Show Reminder Dialog when scanning first saliva sample of the day
             showQuestionnaireReminderDialog();
         } else {
             finishActivity(this.alarmTime);
-        }*/
-
-        Log.e(TAG, "ON DISMISS");
-        finishActivity(this.alarmTime);
+        }
 
     }
 
@@ -252,6 +251,17 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             Log.d(TAG, "Barcode scan: " + check);
 
             switch (check) {
+                case DUPLICATE_BARCODE:
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
+                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //showBarcodeAlreadyScannedDialog();
+                    // call through
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
                     sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
@@ -268,16 +278,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                         e.printStackTrace();
                     }
                     showInvalidBarcodeDialog();
-                    break;
-                case DUPLICATE_BARCODE:
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
-                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    showBarcodeAlreadyScannedDialog();
                     break;
             }
         }
@@ -332,7 +332,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     }
 
     private void finishActivity(long alarmTime) {
-        Log.e(TAG, "FINISH ACTIVITY");
         if (getActivity() != null) {
             Intent intent = new Intent();
             intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);

@@ -58,6 +58,7 @@
         <RelativeLayout
             android:id="@+id/add_alarm_repeat_layout"
             style="@style/settingsItem"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_below="@id/add_alarm_time_layout"
             android:background="?android:attr/selectableItemBackground"

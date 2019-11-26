@@ -27,6 +27,7 @@
             android:id="@+id/alarm_repetition_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:fontFamily="@string/font_family_medium"
             android:textSize="@dimen/small_text_size" />
 
