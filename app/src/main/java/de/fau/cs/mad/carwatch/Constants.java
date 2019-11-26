@@ -30,7 +30,7 @@ public final class Constants {
     /**
      * Time to the next saliva sample in minutes
      */
-    public static final int[] SALIVA_TIMES = {0, 1, 1, 1, 1};
+    public static final int[] SALIVA_TIMES = {0, 15, 15, 15, 15};
 
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
