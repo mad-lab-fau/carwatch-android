@@ -1,27 +1,20 @@
 package de.fau.cs.mad.carwatch.ui;
 
+import android.app.Activity;
 import android.app.KeyguardManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSource;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmStopReceiver;
-import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.ui.alarm.ShowAlarmFragment;
 import de.fau.cs.mad.carwatch.ui.barcode.BarcodeFragment;
 import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
@@ -47,6 +40,15 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
             salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
         }
 
+        keepScreenOn();
+
+        ShowAlarmFragment fragment = new ShowAlarmFragment();
+        fragment.setOnSwipeListener(this);
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
+
+    }
+
+    private void keepScreenOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -64,12 +66,12 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
                             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
             );
         }
+    }
 
-        ShowAlarmFragment fragment = new ShowAlarmFragment();
-        fragment.setOnSwipeListener(this);
-
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        keepScreenOn();
     }
 
     /*private void snoozeAlarm() {
@@ -98,38 +100,14 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
         stopAlarmIntent.setAction("Stop Alarm");
 
-        sendBroadcast(stopAlarmIntent);
-
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
-
-        int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
-        if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
-            // There's already a saliva procedure running at the moment
-            Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing % Constants.ALARM_OFFSET + " already running at the moment!");
-            return;
-        }
-
-        if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-            Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-            icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.warning_title))
-                    .setCancelable(false)
-                    .setIcon(icon)
-                    .setMessage(getString(R.string.warning_already_taken_wakeup))
-                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
-                    .show();
-            return;
-        }
-
-        TimerHandler.scheduleSalivaCountdown(this, alarmId, salivaId);
-
-        BarcodeFragment fragment = new BarcodeFragment();
-        fragment.setAlarmId(alarmId);
-        fragment.setSalivaId(salivaId);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
-
+        sendOrderedBroadcast(stopAlarmIntent, null, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                BarcodeFragment fragment = new BarcodeFragment();
+                fragment.setAlarmId(alarmId);
+                fragment.setSalivaId(salivaId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            }
+        }, null, Activity.RESULT_OK, null, null);
     }
 }

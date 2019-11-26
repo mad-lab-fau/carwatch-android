@@ -79,32 +79,34 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
+        //if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
+
+        int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
+        if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
+            // There's already a saliva procedure running at the moment
+            Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing % Constants.ALARM_OFFSET + " already running at the moment!");
+            return;
+        }
+
+        if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
+            Intent i = new Intent(context, AlertActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(i);
+            return;
+        }
+
+        TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId);
+
         if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
-
-            // TODO DISCUSS
-            int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
-            if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
-                // There's already a saliva procedure running at the moment
-                Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing % Constants.ALARM_OFFSET + " already running at the moment!");
-                return;
-            }
-
-            if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-                Intent i = new Intent(context, AlertActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
-                return;
-            }
-
             Intent scannerIntent = new Intent(context, BarcodeActivity.class);
             scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
             scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
             scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(scannerIntent);
-
-            TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId);
         }
+
+        //}
     }
 }

@@ -223,8 +223,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        Log.e(TAG, "ON DISMISS");
-
         if (salivaId == 0) {
             // Show Reminder Dialog when scanning first saliva sample of the day
             showQuestionnaireReminderDialog();
@@ -331,7 +329,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     }
 
     private void finishActivity(long alarmTime) {
-        Log.e(TAG, "FINISH ACTIVITY");
         if (getActivity() != null) {
             Intent intent = new Intent();
             intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
