@@ -51,6 +51,10 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:parentActivityName=".ui.MainActivity"
             android:taskAffinity="" />
 
         <activity
