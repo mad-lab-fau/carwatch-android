@@ -133,7 +133,9 @@ public class TimerHandler {
 
 
     private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
+        int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         Intent contentIntent = new Intent(context, BarcodeActivity.class);
+        contentIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
