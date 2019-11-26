@@ -61,6 +61,7 @@ public final class Constants {
     public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
     public static final String EXTRA_SOURCE = "extra_source";
+    public static final String EXTRA_DAY_FINISHED = "day_finished";
 
     public static final int EXTRA_ALARM_ID_SPONTANEOUS = 4711;
     public static final int EXTRA_ALARM_ID_DEFAULT = -1;

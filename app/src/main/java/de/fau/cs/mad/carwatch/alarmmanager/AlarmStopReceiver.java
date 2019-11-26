@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.alarmmanager;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -20,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.ui.AlertActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
@@ -79,7 +79,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
-        //if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
 
@@ -90,23 +89,26 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             return;
         }
 
+        Intent scannerIntent = new Intent(context, BarcodeActivity.class);
+        scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        // morning already finished => return (with result code)
         if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-            Intent i = new Intent(context, AlertActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
-            return;
+            if (alarmSource == AlarmSource.SOURCE_ACTIVITY) {
+                setResultCode(Activity.RESULT_CANCELED);
+                return;
+            } else {
+                scannerIntent.putExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_CANCELED);
+            }
+        } else {
+            TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId);
         }
 
-        TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId);
-
         if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {
-            Intent scannerIntent = new Intent(context, BarcodeActivity.class);
-            scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-            scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
-            scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(scannerIntent);
         }
 
-        //}
     }
 }

@@ -5,10 +5,12 @@ import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -103,6 +105,18 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         sendOrderedBroadcast(stopAlarmIntent, null, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (getResultCode() == Activity.RESULT_CANCELED) {
+                    Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+                    icon.setTint(getResources().getColor(R.color.colorPrimary));
+
+                    new AlertDialog.Builder(ShowAlarmActivity.this)
+                            .setTitle(getString(R.string.warning_title))
+                            .setCancelable(false)
+                            .setIcon(icon)
+                            .setMessage(getString(R.string.warning_already_taken_wakeup))
+                            .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
+                            .show();
+                }
                 BarcodeFragment fragment = new BarcodeFragment();
                 fragment.setAlarmId(alarmId);
                 fragment.setSalivaId(salivaId);
