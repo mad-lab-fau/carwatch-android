@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,14 +75,6 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
-            try {
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_VERSION_CODE, BuildConfig.VERSION_CODE);
-                LoggerUtil.log(Constants.LOGGER_ACTION_APP_VERSION, json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
             // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
@@ -240,6 +233,8 @@ public class MainActivity extends AppCompatActivity {
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_CONDITION, SubjectMap.getConditionForSubject(subjectId));
                     LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+
+                    logAppPhoneMetadata();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -251,6 +246,36 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         subjectIdDialog.show();
+    }
+
+    private void logAppPhoneMetadata() {
+        try {
+            // App Metadata – Version Code and Version Name
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_APP_VERSION_CODE, BuildConfig.VERSION_CODE);
+            json.put(Constants.LOGGER_EXTRA_APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+            LoggerUtil.log(Constants.LOGGER_ACTION_APP_METADATA, json);
+
+            // Phone Metadata – Brand, Manufacturer, Model, Android SDK level, Security Patch (if applicable), Build Release
+            json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_PHONE_BRAND, Build.BRAND);
+            json.put(Constants.LOGGER_EXTRA_PHONE_MANUFACTURER, Build.MANUFACTURER);
+            json.put(Constants.LOGGER_EXTRA_PHONE_MODEL, Build.MODEL);
+            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_SDK_LEVEL, Build.VERSION.SDK_INT);
+            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_SECURITY_PATCH, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? Build.VERSION.SECURITY_PATCH : ""); // this
+            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_RELEASE, Build.VERSION.RELEASE); // this
+
+            LoggerUtil.log(Constants.LOGGER_ACTION_PHONE_METADATA, json);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void showAppInfoDialog() {
+        AppInfoDialog dialog = new AppInfoDialog();
+        dialog.show(getSupportFragmentManager(), "app_info");
     }
 
     public void showKillWarningDialog() {

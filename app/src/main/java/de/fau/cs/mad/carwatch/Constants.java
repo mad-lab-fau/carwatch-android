@@ -79,7 +79,8 @@ public final class Constants {
 
 
     // Actions that the Logger should log
-    public static final String LOGGER_ACTION_APP_VERSION = "app_version";
+    public static final String LOGGER_ACTION_APP_METADATA = "app_metadata";
+    public static final String LOGGER_ACTION_PHONE_METADATA = "phone_metadata";
     public static final String LOGGER_ACTION_ALARM_SET = "alarm_set";
     public static final String LOGGER_ACTION_TIMER_SET = "timer_set";
     public static final String LOGGER_ACTION_ALARM_CANCEL = "alarm_cancel";
@@ -119,7 +120,14 @@ public final class Constants {
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
     public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
     public static final String LOGGER_EXTRA_SUBJECT_CONDITION = "subject_condition"; // String
-    public static final String LOGGER_EXTRA_VERSION_CODE = "version_code"; // int
+    public static final String LOGGER_EXTRA_APP_VERSION_CODE = "version_code"; // int
+    public static final String LOGGER_EXTRA_APP_VERSION_NAME = "version_name"; // String
+    public static final String LOGGER_EXTRA_PHONE_BRAND = "brand"; // String
+    public static final String LOGGER_EXTRA_PHONE_MANUFACTURER = "manufacturer"; // String
+    public static final String LOGGER_EXTRA_PHONE_MODEL = "model"; // String
+    public static final String LOGGER_EXTRA_PHONE_VERSION_SDK_LEVEL = "version_sdk_level"; // int
+    public static final String LOGGER_EXTRA_PHONE_VERSION_SECURITY_PATCH = "version_security_patch"; // String
+    public static final String LOGGER_EXTRA_PHONE_VERSION_RELEASE = "version_release"; // String
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
