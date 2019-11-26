@@ -16,12 +16,16 @@
 
 package de.fau.cs.mad.carwatch.barcodedetection;
 
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,9 +53,33 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
 
     private BarcodeResultFragment(DialogInterface.OnDismissListener dismissListener) {
         this.dismissListener = dismissListener;
+
+        if (getActivity() == null) {
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            getActivity().setShowWhenLocked(true);
+            getActivity().setTurnScreenOn(true);
+            KeyguardManager keyguardManager = (KeyguardManager) getActivity().getSystemService(Context.KEYGUARD_SERVICE);
+            if (keyguardManager != null) {
+                keyguardManager.requestDismissKeyguard(getActivity(), null);
+            }
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            getActivity().getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN |
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+            );
+        }
+
     }
 
-    public static void show(FragmentManager fragmentManager, BarcodeField barcodeField, DialogInterface.OnDismissListener dismissListener) {
+    public static void show(FragmentManager fragmentManager, BarcodeField
+            barcodeField, DialogInterface.OnDismissListener dismissListener) {
         BarcodeResultFragment barcodeResultFragment = new BarcodeResultFragment(dismissListener);
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARG_BARCODE_FIELD, barcodeField);
@@ -69,7 +97,8 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater layoutInflater, @Nullable ViewGroup viewGroup, @Nullable Bundle bundle) {
+    public View onCreateView(@NonNull LayoutInflater layoutInflater, @Nullable ViewGroup
+            viewGroup, @Nullable Bundle bundle) {
         View view = layoutInflater.inflate(R.layout.barcode_bottom_sheet, viewGroup);
         BarcodeField barcodeField;
         Bundle arguments = getArguments();

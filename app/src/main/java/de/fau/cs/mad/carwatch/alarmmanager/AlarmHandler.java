@@ -222,6 +222,17 @@ public class AlarmHandler {
         if (alarmManager != null) {
             AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(timeToRing.getMillis(), pendingIntentShow);
             alarmManager.setAlarmClock(info, pendingIntent);
+
+            try {
+                // create Json object and log information
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
+                json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, timeToRing.getMillis());
+                LoggerUtil.log(Constants.LOGGER_ACTION_TIMER_SET, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             showAlarmSetMessage(context, snackbarAnchor, timeToRing);
             return timeToRing.getMillis();
         }

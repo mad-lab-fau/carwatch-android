@@ -130,6 +130,10 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             try {
                 workflowModel.markCameraLive();
                 preview.start(cameraSource);
+
+                JSONObject json = new JSONObject();
+                LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCAN_INIT, json);
+
             } catch (IOException e) {
                 Log.e(TAG, "Failed to start camera preview!", e);
                 cameraSource.release();
@@ -244,13 +248,26 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
             BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
 
+            Log.d(TAG, "Barcode scan: " + check);
+
             switch (check) {
+                case DUPLICATE_BARCODE:
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
+                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //showBarcodeAlreadyScannedDialog();
+                    // call through
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
                     sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
 
-                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
                     cancelTimer(alarmId, salivaId, barcode.getValue());
+                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
                     break;
                 case INVALID:
                     try {
@@ -261,16 +278,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                         e.printStackTrace();
                     }
                     showInvalidBarcodeDialog();
-                    break;
-                case DUPLICATE_BARCODE:
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
-                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    showBarcodeAlreadyScannedDialog();
                     break;
             }
         }

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +37,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 
+import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
@@ -61,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
     private NavController navController;
 
     private int clickCounter = 0;
-    private static final int CLICK_THRESHOLD_TOAST = 5;
-    private static final int CLICK_THRESHOLD_KILL = 10;
+    private static final int CLICK_THRESHOLD_TOAST = 2;
+    private static final int CLICK_THRESHOLD_KILL = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,10 +183,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
-            /*case R.id.menu_scan:
-                startActivity(new Intent(this, BarcodeActivity.class));
+            case R.id.menu_app_info:
+                showAppInfoDialog();
                 break;
-            */
+
 
         }
         return super.onOptionsItemSelected(item);
@@ -231,6 +233,8 @@ public class MainActivity extends AppCompatActivity {
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_CONDITION, SubjectMap.getConditionForSubject(subjectId));
                     LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+
+                    logAppPhoneMetadata();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -242,6 +246,36 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         subjectIdDialog.show();
+    }
+
+    private void logAppPhoneMetadata() {
+        try {
+            // App Metadata – Version Code and Version Name
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_APP_VERSION_CODE, BuildConfig.VERSION_CODE);
+            json.put(Constants.LOGGER_EXTRA_APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+            LoggerUtil.log(Constants.LOGGER_ACTION_APP_METADATA, json);
+
+            // Phone Metadata – Brand, Manufacturer, Model, Android SDK level, Security Patch (if applicable), Build Release
+            json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_PHONE_BRAND, Build.BRAND);
+            json.put(Constants.LOGGER_EXTRA_PHONE_MANUFACTURER, Build.MANUFACTURER);
+            json.put(Constants.LOGGER_EXTRA_PHONE_MODEL, Build.MODEL);
+            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_SDK_LEVEL, Build.VERSION.SDK_INT);
+            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_SECURITY_PATCH, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? Build.VERSION.SECURITY_PATCH : ""); // this
+            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_RELEASE, Build.VERSION.RELEASE); // this
+
+            LoggerUtil.log(Constants.LOGGER_ACTION_PHONE_METADATA, json);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void showAppInfoDialog() {
+        AppInfoDialog dialog = new AppInfoDialog();
+        dialog.show(getSupportFragmentManager(), "app_info");
     }
 
     public void showKillWarningDialog() {
