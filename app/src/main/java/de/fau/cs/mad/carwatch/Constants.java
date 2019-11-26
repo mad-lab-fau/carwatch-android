@@ -88,6 +88,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_ALARM_STOP = "alarm_stop";
     public static final String LOGGER_ACTION_ALARM_KILLALL = "alarm_killall";
     public static final String LOGGER_ACTION_EVENING_SALIVETTE = "evening_salivette";
+    public static final String LOGGER_ACTION_BARCODE_SCAN_INIT = "barcode_scan_init";
     public static final String LOGGER_ACTION_BARCODE_SCANNED = "barcode_scanned";
     public static final String LOGGER_ACTION_INVALID_BARCODE_SCANNED = "invalid_barcode_scanned";
     public static final String LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED = "duplicate_barcode_scanned";

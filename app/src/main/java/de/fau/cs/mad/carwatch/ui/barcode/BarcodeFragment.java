@@ -87,7 +87,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     @Override
     public void onResume() {
         super.onResume();
-        Log.e(TAG, "ON RESUME");
 
         workflowModel.markCameraFrozen();
         currentWorkflowState = WorkflowState.NOT_STARTED;
@@ -131,6 +130,10 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             try {
                 workflowModel.markCameraLive();
                 preview.start(cameraSource);
+
+                JSONObject json = new JSONObject();
+                LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCAN_INIT, json);
+
             } catch (IOException e) {
                 Log.e(TAG, "Failed to start camera preview!", e);
                 cameraSource.release();
