@@ -36,12 +36,6 @@ public class BarcodeActivity extends AppCompatActivity {
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        BarcodeFragment fragment = new BarcodeFragment();
-        fragment.setAlarmId(alarmId);
-        fragment.setSalivaId(salivaId);
-
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -63,5 +57,12 @@ public class BarcodeActivity extends AppCompatActivity {
             );
         }
 
+        BarcodeFragment fragment = new BarcodeFragment();
+        fragment.setAlarmId(alarmId);
+        fragment.setSalivaId(salivaId);
+
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
+
     }
+
 }

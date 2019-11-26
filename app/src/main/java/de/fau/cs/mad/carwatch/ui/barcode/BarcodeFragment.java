@@ -87,7 +87,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     @Override
     public void onResume() {
         super.onResume();
-
         Log.e(TAG, "ON RESUME");
 
         workflowModel.markCameraFrozen();
@@ -224,15 +223,14 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        /*if (salivaId == 0) {
+        Log.e(TAG, "ON DISMISS");
+
+        if (salivaId == 0) {
             // Show Reminder Dialog when scanning first saliva sample of the day
             showQuestionnaireReminderDialog();
         } else {
             finishActivity(this.alarmTime);
-        }*/
-
-        Log.e(TAG, "ON DISMISS");
-        finishActivity(this.alarmTime);
+        }
 
     }
 
@@ -273,6 +271,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                     try {
                         JSONObject json = new JSONObject();
                         json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
                         LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
                         e.printStackTrace();

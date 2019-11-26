@@ -30,7 +30,7 @@ public final class Constants {
     /**
      * Time to the next saliva sample in minutes
      */
-    public static final int[] SALIVA_TIMES = {0, 15, 15, 15, 15};
+    public static final int[] SALIVA_TIMES = {0, 1, 1, 1, 1};
 
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
@@ -78,7 +78,9 @@ public final class Constants {
 
 
     // Actions that the Logger should log
+    public static final String LOGGER_ACTION_APP_VERSION = "app_version";
     public static final String LOGGER_ACTION_ALARM_SET = "alarm_set";
+    public static final String LOGGER_ACTION_TIMER_SET = "timer_set";
     public static final String LOGGER_ACTION_ALARM_CANCEL = "alarm_cancel";
     public static final String LOGGER_ACTION_ALARM_RING = "alarm_ring";
     public static final String LOGGER_ACTION_ALARM_SNOOZE = "alarm_snooze";
@@ -102,18 +104,20 @@ public final class Constants {
 
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
-    public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long
+    public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long (utc timestamp)
     public static final String LOGGER_EXTRA_ALARM_IS_HIDDEN = "is_hidden"; // boolean
-    public static final String LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP = "timestamp_hidden"; // long
+    public static final String LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP = "timestamp_hidden"; // long (utc timestamp)
     public static final String LOGGER_EXTRA_ALARM_IS_REPEATING = "is_repeating"; // boolean
     public static final String LOGGER_EXTRA_ALARM_REPEATING_DAYS = "repeating_days"; // boolean[]
     public static final String LOGGER_EXTRA_ALARM_SNOOZE_DURATION = "snooze_duration"; // int
     public static final String LOGGER_EXTRA_ALARM_SOURCE = "source"; // int
     public static final String LOGGER_EXTRA_SALIVA_ID = "saliva_id"; // int
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
+    public static final String LOGGER_EXTRA_OTHER_BARCODES = "other_barcodes"; // String Set
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
     public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
     public static final String LOGGER_EXTRA_SUBJECT_CONDITION = "subject_condition"; // String
+    public static final String LOGGER_EXTRA_VERSION_CODE = "version_code"; // int
 
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);

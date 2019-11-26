@@ -3,19 +3,27 @@ package de.fau.cs.mad.carwatch.ui;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSource;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmStopReceiver;
+import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
+import de.fau.cs.mad.carwatch.ui.alarm.ShowAlarmFragment;
+import de.fau.cs.mad.carwatch.ui.barcode.BarcodeFragment;
 import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
 
 public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.OnSwipeListener {
@@ -24,8 +32,6 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
     private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
     private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
-
-    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +43,8 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         }
 
         if (getIntent() != null) {
-            this.alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
-            this.salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
+            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
+            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -59,25 +65,11 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
             );
         }
 
-        SwipeButton swipeButton = findViewById(R.id.button_swipe);
-        swipeButton.setOnSwipeListener(this);
+        ShowAlarmFragment fragment = new ShowAlarmFragment();
+        fragment.setOnSwipeListener(this);
 
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        if (vibrator != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createWaveform(Constants.VIBRATION_PATTERN, 0));
-            } else {
-                vibrator.vibrate(Constants.VIBRATION_PATTERN, 0);
-            }
-        }
-    }
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (vibrator != null) {
-            vibrator.cancel();
-        }
     }
 
     /*private void snoozeAlarm() {
@@ -89,16 +81,6 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         finish();
     }*/
 
-    private void stopAlarm() {
-        Intent stopAlarmIntent = new Intent(this, AlarmStopReceiver.class);
-        stopAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        stopAlarmIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
-        stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
-        stopAlarmIntent.setAction("Stop Alarm");
-        sendBroadcast(stopAlarmIntent);
-        finish();
-    }
-
     @Override
     public void onSwipeLeft() {
         stopAlarm();
@@ -107,5 +89,47 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     @Override
     public void onSwipeRight() {
         stopAlarm();
+    }
+
+    private void stopAlarm() {
+        Intent stopAlarmIntent = new Intent(this, AlarmStopReceiver.class);
+        stopAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        stopAlarmIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
+        stopAlarmIntent.setAction("Stop Alarm");
+
+        sendBroadcast(stopAlarmIntent);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
+
+        int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
+        if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
+            // There's already a saliva procedure running at the moment
+            Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing % Constants.ALARM_OFFSET + " already running at the moment!");
+            return;
+        }
+
+        if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
+            Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+            icon.setTint(getResources().getColor(R.color.colorPrimary));
+
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.warning_title))
+                    .setCancelable(false)
+                    .setIcon(icon)
+                    .setMessage(getString(R.string.warning_already_taken_wakeup))
+                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
+                    .show();
+            return;
+        }
+
+        TimerHandler.scheduleSalivaCountdown(this, alarmId, salivaId);
+
+        BarcodeFragment fragment = new BarcodeFragment();
+        fragment.setAlarmId(alarmId);
+        fragment.setSalivaId(salivaId);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+
     }
 }
