@@ -69,7 +69,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             // create Json object and log information
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
-            json.put(Constants.EXTRA_SALIVA_ID, salivaId);
+            json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaId);
             json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, isHidden);
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_RING, json);
         } catch (JSONException e) {
