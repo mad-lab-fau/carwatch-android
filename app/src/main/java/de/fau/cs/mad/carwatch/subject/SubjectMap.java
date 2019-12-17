@@ -61,6 +61,7 @@ public class SubjectMap {
         sSubjectMap.put("FA23L", KNOWN_ALARM);
         sSubjectMap.put("FB04R", UNKNOWN_ALARM);
         sSubjectMap.put("FK22R", KNOWN_ALARM);
+        sSubjectMap.put("FS11N", UNKNOWN_ALARM);
         sSubjectMap.put("HE12B", UNKNOWN_ALARM);
         sSubjectMap.put("HT08S", SPONTANEOUS);
         sSubjectMap.put("II08L", UNKNOWN_ALARM);
@@ -71,6 +72,7 @@ public class SubjectMap {
         sSubjectMap.put("JE03S", KNOWN_ALARM);
         sSubjectMap.put("JE15A", SPONTANEOUS);
         sSubjectMap.put("JG04G", UNKNOWN_ALARM);
+        sSubjectMap.put("JH08K", UNKNOWN_ALARM);
         sSubjectMap.put("JK12R", KNOWN_ALARM);
         sSubjectMap.put("JK20G", UNKNOWN_ALARM);
         sSubjectMap.put("JK25L", KNOWN_ALARM);
@@ -99,6 +101,7 @@ public class SubjectMap {
         sSubjectMap.put("LI20Z", KNOWN_ALARM);
         sSubjectMap.put("LJ16R", KNOWN_ALARM);
         sSubjectMap.put("LK24L", SPONTANEOUS);
+        sSubjectMap.put("LL31H", UNKNOWN_ALARM);
         sSubjectMap.put("LM18T", UNKNOWN_ALARM);
         sSubjectMap.put("LP06T", UNKNOWN_ALARM);
         sSubjectMap.put("LP25R", UNKNOWN_ALARM);
