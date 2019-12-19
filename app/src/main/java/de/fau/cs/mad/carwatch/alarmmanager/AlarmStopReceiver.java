@@ -86,6 +86,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
             // There's already a saliva procedure running at the moment
             Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing % Constants.ALARM_OFFSET + " already running at the moment!");
+            setResultCode(Activity.RESULT_CANCELED);
             return;
         }
 

@@ -12,6 +12,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -106,22 +107,33 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (getResultCode() == Activity.RESULT_CANCELED) {
-                    Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-                    icon.setTint(getResources().getColor(R.color.colorPrimary));
+                    if (checkAlarmOngoing()) {
+                        finish();
+                    } else {
+                        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+                        icon.setTint(getResources().getColor(R.color.colorPrimary));
 
-                    new AlertDialog.Builder(ShowAlarmActivity.this)
-                            .setTitle(getString(R.string.warning_title))
-                            .setCancelable(false)
-                            .setIcon(icon)
-                            .setMessage(getString(R.string.warning_already_taken_wakeup))
-                            .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
-                            .show();
+                        new AlertDialog.Builder(ShowAlarmActivity.this)
+                                .setTitle(getString(R.string.warning_title))
+                                .setCancelable(false)
+                                .setIcon(icon)
+                                .setMessage(getString(R.string.warning_already_taken_wakeup))
+                                .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
+                                .show();
+                    }
                 }
+
                 BarcodeFragment fragment = new BarcodeFragment();
                 fragment.setAlarmId(alarmId);
                 fragment.setSalivaId(salivaId);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
             }
         }, null, Activity.RESULT_OK, null, null);
+    }
+
+    private boolean checkAlarmOngoing() {
+        int alarmIdOngoing = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
+        // There's already a saliva procedure running at the moment
+        return (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT) && ((alarmIdOngoing % Constants.ALARM_OFFSET) != (alarmId % Constants.ALARM_OFFSET));
     }
 }
