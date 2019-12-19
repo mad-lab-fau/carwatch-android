@@ -2,6 +2,9 @@ package de.fau.cs.mad.carwatch.barcodedetection;
 
 import java.util.Set;
 
+import de.fau.cs.mad.carwatch.Constants;
+import de.fau.cs.mad.carwatch.subject.SubjectMap;
+
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.DUPLICATE_BARCODE;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.INVALID;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.VALID;
@@ -11,11 +14,11 @@ public class BarcodeChecker {
     private static final String TAG = BarcodeChecker.class.getSimpleName();
 
     // 3 digits (msb)
-    private static final int subjectRange = 100;
+    private static final int subjectRange = SubjectMap.sSubjectMap.size();
     // 2 digits
-    private static final int dayRange = 2;
+    private static final int dayRange = Constants.DELTA_HIDDEN_ALARMS.length;
     // 2 digits (lsb)
-    private static final int salivaRange = 5;
+    private static final int salivaRange = Constants.SALIVA_TIMES.length;
 
     public enum BarcodeCheckResult {
         VALID,
