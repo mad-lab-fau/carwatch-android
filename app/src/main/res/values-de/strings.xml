@@ -52,7 +52,8 @@
     <string name="title_dashboard">Alarm</string>
     <string name="title_wakeup">Aufstehen</string>
     <string name="title_bedtime">Bettzeit</string>
-    <string name="title_subject_id">Code eingeben</string>
+    <string name="title_study_name">Studienname eingeben</string>
+    <string name="title_subject_id">Probanden-ID eingeben</string>
     <string name="snooze_duration">Snoozedauer</string>
     <string name="user_credentials">Benutzerinformationen</string>
 
@@ -90,8 +91,8 @@
     <string name="title_alarm_reminder">Wecker gestellt</string>
     <string name="message_alarm_reminder">Bitte vergessen Sie nicht, alle anderen Wecker in Ihrer Standard-Weckerapp auszustellen!</string>
 
-    <string name="title_reminder_nilspod">Sensor angelegt?</string>
-    <string name="message_reminder_nilspod">Haben Sie den Sensor angelegt? Bitte vergessen Sie nicht, den Sensor für die gesamte Zeit im Bett an Ihrer nicht-dominanten Hand zu tragen!</string>
+    <string name="title_reminder_sensors">Alle Sensoren angebracht?</string>
+    <string name="message_reminder_sensors">Haben Sie alle Sensoren angebracht?\n\nFalls Sie das Sensor-Armband verwenden: Bitte denken Sie daran, den Sensor während der ganzen Zeit im Bett und an Ihrer nicht-dominanten Hand zu tragen.\n\nFalls Sie den EKG-Brustgurt verwenden: Bitte stellen Sie sicher, dass der Brustgurt bequem, aber fest, sitzt und dass Sie die Elektroden vor dem Tragen befeuchtet haben .\n\nFalls Sie die Schlaf-Analyse-Matte verwenden: Bitte stellen Sie sicher, dass die Matte an der Steckdose angeseschlossen ist und korrekt unter dem Bettlaken platziert ist.</string>
 
     <string name="title_reminder_questionnaire">Erinnerung</string>
     <string name="message_reminder_questionnaire">Bitte vergessen Sie nicht, in der Zwischenzeit die Fragebögen auszufüllen!</string>
@@ -99,8 +100,8 @@
     <string name="title_activity_scan">Barcode einscannen</string>
 
     <string name="app_active">CAR Watch Service ist aktiv.</string>
-    <string name="title_invalid_subject_id">Ungültiger Probanden-Code</string>
-    <string name="message_invalid_subject_id">Ungültiger Probanden-Code! Bitte versuchen Sie es erneut.</string>
+    <string name="title_invalid_subject_id">Ungültiger Studienname oder Probanden-Code</string>
+    <string name="message_invalid_subject_id">Ungültiger Studienname oder Probanden-Code! Bitte versuchen Sie es erneut.</string>
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>

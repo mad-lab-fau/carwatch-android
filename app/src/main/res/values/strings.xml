@@ -70,8 +70,8 @@
         \n2nd Digit: First letter of mother\'s first name
         \n3rd and 4th Digits: Day of birth date (01-31)
         \n5th Digit: Last letter of last name</string>
-    <string name="title_invalid_subject_id">Invalid Subject ID</string>
-    <string name="message_invalid_subject_id">Invalid Subject ID! Please try again.</string>
+    <string name="title_invalid_subject_id">Invalid Study Name or Subject ID</string>
+    <string name="message_invalid_subject_id">Invalid Study Name or Subject ID! Please try again.</string>
     <string name="title_kill_alarms">Warning</string>
     <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
@@ -91,8 +91,8 @@
     <string name="title_reminder_questionnaire">Reminder</string>
     <string name="message_reminder_questionnaire">Please remember to fill out the questionnaires in the meanwhile!</string>
 
-    <string name="title_reminder_nilspod">Wearing the Sensor?</string>
-    <string name="message_reminder_nilspod">Are you wearing the sensor? Please remember to wear the sensor throughout your time in bed on your non-dominant hand!</string>
+    <string name="title_reminder_sensors">All sensors in place?</string>
+    <string name="message_reminder_sensors">Are all sensors in place?\n\nIf you use the sensor armband: Please remember to wear the sensor throughout your time in bed on your non-dominant hand!\n\nIf you use the ECG chest strap: Please make sure that it fits correctly and you moistened the electrodes before wearing.\n\nIf you use the Sleep analyzer mat: Please make sure it is plugged in, has power supply and is correctly placed under the bed sheets.</string>
 
     <!-- Wakeup Fragment -->
     <string name="wakeup_title">Start Morning</string>
@@ -113,6 +113,8 @@
     <string name="good_night">Thank you and good night!</string>
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
+
+    <string name="title_share_dialog">Share Logs via…</string>
 
 
     <string name="hint_clicks_kill_alarms">%1$d more clicks to kill all alarms.</string>

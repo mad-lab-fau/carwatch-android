@@ -131,7 +131,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 bedtimeViewModel.setSalivaTaken(true);
                 if (!UserPresentService.serviceRunning) {
                     UserPresentService.startService(getContext());
-                    showNilsPodHintDialog();
+                    showSensorHintDialog();
                 }
             }
         }
@@ -179,7 +179,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
-    private void showNilsPodHintDialog() {
+    private void showSensorHintDialog() {
         if (getContext() == null) {
             return;
         }
@@ -187,10 +187,10 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         icon.setTint(getResources().getColor(R.color.colorPrimary));
 
         new AlertDialog.Builder(getContext())
-                .setTitle(getString(R.string.title_reminder_nilspod))
+                .setTitle(getString(R.string.title_reminder_sensors))
                 .setCancelable(false)
                 .setIcon(icon)
-                .setMessage(getString(R.string.message_reminder_nilspod))
+                .setMessage(getString(R.string.message_reminder_sensors))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                 })
                 .show();
