@@ -5,8 +5,6 @@ import java.util.Set;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.subject.SubjectMap;
 
-import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.DUPLICATE_BARCODE;
-import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.INVALID;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.VALID;
 
 public class BarcodeChecker {
@@ -27,7 +25,8 @@ public class BarcodeChecker {
     }
 
     public static BarcodeCheckResult isValidBarcode(String barcode, Set<String> scannedBarcodes) {
-        if (scannedBarcodes.contains(barcode)) {
+        return VALID;
+        /*if (scannedBarcodes.contains(barcode)) {
             return DUPLICATE_BARCODE;
         }
 
@@ -45,6 +44,6 @@ public class BarcodeChecker {
             }
         }
 
-        return INVALID;
+        return INVALID;*/
     }
 }
