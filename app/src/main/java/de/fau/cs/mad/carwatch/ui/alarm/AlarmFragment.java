@@ -55,7 +55,7 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
         final TextView noAlarmsTextView = root.findViewById(R.id.tv_no_alarms);
 
         // Add an observer on the LiveData returned by getAllAlarms.
-        alarmViewModel.getAllAlarms().observe(this, alarms -> {
+        alarmViewModel.getAllAlarms().observe(getViewLifecycleOwner(), alarms -> {
             // Update the cached copy of the words in the adapter.
             adapter.setAlarms(alarms);
             noAlarmsTextView.setVisibility(alarms.size() == 0 ? View.VISIBLE : View.GONE);

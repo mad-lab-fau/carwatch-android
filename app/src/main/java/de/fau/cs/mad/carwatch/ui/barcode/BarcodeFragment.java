@@ -155,7 +155,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
         // Observes the workflow state changes, if happens, update the overlay view indicators and
         // camera preview state.
         workflowModel.workflowState.observe(
-                this,
+                getViewLifecycleOwner(),
                 workflowState -> {
                     if (workflowState == null || Objects.equal(currentWorkflowState, workflowState)) {
                         return;
@@ -193,7 +193,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                     }
                 });
 
-        workflowModel.detectedBarcode.observe(this, this);
+        workflowModel.detectedBarcode.observe(getViewLifecycleOwner(), this);
     }
 
     private void cancelTimer(int alarmId, int salivaId, String barcodeValue) {
@@ -205,8 +205,9 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             // create Json object and log information
             try {
                 JSONObject json = new JSONObject();
+                int dayId = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(Constants.PREF_DAY_COUNTER, 0);
                 json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
-                json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaId);
+                json.put(Constants.LOGGER_EXTRA_SALIVA_ID, dayId * 100 + salivaId);
                 json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
                 LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);
             } catch (JSONException e) {
