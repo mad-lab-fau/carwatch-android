@@ -12,7 +12,7 @@ public final class Constants {
      */
     public static final int TIMER_DURATION = 1;
 
-    public static final int[] DELTA_HIDDEN_ALARMS = {21, 39};
+    public static final int[] DELTA_HIDDEN_ALARMS = {0, 0};
 
     public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
 
