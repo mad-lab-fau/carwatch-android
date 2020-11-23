@@ -69,6 +69,7 @@ public class Utils {
                 switch (permission) {
                     case Manifest.permission.USE_FULL_SCREEN_INTENT:
                     case Manifest.permission.FOREGROUND_SERVICE:
+                    case Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE:
                         continue;
                 }
                 return false;

@@ -1,12 +1,15 @@
 package de.fau.cs.mad.carwatch.ui;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int CLICK_THRESHOLD_TOAST = 2;
     private static final int CLICK_THRESHOLD_KILL = 5;
 
+    private AlertDialog notificationServiceDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         clickCounter = 0;
 
         // disable night mode per default
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         AppCompatDelegate delegate = getDelegate();
         AppCompatDelegate.setDefaultNightMode(sharedPreferences.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
@@ -143,6 +148,17 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
+        }
+
+        if (isNotificationServiceEnabled()) {
+            if (notificationServiceDialog != null) {
+                notificationServiceDialog.dismiss();
+            }
+        } else {
+            if (notificationServiceDialog == null) {
+                notificationServiceDialog = buildNotificationServiceAlertDialog();
+                notificationServiceDialog.show();
+            }
         }
     }
 
@@ -305,7 +321,66 @@ public class MainActivity extends AppCompatActivity {
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
         sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{Constants.SHARE_EMAIL_ADDRESS});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
-        startActivity(Intent.createChooser(sharingIntent, "Share Logs via..."));
+        startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
     }
 
+
+    /**
+     * Is Notification Service Enabled.
+     * Verifies if the notification listener service is enabled.
+     * Got it from: https://github.com/kpbird/NotificationListenerService-Example/blob/master/NLSExample/src/main/java/com/kpbird/nlsexample/NLService.java
+     *
+     * @return True if enabled, false otherwise.
+     */
+    private boolean isNotificationServiceEnabled() {
+        String pkgName = getPackageName();
+        final String flat = Settings.Secure.getString(getContentResolver(),
+                Constants.SETTINGS_ENABLED_NOTIFICATION_LISTENERS);
+        if (!TextUtils.isEmpty(flat)) {
+            for (String name : flat.split(":")) {
+                final ComponentName cn = ComponentName.unflattenFromString(name);
+                if (cn != null && TextUtils.equals(pkgName, cn.getPackageName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Build Notification Listener Alert Dialog.
+     * Builds the alert dialog that pops up if the user has not turned
+     * the Notification Listener Service on yet.
+     *
+     * @return An alert dialog which leads to the notification enabling screen
+     */
+    private AlertDialog buildNotificationServiceAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder =
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setTitle(R.string.notification_listener_service)
+                        .setMessage(R.string.notification_listener_service_explanation)
+                        .setPositiveButton(
+                                getString(R.string.ok), (dialog, which) -> startActivityForResult(
+                                        new Intent(Constants.ACTION_NOTIFICATION_LISTENER_SETTINGS),
+                                        Constants.REQUEST_CODE_NOTIFICATION_ACCESS)
+                        );
+
+        return alertDialogBuilder.create();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Constants.REQUEST_CODE_NOTIFICATION_ACCESS) {
+            if (notificationServiceDialog != null) {
+                notificationServiceDialog.dismiss();
+
+                if (!isNotificationServiceEnabled()) {
+                    notificationServiceDialog.show();
+                }
+            }
+        }
+    }
 }

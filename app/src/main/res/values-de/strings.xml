@@ -113,5 +113,9 @@
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Info</string>
+    <string name="notification_service_name">NotificationListener</string>
+    <string name="notification_listener_service">Notification Listener Service</string>
+    <string name="notification_listener_service_explanation">For this study you need to enable the Notifcation Listener Service. Enable it now?</string>
+    <string name="title_share_dialog">Logs teilen via…</string>
 
 </resources>
