@@ -59,10 +59,13 @@
     <string name="alarm_set_error">Error setting alarm.</string>
 
     <!-- Subject ID Dialog -->
-    <string name="title_subject_id">Enter Code</string>
-    <string name="message_subject_id_short">Please enter the Code you generated in the online survey.</string>
-    <string name="message_subject_id">Please enter the Code you generated in the online survey.
-        \nHint:
+    <string name="title_study_name">Enter Study Name</string>
+    <string name="title_subject_id">Enter Subject ID</string>
+    <string name="subject_id">Subject ID</string>
+    <string name="study_id">Study Name</string>
+    <string name="message_subject_id_short">Please enter the Study Name and the Subject ID you got from us.</string>
+    <string name="message_subject_id">Please enter the Study Name and the Subject ID you got from us:
+        \nHint for Subject ID:
         \n1st Digit: First letter of first name
         \n2nd Digit: First letter of mother\'s first name
         \n3rd and 4th Digits: Day of birth date (01-31)

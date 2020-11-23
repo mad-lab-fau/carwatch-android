@@ -162,10 +162,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_share:
+                String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
                 String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
 
                 try {
-                    File zipFile = LoggerUtil.zipDirectory(this, subjectId);
+                    File zipFile = LoggerUtil.zipDirectory(this, studyName, subjectId);
                     createFileShareDialog(zipFile);
                 } catch (FileNotFoundException e) {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
@@ -197,8 +198,9 @@ public class MainActivity extends AppCompatActivity {
     private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
-        final EditText editText = dialogView.findViewById(R.id.edit_text_subject_id);
-        editText.setText(sharedPreferences.getString(Constants.PREF_SUBJECT_ID, ""));
+        final EditText studyNameEditText = dialogView.findViewById(R.id.edit_text_study_name);
+        final EditText subjectIdEditText = dialogView.findViewById(R.id.edit_text_subject_id);
+        //subjectIdEditText.setText(sharedPreferences.getString(Constants.PREF_SUBJECT_ID, ""));
 
         AlertDialog warningDialog =
                 new AlertDialog.Builder(this)
@@ -219,17 +221,20 @@ public class MainActivity extends AppCompatActivity {
                         .create();
 
         subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String subjectId = editText.getText().toString().toUpperCase();
+            String studyName = studyNameEditText.getText().toString().toLowerCase();
+            String subjectId = subjectIdEditText.getText().toString().toLowerCase();
 
-            if (SubjectIdCheck.isValidSubjectId(subjectId)) {
+            if (SubjectIdCheck.isValidSubjectId(studyName, subjectId)) {
                 sharedPreferences.edit()
                         .putBoolean(Constants.PREF_FIRST_RUN, false)
                         .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                        .putString(Constants.PREF_STUDY_NAME, studyName)
                         .putInt(Constants.PREF_DAY_COUNTER, 0)
                         .apply();
 
                 try {
                     JSONObject json = new JSONObject();
+                    json.put(Constants.LOGGER_EXTRA_STUDY_NAME, studyName);
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_CONDITION, SubjectMap.getConditionForSubject(subjectId));
                     LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);

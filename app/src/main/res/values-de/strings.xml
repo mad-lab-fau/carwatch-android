@@ -17,9 +17,11 @@
     <string name="menu_scan">Scan</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_share">Logs teilen …</string>
-    <string name="message_subject_id_short">Bitte geben Sie den Code ein, den Sie in der Online-Umfrage generiert haben.</string>
-    <string name="message_subject_id">Bitte geben Sie den Code ein, den Sie in der Online-Umfrage generiert haben.\n
-        Hinweis:\n
+    <string name="study_id">Name der Studie</string>
+    <string name="subject_id">Probanden-ID</string>
+    <string name="message_subject_id_short">Bitte geben Sie den Namen der Studie und die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
+    <string name="message_subject_id">Bitte geben Sie den Namen der Studie und die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.\n
+        Hinweis zur Probanden-ID:\n
         1. Stelle: Erster Buchstabe des Vornamens\n
         2. Stelle: Erster Buchstebe des Vornamens der Mutter\n
         3. und 4. Stelle: Tag des Geburtstags (01 - 31)\n

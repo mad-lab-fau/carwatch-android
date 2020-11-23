@@ -39,8 +39,8 @@ public class LoggerUtil {
     }
 
 
-    public static File zipDirectory(Context context, String subjectId) throws FileNotFoundException {
-        return DiskLogHandler.zipDirectory(context, subjectId);
+    public static File zipDirectory(Context context, String studyName, String subjectId) throws FileNotFoundException {
+        return DiskLogHandler.zipDirectory(context, studyName, subjectId);
     }
 
 }

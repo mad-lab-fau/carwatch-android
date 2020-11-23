@@ -6,11 +6,21 @@
     android:layout_height="wrap_content">
 
     <EditText
+        android:id="@+id/edit_text_study_name"
+        android:layout_width="300dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:inputType="text"
+        android:layout_height="wrap_content"
+        android:hint="@string/study_id" />
+
+    <EditText
         android:id="@+id/edit_text_subject_id"
         android:layout_width="300dp"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:inputType="text"
+        android:hint="@string/subject_id"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

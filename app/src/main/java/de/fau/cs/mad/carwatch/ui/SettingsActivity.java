@@ -2,11 +2,13 @@ package de.fau.cs.mad.carwatch.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
+import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceFragmentCompat;
 
 import org.json.JSONException;
@@ -19,6 +21,7 @@ import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
 import de.fau.cs.mad.carwatch.subject.SubjectMap;
 
 public class SettingsActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,39 +47,13 @@ public class SettingsActivity extends AppCompatActivity {
             if (subjectIdPref == null) {
                 return;
             }
+            EditTextPreference studyNamePref = getPreferenceScreen().findPreference(Constants.PREF_STUDY_NAME);
+            if (studyNamePref == null) {
+                return;
+            }
 
-            subjectIdPref.setOnPreferenceChangeListener((preference, newValue) -> {
-                if (!(newValue instanceof String)) {
-                    return false;
-                }
-
-                String subjectId = ((String) newValue).toUpperCase();
-
-                boolean isValid = SubjectIdCheck.isValidSubjectId(subjectId);
-
-                if (!isValid) {
-                    if (getContext() == null) {
-                        return false;
-                    }
-                    new AlertDialog.Builder(getContext())
-                            .setCancelable(false)
-                            .setTitle(getString(R.string.title_invalid_subject_id))
-                            .setMessage(getString(R.string.message_invalid_subject_id))
-                            .setPositiveButton(R.string.ok, (dialog, which) -> {
-                            })
-                            .show();
-                } else {
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
-                        json.put(Constants.LOGGER_EXTRA_SUBJECT_CONDITION, SubjectMap.getConditionForSubject(subjectId));
-                        LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return isValid;
-            });
+            subjectIdPref.setOnPreferenceChangeListener(listener);
+            studyNamePref.setOnPreferenceChangeListener(listener);
         }
 
 
@@ -103,5 +80,40 @@ public class SettingsActivity extends AppCompatActivity {
                         .apply();
             }
         }
+
+        OnPreferenceChangeListener listener = (preference, newValue) -> {
+            if (!(newValue instanceof String)) {
+                return false;
+            }
+
+            String subjectId = ((String) newValue).toUpperCase();
+            String studyName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_STUDY_NAME, "");
+
+            boolean isValid = SubjectIdCheck.isValidSubjectId(studyName, subjectId);
+
+            if (!isValid) {
+                if (getContext() == null) {
+                    return false;
+                }
+                new AlertDialog.Builder(getContext())
+                        .setCancelable(false)
+                        .setTitle(getString(R.string.title_invalid_subject_id))
+                        .setMessage(getString(R.string.message_invalid_subject_id))
+                        .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        })
+                        .show();
+            } else {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                    json.put(Constants.LOGGER_EXTRA_SUBJECT_CONDITION, SubjectMap.getConditionForSubject(subjectId));
+                    LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return isValid;
+        };
     }
+
 }

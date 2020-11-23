@@ -91,9 +91,10 @@ public class DiskLogHandler extends Handler {
     private File getLogFile() {
         String filename;
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String studyName = sp.getString(Constants.PREF_STUDY_NAME, null);
         String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
-        if (subjectId != null) {
-            filename = "carwatch_" + subjectId.toLowerCase() + "_" + DateTime.now().toString("YYYYMMdd");
+        if (subjectId != null && studyName != null) {
+            filename = "carwatch_" + studyName.toLowerCase() + "_" + subjectId.toLowerCase() + "_" + DateTime.now().toString("YYYYMMdd");
         } else {
             filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
         }
@@ -175,10 +176,10 @@ public class DiskLogHandler extends Handler {
     }
 
 
-    public static File zipDirectory(Context context, String subjectId) throws FileNotFoundException {
+    public static File zipDirectory(Context context, String studyName, String subjectId) throws FileNotFoundException {
         File directory = getDirectory(context);
         File root = getRootDirectory(context);
-        String filename = subjectId == null ? "logs.zip" : String.format("logs_%s.zip", subjectId);
+        String filename = subjectId == null ? "logs.zip" : String.format("logs_%s_%s.zip", studyName, subjectId);
         File file = new File(root, filename);
         if (directory != null && Objects.requireNonNull(directory.list()).length > 0) {
             ZipUtil.pack(directory, file);

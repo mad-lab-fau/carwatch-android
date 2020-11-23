@@ -35,7 +35,8 @@ public final class Constants {
     public static final String KEY_ACTIVE_DAYS = "active_days";
 
     public static final String PREF_FIRST_RUN = "first_run"; // boolean
-    public static final String PREF_SUBJECT_ID = "subject_id"; // int
+    public static final String PREF_STUDY_NAME = "study_name"; // String
+    public static final String PREF_SUBJECT_ID = "subject_id"; // String
     public static final String PREF_SNOOZE_DURATION = "snooze_duration"; // int (min)
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
     public static final String PREF_MORNING_TAKEN = "morning_taken"; // long (day)
@@ -118,6 +119,7 @@ public final class Constants {
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
     public static final String LOGGER_EXTRA_OTHER_BARCODES = "other_barcodes"; // String Set
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
+    public static final String LOGGER_EXTRA_STUDY_NAME = "study_name"; // String
     public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
     public static final String LOGGER_EXTRA_SUBJECT_CONDITION = "subject_condition"; // String
     public static final String LOGGER_EXTRA_APP_VERSION_CODE = "version_code"; // int
