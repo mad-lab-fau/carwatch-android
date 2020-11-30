@@ -95,7 +95,7 @@
     <string name="message_reminder_sensors">Haben Sie alle Sensoren angebracht?\n\nFalls Sie das Sensor-Armband verwenden: Bitte denken Sie daran, den Sensor während der ganzen Zeit im Bett und an Ihrer nicht-dominanten Hand zu tragen.\n\nFalls Sie den EKG-Brustgurt verwenden: Bitte stellen Sie sicher, dass der Brustgurt bequem, aber fest, sitzt und dass Sie die Elektroden vor dem Tragen befeuchtet haben .\n\nFalls Sie die Schlaf-Analyse-Matte verwenden: Bitte stellen Sie sicher, dass die Matte an der Steckdose angeseschlossen ist und korrekt unter dem Bettlaken platziert ist.</string>
 
     <string name="title_reminder_questionnaire">Erinnerung</string>
-    <string name="message_reminder_questionnaire">Bitte vergessen Sie nicht, in der Zwischenzeit die Fragebögen auszufüllen!</string>
+    <string name="message_reminder_questionnaire">Bitte vergessen Sie nicht, in der Zwischenzeit die Schlaf- und Speichelprobenprotokolle auszufüllen!</string>
 
     <string name="title_activity_scan">Barcode einscannen</string>
 

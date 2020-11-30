@@ -89,7 +89,7 @@
     <string name="title_alarm_reminder">Alarm Set</string>
     <string name="message_alarm_reminder">Please don\'t forget to turn off all regular alarms in your default alarm app!</string>
     <string name="title_reminder_questionnaire">Reminder</string>
-    <string name="message_reminder_questionnaire">Please remember to fill out the questionnaires in the meanwhile!</string>
+    <string name="message_reminder_questionnaire">Please remember to fill out the sleep and saliva protocols in the meanwhile!</string>
 
     <string name="title_reminder_sensors">All sensors in place?</string>
     <string name="message_reminder_sensors">Are all sensors in place?\n\nIf you use the sensor armband: Please remember to wear the sensor throughout your time in bed on your non-dominant hand!\n\nIf you use the ECG chest strap: Please make sure that it fits correctly and you moistened the electrodes before wearing.\n\nIf you use the Sleep analyzer mat: Please make sure it is plugged in, has power supply and is correctly placed under the bed sheets.</string>
