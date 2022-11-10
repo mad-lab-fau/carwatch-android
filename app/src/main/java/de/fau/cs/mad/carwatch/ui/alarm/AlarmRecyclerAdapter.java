@@ -2,7 +2,6 @@ package de.fau.cs.mad.carwatch.ui.alarm;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -24,8 +22,6 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.db.Alarm;
-import de.fau.cs.mad.carwatch.subject.Condition;
-import de.fau.cs.mad.carwatch.subject.SubjectMap;
 import de.fau.cs.mad.carwatch.ui.AddAlarmActivity;
 
 /**

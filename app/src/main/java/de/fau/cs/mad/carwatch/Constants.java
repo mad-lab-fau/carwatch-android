@@ -123,7 +123,6 @@ public final class Constants {
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
     public static final String LOGGER_EXTRA_STUDY_NAME = "study_name"; // String
     public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
-    public static final String LOGGER_EXTRA_SUBJECT_CONDITION = "subject_condition"; // String
     public static final String LOGGER_EXTRA_APP_VERSION_CODE = "version_code"; // int
     public static final String LOGGER_EXTRA_APP_VERSION_NAME = "version_name"; // String
     public static final String LOGGER_EXTRA_PHONE_BRAND = "brand"; // String

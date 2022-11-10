@@ -12,8 +12,6 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.AlarmManagerCompat;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,8 +30,6 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.subject.Condition;
-import de.fau.cs.mad.carwatch.subject.SubjectMap;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.BootCompletedReceiver;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
@@ -241,7 +237,6 @@ public class AlarmHandler {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, PendingIntent.FLAG_NO_CREATE);
-        String subjectId = PreferenceManager.getDefaultSharedPreferences(context).getString(Constants.PREF_SUBJECT_ID, null);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -259,14 +254,6 @@ public class AlarmHandler {
             }
 
             alarmManager.cancel(pendingIntent);
-
-            if (subjectId != null && SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM) {
-                PendingIntent pendingIntentUnknown = getPendingIntent(context, Integer.MAX_VALUE - alarm.getId());
-                if (pendingIntentUnknown != null) {
-                    Log.d(TAG, "Cancelling unknown alarm for " + alarm.getId());
-                    alarmManager.cancel(pendingIntentUnknown);
-                }
-            }
 
             ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
             PackageManager pm = context.getPackageManager();
