@@ -2,7 +2,6 @@ package de.fau.cs.mad.carwatch.ui;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,8 +20,6 @@ import org.joda.time.LocalTime;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
-import de.fau.cs.mad.carwatch.subject.Condition;
-import de.fau.cs.mad.carwatch.subject.SubjectMap;
 import de.fau.cs.mad.carwatch.ui.alarm.AlarmViewModel;
 import de.fau.cs.mad.carwatch.ui.alarm.RepeatDaysDialogFragment;
 
@@ -31,8 +27,6 @@ import de.fau.cs.mad.carwatch.ui.alarm.RepeatDaysDialogFragment;
  * Used to create and edit alarms, depending on REQUEST_CODE
  */
 public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDialogFragment.OnDialogCompleteListener {
-
-    private final String TAG = AddAlarmActivity.class.getSimpleName();
 
     private AlarmViewModel alarmViewModel;
     private int currRequestCode; // current request code - static values in Constants
@@ -80,21 +74,6 @@ public class AddAlarmActivity extends AppCompatActivity implements RepeatDaysDia
             deleteButton.hide();
             setInitialAlarmTime();
             repeatTextView.setText(R.string.never);
-        }
-
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
-        int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
-
-        if (subjectId != null && SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM) {
-            int hiddenDelta;
-            if (dayId >= 0 && dayId < Constants.DELTA_HIDDEN_ALARMS.length) {
-                hiddenDelta = Constants.DELTA_HIDDEN_ALARMS[dayId];
-            } else {
-                hiddenDelta = Constants.DELTA_HIDDEN_ALARMS[Constants.DELTA_HIDDEN_ALARMS.length - 1];
-            }
-
-            alarm.setHiddenDelta(hiddenDelta);
         }
 
         addSetTimeLayoutListener();
