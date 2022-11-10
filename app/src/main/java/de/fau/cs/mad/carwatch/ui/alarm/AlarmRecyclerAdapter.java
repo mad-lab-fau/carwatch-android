@@ -96,13 +96,6 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
             viewHolder.repetitionTextView.setText(resources.getString(R.string.no_repeat));
         }
 
-        // check whether hidden alarm should be activated (e.g. subject id was changed in preferences after alarm was created)
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(viewHolder.itemView.getContext());
-        String subjectId = sp.getString(Constants.PREF_SUBJECT_ID, null);
-        if (subjectId != null) {
-            alarm.setHasHiddenTime(SubjectMap.getConditionForSubject(subjectId) == Condition.UNKNOWN_ALARM);
-        }
-
         // Set TextView colors based on alarm's active state
         if (alarm.isActive()) {
             viewHolder.activeSwitch.setChecked(true);

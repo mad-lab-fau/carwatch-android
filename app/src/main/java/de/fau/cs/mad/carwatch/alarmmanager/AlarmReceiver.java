@@ -47,16 +47,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             UserPresentService.stopService(context);
         }
 
-        boolean isHidden = false;
-
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
         int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
-
-        // convert id from hidden alarm to regular alarm id (will be needed in SnoozeReceiver and StopReceiver)
-        if (alarmId > Integer.MAX_VALUE / 2) {
-            isHidden = true;
-            alarmId = Integer.MAX_VALUE - alarmId;
-        }
 
         Notification notification = buildNotification(context, alarmId, salivaId);
 
@@ -70,7 +62,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
             json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaId);
-            json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, isHidden);
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_RING, json);
         } catch (JSONException e) {
             e.printStackTrace();

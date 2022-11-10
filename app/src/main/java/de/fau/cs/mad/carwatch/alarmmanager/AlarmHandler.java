@@ -109,10 +109,6 @@ public class AlarmHandler {
                     nextAlarmRing = time;
                 }
 
-                if (alarm.hasHiddenTime()) {
-                    time = time.minusMinutes(alarm.getHiddenDelta());
-                    Log.d(TAG, "Condition " + Condition.UNKNOWN_ALARM + "! Setting hidden repeating alarm for " + time);
-                }
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
             }
             if (nextAlarmRing != null) {
@@ -129,14 +125,6 @@ public class AlarmHandler {
             logAlarmSet(alarm, alarm.getTimeToNextRing());
 
             Log.d(TAG, "Setting alarm for " + alarm);
-
-            if (alarm.hasHiddenTime()) {
-                PendingIntent pendingIntentUnknown = getPendingIntent(context, Integer.MAX_VALUE - alarm.getId());
-                AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, alarm.getHiddenTime().getMillis(), pendingIntentUnknown);
-
-                Log.d(TAG, "Condition " + Condition.UNKNOWN_ALARM + "! Setting hidden alarm for " + alarm.getHiddenTime());
-            }
-
         }
 
         ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
@@ -355,10 +343,6 @@ public class AlarmHandler {
             if (alarm.isRepeating()) {
                 json.put(Constants.LOGGER_EXTRA_ALARM_REPEATING_DAYS, new JSONArray(alarm.getActiveDays()));
             }
-            json.put(Constants.LOGGER_EXTRA_ALARM_IS_HIDDEN, alarm.hasHiddenTime());
-            if (alarm.hasHiddenTime()) {
-                json.put(Constants.LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP, alarm.getHiddenTime().getMillis());
-            }
 
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
         } catch (JSONException e) {
@@ -372,7 +356,7 @@ public class AlarmHandler {
         AlarmRepository repo = AlarmRepository.getInstance(application);
 
         if (repo.getAllAlarms() != null && repo.getAllAlarms().getValue() != null) {
-            // cancel everything that's there: all alarms, all hidden alarms, all timer alarms...
+            // cancel everything that's there: all alarms, all timer alarms...
             for (Alarm alarm : repo.getAllAlarms().getValue()) {
                 alarm.setActive(false);
 

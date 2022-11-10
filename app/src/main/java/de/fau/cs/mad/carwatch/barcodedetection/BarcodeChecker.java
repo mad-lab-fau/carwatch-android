@@ -13,8 +13,6 @@ public class BarcodeChecker {
 
     // 3 digits (msb)
     private static final int subjectRange = SubjectMap.sSubjectMap.size();
-    // 2 digits
-    private static final int dayRange = Constants.DELTA_HIDDEN_ALARMS.length;
     // 2 digits (lsb)
     private static final int salivaRange = Constants.SALIVA_TIMES.length;
 

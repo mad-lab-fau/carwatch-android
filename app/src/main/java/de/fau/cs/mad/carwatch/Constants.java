@@ -12,8 +12,6 @@ public final class Constants {
      */
     public static final int TIMER_DURATION = 1;
 
-    public static final int[] DELTA_HIDDEN_ALARMS = {0, 0};
-
     public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
 
     public static final DateTime[] MORNING_TIMES = {
@@ -115,8 +113,6 @@ public final class Constants {
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
     public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long (utc timestamp)
-    public static final String LOGGER_EXTRA_ALARM_IS_HIDDEN = "is_hidden"; // boolean
-    public static final String LOGGER_EXTRA_ALARM_HIDDEN_TIMESTAMP = "timestamp_hidden"; // long (utc timestamp)
     public static final String LOGGER_EXTRA_ALARM_IS_REPEATING = "is_repeating"; // boolean
     public static final String LOGGER_EXTRA_ALARM_REPEATING_DAYS = "repeating_days"; // boolean[]
     public static final String LOGGER_EXTRA_ALARM_SNOOZE_DURATION = "snooze_duration"; // int

@@ -37,12 +37,6 @@ public class Alarm implements Parcelable {
     @ColumnInfo(name = "alarm_time")
     private DateTime time;
 
-    @ColumnInfo(name = "hidden_delta")
-    private int hiddenDelta;
-
-    @ColumnInfo(name = "has_hidden_time")
-    private boolean hasHiddenTime;
-
     @ColumnInfo(name = "alarm_active")
     private boolean active;
 
@@ -54,8 +48,6 @@ public class Alarm implements Parcelable {
     public Alarm() {
         this(
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
-                false,
-                0,
                 false,
                 new boolean[]{false, true, true, true, true, true, false}
         );
@@ -76,23 +68,6 @@ public class Alarm implements Parcelable {
 
     public DateTime getTime() {
         return time;
-    }
-
-    public void setHasHiddenTime(boolean hasHiddenTime) {
-        this.hasHiddenTime = hasHiddenTime;
-    }
-
-    public boolean hasHiddenTime() {
-        return hasHiddenTime;
-    }
-
-    public void setHiddenDelta(int hiddenDelta) {
-        this.hiddenDelta = hiddenDelta;
-        this.hasHiddenTime = true;
-    }
-
-    public int getHiddenDelta() {
-        return hiddenDelta;
     }
 
     public boolean isActive() {
@@ -124,10 +99,8 @@ public class Alarm implements Parcelable {
     // Ignored Members
 
     @Ignore
-    public Alarm(DateTime time, boolean hasHiddenTime, int hiddenDelta, boolean active, boolean[] activeDays) {
+    public Alarm(DateTime time, boolean active, boolean[] activeDays) {
         this.time = time;
-        this.hasHiddenTime = hasHiddenTime;
-        this.hiddenDelta = hiddenDelta;
         this.active = active;
         this.activeDays = activeDays;
     }
@@ -248,11 +221,6 @@ public class Alarm implements Parcelable {
         return alarmDate;
     }
 
-    @Ignore
-    public DateTime getHiddenTime() {
-        return getTime().minusMinutes(hiddenDelta);
-    }
-
     // Parcelable implementation
     @Ignore
     public int describeContents() {
@@ -267,8 +235,6 @@ public class Alarm implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeInt(id);
         out.writeLong(DateConverter.toTimestamp(time));
-        out.writeInt(hasHiddenTime ? 1 : 0);
-        out.writeInt(hiddenDelta);
         out.writeBooleanArray(activeDays);
         out.writeInt(active ? 1 : 0);
     }
@@ -292,8 +258,6 @@ public class Alarm implements Parcelable {
         id = in.readInt();
         Long timestamp = in.readLong();
         time = DateConverter.toDate(timestamp);
-        hasHiddenTime = in.readInt() != 0;
-        hiddenDelta = in.readInt();
         activeDays = new boolean[Constants.NUM_DAYS];
         in.readBooleanArray(activeDays);
         active = in.readInt() != 0;
@@ -304,11 +268,6 @@ public class Alarm implements Parcelable {
     @Ignore
     @Override
     public String toString() {
-        String ret = "Alarm <" + getId() + "> next alarm: " + getTimeToNextRing().toString("HH:mm") + " [" + isActive() + "]";
-        if (hasHiddenTime()) {
-            ret += ", hidden: [" + getHiddenTime() + "]";
-        }
-
-        return ret;
+        return "Alarm <" + getId() + "> next alarm: " + getTimeToNextRing().toString("HH:mm") + " [" + isActive() + "]";
     }
 }
