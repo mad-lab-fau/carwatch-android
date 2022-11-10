@@ -73,7 +73,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private Notification buildNotification(Context context, int alarmId, int salivaId) {
-        //PendingIntent snoozeIntent = createSnoozeAlarmIntent(context, alarmId);
         PendingIntent stopIntent = createStopAlarmIntent(context, alarmId, salivaId);
 
         // Full screen Intent
@@ -93,29 +92,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.alarm_notification_text))
-                // Snooze function disabled
-                //.addAction(R.drawable.ic_snooze_white_24dp, context.getString(R.string.snooze), snoozeIntent)
                 .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();
     }
-
-
-    /*
-      Get PendingIntent to Snooze Alarm
-      @param context current App context
-     * @param alarmId ID of alarm to handle
-     * @return PendingIntent to AlarmSnooze(Broadcast)Receiver
-     */
-    /*
-    private PendingIntent createSnoozeAlarmIntent(Context context, int alarmId) {
-        Intent snoozeAlarmIntent = new Intent(context, AlarmSnoozeReceiver.class);
-        snoozeAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        snoozeAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
-        snoozeAlarmIntent.setAction(Constants.ACTION_SNOOZE_ALARM);
-        return PendingIntent.getBroadcast(context, 0, snoozeAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }*/
 
     /**
      * Get PendingIntent to Stop Alarm

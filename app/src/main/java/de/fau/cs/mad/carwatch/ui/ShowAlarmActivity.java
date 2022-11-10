@@ -77,15 +77,6 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         keepScreenOn();
     }
 
-    /*private void snoozeAlarm() {
-        Intent snoozeAlarmIntent = new Intent(this, AlarmSnoozeReceiver.class);
-        snoozeAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        snoozeAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
-        snoozeAlarmIntent.setAction("Snooze Alarm");
-        sendBroadcast(snoozeAlarmIntent);
-        finish();
-    }*/
-
     @Override
     public void onSwipeLeft() {
         stopAlarm();
