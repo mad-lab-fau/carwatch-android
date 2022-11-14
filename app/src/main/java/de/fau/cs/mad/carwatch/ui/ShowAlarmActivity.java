@@ -78,12 +78,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     }
 
     @Override
-    public void onSwipeLeft() {
-        stopAlarm();
-    }
-
-    @Override
-    public void onSwipeRight() {
+    public void onSwipe() {
         stopAlarm();
     }
 
