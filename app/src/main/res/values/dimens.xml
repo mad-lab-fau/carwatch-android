@@ -5,6 +5,7 @@
 
     <dimen name="swipe_button_height">72dp</dimen>
     <dimen name="swipe_button_padding">32dp</dimen>
+    <dimen name="swipe_widget_padding">32dp</dimen>
 
 
     <dimen name="home_icon_size">56dp</dimen>

@@ -119,14 +119,6 @@
         </receiver>
 
         <receiver
-            android:name=".alarmmanager.AlarmSnoozeReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="Snooze Alarm" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
             android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
             android:exported="true" />

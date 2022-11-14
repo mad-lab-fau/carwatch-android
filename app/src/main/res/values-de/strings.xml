@@ -42,7 +42,6 @@
     <string name="repeat">Wiederholen</string>
     <string name="set_repeat">Wiederholen:</string>
     <string name="set_time">Zeit</string>
-    <string name="snooze">Snooze</string>
     <string name="stop">Stop</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d!</string>
     <string name="timer_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe!</string>
@@ -54,7 +53,6 @@
     <string name="title_bedtime">Bettzeit</string>
     <string name="title_study_name">Studienname eingeben</string>
     <string name="title_subject_id">Probanden-ID eingeben</string>
-    <string name="snooze_duration">Snoozedauer</string>
     <string name="user_credentials">Benutzerinformationen</string>
 
 

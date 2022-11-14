@@ -19,6 +19,7 @@ import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
 
 public class ShowAlarmFragment extends Fragment implements SwipeButton.OnSwipeListener {
 
+    // TODO why is this here and not in AlarmSoundControl?
     private Vibrator vibrator;
 
     private SwipeButton.OnSwipeListener onSwipeListener;
@@ -31,7 +32,8 @@ public class ShowAlarmFragment extends Fragment implements SwipeButton.OnSwipeLi
         SwipeButton swipeButton = root.findViewById(R.id.button_swipe);
         swipeButton.setOnSwipeListener(this);
 
-        if (getContext() != null) {
+        // TODO removed for testing
+        /*if (getContext() != null) {
             vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -40,7 +42,7 @@ public class ShowAlarmFragment extends Fragment implements SwipeButton.OnSwipeLi
                     vibrator.vibrate(Constants.VIBRATION_PATTERN, 0);
                 }
             }
-        }
+        }*/
 
 
         return root;
@@ -48,13 +50,8 @@ public class ShowAlarmFragment extends Fragment implements SwipeButton.OnSwipeLi
 
 
     @Override
-    public void onSwipeLeft() {
-        onSwipeListener.onSwipeLeft();
-    }
-
-    @Override
-    public void onSwipeRight() {
-        onSwipeListener.onSwipeRight();
+    public void onSwipe() {
+        onSwipeListener.onSwipe();
     }
 
     @Override

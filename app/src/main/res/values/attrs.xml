@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SwipeButton">
-        <attr name="textLeft" format="reference|string" />
-        <attr name="textRight" format="reference|string" />
-        <attr name="iconLeft" format="reference" />
-        <attr name="iconCenter" format="reference" />
+        <attr name="text" format="reference|string" />
         <attr name="iconRight" format="reference" />
+        <attr name="iconLeft" format="reference" />
 
     </declare-styleable>
 </resources>

@@ -9,8 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_margin="16dp"
-        app:textLeft="@string/stop"
-        app:textRight="@string/stop"
+        app:text="@string/stop"
         app:iconLeft="@drawable/ic_stop_black_24dp"
         app:iconRight="@drawable/ic_stop_black_24dp"
         android:layout_centerInParent="true" />

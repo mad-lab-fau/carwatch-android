@@ -39,7 +39,6 @@ public final class Constants {
     public static final String PREF_FIRST_RUN = "first_run"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_SUBJECT_ID = "subject_id"; // String
-    public static final String PREF_SNOOZE_DURATION = "snooze_duration"; // int (min)
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
     public static final String PREF_MORNING_TAKEN = "morning_taken"; // long (day)
     public static final String PREF_MORNING_ONGOING = "morning_ongoing"; // int (alarmId)
@@ -77,7 +76,6 @@ public final class Constants {
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
-    // public static final String ACTION_SNOOZE_ALARM = "Snooze Alarm";
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
 
@@ -88,7 +86,6 @@ public final class Constants {
     public static final String LOGGER_ACTION_TIMER_SET = "timer_set";
     public static final String LOGGER_ACTION_ALARM_CANCEL = "alarm_cancel";
     public static final String LOGGER_ACTION_ALARM_RING = "alarm_ring";
-    public static final String LOGGER_ACTION_ALARM_SNOOZE = "alarm_snooze";
     public static final String LOGGER_ACTION_ALARM_STOP = "alarm_stop";
     public static final String LOGGER_ACTION_ALARM_KILLALL = "alarm_killall";
     public static final String LOGGER_ACTION_EVENING_SALIVETTE = "evening_salivette";
@@ -115,7 +112,6 @@ public final class Constants {
     public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long (utc timestamp)
     public static final String LOGGER_EXTRA_ALARM_IS_REPEATING = "is_repeating"; // boolean
     public static final String LOGGER_EXTRA_ALARM_REPEATING_DAYS = "repeating_days"; // boolean[]
-    public static final String LOGGER_EXTRA_ALARM_SNOOZE_DURATION = "snooze_duration"; // int
     public static final String LOGGER_EXTRA_ALARM_SOURCE = "source"; // int
     public static final String LOGGER_EXTRA_SALIVA_ID = "saliva_id"; // int
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
