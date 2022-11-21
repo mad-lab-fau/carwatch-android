@@ -31,7 +31,7 @@
 
     <string name="alarm">Alarm</string>
 
-    <string name="no_alarms">No alarms yet.  Click \'+\' to add an alarm.</string>
+    <string name="no_alarm">No alarm yet.  Click \'+\' to add an alarm.</string>
     <string name="add_alarm">Add New Alarm</string>
     <string name="edit_alarm">Edit Alarm</string>
     <string name="set_time">Time</string>
@@ -101,6 +101,9 @@
     <string name="bedtime_title">Start Night</string>
     <string name="bedtime_text">We will now begin with the evening procedure.</string>
     <string name="bedtime_message">Good Evening!\nAre you going to bed?</string>
+
+    <!-- Bedtime Fragment -->
+    <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>
 
     <string name="warning_title">Warning</string>
     <string name="warning_already_taken_wakeup">You have already taken all morning saliva samples!</string>

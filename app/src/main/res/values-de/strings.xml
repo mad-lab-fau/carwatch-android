@@ -31,7 +31,7 @@
     <string name="everyday">täglich</string>
     <string name="weekends">Wochenende</string>
     <string name="weekdays">Werktage</string>
-    <string name="no_alarms">Keine Alarme. Klicken Sie auf \'+\', um einen Alarm hinzuzufügen.</string>
+    <string name="no_alarm">Keine Alarme. Klicken Sie auf \'+\', um einen Alarm hinzuzufügen.</string>
     <string name="no_repeat">nicht wiederholen</string>
     <string name="not_set">Nicht gesetzt</string>
     <string name="ok">OK</string>
@@ -115,5 +115,6 @@
     <string name="notification_listener_service">Notification Listener Service</string>
     <string name="notification_listener_service_explanation">For this study you need to enable the Notifcation Listener Service. Enable it now?</string>
     <string name="title_share_dialog">Logs teilen via…</string>
+    <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
 
 </resources>
