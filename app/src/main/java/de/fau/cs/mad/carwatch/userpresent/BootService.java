@@ -20,7 +20,7 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
-public class BootService extends JobIntentService implements Observer<List<Alarm>> {
+public class BootService extends JobIntentService implements Observer<Alarm> {
 
     private static final String TAG = BootService.class.getSimpleName();
 
@@ -32,7 +32,7 @@ public class BootService extends JobIntentService implements Observer<List<Alarm
     public void onCreate() {
         super.onCreate();
         repository = AlarmRepository.getInstance(getApplication());
-        repository.getAllAlarms().observeForever(this);
+        repository.getAlarm().observeForever(this);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BootService extends JobIntentService implements Observer<List<Alarm
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         if (repository != null) {
-            repository.getAllAlarms().removeObserver(this);
+            repository.getAlarm().removeObserver(this);
         }
     }
 
@@ -61,15 +61,13 @@ public class BootService extends JobIntentService implements Observer<List<Alarm
     }
 
     @Override
-    public void onChanged(List<Alarm> alarms) {
+    public void onChanged(Alarm alarm) {
         // reschedule all active alarms
-        if (alarms == null) {
+        if (alarm == null) {
             return;
         }
-        for (Alarm alarm : alarms) {
-            if (alarm.isActive()) {
-                AlarmHandler.scheduleAlarm(this, alarm);
-            }
+        if (alarm.isActive()) {
+            AlarmHandler.scheduleAlarm(this, alarm);
         }
     }
 }

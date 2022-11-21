@@ -22,7 +22,7 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.converter.BooleanArrayConverter;
 import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 
-@Entity(tableName = "alarms")
+@Entity(tableName = "alarm")
 @TypeConverters({DateConverter.class, BooleanArrayConverter.class})
 public class Alarm implements Parcelable {
     @Ignore
@@ -49,7 +49,7 @@ public class Alarm implements Parcelable {
         this(
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
                 false,
-                new boolean[]{false, true, true, true, true, true, false}
+                new boolean[]{false, false, false, false, false, false, false}
         );
     }
 

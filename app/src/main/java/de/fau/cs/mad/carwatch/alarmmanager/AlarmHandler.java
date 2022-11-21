@@ -99,7 +99,6 @@ public class AlarmHandler {
             List<DateTime> timeToWeeklyRings = alarm.getTimeToWeeklyRings();
 
             for (DateTime time : timeToWeeklyRings) {
-                Log.d(TAG, "Setting weekly repeat at " + time);
 
                 if (nextAlarmRing == null || time.isBefore(nextAlarmRing)) {
                     nextAlarmRing = time;
@@ -110,7 +109,6 @@ public class AlarmHandler {
             if (nextAlarmRing != null) {
                 logAlarmSet(alarm, nextAlarmRing);
 
-                Log.d(TAG, "Setting next alarm to " + nextAlarmRing);
                 AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(nextAlarmRing.getMillis(), pendingIntentShow);
                 alarmManager.setAlarmClock(info, pendingIntent);
             }
@@ -119,8 +117,6 @@ public class AlarmHandler {
             alarmManager.setAlarmClock(info, pendingIntent);
 
             logAlarmSet(alarm, alarm.getTimeToNextRing());
-
-            Log.d(TAG, "Setting alarm for " + alarm);
         }
 
         ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
@@ -129,6 +125,7 @@ public class AlarmHandler {
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
+
 
         if (!alarm.isRepeating()) {
             showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
@@ -151,7 +148,6 @@ public class AlarmHandler {
                     timeDiffString += " from ";
                 }
             }
-
             Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
         }
     }
@@ -342,14 +338,12 @@ public class AlarmHandler {
 
         AlarmRepository repo = AlarmRepository.getInstance(application);
 
-        if (repo.getAllAlarms() != null && repo.getAllAlarms().getValue() != null) {
+        if (repo.getAlarm() != null && repo.getAlarm().getValue() != null) {
             // cancel everything that's there: all alarms, all timer alarms...
-            for (Alarm alarm : repo.getAllAlarms().getValue()) {
-                alarm.setActive(false);
-
-                killAllOngoingAlarms(application, alarm.getId());
-                repo.update(alarm);
-            }
+            Alarm alarm = repo.getAlarm().getValue();
+            alarm.setActive(false);
+            killAllOngoingAlarms(application, alarm.getId());
+            repo.update(alarm);
         }
 
         // cancel a potential alarm session from spontaneous awakening (has a special id)

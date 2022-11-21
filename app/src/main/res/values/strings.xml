@@ -31,7 +31,6 @@
 
     <string name="alarm">Alarm</string>
 
-    <string name="no_alarm">No alarm yet.  Click \'+\' to add an alarm.</string>
     <string name="add_alarm">Add New Alarm</string>
     <string name="edit_alarm">Edit Alarm</string>
     <string name="set_time">Time</string>

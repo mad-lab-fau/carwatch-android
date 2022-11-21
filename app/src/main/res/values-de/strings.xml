@@ -31,7 +31,6 @@
     <string name="everyday">täglich</string>
     <string name="weekends">Wochenende</string>
     <string name="weekdays">Werktage</string>
-    <string name="no_alarm">Keine Alarme. Klicken Sie auf \'+\', um einen Alarm hinzuzufügen.</string>
     <string name="no_repeat">nicht wiederholen</string>
     <string name="not_set">Nicht gesetzt</string>
     <string name="ok">OK</string>

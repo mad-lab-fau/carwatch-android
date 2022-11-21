@@ -18,10 +18,10 @@ import static androidx.room.OnConflictStrategy.REPLACE;
  */
 @Dao
 public interface AlarmDao {
-    @Query("select * from alarms")
-    LiveData<List<Alarm>> getAllAlarms();
+    @Query("select * from alarm")
+    LiveData<Alarm> getAlarm();
 
-    @Query("SELECT * FROM alarms WHERE alarm_id=:id")
+    @Query("SELECT * FROM alarm WHERE alarm_id=:id")
     Alarm getById(int id);
 
     @Insert(onConflict = IGNORE)
@@ -33,12 +33,9 @@ public interface AlarmDao {
     @Delete
     void delete(Alarm alarm);
 
-    @Query("UPDATE alarms set alarm_active=:active where alarm_id=:id")
+    @Query("UPDATE alarm set alarm_active=:active where alarm_id=:id")
     void updateActive(int id, boolean active);
 
     @Insert(onConflict = REPLACE)
     void insertOrReplaceAlarm(Alarm alarm);
-
-    @Query("DELETE FROM alarms")
-    void deleteAll();
 }

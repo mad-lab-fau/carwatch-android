@@ -23,8 +23,8 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -40,11 +40,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.fau.cs.mad.carwatch.ui.MainActivity" />
         </activity>
-
-        <activity
-            android:name=".ui.AddAlarmActivity"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.ShowAlarmActivity"
@@ -93,7 +88,7 @@
         <receiver
             android:name=".userpresent.UserPresentReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <receiver
             android:name=".userpresent.BootCompletedReceiver"
@@ -108,11 +103,12 @@
         <receiver
             android:name=".alarmmanager.AlarmReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <receiver
             android:name=".alarmmanager.AlarmStopReceiver"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="Stop Alarm" />
             </intent-filter>
@@ -121,7 +117,7 @@
         <receiver
             android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <service
             android:name=".userpresent.BootService"
@@ -131,12 +127,13 @@
         <service
             android:name=".userpresent.UserPresentService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <service
             android:name=".notification.NotificationListenerService"
             android:label="@string/notification_service_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
