@@ -65,9 +65,6 @@ public final class Constants {
     public static final int EXTRA_ALARM_ID_EVENING = 815;
     public static final int EXTRA_SALIVA_ID_EVENING = SALIVA_TIMES.length;
 
-    public static final int ALARM_OFFSET = Short.MAX_VALUE;
-    public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
-
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
 

@@ -64,7 +64,6 @@ public class TimerHandler {
                 scheduleSalivaCountdown(context, alarmId, salivaId);
                 return 0;
             } else {
-                alarmId += Constants.ALARM_OFFSET;
                 DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
                 AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
                 return timeToRing.getMillis();
@@ -79,8 +78,8 @@ public class TimerHandler {
 
     @SuppressLint("WrongConstant")
     public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId) {
-        int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
         long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();
+        //long when = DateTime.now().plusSeconds(Constants.TIMER_DURATION).getMillis();TODO change back
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -93,37 +92,36 @@ public class TimerHandler {
             }
         }
 
-        Notification notification = buildCountdownNotification(context, timerId, salivaId, when);
+        Notification notification = buildCountdownNotification(context, alarmId, salivaId, when);
 
         if (alarmManager != null) {
-            PendingIntent pendingIntent = getTimerPendingIntent(context, timerId, salivaId);
+            PendingIntent pendingIntent = getTimerPendingIntent(context, alarmId, salivaId);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, when, pendingIntent);
         }
 
         if (notificationManager != null) {
-            notificationManager.notify(timerId, notification);
+            notificationManager.notify(alarmId, notification);
         }
     }
 
 
     public static void cancelTimer(Context context, int alarmId) {
-        int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
         // Dismiss notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         // Get PendingIntent to TimerReceiver Broadcast channel
         Intent intent = new Intent(context, TimerReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, timerId, intent, PendingIntent.FLAG_NO_CREATE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_NO_CREATE);
 
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
-            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + alarmId);
+            Log.d(TAG, "Cancelling timer " + alarmId + " for alarm " + alarmId);
             Log.d(TAG, "Cancelling timer " + pendingIntent);
         }
 
         if (notificationManager != null) {
-            notificationManager.cancel(timerId);
+            notificationManager.cancel(alarmId);
         }
 
         // Play alarm ringing sound
@@ -132,11 +130,10 @@ public class TimerHandler {
     }
 
 
-    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
-        int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
+    private static Notification buildCountdownNotification(Context context, int alarmId, int salivaId, long when) {
         Intent contentIntent = new Intent(context, BarcodeActivity.class);
         contentIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
+        contentIntent.putExtra(Constants.EXTRA_TIMER_ID, alarmId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -161,8 +158,7 @@ public class TimerHandler {
         return builder.build();
     }
 
-    public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
-        int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
+    public static Notification buildAlarmNotification(Context context, int alarmId, int salivaId) {
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, BarcodeActivity.class);
         fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);

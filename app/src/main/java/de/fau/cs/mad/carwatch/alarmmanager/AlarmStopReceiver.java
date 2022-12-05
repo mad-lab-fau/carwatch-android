@@ -78,14 +78,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
 
-        int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
-        if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
-            // There's already a saliva procedure running at the moment
-            Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing % Constants.ALARM_OFFSET + " already running at the moment!");
-            setResultCode(Activity.RESULT_CANCELED);
-            return;
-        }
-
         Intent scannerIntent = new Intent(context, BarcodeActivity.class);
         scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);

@@ -301,7 +301,6 @@ public class AlarmHandler {
         for (int ignored : Constants.SALIVA_TIMES) {
             cancelAlarmAtTime(context, alarmId);
             TimerHandler.cancelTimer(context, alarmId);
-            alarmId += Constants.ALARM_OFFSET;
         }
     }
 }
