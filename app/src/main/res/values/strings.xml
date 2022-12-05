@@ -34,15 +34,11 @@
     <string name="add_alarm">Add New Alarm</string>
     <string name="edit_alarm">Edit Alarm</string>
     <string name="set_time">Time</string>
-    <string name="repeat">Repeat</string>
-    <string name="set_repeat">Set Repeat</string>
-    <string name="no_repeat">no repeat</string>
     <string name="never">never</string>
     <string name="everyday">everyday</string>
     <string name="weekends">weekends</string>
     <string name="weekdays">weekdays</string>
     <string name="action_alarm_save">Save Alarm</string>
-    <string name="not_set">Not Set</string>
     <string name="alarm_not_saved">Alarm not saved.</string>
 
     <!-- Preferences -->

@@ -86,15 +86,6 @@ public class Alarm implements Parcelable {
         return activeDays;
     }
 
-    public boolean isRepeating() {
-        // Iterate through active days to see if one is true
-        boolean isRepeat = false;
-        for (boolean bool : activeDays) {
-            if (bool) isRepeat = true;
-        }
-        return isRepeat;
-    }
-
 
     // Ignored Members
 
