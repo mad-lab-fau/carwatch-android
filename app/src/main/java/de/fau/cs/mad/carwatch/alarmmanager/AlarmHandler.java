@@ -19,11 +19,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Locale;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -128,10 +126,6 @@ public class AlarmHandler {
         }
     }
 
-    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId) {
-        return scheduleAlarmAtTime(context, timeToRing, alarmId, -1);
-    }
-
     /**
      * Schedule alarm notification based on absolute time
      *
@@ -143,16 +137,6 @@ public class AlarmHandler {
         PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId, salivaId);
 
         return scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
-    }
-
-    /**
-     * Schedule alarm notification based on absolute time
-     *
-     * @param timeToRing time to next alarm
-     * @param alarmId    ID of alarm to ring
-     */
-    private static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
-        return scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
     }
 
     /**
@@ -184,10 +168,6 @@ public class AlarmHandler {
         }
 
         return 0;
-    }
-
-    public static void cancelAlarm(Context context, Alarm alarm) {
-        cancelAlarm(context, alarm, null);
     }
 
     /**
