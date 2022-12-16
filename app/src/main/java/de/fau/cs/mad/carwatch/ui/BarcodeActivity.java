@@ -3,13 +3,13 @@ package de.fau.cs.mad.carwatch.ui;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -68,14 +68,8 @@ public class BarcodeActivity extends AppCompatActivity {
             Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
             icon.setTint(getResources().getColor(R.color.colorPrimary));
 
-            // TODO why not use AlertActivity?
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.warning_title))
-                    .setCancelable(false)
-                    .setIcon(icon)
-                    .setMessage(getString(R.string.warning_already_taken_wakeup))
-                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
-                    .show();
+            Intent intent = new Intent(BarcodeActivity.this, AlertActivity.class);
+            startActivity(intent);
 
         } else {
             BarcodeFragment fragment = new BarcodeFragment();

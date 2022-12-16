@@ -30,6 +30,7 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.AlertActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
@@ -130,17 +131,9 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         if (getContext() == null) {
             return;
         }
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
 
-        new AlertDialog.Builder(getContext())
-                .setTitle(getString(R.string.warning_title))
-                .setCancelable(false)
-                .setIcon(icon)
-                .setMessage(getString(R.string.warning_already_taken_wakeup))
-                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                })
-                .show();
+        Intent intent = new Intent(getActivity(), AlertActivity.class);
+        startActivity(intent);
     }
 
     @Override

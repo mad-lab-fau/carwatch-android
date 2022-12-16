@@ -97,17 +97,8 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
                     if (checkAlarmOngoing()) {
                         finish();
                     } else {
-                        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-                        icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-                        // TODO why not use AlertActivity
-                        new AlertDialog.Builder(ShowAlarmActivity.this)
-                                .setTitle(getString(R.string.warning_title))
-                                .setCancelable(false)
-                                .setIcon(icon)
-                                .setMessage(getString(R.string.warning_already_taken_wakeup))
-                                .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
-                                .show();
+                        Intent alertIntent = new Intent(ShowAlarmActivity.this, AlertActivity.class);
+                        startActivity(alertIntent);
                     }
                 }
 
