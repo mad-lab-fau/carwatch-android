@@ -23,7 +23,7 @@ public final class Constants {
             new LocalTime(5, 0).toDateTimeToday().plusDays(1)
     };
 
-    public static final String SHARE_EMAIL_ADDRESS = "dipsylab@portabiles.de";
+    public static final String SHARE_EMAIL_ADDRESS = "dipsylab@portabiles.de"; // TODO: remove or replace
 
     public static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
@@ -33,8 +33,6 @@ public final class Constants {
      * Time to the next saliva sample in minutes
      */
     public static final int[] SALIVA_TIMES = {0, 15, 15, 15, 15};
-
-    public static final String KEY_ACTIVE_DAYS = "active_days";
 
     public static final String PREF_FIRST_RUN = "first_run"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
@@ -48,29 +46,24 @@ public final class Constants {
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
     public static final int REQUEST_CODE_NOTIFICATION_ACCESS = 0x35;
-    public static final int REQUEST_CODE_NEW_ALARM = 1;
-    public static final int REQUEST_CODE_EDIT_ALARM = 2;
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
+    public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
+    public static final int DEFAULT_ALARM_ID = 1; // id of morning alarm
 
-    public static final String EXTRA_ALARM = "extra_alarm";
     public static final String EXTRA_ALARM_TIME = "extra_alarm_time";
-    public static final String EXTRA_BUNDLE = "extra_bundle";
-    public static final String EXTRA_EDIT = "extra_edit";
-    public static final String EXTRA_DELETE = "extra_delete";
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
     public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_DAY_FINISHED = "day_finished";
 
-    public static final int EXTRA_ALARM_ID_SPONTANEOUS = 4711;
-    public static final int EXTRA_ALARM_ID_DEFAULT = -1;
-    public static final int EXTRA_TIMER_ID_DEFAULT = -1;
-    public static final int EXTRA_SALIVA_ID_DEFAULT = 0;
+    public static final int EXTRA_ALARM_ID_INITIAL = 0;
+    public static final int EXTRA_TIMER_ID_INITIAL = 0;
+    public static final int EXTRA_SALIVA_ID_INITIAL = 0;
 
-    public static final int EXTRA_ALARM_ID_EVENING = 815;
+    public static final int EXTRA_ALARM_ID_EVENING = 815; // TODO - why this weird number?
     public static final int EXTRA_SALIVA_ID_EVENING = SALIVA_TIMES.length;
 
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
@@ -110,8 +103,6 @@ public final class Constants {
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
     public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long (utc timestamp)
-    public static final String LOGGER_EXTRA_ALARM_IS_REPEATING = "is_repeating"; // boolean
-    public static final String LOGGER_EXTRA_ALARM_REPEATING_DAYS = "repeating_days"; // boolean[]
     public static final String LOGGER_EXTRA_ALARM_SOURCE = "source"; // int
     public static final String LOGGER_EXTRA_SALIVA_ID = "saliva_id"; // int
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
@@ -135,8 +126,5 @@ public final class Constants {
     public static final String LOGGER_EXTRA_NOTIFICATION_POST_TIME = "notification_post_time"; // int
     public static final String LOGGER_EXTRA_NOTIFICATION_CATEGORY = "notification_category"; // String
     public static final String LOGGER_EXTRA_NOTIFICATION_REMOVED_REASON = "notification_removed_reason"; // int
-
-
-    public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
 
 }

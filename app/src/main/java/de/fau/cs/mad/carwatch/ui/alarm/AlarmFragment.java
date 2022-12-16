@@ -1,11 +1,14 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,29 +17,34 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import de.fau.cs.mad.carwatch.Constants;
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
+
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.databinding.FragmentAlarmBinding;
 import de.fau.cs.mad.carwatch.db.Alarm;
-import de.fau.cs.mad.carwatch.ui.AddAlarmActivity;
 
-public class AlarmFragment extends Fragment implements View.OnClickListener {
+public class AlarmFragment extends Fragment {
 
     private static final String TAG = AlarmFragment.class.getSimpleName();
 
-    private AlarmRecyclerAdapter adapter;
+    private AlarmViewModel alarmViewModel;
     private CoordinatorLayout coordinatorLayout;
+
+    Alarm alarm;
+
+    private LinearLayout alarmLayout;
+    private TextView timeTextView;
+    private SwitchMaterial activeSwitch;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        AlarmViewModel alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+        alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
 
         FragmentAlarmBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
         View root = dataBinding.getRoot();
@@ -46,53 +54,107 @@ public class AlarmFragment extends Fragment implements View.OnClickListener {
             coordinatorLayout = getActivity().findViewById(R.id.coordinator);
         }
 
-        adapter = new AlarmRecyclerAdapter(this, coordinatorLayout);
+        alarmLayout = root.findViewById(R.id.alarm);
+        timeTextView = root.findViewById(R.id.alarm_time_text);
+        activeSwitch = root.findViewById(R.id.alarm_active_switch);
 
-        RecyclerView recyclerView = root.findViewById(R.id.alarm_recycler_view);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        final TextView noAlarmsTextView = root.findViewById(R.id.tv_no_alarms);
-
-        // Add an observer on the LiveData returned by getAllAlarms.
-        alarmViewModel.getAllAlarms().observe(getViewLifecycleOwner(), alarms -> {
-            // Update the cached copy of the words in the adapter.
-            adapter.setAlarms(alarms);
-            noAlarmsTextView.setVisibility(alarms.size() == 0 ? View.VISIBLE : View.GONE);
+        // Add an observer on the LiveData returned by getAlarm
+        alarmViewModel.getAlarm().observe(getViewLifecycleOwner(), alarm -> {
+            this.alarm = alarm;
+            // alarm was not created yet
+            if (this.alarm == null) {
+                createInitialAlarm();
+            }
+            setAlarmView(this.alarm);
         });
-
-        FloatingActionButton fab = root.findViewById(R.id.fab);
-        fab.setOnClickListener(this);
-
         return root;
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.fab) {
-            Intent intent = new Intent(getContext(), AddAlarmActivity.class);
-            startActivityForResult(intent, Constants.REQUEST_CODE_NEW_ALARM);
-        }
-    }
+    private void setAlarmView(Alarm alarm) {
+        final Context context = getContext();
+        final Resources resources = getResources();
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        // set alarm time
+        timeTextView.setText(alarm.getStringTime());
+        // set alarm activity
+        activeSwitch.setChecked(alarm.isActive());
+        setAlarmColor();
 
-        if (resultCode == Activity.RESULT_OK) {
-            if (data.hasExtra(Constants.EXTRA_ALARM)) {
-                Alarm alarm = data.getParcelableExtra(Constants.EXTRA_ALARM);
-                adapter.updateAlarm(alarm);
-
-                if (data.hasExtra(Constants.EXTRA_EDIT)) {
-                    showAlarmReminderDialog();
-                }
+        // define behavior on activity switch change
+        activeSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+            alarm.setActive(checked);
+            setAlarmColor();
+            if (checked) {
+                timeTextView.setTextColor(resources.getColor(R.color.colorAccent));
+            } else {
+                timeTextView.setTextColor(resources.getColor(R.color.colorGrey500));
             }
+            scheduleAlarm(context);
+            updateAlarm();
+        });
+
+        // define behavior on time update
+        alarmLayout.setOnClickListener(view -> {
+            DateTime time;
+            if (alarm.getTime() == null) {
+                time = DateTime.now();
+            } else {
+                time = alarm.getTime();
+            }
+            TimePickerDialog timePicker = new TimePickerDialog(context, (timePicker1, selectedHour, selectedMinute) -> {
+                LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
+                alarm.setTime(selectedTime.toDateTimeToday());
+                timeTextView.setText(selectedTime.toString("HH:mm"));
+                alarm.setActive(true);
+                scheduleAlarm(context);
+                updateAlarm();
+            }, time.getHourOfDay(), time.getMinuteOfHour(), true);
+            timePicker.show();
+        });
+    }
+
+    private void setAlarmColor() {
+        // Set alarm TextView colors based on alarm's activity state
+        if (alarm.isActive()) {
+            timeTextView.setTextColor(getResources().getColor(R.color.colorAccent));
         } else {
-            Snackbar.make(coordinatorLayout, R.string.alarm_not_saved, Snackbar.LENGTH_SHORT).show();
+            timeTextView.setTextColor(getResources().getColor(R.color.colorGrey500));
         }
     }
 
+    private void updateAlarm() {
+        alarmViewModel.update(alarm);
+        if (alarm.isActive()) {
+            showAlarmReminderDialog();
+        }
+    }
+
+    private void scheduleAlarm(Context context) {
+        if (alarm.isActive()) {
+            AlarmHandler.scheduleAlarm(context, alarm, coordinatorLayout);
+        } else {
+            AlarmHandler.cancelAlarm(context, alarm, coordinatorLayout);
+        }
+    }
+
+    private void createInitialAlarm() {
+        alarm = new Alarm();
+        setInitialAlarmTime();
+        alarmViewModel.insert(alarm);
+        scheduleAlarm(getContext());
+    }
+
+    /**
+     * Initialize TimeTextView and Alarm's time with current time
+     */
+    private void setInitialAlarmTime() {
+        // Get time and set it to alarm time TextView
+        DateTime time = DateTime.now();
+
+        String currentTime = time.toString("HH:mm");
+        timeTextView.setText(currentTime);
+        alarm.setTime(time);
+    }
 
     private void showAlarmReminderDialog() {
         if (getContext() == null) {

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AlertDialog;
@@ -26,8 +27,8 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
     private static final String TAG = ShowAlarmActivity.class.getSimpleName();
 
-    private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
-    private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
+    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,8 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         }
 
         if (getIntent() != null) {
-            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
-            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
+            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
         }
 
         keepScreenOn();
@@ -96,16 +97,8 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
                     if (checkAlarmOngoing()) {
                         finish();
                     } else {
-                        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-                        icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-                        new AlertDialog.Builder(ShowAlarmActivity.this)
-                                .setTitle(getString(R.string.warning_title))
-                                .setCancelable(false)
-                                .setIcon(icon)
-                                .setMessage(getString(R.string.warning_already_taken_wakeup))
-                                .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
-                                .show();
+                        Intent alertIntent = new Intent(ShowAlarmActivity.this, AlertActivity.class);
+                        startActivity(alertIntent);
                     }
                 }
 
@@ -118,8 +111,8 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     }
 
     private boolean checkAlarmOngoing() {
-        int alarmIdOngoing = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT);
+        int alarmIdOngoing = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
         // There's already a saliva procedure running at the moment
-        return (alarmIdOngoing != Constants.EXTRA_ALARM_ID_DEFAULT) && ((alarmIdOngoing % Constants.ALARM_OFFSET) != (alarmId % Constants.ALARM_OFFSET));
+        return (alarmIdOngoing != Constants.EXTRA_ALARM_ID_INITIAL) && (alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET);
     }
 }

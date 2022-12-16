@@ -3,13 +3,13 @@ package de.fau.cs.mad.carwatch.ui;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -20,8 +20,8 @@ public class BarcodeActivity extends AppCompatActivity {
 
     private static final String TAG = BarcodeActivity.class.getSimpleName();
 
-    private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
-    private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
+    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +31,8 @@ public class BarcodeActivity extends AppCompatActivity {
         boolean dayFinished = false;
 
         if (getIntent() != null) {
-            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
-            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
+            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
             dayFinished = getIntent().getIntExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_OK) == Activity.RESULT_CANCELED;
         }
 
@@ -68,13 +68,8 @@ public class BarcodeActivity extends AppCompatActivity {
             Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
             icon.setTint(getResources().getColor(R.color.colorPrimary));
 
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.warning_title))
-                    .setCancelable(false)
-                    .setIcon(icon)
-                    .setMessage(getString(R.string.warning_already_taken_wakeup))
-                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> finish())
-                    .show();
+            Intent intent = new Intent(BarcodeActivity.this, AlertActivity.class);
+            startActivity(intent);
 
         } else {
             BarcodeFragment fragment = new BarcodeFragment();

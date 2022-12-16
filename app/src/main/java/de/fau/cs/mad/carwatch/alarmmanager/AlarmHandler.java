@@ -19,11 +19,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Locale;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -89,39 +87,13 @@ public class AlarmHandler {
             return;
         }
 
-        DateTime nextAlarmRing = null; // used in Snackbar
-
         PendingIntent pendingIntent = getPendingIntent(context, alarm.getId());
         PendingIntent pendingIntentShow = getPendingIntentShow(context, alarm.getId());
 
-        if (alarm.isRepeating()) {
-            // get list of time to ring in milliseconds for each active day, and repeat weekly
-            List<DateTime> timeToWeeklyRings = alarm.getTimeToWeeklyRings();
+        AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), pendingIntentShow);
+        alarmManager.setAlarmClock(info, pendingIntent);
 
-            for (DateTime time : timeToWeeklyRings) {
-                Log.d(TAG, "Setting weekly repeat at " + time);
-
-                if (nextAlarmRing == null || time.isBefore(nextAlarmRing)) {
-                    nextAlarmRing = time;
-                }
-
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-            }
-            if (nextAlarmRing != null) {
-                logAlarmSet(alarm, nextAlarmRing);
-
-                Log.d(TAG, "Setting next alarm to " + nextAlarmRing);
-                AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(nextAlarmRing.getMillis(), pendingIntentShow);
-                alarmManager.setAlarmClock(info, pendingIntent);
-            }
-        } else {
-            AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), pendingIntentShow);
-            alarmManager.setAlarmClock(info, pendingIntent);
-
-            logAlarmSet(alarm, alarm.getTimeToNextRing());
-
-            Log.d(TAG, "Setting alarm for " + alarm);
-        }
+        logAlarmSet(alarm, alarm.getTimeToNextRing());
 
         ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
         PackageManager pm = context.getPackageManager();
@@ -130,9 +102,8 @@ public class AlarmHandler {
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
 
-        if (!alarm.isRepeating()) {
-            showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
-        }
+
+        showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
     }
 
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
@@ -151,13 +122,8 @@ public class AlarmHandler {
                     timeDiffString += " from ";
                 }
             }
-
             Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId) {
-        return scheduleAlarmAtTime(context, timeToRing, alarmId, -1);
     }
 
     /**
@@ -172,26 +138,6 @@ public class AlarmHandler {
 
         return scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
     }
-
-    /**
-     * Schedule alarm notification based on absolute time
-     *
-     * @param timeToRing time to next alarm
-     * @param alarmId    ID of alarm to ring
-     */
-    private static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId) {
-        return scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
-    }
-
-    /*
-     * Schedule alarm notification based on absolute time
-     *
-     * @param timeToRing time to next alarm
-     * @param alarmId    ID of alarm to ring
-     */
-    /*public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow) {
-        return scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, null);
-    }*/
 
     /**
      * Schedule alarm notification based on absolute time
@@ -222,10 +168,6 @@ public class AlarmHandler {
         }
 
         return 0;
-    }
-
-    public static void cancelAlarm(Context context, Alarm alarm) {
-        cancelAlarm(context, alarm, null);
     }
 
     /**
@@ -326,10 +268,6 @@ public class AlarmHandler {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
             json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, nextRing.getMillis());
-            json.put(Constants.LOGGER_EXTRA_ALARM_IS_REPEATING, alarm.isRepeating());
-            if (alarm.isRepeating()) {
-                json.put(Constants.LOGGER_EXTRA_ALARM_REPEATING_DAYS, new JSONArray(alarm.getActiveDays()));
-            }
 
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
         } catch (JSONException e) {
@@ -342,19 +280,13 @@ public class AlarmHandler {
 
         AlarmRepository repo = AlarmRepository.getInstance(application);
 
-        if (repo.getAllAlarms() != null && repo.getAllAlarms().getValue() != null) {
+        if (repo.getAlarm() != null && repo.getAlarm().getValue() != null) {
             // cancel everything that's there: all alarms, all timer alarms...
-            for (Alarm alarm : repo.getAllAlarms().getValue()) {
-                alarm.setActive(false);
-
-                killAllOngoingAlarms(application, alarm.getId());
-                repo.update(alarm);
-            }
+            Alarm alarm = repo.getAlarm().getValue();
+            alarm.setActive(false);
+            killAllOngoingAlarms(application, alarm.getId());
+            repo.update(alarm);
         }
-
-        // cancel a potential alarm session from spontaneous awakening (has a special id)
-        TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
-        killAllOngoingAlarms(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
 
         // cancel a potential alarm session from evening (has a special id)
         TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_EVENING);

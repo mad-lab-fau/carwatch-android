@@ -30,6 +30,7 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.AlertActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
@@ -65,7 +66,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 // create Json object and log information
                 try {
                     JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
+                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.DEFAULT_ALARM_ID);
                     LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -77,7 +78,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     showWakeupWarningDialog();
                 } else {
                     // no morning procedure ongoing yet
-                    if (sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT) == Constants.EXTRA_ALARM_ID_DEFAULT) {
+                    if (sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL) == Constants.EXTRA_ALARM_ID_INITIAL) {
                         showWakeupDialog();
                     } else {
                         if (getActivity() != null) {
@@ -116,11 +117,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                         delegate.applyDayNight();
                     }
 
-                    TimerHandler.scheduleSalivaTimer(getContext(), Constants.EXTRA_ALARM_ID_SPONTANEOUS, Constants.EXTRA_SALIVA_ID_DEFAULT);
+                    TimerHandler.scheduleSalivaTimer(getContext(), Constants.DEFAULT_ALARM_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
 
                     Intent intent = new Intent(getContext(), BarcodeActivity.class);
-                    intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
-                    intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
+                    intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.DEFAULT_ALARM_ID);
+                    intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
                     startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
                 })
                 .show();
@@ -130,17 +131,9 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         if (getContext() == null) {
             return;
         }
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
 
-        new AlertDialog.Builder(getContext())
-                .setTitle(getString(R.string.warning_title))
-                .setCancelable(false)
-                .setIcon(icon)
-                .setMessage(getString(R.string.warning_already_taken_wakeup))
-                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                })
-                .show();
+        Intent intent = new Intent(getActivity(), AlertActivity.class);
+        startActivity(intent);
     }
 
     @Override

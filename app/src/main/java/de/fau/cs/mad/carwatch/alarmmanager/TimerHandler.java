@@ -46,7 +46,7 @@ public class TimerHandler {
             sp.edit()
                     .putInt(Constants.PREF_DAY_COUNTER, ++dayId)
                     .putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
-                    .putInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_DEFAULT)
+                    .putInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL)
                     .apply();
 
         } catch (JSONException e) {
@@ -118,7 +118,7 @@ public class TimerHandler {
 
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
-            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + alarmId);
+            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + timerId);
             Log.d(TAG, "Cancelling timer " + pendingIntent);
         }
 
