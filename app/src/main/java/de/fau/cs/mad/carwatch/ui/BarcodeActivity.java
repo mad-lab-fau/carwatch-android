@@ -20,8 +20,8 @@ public class BarcodeActivity extends AppCompatActivity {
 
     private static final String TAG = BarcodeActivity.class.getSimpleName();
 
-    private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
-    private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
+    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +31,8 @@ public class BarcodeActivity extends AppCompatActivity {
         boolean dayFinished = false;
 
         if (getIntent() != null) {
-            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_DEFAULT);
-            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_DEFAULT);
+            alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
             dayFinished = getIntent().getIntExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_OK) == Activity.RESULT_CANCELED;
         }
 
@@ -68,6 +68,7 @@ public class BarcodeActivity extends AppCompatActivity {
             Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
             icon.setTint(getResources().getColor(R.color.colorPrimary));
 
+            // TODO why not use AlertActivity?
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.warning_title))
                     .setCancelable(false)

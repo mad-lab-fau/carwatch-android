@@ -51,8 +51,8 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
 
     private static final String TAG = BarcodeFragment.class.getSimpleName();
 
-    private int alarmId = Constants.EXTRA_ALARM_ID_DEFAULT;
-    private int salivaId = Constants.EXTRA_SALIVA_ID_DEFAULT;
+    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
     private CameraSource cameraSource;
     private CameraSourcePreview preview;
@@ -201,7 +201,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
             return;
         }
 
-        if (alarmId != Constants.EXTRA_ALARM_ID_DEFAULT) {
+        if (alarmId != Constants.EXTRA_ALARM_ID_INITIAL) {
             // create Json object and log information
             try {
                 JSONObject json = new JSONObject();
@@ -296,22 +296,6 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
                 .setTitle(R.string.title_barcode_invalid)
                 .setIcon(icon)
                 .setMessage(R.string.message_barcode_invalid)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
-    }
-
-    private void showBarcodeAlreadyScannedDialog() {
-        if (getContext() == null) {
-            return;
-        }
-
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.title_barcode_already_scanned)
-                .setIcon(icon)
-                .setMessage(R.string.message_barcode_already_scanned)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }

@@ -1,8 +1,11 @@
 package de.fau.cs.mad.carwatch.db;
 
+import static de.fau.cs.mad.carwatch.Constants.DEFAULT_ALARM_ID;
+
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -30,7 +33,7 @@ public class Alarm implements Parcelable {
 
     // Class members
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey()
     @ColumnInfo(name = "alarm_id")
     private int id;
 
@@ -43,7 +46,8 @@ public class Alarm implements Parcelable {
     public Alarm() {
         this(
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
-                false
+                false,
+                DEFAULT_ALARM_ID
         );
     }
 
@@ -75,9 +79,10 @@ public class Alarm implements Parcelable {
 
     // Ignored Members
     @Ignore
-    public Alarm(DateTime time, boolean active) {
+    public Alarm(DateTime time, boolean active, int id) {
         this.time = time;
         this.active = active;
+        this.id = id;
     }
 
     /**

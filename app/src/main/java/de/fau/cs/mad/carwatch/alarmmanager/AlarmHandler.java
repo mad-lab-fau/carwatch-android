@@ -288,10 +288,6 @@ public class AlarmHandler {
             repo.update(alarm);
         }
 
-        // cancel a potential alarm session from spontaneous awakening (has a special id)
-        TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
-        killAllOngoingAlarms(application, Constants.EXTRA_ALARM_ID_SPONTANEOUS);
-
         // cancel a potential alarm session from evening (has a special id)
         TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_EVENING);
         killAllOngoingAlarms(application, Constants.EXTRA_ALARM_ID_EVENING);
@@ -301,6 +297,7 @@ public class AlarmHandler {
         for (int ignored : Constants.SALIVA_TIMES) {
             cancelAlarmAtTime(context, alarmId);
             TimerHandler.cancelTimer(context, alarmId);
+            alarmId += Constants.ALARM_OFFSET;
         }
     }
 }

@@ -23,7 +23,7 @@ public final class Constants {
             new LocalTime(5, 0).toDateTimeToday().plusDays(1)
     };
 
-    public static final String SHARE_EMAIL_ADDRESS = "dipsylab@portabiles.de";
+    public static final String SHARE_EMAIL_ADDRESS = "dipsylab@portabiles.de"; // TODO: remove or replace
 
     public static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
@@ -49,6 +49,8 @@ public final class Constants {
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
+    public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
+    public static final int DEFAULT_ALARM_ID = 1; // id of morning alarm
 
     public static final String EXTRA_ALARM_TIME = "extra_alarm_time";
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
@@ -57,13 +59,15 @@ public final class Constants {
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_DAY_FINISHED = "day_finished";
 
-    public static final int EXTRA_ALARM_ID_SPONTANEOUS = 4711;
-    public static final int EXTRA_ALARM_ID_DEFAULT = -1;
-    public static final int EXTRA_TIMER_ID_DEFAULT = -1;
-    public static final int EXTRA_SALIVA_ID_DEFAULT = 0;
+    public static final int EXTRA_ALARM_ID_INITIAL = 0;
+    public static final int EXTRA_TIMER_ID_INITIAL = 0;
+    public static final int EXTRA_SALIVA_ID_INITIAL = 0;
 
-    public static final int EXTRA_ALARM_ID_EVENING = 815;
+    public static final int EXTRA_ALARM_ID_EVENING = 815; // TODO - why this weird number?
     public static final int EXTRA_SALIVA_ID_EVENING = SALIVA_TIMES.length;
+
+    public static final int ALARM_OFFSET = Short.MAX_VALUE;
+    public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
@@ -122,7 +126,5 @@ public final class Constants {
     public static final String LOGGER_EXTRA_NOTIFICATION_POST_TIME = "notification_post_time"; // int
     public static final String LOGGER_EXTRA_NOTIFICATION_CATEGORY = "notification_category"; // String
     public static final String LOGGER_EXTRA_NOTIFICATION_REMOVED_REASON = "notification_removed_reason"; // int
-
-    public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
 
 }
