@@ -19,7 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.collection.ArraySet;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.common.internal.Objects;
 import com.google.android.material.chip.Chip;
@@ -150,7 +150,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     }
 
     private void setUpWorkflowModel() {
-        workflowModel = ViewModelProviders.of(this).get(WorkflowModel.class);
+        workflowModel = new ViewModelProvider(this).get(WorkflowModel.class);
 
         // Observes the workflow state changes, if happens, update the overlay view indicators and
         // camera preview state.

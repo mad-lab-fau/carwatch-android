@@ -17,7 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -48,7 +48,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
         View root = inflater.inflate(R.layout.fragment_bedtime, container, false);
 
-        bedtimeViewModel = ViewModelProviders.of(this).get(BedtimeViewModel.class);
+        bedtimeViewModel = new ViewModelProvider(this).get(BedtimeViewModel.class);
 
         Button yesButton = root.findViewById(R.id.button_yes);
         Button noButton = root.findViewById(R.id.button_no);
@@ -60,7 +60,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         lightsOutButton.setOnClickListener(this);
         lightsOutButtonOutline.setOnClickListener(this);
 
-        bedtimeViewModel.getSalivaTaken().observe(this, aBoolean -> {
+        bedtimeViewModel.getSalivaTaken().observe(getViewLifecycleOwner(), aBoolean -> {
             lightsOutButtonOutline.setVisibility(aBoolean ? View.GONE : View.VISIBLE);
             lightsOutButton.setVisibility(aBoolean ? View.VISIBLE : View.GONE);
         });
