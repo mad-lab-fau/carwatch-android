@@ -15,6 +15,7 @@ public class BarcodeChecker {
     private static final int subjectRange = SubjectList.sSubjectList.size();
     // 2 digits (lsb)
     private static final int salivaRange = Constants.SALIVA_TIMES.length;
+    private static final int dayRange = Constants.NUM_DAYS;
 
     public enum BarcodeCheckResult {
         VALID,
@@ -23,13 +24,11 @@ public class BarcodeChecker {
     }
 
     public static BarcodeCheckResult isValidBarcode(String barcode, Set<String> scannedBarcodes) {
-        return VALID;
-        /*if (scannedBarcodes.contains(barcode)) {
-            return DUPLICATE_BARCODE;
+        if (scannedBarcodes.contains(barcode)) {
+            return BarcodeCheckResult.DUPLICATE_BARCODE;
         }
 
         int barcodeVal = Integer.parseInt(barcode);
-
         int subjectId = (int) (barcodeVal / 1e4);
         int dayId = (int) (barcodeVal / 1e2) % 100;
         int salivaId = barcodeVal % 100;
@@ -42,6 +41,6 @@ public class BarcodeChecker {
             }
         }
 
-        return INVALID;*/
+        return BarcodeCheckResult.INVALID;
     }
 }
