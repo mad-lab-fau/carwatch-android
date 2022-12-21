@@ -20,7 +20,7 @@ import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 @TypeConverters({DateConverter.class, BooleanArrayConverter.class})
 public abstract class AlarmDatabase extends RoomDatabase {
 
-    private static AlarmDatabase sInstance;
+    private static volatile AlarmDatabase sInstance;
 
     @VisibleForTesting
     private static final String DATABASE_NAME = "alarm-db";

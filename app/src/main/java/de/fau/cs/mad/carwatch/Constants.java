@@ -10,7 +10,7 @@ public final class Constants {
     /**
      * Timer duration in minutes.
      */
-    public static final int TIMER_DURATION = 1;
+    public static final int TIMER_DURATION = 10; // TODO change to 1
 
     public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
 

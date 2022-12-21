@@ -132,11 +132,11 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    public static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId, View snackbarAnchor) {
+    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId, View snackbarAnchor) {
         PendingIntent pendingIntent = getPendingIntent(context, alarmId, salivaId);
         PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId, salivaId);
 
-        return scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
+        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
     }
 
     /**
@@ -145,7 +145,7 @@ public class AlarmHandler {
      * @param timeToRing time to next alarm
      * @param alarmId    ID of alarm to ring
      */
-    private static long scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
+    private static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
         Log.d(TAG, "Setting timed alarm " + alarmId + " at " + timeToRing);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -164,10 +164,8 @@ public class AlarmHandler {
             }
 
             showAlarmSetMessage(context, snackbarAnchor, timeToRing);
-            return timeToRing.getMillis();
+            timeToRing.getMillis();
         }
-
-        return 0;
     }
 
     /**

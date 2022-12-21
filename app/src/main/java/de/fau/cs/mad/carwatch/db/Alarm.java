@@ -2,10 +2,8 @@ package de.fau.cs.mad.carwatch.db;
 
 import static de.fau.cs.mad.carwatch.Constants.DEFAULT_ALARM_ID;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -15,13 +13,8 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
-import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.converter.BooleanArrayConverter;
 import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 

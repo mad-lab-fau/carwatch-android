@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class SubjectList {
 
-    public static ArrayList<String> sSubjectList = new ArrayList<>();
+    public static final ArrayList<String> sSubjectList = new ArrayList<>();
 
 
     // DEBUG CODES

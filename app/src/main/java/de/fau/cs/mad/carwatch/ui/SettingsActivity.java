@@ -80,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        OnPreferenceChangeListener listener = (preference, newValue) -> {
+        final OnPreferenceChangeListener listener = (preference, newValue) -> {
             if (!(newValue instanceof String)) {
                 return false;
             }

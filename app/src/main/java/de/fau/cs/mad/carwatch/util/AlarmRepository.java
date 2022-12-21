@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.db.Alarm;
@@ -44,10 +43,6 @@ public class AlarmRepository {
 
     public void insert(Alarm alarm) {
         new InsertAsyncTask(alarmModel).execute(alarm);
-    }
-
-    public void replace(Alarm alarm) {
-        new ReplaceAsyncTask(alarmModel).execute(alarm);
     }
 
     public void update(Alarm alarm) {

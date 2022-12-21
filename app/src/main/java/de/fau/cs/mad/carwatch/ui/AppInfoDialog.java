@@ -46,10 +46,8 @@ public class AppInfoDialog extends DialogFragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button_ok:
-                dismiss();
-                break;
+        if (v.getId() == R.id.button_ok) {
+            dismiss();
         }
     }
 }

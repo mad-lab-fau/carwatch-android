@@ -12,8 +12,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.json.JSONObject;
 
-import java.util.List;
-
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.db.Alarm;

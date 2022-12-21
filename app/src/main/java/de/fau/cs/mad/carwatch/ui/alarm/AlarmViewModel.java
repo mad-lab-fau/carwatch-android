@@ -1,13 +1,9 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
@@ -39,7 +35,4 @@ public class AlarmViewModel extends AndroidViewModel {
         repository.update(alarm);
     }
 
-    public void delete(Alarm alarm) {
-        repository.delete(alarm);
-    }
 }
