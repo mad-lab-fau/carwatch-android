@@ -40,7 +40,7 @@ public class AlarmHandler {
 
     private static final String TAG = AlarmHandler.class.getSimpleName();
 
-    private static PeriodFormatter formatter;
+    private static final PeriodFormatter formatter;
 
     static {
         if (Locale.getDefault().getLanguage().equals("de")) {

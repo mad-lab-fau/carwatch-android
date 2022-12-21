@@ -19,8 +19,8 @@ public class AlarmRepository {
 
     private static AlarmRepository sAlarmRepository;
 
-    private AlarmDao alarmModel;
-    private LiveData<Alarm> alarm;
+    private final AlarmDao alarmModel;
+    private final LiveData<Alarm> alarm;
 
     private AlarmRepository(Application application) {
         // Application is used instead of Context in order to prevent memory leaks
@@ -76,7 +76,7 @@ public class AlarmRepository {
 
     private static class InsertAsyncTask extends AsyncTask<Alarm, Void, Void> {
 
-        private AlarmDao alarmModel;
+        private final AlarmDao alarmModel;
 
         InsertAsyncTask(AlarmDao alarmModel) {
             this.alarmModel = alarmModel;
@@ -91,7 +91,7 @@ public class AlarmRepository {
 
     private static class ReplaceAsyncTask extends AsyncTask<Alarm, Void, Void> {
 
-        private AlarmDao alarmModel;
+        private final AlarmDao alarmModel;
 
         ReplaceAsyncTask(AlarmDao alarmModel) {
             this.alarmModel = alarmModel;
@@ -106,7 +106,7 @@ public class AlarmRepository {
 
     private static class UpdateAsyncTask extends AsyncTask<Alarm, Void, Void> {
 
-        private AlarmDao alarmModel;
+        private final AlarmDao alarmModel;
 
         UpdateAsyncTask(AlarmDao alarmModel) {
             this.alarmModel = alarmModel;
@@ -121,7 +121,7 @@ public class AlarmRepository {
 
     private static class UpdateActiveAsyncTask extends AsyncTask<Alarm, Void, Void> {
 
-        private AlarmDao alarmModel;
+        private final AlarmDao alarmModel;
 
         UpdateActiveAsyncTask(AlarmDao alarmModel) {
             this.alarmModel = alarmModel;
@@ -136,7 +136,7 @@ public class AlarmRepository {
 
     private static class DeleteAsyncTask extends AsyncTask<Alarm, Void, Void> {
 
-        private AlarmDao alarmModel;
+        private final AlarmDao alarmModel;
 
         DeleteAsyncTask(AlarmDao alarmModel) {
             this.alarmModel = alarmModel;
@@ -151,7 +151,7 @@ public class AlarmRepository {
 
     private static class GetByIdAsyncTask extends AsyncTask<Integer, Void, Alarm> {
 
-        private AlarmDao alarmModel;
+        private final AlarmDao alarmModel;
 
         GetByIdAsyncTask(AlarmDao alarmModel) {
             this.alarmModel = alarmModel;

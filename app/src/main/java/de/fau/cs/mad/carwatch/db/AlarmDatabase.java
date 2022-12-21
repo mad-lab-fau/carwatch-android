@@ -45,7 +45,7 @@ public abstract class AlarmDatabase extends RoomDatabase {
     /**
      * Override the onCreate method to populate the database.
      */
-    private static RoomDatabase.Callback roomDatabaseCallback = new RoomDatabase.Callback() {
+    private static final RoomDatabase.Callback roomDatabaseCallback = new RoomDatabase.Callback() {
 
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {

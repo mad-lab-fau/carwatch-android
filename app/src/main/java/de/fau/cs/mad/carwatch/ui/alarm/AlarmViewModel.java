@@ -16,8 +16,8 @@ public class AlarmViewModel extends AndroidViewModel {
 
     private static final String TAG = AlarmViewModel.class.getSimpleName();
 
-    private AlarmRepository repository;
-    private LiveData<Alarm> alarm;
+    private final AlarmRepository repository;
+    private final LiveData<Alarm> alarm;
 
 
     public AlarmViewModel(Application application) {

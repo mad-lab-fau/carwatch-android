@@ -49,7 +49,7 @@ public class BarcodeResultFragment extends BottomSheetDialogFragment {
     private static final String TAG = BarcodeResultFragment.class.getSimpleName();
     private static final String ARG_BARCODE_FIELD = "arg_barcode_field";
 
-    private DialogInterface.OnDismissListener dismissListener;
+    private final DialogInterface.OnDismissListener dismissListener;
 
     private BarcodeResultFragment(DialogInterface.OnDismissListener dismissListener) {
         this.dismissListener = dismissListener;

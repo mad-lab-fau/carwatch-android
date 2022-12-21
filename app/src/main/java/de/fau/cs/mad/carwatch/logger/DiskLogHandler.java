@@ -32,7 +32,7 @@ public class DiskLogHandler extends Handler {
      */
     private static final String DIR_NAME = "CarWatchLogger";
 
-    private Context context;
+    private final Context context;
 
     public DiskLogHandler(Context context) {
         this(getDefaultLooper(), context);

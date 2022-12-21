@@ -17,7 +17,7 @@ public class BedtimeViewModel extends AndroidViewModel {
 
     private static final String TAG = BedtimeViewModel.class.getSimpleName();
 
-    private MutableLiveData<Boolean> salivaTaken;
+    private final MutableLiveData<Boolean> salivaTaken;
 
     public BedtimeViewModel(Application application) {
         super(application);

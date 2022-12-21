@@ -36,7 +36,7 @@ class BarcodeFieldAdapter extends RecyclerView.Adapter<BarcodeFieldViewHolder> {
 
     static class BarcodeFieldViewHolder extends RecyclerView.ViewHolder {
 
-        private Context context;
+        private final Context context;
 
         static BarcodeFieldViewHolder create(ViewGroup parent) {
             View view =
