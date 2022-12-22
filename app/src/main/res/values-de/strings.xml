@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CAR Watch</string>
-    <string name="action_alarm_save">Alarm speichern</string>
-    <string name="add_alarm">Neuen Alarm hinzufügen</string>
-    <string name="alarm">Alarm</string>
     <string name="alarm_cancelled">Alarm deaktiviert.</string>
-    <string name="alarm_deleted">Alarm gelöscht.</string>
-    <string name="alarm_not_saved">Alarm nicht gespeichert.</string>
     <string name="alarm_notification_text">Alarm!</string>
-    <string name="alarm_saved">Alarm gespeichert.</string>
     <string name="alarm_set">Der Wecker klingelt %s.</string>
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
     <string name="cancel">Abbrecheen</string>
-    <string name="edit_alarm">Alarm bearbeiten</string>
     <string name="menu_kill">Kill Alarms</string>
-    <string name="menu_scan">Scan</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_share">Logs teilen …</string>
     <string name="study_id">Name der Studie</string>
@@ -27,16 +19,11 @@
         3. und 4. Stelle: Tag des Geburtstags (01 - 31)\n
         5. Stelle: Letzter Buchstabe des Nachnamens
     </string>
-    <string name="never">nie</string>
-    <string name="everyday">täglich</string>
-    <string name="weekends">Wochenende</string>
-    <string name="weekdays">Werktage</string>
     <string name="ok">OK</string>
     <string name="prompt_point_at_a_barcode">Halten Sie Ihre Kamera auf einen Barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
     <string name="prompt_barcode_scan_successful">Barcode erfolgreich gescannt!</string>
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
-    <string name="set_time">Zeit</string>
     <string name="stop">Stop</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d!</string>
     <string name="timer_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe!</string>
@@ -46,20 +33,10 @@
     <string name="title_dashboard">Alarm</string>
     <string name="title_wakeup">Aufstehen</string>
     <string name="title_bedtime">Bettzeit</string>
-    <string name="title_study_name">Studienname eingeben</string>
     <string name="title_subject_id">Probanden-ID eingeben</string>
     <string name="user_credentials">Benutzerinformationen</string>
 
 
-    <string-array name="days_of_week">
-        <item>Montag</item>
-        <item>Dienstag</item>
-        <item>Mittwoch</item>
-        <item>Donnerstag</item>
-        <item>Freitag</item>
-        <item>Samstag</item>
-        <item>Sonntag</item>
-    </string-array>
     <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
     <string name="good_night">Vielen Dank und Gute Nacht!</string>
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
@@ -98,8 +75,6 @@
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
-    <string name="title_barcode_already_scanned">Barcode bereits gescannt</string>
-    <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits gescannt. Bitte scannen Sie den Barcode auf der korrekten Salivette.</string>
     <string name="hint_clicks_kill_alarms">Noch %1$d Klicks, um alle Alarme zu beenden.</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
