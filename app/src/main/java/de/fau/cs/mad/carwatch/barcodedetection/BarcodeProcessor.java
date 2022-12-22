@@ -23,13 +23,12 @@ import android.util.Log;
 import androidx.annotation.MainThread;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.common.InputImage;
 
-import java.io.IOException;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraReticleAnimator;
@@ -41,17 +40,17 @@ import de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowStat
 /**
  * A processor to run the barcode detector.
  */
-public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarcode>> {
+public class BarcodeProcessor extends FrameProcessorBase<List<Barcode>> {
 
     private static final String TAG = BarcodeProcessor.class.getSimpleName();
 
-    private final FirebaseVisionBarcodeDetectorOptions options =
-            new FirebaseVisionBarcodeDetectorOptions.Builder()
-                    .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_EAN_8)
+    BarcodeScannerOptions options =
+            new BarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(Barcode.FORMAT_EAN_8)
                     .build();
 
-    private final FirebaseVisionBarcodeDetector detector =
-            FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+    private final BarcodeScanner scanner =
+            BarcodeScanning.getClient(options);
 
     private final WorkflowModel workflowModel;
     private final CameraReticleAnimator cameraReticleAnimator;
@@ -62,22 +61,21 @@ public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarc
     }
 
     @Override
-    protected Task<List<FirebaseVisionBarcode>> detectInImage(FirebaseVisionImage image) {
-        return detector.detectInImage(image);
+    protected Task<List<Barcode>> detectInImage(InputImage image) {
+        return scanner.process(image);
     }
+
 
     @MainThread
     @Override
-    protected void onSuccess(FirebaseVisionImage image, List<FirebaseVisionBarcode> results, GraphicOverlay graphicOverlay) {
+    protected void onSuccess(InputImage image, List<Barcode> results, GraphicOverlay graphicOverlay) {
         if (!workflowModel.isCameraLive()) {
             return;
         }
 
-        //Log.d(TAG, "Barcode result size: " + results.size());
-
         // Picks the barcode, if exists, that covers the center of graphic overlay.
-        FirebaseVisionBarcode barcodeInCenter = null;
-        for (FirebaseVisionBarcode barcode : results) {
+        Barcode barcodeInCenter = null;
+        for (Barcode barcode : results) {
             if (barcode.getBoundingBox() != null) {
                 RectF box = graphicOverlay.translateRect(barcode.getBoundingBox());
                 if (box.contains(graphicOverlay.getWidth() / 2f, graphicOverlay.getHeight() / 2f)) {
@@ -105,7 +103,7 @@ public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarc
     }
 
     private ValueAnimator createLoadingAnimator(
-            GraphicOverlay graphicOverlay, FirebaseVisionBarcode barcode) {
+            GraphicOverlay graphicOverlay, Barcode barcode) {
         float endProgress = 1.1f;
         ValueAnimator loadingAnimator = ValueAnimator.ofFloat(0f, endProgress);
         loadingAnimator.setDuration(2000);
@@ -129,10 +127,6 @@ public class BarcodeProcessor extends FrameProcessorBase<List<FirebaseVisionBarc
 
     @Override
     public void stop() {
-        try {
-            detector.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to close barcode detector!", e);
-        }
+        scanner.close();
     }
 }

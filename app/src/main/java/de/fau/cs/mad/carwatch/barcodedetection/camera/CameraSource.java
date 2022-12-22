@@ -27,7 +27,6 @@ import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
 import com.google.android.gms.common.images.Size;
-import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -61,7 +60,6 @@ public class CameraSource {
     private static final float REQUESTED_CAMERA_FPS = 30.0f;
 
     private Camera camera;
-    @FirebaseVisionImageMetadata.Rotation
     private int rotation;
 
     private Size previewSize;
@@ -296,10 +294,11 @@ public class CameraSource {
             CameraInfo cameraInfo = new CameraInfo();
             Camera.getCameraInfo(CAMERA_FACING_BACK, cameraInfo);
             int angle = (cameraInfo.orientation - degrees + 360) % 360;
-            // This corresponds to the rotation constants in FirebaseVisionImageMetadata.
-            this.rotation = angle / 90;
             camera.setDisplayOrientation(angle);
             parameters.setRotation(angle);
+
+            // This corresponds to the rotation constants in ML Kit Input Image.
+            this.rotation = angle;
         }
     }
 

@@ -23,7 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.common.internal.Objects;
 import com.google.android.material.chip.Chip;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
+import com.google.mlkit.vision.barcode.common.Barcode;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +47,7 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
-public class BarcodeFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener, Observer<FirebaseVisionBarcode> {
+public class BarcodeFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener, Observer<Barcode> {
 
     private static final String TAG = BarcodeFragment.class.getSimpleName();
 
@@ -237,7 +237,7 @@ public class BarcodeFragment extends Fragment implements View.OnClickListener, D
     }
 
     @Override
-    public void onChanged(FirebaseVisionBarcode firebaseVisionBarcode) {
+    public void onChanged(Barcode firebaseVisionBarcode) {
         if (firebaseVisionBarcode != null) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 
