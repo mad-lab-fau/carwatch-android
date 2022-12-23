@@ -34,8 +34,8 @@ class BarcodeLoadingGraphic extends BarcodeGraphicBase {
     private final Point[] coordinateOffsetBits;
     private final PointF lastPathPoint = new PointF();
 
-    BarcodeLoadingGraphic(GraphicOverlay overlay, ValueAnimator loadingAnimator) {
-        super(overlay);
+    BarcodeLoadingGraphic(GraphicOverlay overlay, ValueAnimator loadingAnimator, int barcodeFormat) {
+        super(overlay, barcodeFormat);
 
         this.loadingAnimator = loadingAnimator;
         boxClockwiseCoordinates =

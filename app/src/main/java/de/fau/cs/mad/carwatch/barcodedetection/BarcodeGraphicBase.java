@@ -16,6 +16,8 @@
 
 package de.fau.cs.mad.carwatch.barcodedetection;
 
+import static java.lang.Math.min;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
@@ -26,6 +28,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 
 import androidx.core.content.ContextCompat;
+
+import com.google.mlkit.vision.barcode.common.Barcode;
 
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.GraphicOverlay;
@@ -40,7 +44,11 @@ abstract class BarcodeGraphicBase extends GraphicOverlay.Graphic {
     final Paint pathPaint;
     final RectF boxRect;
 
-    BarcodeGraphicBase(GraphicOverlay overlay) {
+    private static final float REL_BOX_HEIGHT_DEFAULT = 0.8f;
+    private static final float REL_BOX_WIDTH_DEFAULT = 0.8f;
+    private static final float REL_BOX_HEIGHT_EAN8 = 0.35f;
+
+    BarcodeGraphicBase(GraphicOverlay overlay, int barcodeFormat) {
         super(overlay);
 
         boxPaint = new Paint();
@@ -62,7 +70,7 @@ abstract class BarcodeGraphicBase extends GraphicOverlay.Graphic {
         pathPaint.setStrokeWidth(boxPaint.getStrokeWidth());
         pathPaint.setPathEffect(new CornerPathEffect(boxCornerRadius));
 
-        boxRect = getBarcodeReticleBox(overlay);
+        boxRect = getBarcodeReticleBox(overlay, barcodeFormat);
     }
 
     @Override
@@ -80,12 +88,20 @@ abstract class BarcodeGraphicBase extends GraphicOverlay.Graphic {
         canvas.drawRoundRect(boxRect, boxCornerRadius, boxCornerRadius, boxPaint);
     }
 
-    private static RectF getBarcodeReticleBox(GraphicOverlay overlay) {
-        // TODO box width and height hardcoded... can be tuned!
+    private static RectF getBarcodeReticleBox(GraphicOverlay overlay, int barcodeFormat) {
+        float relBoxHeight;
+        if (barcodeFormat == Barcode.FORMAT_EAN_8) {
+            relBoxHeight = REL_BOX_HEIGHT_EAN8;
+        } else {
+            relBoxHeight = REL_BOX_HEIGHT_DEFAULT;
+        }
+        float relBoxWidth = REL_BOX_WIDTH_DEFAULT;
+
         float overlayWidth = overlay.getWidth();
         float overlayHeight = overlay.getHeight();
-        float boxWidth = overlayWidth * 80 / 100;
-        float boxHeight = overlayHeight * 35 / 100;
+        float overlayMin = min(overlayHeight, overlayWidth);
+        float boxWidth = overlayMin * relBoxWidth;
+        float boxHeight = overlayMin * relBoxHeight;
         float cx = overlayWidth / 2;
         float cy = overlayHeight / 2;
         return new RectF(cx - boxWidth / 2, cy - boxHeight / 2, cx + boxWidth / 2, cy + boxHeight / 2);
