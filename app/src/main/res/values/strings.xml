@@ -58,6 +58,7 @@
     <string name="prompt_barcode_scan_successful">Barcode scan successful!</string>
     <string name="text_barcode_scan_successful">Value: %1$s</string>
     <string name="title_barcode_invalid">Invalid Barcode</string>
+    <string name="title_qr_code_invalid">Invalid QR-Code</string>
     <string name="message_barcode_invalid">Invalid Barcode! Please scan the correct barcode label on the salivette.</string>
 
     <!-- Reminder Dialogs -->
@@ -107,5 +108,8 @@
     <string name="notification_service_name">NotificationListener</string>
     <string name="notification_listener_service">Notification Access</string>
     <string name="notification_listener_service_explanation">For this study you need to need to grant this app the permission to access notifications.\n\nPlease click on "OK" to be forwarded to the "Notification Access" system dialog.\nThen, click on the app icon of CAR Watch and allow notification access.\n\nThis app will ONLY access the kind of notification timestamp and the originating app, NOT the notification content!</string>
+    <string name="title_scan_qr">Scan Study QR Code</string>
+    <string name="message_scan_qr">First, we need to know further details about the study you\'re participating at. For this purpose, please scan the QR-Code that you received together with your study materials in the next step.</string>
+    <string name="message_qr_code_invalid">Invalid QR-Code! Please scan the QR-Code in your study materials.</string>
 
 </resources>

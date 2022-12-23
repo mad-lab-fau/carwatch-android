@@ -86,5 +86,9 @@
     <string name="notification_listener_service_explanation">For this study you need to enable the Notifcation Listener Service. Enable it now?</string>
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
+    <string name="title_scan_qr">QR-Code der Studie Einscannen</string>
+    <string name="message_scan_qr">Zunächst benötigen wir einige Details über die Studie an der Sie teilnehmen möchten. Scannen Sie dazu im nächsten Schritt bitte den QR-Code ein, den Sie zusammen mit den Studienmaterialien erhalten haben.</string>
+    <string name="title_qr_code_invalid">Ungültiger QR-Code</string>
+    <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
 
 </resources>

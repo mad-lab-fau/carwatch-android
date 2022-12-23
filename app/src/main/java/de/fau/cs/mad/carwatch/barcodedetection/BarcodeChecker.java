@@ -43,4 +43,9 @@ public class BarcodeChecker {
 
         return BarcodeCheckResult.INVALID;
     }
+
+    public static BarcodeCheckResult isValidQrCode(String barcode) {
+        // TODO
+        return VALID;
+    }
 }

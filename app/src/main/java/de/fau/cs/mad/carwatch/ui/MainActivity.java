@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
             // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
-            showSubjectIdDialog();
+            showScanQrDialog();
         }
 
         clickCounter = 0;
@@ -208,63 +208,48 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    @SuppressLint("InflateParams")
-    private void showSubjectIdDialog() {
+    private void showScanQrDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
-        final EditText studyNameEditText = dialogView.findViewById(R.id.edit_text_study_name);
-        final EditText subjectIdEditText = dialogView.findViewById(R.id.edit_text_subject_id);
-        //subjectIdEditText.setText(sharedPreferences.getString(Constants.PREF_SUBJECT_ID, ""));
-
-        AlertDialog warningDialog =
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle(getString(R.string.title_invalid_subject_id))
-                        .setMessage(getString(R.string.message_invalid_subject_id))
-                        .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        })
-                        .create();
-
-        AlertDialog subjectIdDialog =
+        AlertDialog scanQrDialog =
                 dialogBuilder
                         .setCancelable(false)
-                        .setTitle(getString(R.string.title_subject_id))
-                        .setMessage(getString(R.string.message_subject_id))
-                        .setView(dialogView)
+                        .setTitle(getString(R.string.title_scan_qr))
+                        .setMessage(getString(R.string.message_scan_qr))
                         .setPositiveButton(R.string.ok, null)
                         .create();
 
-        subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String studyName = studyNameEditText.getText().toString().toLowerCase();
-            String subjectId = subjectIdEditText.getText().toString().toLowerCase();
+        scanQrDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String studyName = "dummy";
+            String subjectId = "dummy";
 
-            if (SubjectIdCheck.isValidSubjectId(studyName, subjectId)) {
-                sharedPreferences.edit()
-                        .putBoolean(Constants.PREF_FIRST_RUN, false)
-                        .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                        .putString(Constants.PREF_STUDY_NAME, studyName)
-                        .putInt(Constants.PREF_DAY_COUNTER, 0)
-                        .apply();
+            sharedPreferences.edit()
+                    //.putBoolean(Constants.PREF_FIRST_RUN, false)
+                    .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                    .putString(Constants.PREF_STUDY_NAME, studyName)
+                    .putInt(Constants.PREF_DAY_COUNTER, 0)
+                    .apply();
 
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_STUDY_NAME, studyName);
-                    json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
-                    LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_STUDY_NAME, studyName);
+                json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
 
-                    logAppPhoneMetadata();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                logAppPhoneMetadata();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
+            Intent intent = new Intent(this, QrActivity.class);
+            startActivity(intent);
+
+            if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, false)) {
+                // if default settings were changed successfully => dismiss Dialog
                 dialog.dismiss();
-            } else {
-                warningDialog.show();
             }
         }));
 
-        subjectIdDialog.show();
+        scanQrDialog.show();
     }
 
     private void logAppPhoneMetadata() {

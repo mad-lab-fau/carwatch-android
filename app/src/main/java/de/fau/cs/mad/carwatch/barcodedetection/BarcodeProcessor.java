@@ -44,20 +44,18 @@ public class BarcodeProcessor extends FrameProcessorBase<List<Barcode>> {
 
     private static final String TAG = BarcodeProcessor.class.getSimpleName();
 
-    BarcodeScannerOptions options =
-            new BarcodeScannerOptions.Builder()
-                    .setBarcodeFormats(Barcode.FORMAT_EAN_8)
-                    .build();
-
-    private final BarcodeScanner scanner =
-            BarcodeScanning.getClient(options);
-
+    BarcodeScannerOptions options;
+    private final BarcodeScanner scanner;
     private final WorkflowModel workflowModel;
     private final CameraReticleAnimator cameraReticleAnimator;
 
-    public BarcodeProcessor(GraphicOverlay graphicOverlay, WorkflowModel workflowModel) {
+    public BarcodeProcessor(GraphicOverlay graphicOverlay, WorkflowModel workflowModel, int barcodeFormat) {
         this.workflowModel = workflowModel;
         this.cameraReticleAnimator = new CameraReticleAnimator(graphicOverlay);
+        options = new BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(barcodeFormat)
+                .build();
+        scanner = BarcodeScanning.getClient(options);
     }
 
     @Override
