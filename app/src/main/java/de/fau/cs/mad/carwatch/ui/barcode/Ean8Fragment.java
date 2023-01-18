@@ -100,7 +100,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         if (mlKitBarcode != null) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-            BarcodeField barcode = new BarcodeField("Barcode", mlKitBarcode.getRawValue());
+            BarcodeField barcode = new BarcodeField(Constants.BARCODE_TYPE_EAN8, mlKitBarcode.getRawValue());
             Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
 
             Log.d(TAG, "Detected Barcode: " + barcode.getValue());

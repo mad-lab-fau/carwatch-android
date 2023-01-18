@@ -5,7 +5,10 @@ import java.util.Set;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.subject.SubjectList;
 
+import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.INVALID;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.VALID;
+
+import android.util.Log;
 
 public class BarcodeChecker {
 
@@ -44,8 +47,13 @@ public class BarcodeChecker {
         return BarcodeCheckResult.INVALID;
     }
 
-    public static BarcodeCheckResult isValidQrCode(String barcode) {
-        // TODO
+    public static BarcodeCheckResult isValidQrCode(QrCodeParser parser) {
+        try {
+            parser.parse();
+        } catch (RuntimeException e) {
+            Log.d(TAG, "Error Encoding QR-Code: " + e.getMessage());
+            return INVALID;
+        }
         return VALID;
     }
 }

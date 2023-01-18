@@ -43,6 +43,11 @@ public final class Constants {
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
     public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean
+    public static final String PREF_SUBJECT_LIST = "subject_list"; //Array<String>
+    public static final String PREF_SALIVA_TIMES = "saliva_times"; //Array<Integer>
+    public static final String PREF_NUM_DAYS = "study_days"; // int
+    public static final String PREF_HAS_EVENING = "has_evening"; // boolean
+    public static final String PREF_SHARE_EMAIL_ADDRESS = "share_email_address"; // boolean
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
     public static final int REQUEST_CODE_NOTIFICATION_ACCESS = 0x35;
@@ -71,6 +76,8 @@ public final class Constants {
 
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
+    public static final String BARCODE_TYPE_EAN8 = "ean8";
+    public static final String BARCODE_TYPE_QR = "qr";
 
     // Actions that the Logger should log
     public static final String LOGGER_ACTION_APP_METADATA = "app_metadata";
@@ -126,5 +133,19 @@ public final class Constants {
     public static final String LOGGER_EXTRA_NOTIFICATION_POST_TIME = "notification_post_time"; // int
     public static final String LOGGER_EXTRA_NOTIFICATION_CATEGORY = "notification_category"; // String
     public static final String LOGGER_EXTRA_NOTIFICATION_REMOVED_REASON = "notification_removed_reason"; // int
+
+    /**
+     * Constants used in QR-encoded study data
+     */
+    public static final String QR_PARSER_APP_ID = "CARWATCH";
+    public static final String QR_PARSER_SEPARATOR = ";";
+    public static final String QR_PARSER_SPECIFIER = ":";
+    public static final String QR_PARSER_LIST_SEPARATOR = ",";
+    public static final String QR_PARSER_PROPERTY_STUDY_NAME = "N";
+    public static final String QR_PARSER_PROPERTY_STUDY_DAYS = "D";
+    public static final String QR_PARSER_PROPERTY_PARTICIPANTS = "S";
+    public static final String QR_PARSER_PROPERTY_SALIVA_TIMES = "T";
+    public static final String QR_PARSER_PROPERTY_EVENING = "E";
+    public static final String QR_PARSER_PROPERTY_CONTACT = "M";
 
 }

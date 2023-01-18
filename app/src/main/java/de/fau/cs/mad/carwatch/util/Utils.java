@@ -30,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSizePair;
 
 import static androidx.core.content.ContextCompat.checkSelfPermission;
@@ -138,5 +139,15 @@ public class Utils {
         return validPreviewSizes;
     }
 
-
+    /**
+     * Convert shared preferences string encoding a list of integers back to an int[]
+     */
+    public static int[] decodeArrayFromString(String input) {
+        String[] list = input.split(Constants.QR_PARSER_LIST_SEPARATOR);
+        int[] output = new int[list.length];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = Integer.parseInt(list[i]);
+        }
+        return output;
+    }
 }
