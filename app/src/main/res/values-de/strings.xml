@@ -11,14 +11,8 @@
     <string name="menu_share">Logs teilen …</string>
     <string name="study_id">Name der Studie</string>
     <string name="subject_id">Probanden-ID</string>
-    <string name="message_subject_id_short">Bitte geben Sie den Namen der Studie und die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
-    <string name="message_subject_id">Bitte geben Sie den Namen der Studie und die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.\n
-        Hinweis zur Probanden-ID:\n
-        1. Stelle: Erster Buchstabe des Vornamens\n
-        2. Stelle: Erster Buchstebe des Vornamens der Mutter\n
-        3. und 4. Stelle: Tag des Geburtstags (01 - 31)\n
-        5. Stelle: Letzter Buchstabe des Nachnamens
-    </string>
+    <string name="message_subject_id_short">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
+    <string name="message_subject_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
     <string name="prompt_point_at_a_barcode">Halten Sie Ihre Kamera auf einen Barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>

@@ -34,7 +34,8 @@ public final class Constants {
      */
     public static final int[] SALIVA_TIMES = {0, 15, 15, 15, 15};
 
-    public static final String PREF_FIRST_RUN = "first_run"; // boolean
+    public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
+    public static final String PREF_FIRST_RUN_SUBJECT_ID = "first_run_subject_id"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_SUBJECT_ID = "subject_id"; // String
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)

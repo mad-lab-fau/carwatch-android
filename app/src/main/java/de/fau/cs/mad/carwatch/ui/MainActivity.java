@@ -1,6 +1,5 @@
 package de.fau.cs.mad.carwatch.ui;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +38,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Objects;
+import java.util.Set;
 
 import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
@@ -47,7 +47,6 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,11 +77,13 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
+        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
             // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
             showScanQrDialog();
         }
-
+        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+            showSubjectIdDialog();
+        }
         clickCounter = 0;
 
         // disable night mode per default
@@ -208,6 +209,59 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void showSubjectIdDialog() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
+        final EditText subjectIdEditText = dialogView.findViewById(R.id.edit_text_subject_id);
+
+        AlertDialog warningDialog =
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setTitle(getString(R.string.title_invalid_subject_id))
+                        .setMessage(getString(R.string.message_invalid_subject_id))
+                        .setPositiveButton(R.string.ok, (dialog, which) -> {
+                        })
+                        .create();
+
+        AlertDialog subjectIdDialog = dialogBuilder
+                .setCancelable(false)
+                .setTitle(getString(R.string.title_subject_id))
+                .setMessage(getString(R.string.message_subject_id))
+                .setView(dialogView)
+                .setPositiveButton(R.string.ok, null)
+                .create();
+
+        subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String subjectId = subjectIdEditText.getText().toString().toLowerCase();
+
+            Set<String> subjectList = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>());
+            // check if subject id is valid
+            if (subjectList.contains(subjectId)) {
+                sharedPreferences.edit()
+                        .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
+                        .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                        .putInt(Constants.PREF_DAY_COUNTER, 0)
+                        .apply();
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                    LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+
+                    logAppPhoneMetadata();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                warningDialog.show();
+            }
+            if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)) {
+                // if default settings were changed successfully => dismiss Dialog
+                dialog.dismiss();
+            }
+        }));
+        subjectIdDialog.show();
+    }
+
     private void showScanQrDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         AlertDialog scanQrDialog =
@@ -219,36 +273,19 @@ public class MainActivity extends AppCompatActivity {
                         .create();
 
         scanQrDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String studyName = "dummy";
-            String subjectId = "dummy";
 
             sharedPreferences.edit()
-                    //.putBoolean(Constants.PREF_FIRST_RUN, false)
-                    .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                    .putString(Constants.PREF_STUDY_NAME, studyName)
                     .putInt(Constants.PREF_DAY_COUNTER, 0)
                     .apply();
-
-            try {
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_STUDY_NAME, studyName);
-                json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
-                LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
-
-                logAppPhoneMetadata();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
             Intent intent = new Intent(this, QrActivity.class);
             startActivity(intent);
 
-            if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, false)) {
+            if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, false)) {
                 // if default settings were changed successfully => dismiss Dialog
                 dialog.dismiss();
             }
         }));
-
         scanQrDialog.show();
     }
 
