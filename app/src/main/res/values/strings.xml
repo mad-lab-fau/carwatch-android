@@ -42,8 +42,8 @@
     <string name="study_id">Study Name</string>
     <string name="message_subject_id_short">Please enter the  Subject ID you got from us.</string>
     <string name="message_subject_id">Please enter the Subject ID you got from us.</string>
-    <string name="title_invalid_subject_id">Invalid Study Name or Subject ID</string>
-    <string name="message_invalid_subject_id">Invalid Study Name or Subject ID! Please try again.</string>
+    <string name="title_invalid_subject_id">Invalid Subject ID</string>
+    <string name="message_invalid_subject_id">Invalid Subject ID! Please try again.</string>
     <string name="title_kill_alarms">Warning</string>
     <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
