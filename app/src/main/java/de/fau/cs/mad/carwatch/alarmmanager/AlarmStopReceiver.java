@@ -23,6 +23,7 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 /**
  * BroadcastReceiver to stop alarm ringing
@@ -77,6 +78,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        int eveningSalivaId = Utils.decodeArrayFromString(encodedSalivaTimes).length + 1;
 
         int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
         if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_INITIAL && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
@@ -100,7 +103,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
                 scannerIntent.putExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_CANCELED);
             }
         } else {
-            TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId);
+            TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
         }
 
         if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {

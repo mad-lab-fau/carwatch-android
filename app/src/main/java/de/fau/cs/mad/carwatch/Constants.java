@@ -21,6 +21,8 @@ public final class Constants {
             new LocalTime(5, 0).toDateTimeToday().plusDays(1)
     };
 
+    public static final int FIRST_SALIVA_SAMPLE_OFFSET = 0;
+
     public static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
     public static final String SETTINGS_ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
