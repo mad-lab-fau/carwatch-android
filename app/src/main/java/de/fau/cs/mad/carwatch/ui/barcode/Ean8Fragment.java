@@ -29,6 +29,7 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnDismissListener {
 
@@ -60,6 +61,10 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             return;
         }
 
+        SharedPreferences sp = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        int lastSalivaSample = Utils.decodeArrayFromString(encodedSalivaTimes).length - 1;
+
         if (alarmId != Constants.EXTRA_ALARM_ID_INITIAL) {
             // create Json object and log information
             try {
@@ -75,7 +80,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
             TimerHandler.cancelTimer(getContext(), alarmId);
             if (alarmId != Constants.EXTRA_ALARM_ID_EVENING) {
-                if (salivaId != Constants.SALIVA_TIMES.length - 1) {
+                if (salivaId != lastSalivaSample) {
                     alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
                 } else {
                     TimerHandler.finishTimer(getContext());
@@ -106,7 +111,8 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             Log.d(TAG, "Detected Barcode: " + barcode.getValue());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
 
-            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes, sharedPreferences);
 
             Log.d(TAG, "Barcode scan: " + check);
 

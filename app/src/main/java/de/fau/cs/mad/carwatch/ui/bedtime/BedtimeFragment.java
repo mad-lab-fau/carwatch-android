@@ -33,6 +33,7 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
@@ -146,17 +147,22 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         Drawable icon = getResources().getDrawable(R.drawable.ic_bedtime_24dp);
         icon.setTint(getResources().getColor(R.color.colorPrimary));
 
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
+        int eveningSalivaId = salivaTimes.length + 1;
+
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.bedtime_title))
                 .setCancelable(false)
                 .setIcon(icon)
                 .setMessage(getString(R.string.bedtime_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                    TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, Constants.EXTRA_SALIVA_ID_EVENING);
+                    TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, eveningSalivaId, eveningSalivaId);
 
                     Intent intent = new Intent(getContext(), BarcodeActivity.class);
                     intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
-                    intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_EVENING);
+                    intent.putExtra(Constants.EXTRA_SALIVA_ID, eveningSalivaId);
                     startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
                 })
                 .show();

@@ -24,6 +24,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 public class TimerHandler {
 
@@ -55,30 +56,36 @@ public class TimerHandler {
     }
 
     public static long scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
-        if (salivaId < Constants.SALIVA_TIMES.length) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
+        int eveningSalivaId = salivaTimes.length + 1;
+
+        if (salivaId < salivaTimes.length) {
             sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarmId).apply();
 
-            if (Constants.SALIVA_TIMES[salivaId] == 0) {
+            if (salivaTimes[salivaId] == 0) {
                 // first saliva sample => directly schedule barcode scan timer
-                scheduleSalivaCountdown(context, alarmId, salivaId);
+                scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
                 return 0;
             } else {
                 alarmId += Constants.ALARM_OFFSET;
-                DateTime timeToRing = DateTime.now().plusMinutes(Constants.SALIVA_TIMES[salivaId]);
+                DateTime timeToRing = DateTime.now().plusMinutes(salivaTimes[salivaId]);
                 AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
                 return timeToRing.getMillis();
             }
-        } else if (salivaId == Constants.EXTRA_SALIVA_ID_EVENING) {
+        } else if (salivaId == eveningSalivaId) {
             // evening saliva sample => directly schedule barcode scan timer
-            scheduleSalivaCountdown(context, alarmId, salivaId);
+            scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
             return 0;
         }
         return 0;
     }
 
     @SuppressLint("WrongConstant")
-    public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId) {
+    public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId, int eveningSalivaId) {
         int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
         //long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();TODO change back
         long when = DateTime.now().plusSeconds(Constants.TIMER_DURATION).getMillis();
@@ -94,7 +101,7 @@ public class TimerHandler {
             }
         }
 
-        Notification notification = buildCountdownNotification(context, timerId, salivaId, when);
+        Notification notification = buildCountdownNotification(context, timerId, salivaId, when, eveningSalivaId);
 
         if (alarmManager != null) {
             PendingIntent pendingIntent = getTimerPendingIntent(context, timerId, salivaId);
@@ -140,7 +147,7 @@ public class TimerHandler {
     }
 
 
-    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
+    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when, int eveningSalivaId) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         Intent contentIntent = new Intent(context, BarcodeActivity.class);
         contentIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
@@ -157,7 +164,7 @@ public class TimerHandler {
                 contentIntent, pendingFlags);
 
         String contentText =
-                salivaId == Constants.EXTRA_SALIVA_ID_EVENING ?
+                salivaId == eveningSalivaId ?
                         context.getString(R.string.timer_notification_text_evening) :
                         context.getString(R.string.timer_notification_text, salivaId);
 
@@ -176,7 +183,7 @@ public class TimerHandler {
         return builder.build();
     }
 
-    public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
+    public static Notification buildAlarmNotification(Context context, int timerId, int salivaId, int eveningSalivaId) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, BarcodeActivity.class);
@@ -193,7 +200,7 @@ public class TimerHandler {
                 fullScreenIntent, pendingFlags);
 
         String contentText =
-                salivaId == Constants.EXTRA_SALIVA_ID_EVENING ?
+                salivaId == eveningSalivaId ?
                         context.getString(R.string.timer_over_notification_text_evening) :
                         context.getString(R.string.timer_over_notification_text, salivaId);
 

@@ -338,9 +338,10 @@ public class MainActivity extends AppCompatActivity {
                 getApplicationContext().getPackageName() +
                         ".logger.fileprovider",
                 zipFile);
+        String extra_email = sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, "");
         sharingIntent.setType("application/octet-stream");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{Constants.SHARE_EMAIL_ADDRESS});
+        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
     }

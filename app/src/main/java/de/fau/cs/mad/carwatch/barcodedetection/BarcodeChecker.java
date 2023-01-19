@@ -3,22 +3,16 @@ package de.fau.cs.mad.carwatch.barcodedetection;
 import java.util.Set;
 
 import de.fau.cs.mad.carwatch.Constants;
-import de.fau.cs.mad.carwatch.subject.SubjectList;
 
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.INVALID;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.VALID;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public class BarcodeChecker {
 
     private static final String TAG = BarcodeChecker.class.getSimpleName();
-
-    // 3 digits (msb)
-    private static final int subjectRange = SubjectList.sSubjectList.size();
-    // 2 digits (lsb)
-    private static final int salivaRange = Constants.SALIVA_TIMES.length;
-    private static final int dayRange = Constants.NUM_DAYS;
 
     public enum BarcodeCheckResult {
         VALID,
@@ -26,7 +20,13 @@ public class BarcodeChecker {
         DUPLICATE_BARCODE
     }
 
-    public static BarcodeCheckResult isValidBarcode(String barcode, Set<String> scannedBarcodes) {
+    public static BarcodeCheckResult isValidBarcode(String barcode, Set<String> scannedBarcodes, SharedPreferences sharedPreferences) {
+        int subjectRange = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, null).size();
+        int salivaRange = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")
+                .split(Constants.QR_PARSER_LIST_SEPARATOR)
+                .length + 1; // TODO: depending on whether saliva idx starts with 0 or 1 - fix this!
+        int dayRange = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
+
         if (scannedBarcodes.contains(barcode)) {
             return BarcodeCheckResult.DUPLICATE_BARCODE;
         }
