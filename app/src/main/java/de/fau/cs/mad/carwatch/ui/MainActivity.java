@@ -79,12 +79,13 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
-            // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
+            // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
             showScanQrDialog();
-        }
-        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
+
         clickCounter = 0;
 
         // disable night mode per default
@@ -118,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
             };
             Logger.addLogAdapter(sAdapter);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     public void navigate(int navId) {
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
                 .create();
 
         subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String subjectId = subjectIdEditText.getText().toString().toLowerCase();
+            String subjectId = subjectIdEditText.getText().toString();
 
             Set<String> subjectList = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>());
             // check if subject id is valid
@@ -255,7 +262,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 warningDialog.show();
             }
-            if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)) {
+
+            if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
                 // if default settings were changed successfully => dismiss Dialog
                 dialog.dismiss();
             }
@@ -282,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, QrActivity.class);
             startActivity(intent);
 
-            if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, false)) {
+            if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
                 // if default settings were changed successfully => dismiss Dialog
                 dialog.dismiss();
             }
