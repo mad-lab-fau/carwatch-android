@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int CLICK_THRESHOLD_KILL = 5;
 
     private AlertDialog notificationServiceDialog;
+    private AlertDialog subjectIdDialog;
+    private AlertDialog scanQrDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,12 +121,6 @@ public class MainActivity extends AppCompatActivity {
             };
             Logger.addLogAdapter(sAdapter);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
     }
 
     public void navigate(int navId) {
@@ -217,6 +213,18 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // dismiss optional dialogs to prevent leaking windows
+        if (subjectIdDialog != null) {
+            subjectIdDialog.dismiss();
+        }
+        if (scanQrDialog != null) {
+            scanQrDialog.dismiss();
+        }
+    }
+
     private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
@@ -231,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .create();
 
-        AlertDialog subjectIdDialog = dialogBuilder
+        subjectIdDialog = dialogBuilder
                 .setCancelable(false)
                 .setTitle(getString(R.string.title_subject_id))
                 .setMessage(getString(R.string.message_subject_id))

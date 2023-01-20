@@ -24,7 +24,7 @@ public class BarcodeChecker {
         int subjectRange = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, null).size();
         int salivaRange = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")
                 .split(Constants.QR_PARSER_LIST_SEPARATOR)
-                .length + 1; // TODO: depending on whether saliva idx starts with 0 or 1 - fix this!
+                .length + 1;
         int dayRange = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
 
         if (scannedBarcodes.contains(barcode)) {

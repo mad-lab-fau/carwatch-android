@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean hasEveningSalivette = sp.getBoolean(Constants.PREF_HAS_EVENING, false);
 
         switch (v.getId()) {
             case R.id.button_no:
@@ -95,7 +97,12 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
                     showBedtimeWarningDialog();
                 } else {
-                    showBedtimeDialog();
+                    bedtimeViewModel.setSalivaTaken(true);
+                    if (!UserPresentService.serviceRunning) {
+                        UserPresentService.startService(getContext());
+                        showSensorHintDialog();
+                    }
+                    showBedtimeDialog(hasEveningSalivette);
                 }
 
                 break;
@@ -139,7 +146,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private void showBedtimeDialog() {
+    private void showBedtimeDialog(boolean hasEveningSalivette) {
         if (getContext() == null) {
             return;
         }
@@ -158,12 +165,20 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .setIcon(icon)
                 .setMessage(getString(R.string.bedtime_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                    TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, eveningSalivaId, eveningSalivaId);
+                    if (hasEveningSalivette) {
+                        TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, eveningSalivaId, eveningSalivaId);
 
-                    Intent intent = new Intent(getContext(), BarcodeActivity.class);
-                    intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
-                    intent.putExtra(Constants.EXTRA_SALIVA_ID, eveningSalivaId);
-                    startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
+                        Intent intent = new Intent(getContext(), BarcodeActivity.class);
+                        intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
+                        intent.putExtra(Constants.EXTRA_SALIVA_ID, eveningSalivaId);
+                        startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
+                    } else {
+                        bedtimeViewModel.setSalivaTaken(true);
+                        if (!UserPresentService.serviceRunning) {
+                            UserPresentService.startService(getContext());
+                            showSensorHintDialog();
+                        }
+                    }
                 })
                 .show();
     }

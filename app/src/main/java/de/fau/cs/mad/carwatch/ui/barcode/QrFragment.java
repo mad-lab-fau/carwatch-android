@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
