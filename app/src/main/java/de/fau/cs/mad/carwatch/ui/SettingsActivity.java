@@ -14,10 +14,12 @@ import androidx.preference.PreferenceFragmentCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -46,13 +48,8 @@ public class SettingsActivity extends AppCompatActivity {
             if (subjectIdPref == null) {
                 return;
             }
-            EditTextPreference studyNamePref = getPreferenceScreen().findPreference(Constants.PREF_STUDY_NAME);
-            if (studyNamePref == null) {
-                return;
-            }
 
             subjectIdPref.setOnPreferenceChangeListener(listener);
-            studyNamePref.setOnPreferenceChangeListener(listener);
         }
 
 
@@ -85,10 +82,11 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             }
 
-            String subjectId = ((String) newValue).toUpperCase();
-            String studyName = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(Constants.PREF_STUDY_NAME, "");
+            String subjectId = ((String) newValue);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            Set<String> subjectList = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>());
 
-            boolean isValid = SubjectIdCheck.isValidSubjectId(studyName, subjectId);
+            boolean isValid = subjectList.contains(newValue);
 
             if (!isValid) {
                 if (getContext() == null) {

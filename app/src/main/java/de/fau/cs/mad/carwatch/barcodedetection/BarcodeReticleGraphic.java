@@ -41,8 +41,8 @@ class BarcodeReticleGraphic extends BarcodeGraphicBase {
     private final int rippleStrokeWidth;
     private final int rippleAlpha;
 
-    BarcodeReticleGraphic(GraphicOverlay overlay, CameraReticleAnimator animator) {
-        super(overlay);
+    BarcodeReticleGraphic(GraphicOverlay overlay, CameraReticleAnimator animator, int barcodeFormat) {
+        super(overlay, barcodeFormat);
         this.animator = animator;
 
         Resources resources = overlay.getResources();

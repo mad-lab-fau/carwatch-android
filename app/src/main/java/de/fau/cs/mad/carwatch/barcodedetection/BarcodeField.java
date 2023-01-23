@@ -19,6 +19,8 @@ package de.fau.cs.mad.carwatch.barcodedetection;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import de.fau.cs.mad.carwatch.Constants;
+
 /**
  * Information about a barcode field.
  */
@@ -45,7 +47,7 @@ public class BarcodeField implements Parcelable {
         this.label = label;
         this.rawValue = rawValue;
 
-        if (rawValue != null && rawValue.length() > 1) {
+        if (label.equals(Constants.BARCODE_TYPE_EAN8) && rawValue != null && rawValue.length() > 1) {
             // remove last digits since it's a check number
             this.value = rawValue.substring(0, rawValue.length() - 1);
         } else {

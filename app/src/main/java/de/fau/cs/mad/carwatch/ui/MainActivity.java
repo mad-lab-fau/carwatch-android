@@ -1,6 +1,5 @@
 package de.fau.cs.mad.carwatch.ui;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,7 +37,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
@@ -47,7 +48,6 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.subject.SubjectIdCheck;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int CLICK_THRESHOLD_KILL = 5;
 
     private AlertDialog notificationServiceDialog;
+    private AlertDialog subjectIdDialog;
+    private AlertDialog scanQrDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +80,11 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN, true)) {
-            // if user launched app for the first time (PREF_FIRST_RUN) => display Dialog to enter Subject ID
+        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
+            showScanQrDialog();
+        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
 
@@ -208,14 +213,22 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // dismiss optional dialogs to prevent leaking windows
+        if (subjectIdDialog != null) {
+            subjectIdDialog.dismiss();
+        }
+        if (scanQrDialog != null) {
+            scanQrDialog.dismiss();
+        }
+    }
 
-    @SuppressLint("InflateParams")
     private void showSubjectIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
-        final EditText studyNameEditText = dialogView.findViewById(R.id.edit_text_study_name);
         final EditText subjectIdEditText = dialogView.findViewById(R.id.edit_text_subject_id);
-        //subjectIdEditText.setText(sharedPreferences.getString(Constants.PREF_SUBJECT_ID, ""));
 
         AlertDialog warningDialog =
                 new AlertDialog.Builder(this)
@@ -226,30 +239,27 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .create();
 
-        AlertDialog subjectIdDialog =
-                dialogBuilder
-                        .setCancelable(false)
-                        .setTitle(getString(R.string.title_subject_id))
-                        .setMessage(getString(R.string.message_subject_id))
-                        .setView(dialogView)
-                        .setPositiveButton(R.string.ok, null)
-                        .create();
+        subjectIdDialog = dialogBuilder
+                .setCancelable(false)
+                .setTitle(getString(R.string.title_subject_id))
+                .setMessage(getString(R.string.message_subject_id))
+                .setView(dialogView)
+                .setPositiveButton(R.string.ok, null)
+                .create();
 
         subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String studyName = studyNameEditText.getText().toString().toLowerCase();
-            String subjectId = subjectIdEditText.getText().toString().toLowerCase();
+            String subjectId = subjectIdEditText.getText().toString();
 
-            if (SubjectIdCheck.isValidSubjectId(studyName, subjectId)) {
+            Set<String> subjectList = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>());
+            // check if subject id is valid
+            if (subjectList.contains(subjectId)) {
                 sharedPreferences.edit()
-                        .putBoolean(Constants.PREF_FIRST_RUN, false)
+                        .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
                         .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                        .putString(Constants.PREF_STUDY_NAME, studyName)
                         .putInt(Constants.PREF_DAY_COUNTER, 0)
                         .apply();
-
                 try {
                     JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_STUDY_NAME, studyName);
                     json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
                     LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
 
@@ -257,14 +267,43 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                dialog.dismiss();
             } else {
                 warningDialog.show();
             }
-        }));
 
+            if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+                // if default settings were changed successfully => dismiss Dialog
+                dialog.dismiss();
+            }
+        }));
         subjectIdDialog.show();
+    }
+
+    private void showScanQrDialog() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog scanQrDialog =
+                dialogBuilder
+                        .setCancelable(false)
+                        .setTitle(getString(R.string.title_scan_qr))
+                        .setMessage(getString(R.string.message_scan_qr))
+                        .setPositiveButton(R.string.ok, null)
+                        .create();
+
+        scanQrDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+
+            sharedPreferences.edit()
+                    .putInt(Constants.PREF_DAY_COUNTER, 0)
+                    .apply();
+
+            Intent intent = new Intent(this, QrActivity.class);
+            startActivity(intent);
+
+            if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
+                // if default settings were changed successfully => dismiss Dialog
+                dialog.dismiss();
+            }
+        }));
+        scanQrDialog.show();
     }
 
     private void logAppPhoneMetadata() {
@@ -315,9 +354,10 @@ public class MainActivity extends AppCompatActivity {
                 getApplicationContext().getPackageName() +
                         ".logger.fileprovider",
                 zipFile);
+        String extra_email = sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, "");
         sharingIntent.setType("application/octet-stream");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{Constants.SHARE_EMAIL_ADDRESS});
+        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
     }

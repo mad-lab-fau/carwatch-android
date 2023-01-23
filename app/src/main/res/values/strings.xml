@@ -40,15 +40,10 @@
     <string name="title_subject_id">Enter Subject ID</string>
     <string name="subject_id">Subject ID</string>
     <string name="study_id">Study Name</string>
-    <string name="message_subject_id_short">Please enter the Study Name and the Subject ID you got from us.</string>
-    <string name="message_subject_id">Please enter the Study Name and the Subject ID you got from us:
-        \nHint for Subject ID:
-        \n1st Digit: First letter of first name
-        \n2nd Digit: First letter of mother\'s first name
-        \n3rd and 4th Digits: Day of birth date (01-31)
-        \n5th Digit: Last letter of last name</string>
-    <string name="title_invalid_subject_id">Invalid Study Name or Subject ID</string>
-    <string name="message_invalid_subject_id">Invalid Study Name or Subject ID! Please try again.</string>
+    <string name="message_subject_id_short">Please enter the  Subject ID you got from us.</string>
+    <string name="message_subject_id">Please enter the Subject ID you got from us.</string>
+    <string name="title_invalid_subject_id">Invalid Subject ID</string>
+    <string name="message_invalid_subject_id">Invalid Subject ID! Please try again.</string>
     <string name="title_kill_alarms">Warning</string>
     <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
@@ -58,6 +53,7 @@
     <string name="prompt_barcode_scan_successful">Barcode scan successful!</string>
     <string name="text_barcode_scan_successful">Value: %1$s</string>
     <string name="title_barcode_invalid">Invalid Barcode</string>
+    <string name="title_qr_code_invalid">Invalid QR-Code</string>
     <string name="message_barcode_invalid">Invalid Barcode! Please scan the correct barcode label on the salivette.</string>
 
     <!-- Reminder Dialogs -->
@@ -107,5 +103,8 @@
     <string name="notification_service_name">NotificationListener</string>
     <string name="notification_listener_service">Notification Access</string>
     <string name="notification_listener_service_explanation">For this study you need to need to grant this app the permission to access notifications.\n\nPlease click on "OK" to be forwarded to the "Notification Access" system dialog.\nThen, click on the app icon of CAR Watch and allow notification access.\n\nThis app will ONLY access the kind of notification timestamp and the originating app, NOT the notification content!</string>
+    <string name="title_scan_qr">Scan Study QR Code</string>
+    <string name="message_scan_qr">First, we need to know further details about the study you\'re participating at. For this purpose, please scan the QR-Code that you received together with your study materials in the next step.</string>
+    <string name="message_qr_code_invalid">Invalid QR-Code! Please scan the QR-Code in your study materials.</string>
 
 </resources>

@@ -7,12 +7,14 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,6 +34,7 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.BootCompletedReceiver;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 
 /**
@@ -319,7 +322,11 @@ public class AlarmHandler {
     }
 
     private static void killAllOngoingAlarms(Context context, int alarmId) {
-        for (int ignored : Constants.SALIVA_TIMES) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
+
+        for (int ignored : salivaTimes) {
             cancelAlarmAtTime(context, alarmId);
             TimerHandler.cancelTimer(context, alarmId);
             alarmId += Constants.ALARM_OFFSET;

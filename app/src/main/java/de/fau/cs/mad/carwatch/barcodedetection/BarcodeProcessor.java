@@ -44,20 +44,20 @@ public class BarcodeProcessor extends FrameProcessorBase<List<Barcode>> {
 
     private static final String TAG = BarcodeProcessor.class.getSimpleName();
 
-    BarcodeScannerOptions options =
-            new BarcodeScannerOptions.Builder()
-                    .setBarcodeFormats(Barcode.FORMAT_EAN_8)
-                    .build();
-
-    private final BarcodeScanner scanner =
-            BarcodeScanning.getClient(options);
-
+    BarcodeScannerOptions options;
+    private final BarcodeScanner scanner;
     private final WorkflowModel workflowModel;
     private final CameraReticleAnimator cameraReticleAnimator;
+    private final int barcodeFormat;
 
-    public BarcodeProcessor(GraphicOverlay graphicOverlay, WorkflowModel workflowModel) {
+    public BarcodeProcessor(GraphicOverlay graphicOverlay, WorkflowModel workflowModel, int barcodeFormat) {
         this.workflowModel = workflowModel;
         this.cameraReticleAnimator = new CameraReticleAnimator(graphicOverlay);
+        this.barcodeFormat = barcodeFormat;
+        options = new BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(barcodeFormat)
+                .build();
+        scanner = BarcodeScanning.getClient(options);
     }
 
     @Override
@@ -88,14 +88,14 @@ public class BarcodeProcessor extends FrameProcessorBase<List<Barcode>> {
         graphicOverlay.clear();
         if (barcodeInCenter == null) {
             cameraReticleAnimator.start();
-            graphicOverlay.add(new BarcodeReticleGraphic(graphicOverlay, cameraReticleAnimator));
+            graphicOverlay.add(new BarcodeReticleGraphic(graphicOverlay, cameraReticleAnimator, barcodeFormat));
             workflowModel.setWorkflowState(WorkflowState.DETECTING);
 
         } else {
             cameraReticleAnimator.cancel();
             ValueAnimator loadingAnimator = createLoadingAnimator(graphicOverlay, barcodeInCenter);
             loadingAnimator.start();
-            graphicOverlay.add(new BarcodeLoadingGraphic(graphicOverlay, loadingAnimator));
+            graphicOverlay.add(new BarcodeLoadingGraphic(graphicOverlay, loadingAnimator, barcodeFormat));
             workflowModel.setWorkflowState(WorkflowState.SEARCHING);
 
         }

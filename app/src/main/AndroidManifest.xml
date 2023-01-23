@@ -72,6 +72,18 @@
             android:screenOrientation="portrait"
             android:taskAffinity="" />
 
+        <activity
+            android:name=".ui.QrActivity"
+            android:label="@string/title_scan_qr"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
+            android:taskAffinity="" />
+
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />

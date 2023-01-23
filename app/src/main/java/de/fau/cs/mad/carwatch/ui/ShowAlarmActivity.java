@@ -17,7 +17,7 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSource;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmStopReceiver;
 import de.fau.cs.mad.carwatch.ui.alarm.ShowAlarmFragment;
-import de.fau.cs.mad.carwatch.ui.barcode.BarcodeFragment;
+import de.fau.cs.mad.carwatch.ui.barcode.Ean8Fragment;
 import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
 
 public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.OnSwipeListener {
@@ -99,7 +99,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
                     }
                 }
 
-                BarcodeFragment fragment = new BarcodeFragment();
+                Ean8Fragment fragment = new Ean8Fragment();
                 fragment.setAlarmId(alarmId);
                 fragment.setSalivaId(salivaId);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
