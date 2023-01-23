@@ -15,7 +15,6 @@ import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
 
 public class ShowAlarmFragment extends Fragment implements SwipeButton.OnSwipeListener {
 
-    // TODO why is this here and not in AlarmSoundControl?
     private Vibrator vibrator;
 
     private SwipeButton.OnSwipeListener onSwipeListener;

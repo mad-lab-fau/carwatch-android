@@ -6,13 +6,12 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
-import java.io.IOException;
+import androidx.annotation.RequiresApi;
 
-import de.fau.cs.mad.carwatch.Constants;
+import java.io.IOException;
 
 /**
  * Singleton class to control Alarm Ringing Sound
@@ -39,6 +38,7 @@ public class AlarmSoundControl {
     /**
      * Play Alarm Sound
      */
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public void playAlarmSound(Context context) {
         Log.d(TAG, "Playing alarm sound");
 
@@ -49,7 +49,7 @@ public class AlarmSoundControl {
             vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
             if (audioManager != null) {
-                if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) == 0) {
+                if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) <= audioManager.getStreamVolume(AudioManager.RINGER_MODE_SILENT)) {
                     audioManager.setStreamVolume(AudioManager.STREAM_ALARM, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0);
                 }
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
