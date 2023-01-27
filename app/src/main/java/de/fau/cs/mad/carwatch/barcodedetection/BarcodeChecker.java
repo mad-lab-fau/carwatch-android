@@ -27,7 +27,7 @@ public class BarcodeChecker {
                 .length + 1;
         int dayRange = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
 
-        if (scannedBarcodes.contains(barcode)) {
+        if (sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false) && scannedBarcodes.contains(barcode)) {
             return BarcodeCheckResult.DUPLICATE_BARCODE;
         }
 

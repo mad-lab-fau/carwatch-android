@@ -126,8 +126,8 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //showBarcodeAlreadyScannedDialog();
-                    // call through
+                    showBarcodeAlreadyScannedDialog();
+                    break;
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
                     sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
@@ -162,6 +162,22 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 .setTitle(R.string.title_barcode_invalid)
                 .setIcon(icon)
                 .setMessage(R.string.message_barcode_invalid)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
+    }
+
+    private void showBarcodeAlreadyScannedDialog() {
+        if (getContext() == null) {
+            return;
+        }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_barcode_already_scanned)
+                .setIcon(icon)
+                .setMessage(R.string.message_barcode_already_scanned)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }

@@ -80,14 +80,6 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
-            // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
-            showScanQrDialog();
-        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
-            // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
-            showSubjectIdDialog();
-        }
-
         clickCounter = 0;
 
         // disable night mode per default
@@ -120,6 +112,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
             Logger.addLogAdapter(sAdapter);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
+            showScanQrDialog();
+        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
+            showSubjectIdDialog();
         }
     }
 

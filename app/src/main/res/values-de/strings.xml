@@ -84,5 +84,7 @@
     <string name="message_scan_qr">Zunächst benötigen wir einige Details über die Studie an der Sie teilnehmen möchten. Scannen Sie dazu im nächsten Schritt bitte den QR-Code ein, den Sie zusammen mit den Studienmaterialien erhalten haben.</string>
     <string name="title_qr_code_invalid">Ungültiger QR-Code</string>
     <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
+    <string name="title_barcode_already_scanned">Doppelter Barcode!</string>
+    <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
 
 </resources>
