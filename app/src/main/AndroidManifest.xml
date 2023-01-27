@@ -24,8 +24,8 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,12 +46,12 @@
             android:name=".ui.ShowAlarmActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:parentActivityName=".ui.MainActivity"
-            android:taskAffinity="" />
+            android:taskAffinity=""
+            android:turnScreenOn="true" />
 
         <activity
             android:name=".ui.AlertActivity"
@@ -62,27 +62,27 @@
 
         <activity
             android:name=".ui.BarcodeActivity"
-            android:label="@string/title_activity_scan"
             android:excludeFromRecents="true"
+            android:label="@string/title_activity_scan"
             android:launchMode="singleTask"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:taskAffinity="" />
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:taskAffinity=""
+            android:turnScreenOn="true" />
 
         <activity
             android:name=".ui.QrActivity"
-            android:label="@string/title_scan_qr"
             android:excludeFromRecents="true"
+            android:label="@string/title_scan_qr"
             android:launchMode="singleTask"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:taskAffinity="" />
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:taskAffinity=""
+            android:turnScreenOn="true" />
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -134,8 +134,8 @@
 
         <service
             android:name=".userpresent.BootService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name=".userpresent.UserPresentService"
@@ -144,9 +144,9 @@
 
         <service
             android:name=".notification.NotificationListenerService"
+            android:exported="false"
             android:label="@string/notification_service_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:exported="false">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>

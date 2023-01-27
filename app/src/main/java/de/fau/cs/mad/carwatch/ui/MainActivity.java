@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showScanQrDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        AlertDialog scanQrDialog =
+        scanQrDialog =
                 dialogBuilder
                         .setCancelable(false)
                         .setTitle(getString(R.string.title_scan_qr))
