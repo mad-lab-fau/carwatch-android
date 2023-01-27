@@ -24,6 +24,7 @@ public class QrCodeParser {
     public int studyDays;
     public boolean hasEveningSalivette;
     public String shareEmailAddress;
+    public boolean checkDuplicates;
 
     public QrCodeParser(String dataString) {
         this.dataString = dataString;
@@ -71,6 +72,12 @@ public class QrCodeParser {
 
             shareEmailAddress = propertyMap.get(Constants.QR_PARSER_PROPERTY_CONTACT);
             Log.d(TAG, "Parsed share contact: " + shareEmailAddress);
+
+            checkDuplicates = Integer.parseInt(Objects.requireNonNull(
+                    propertyMap.get(Constants.QR_PARSER_PROPERTY_DUPLICATES))
+            ) == 1;
+            Log.d(TAG, "Parsed has evening salivette: " + checkDuplicates);
+
         } catch (NullPointerException e) {
             throw new RuntimeException("QR-Code could not be parsed properly!");
         }

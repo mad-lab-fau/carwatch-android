@@ -42,6 +42,7 @@ public final class Constants {
     public static final String PREF_NUM_DAYS = "study_days"; // int
     public static final String PREF_HAS_EVENING = "has_evening"; // boolean
     public static final String PREF_SHARE_EMAIL_ADDRESS = "share_email_address"; // boolean
+    public static final String PREF_CHECK_DUPLICATES = "check_duplicates"; // boolean
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
     public static final int REQUEST_CODE_NOTIFICATION_ACCESS = 0x35;
@@ -139,5 +140,6 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_SALIVA_TIMES = "T";
     public static final String QR_PARSER_PROPERTY_EVENING = "E";
     public static final String QR_PARSER_PROPERTY_CONTACT = "M";
+    public static final String QR_PARSER_PROPERTY_DUPLICATES = "F";
 
 }

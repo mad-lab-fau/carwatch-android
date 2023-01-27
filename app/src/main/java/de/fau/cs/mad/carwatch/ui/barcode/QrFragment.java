@@ -56,6 +56,7 @@ public class QrFragment extends BarcodeFragment {
                 .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
                 .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
                 .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)
+                .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
                 .apply();
     }
