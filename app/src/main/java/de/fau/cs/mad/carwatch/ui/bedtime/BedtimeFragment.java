@@ -116,6 +116,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                     JSONObject json = new JSONObject();
                     LoggerUtil.log(Constants.LOGGER_ACTION_LIGHTS_OUT, json);
                     Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night), Snackbar.LENGTH_SHORT).show();
+                    ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
 
                     // enable night mode
                     sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, true).apply();

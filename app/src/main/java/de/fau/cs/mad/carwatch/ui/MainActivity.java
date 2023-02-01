@@ -234,14 +234,6 @@ public class MainActivity extends AppCompatActivity {
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
         final EditText subjectIdEditText = dialogView.findViewById(R.id.edit_text_subject_id);
 
-        AlertDialog warningDialog =
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle(getString(R.string.title_invalid_subject_id))
-                        .setMessage(getString(R.string.message_invalid_subject_id))
-                        .setPositiveButton(R.string.ok, (dialog, which) -> {
-                        })
-                        .create();
 
         subjectIdDialog = dialogBuilder
                 .setCancelable(false)
@@ -272,6 +264,15 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             } else {
+                AlertDialog warningDialog =
+                        new AlertDialog.Builder(this)
+                                .setCancelable(false)
+                                .setTitle(getString(R.string.title_invalid_subject_id))
+                                .setMessage(getString(R.string.message_invalid_subject_id))
+                                .setPositiveButton(R.string.ok, (warnDialog, which) -> {
+                                })
+                                .create();
+
                 warningDialog.show();
             }
 

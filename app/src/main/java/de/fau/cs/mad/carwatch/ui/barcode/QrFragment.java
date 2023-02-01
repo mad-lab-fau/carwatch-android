@@ -77,6 +77,7 @@ public class QrFragment extends BarcodeFragment {
                 case VALID:
                     setStudyData(parser);
                     finishActivity();
+                    break;
                 case INVALID:
                     try {
                         JSONObject json = new JSONObject();
