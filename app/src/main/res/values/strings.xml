@@ -15,7 +15,7 @@
     <string name="title_activity_scan">Scan Barcode</string>
 
     <!-- Menu -->
-    <string name="menu_settings">Settings</string>
+    <string name="menu_reregister">Reregister</string>
     <string name="menu_share">Share Logs …</string>
     <string name="menu_kill">Kill Alarms</string>
 

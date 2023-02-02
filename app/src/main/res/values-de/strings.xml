@@ -7,7 +7,6 @@
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
     <string name="cancel">Abbrecheen</string>
     <string name="menu_kill">Kill Alarms</string>
-    <string name="menu_settings">Einstellungen</string>
     <string name="menu_share">Logs teilen …</string>
     <string name="study_id">Name der Studie</string>
     <string name="subject_id">Probanden-ID</string>
@@ -86,5 +85,6 @@
     <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
     <string name="title_barcode_already_scanned">Doppelter Barcode!</string>
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
+    <string name="menu_reregister">Neu registrieren</string>
 
 </resources>

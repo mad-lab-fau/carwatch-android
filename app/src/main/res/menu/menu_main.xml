@@ -18,8 +18,8 @@
         android:title="Service" />-->
 
     <item
-        android:id="@+id/menu_settings"
-        android:title="@string/menu_settings" />
+        android:id="@+id/menu_reregister"
+        android:title="@string/menu_reregister" />
 
     <item
         android:id="@+id/menu_app_info"

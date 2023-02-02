@@ -205,8 +205,12 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.menu_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+            case R.id.menu_reregister:
+                sharedPreferences.edit().clear().apply();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+                //startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.menu_app_info:
                 showAppInfoDialog();
