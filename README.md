@@ -47,6 +47,15 @@ CARWatch – A smartphone application for improving the accuracy of cortisol awa
 sampling. Psychoneuroendocrinology, 151, 106073. https://doi.org/10.1016/j.psyneuen.2023.106073
 ```
 
+## Studies using CARWatch
+The following papers used CARWatch in their research:
+* Richer, R., Küderle, A., Dörr, J., Rohleder, N., & Eskofier, B. M. (2021). 
+  Assessing the Influence of the Inner Clock on the Cortisol Awakening Response and 
+  Pre-Awakening Movement. 2021 IEEE EMBS International Conference on Biomedical and Health 
+  Informatics (BHI), 1–4. https://doi.org/10.1109/BHI50953.2021.9508529
+* *further papers to be added - let us know if you used CARWatch in your research!*
+
+
 ## Compatibility
 CARWatch requires an Android device running Android 6.0 (Marshmallow) or higher.
 
