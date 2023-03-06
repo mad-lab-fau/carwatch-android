@@ -33,9 +33,19 @@ install the app on your Android device.
 
 ## Usage
 CARWatch is designed to be used in CAR studies. The following steps describe how to use CARWatch
-in a CAR study:
+in a CAR study:  
 *to be added*
 
+
+## How to cite
+If you use CARWatch in your research, please cite our Psychoneuroendocrinology 
+[paper](https://www.sciencedirect.com/science/article/pii/S0306453023000513):
+
+```
+Richer, R., Abel, L., Küderle, A., Eskofier, B. M., & Rohleder, N. (2023). 
+CARWatch – A smartphone application for improving the accuracy of cortisol awakening response 
+sampling. Psychoneuroendocrinology, 151, 106073. https://doi.org/10.1016/j.psyneuen.2023.106073
+```
 
 ## Compatibility
 CARWatch requires an Android device running Android 6.0 (Marshmallow) or higher.
