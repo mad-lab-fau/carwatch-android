@@ -6,12 +6,15 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import java.io.IOException;
+
+import de.fau.cs.mad.carwatch.Constants;
 
 /**
  * Singleton class to control Alarm Ringing Sound
