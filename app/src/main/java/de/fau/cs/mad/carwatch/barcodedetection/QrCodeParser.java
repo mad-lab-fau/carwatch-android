@@ -58,6 +58,8 @@ public class QrCodeParser {
             Log.d(TAG, "Parsed subject list: " + subjectList);
 
             salivaTimes = propertyMap.get(Constants.QR_PARSER_PROPERTY_SALIVA_TIMES);
+            // add offset of initial saliva sample
+            salivaTimes = Constants.FIRST_SALIVA_SAMPLE_OFFSET + Constants.QR_PARSER_LIST_SEPARATOR + salivaTimes;
             Log.d(TAG, "Parsed saliva times: " + salivaTimes);
 
             studyDays = Integer.parseInt(Objects.requireNonNull(
