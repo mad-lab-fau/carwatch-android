@@ -26,6 +26,7 @@
     <string name="title_dashboard">Alarm</string>
     <string name="title_wakeup">Wakeup</string>
     <string name="title_bedtime">Bedtime</string>
+    <string name="title_scanner">Scan</string>
 
 
     <!-- Preferences -->
