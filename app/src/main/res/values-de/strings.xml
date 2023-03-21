@@ -87,5 +87,6 @@
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
     <string name="menu_reregister">Neu registrieren</string>
     <string name="title_scanner">Scannen</string>
+    <string name="menu_manual_scan">Barcode scannen</string>
 
 </resources>

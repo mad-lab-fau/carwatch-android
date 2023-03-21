@@ -109,5 +109,6 @@
     <string name="message_qr_code_invalid">Invalid QR-Code! Please scan the QR-Code in your study materials.</string>
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
+    <string name="menu_manual_scan">Scan Barcode</string>
 
 </resources>

@@ -205,11 +205,15 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.menu_scan:
+                Intent scanIntent = new Intent(this, BarcodeActivity.class);
+                startActivity(scanIntent);
+                break;
             case R.id.menu_reregister:
                 sharedPreferences.edit().clear().apply();
-                Intent intent = getIntent();
+                Intent currIntent = getIntent();
                 finish();
-                startActivity(intent);
+                startActivity(currIntent);
                 //startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.menu_app_info:
