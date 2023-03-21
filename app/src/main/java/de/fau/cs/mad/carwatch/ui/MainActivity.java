@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
+        updateBottomNavigationBar();
     }
 
     public void navigate(int navId) {
@@ -317,6 +318,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
         scanQrDialog.show();
+    }
+
+    private void updateBottomNavigationBar() {
+        // control bottom navigation view options
+        boolean showScanItem = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false);
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        Menu navMenu = navView.getMenu();
+        navMenu.findItem(R.id.navigation_scanner).setVisible(showScanItem);
     }
 
     private void logAppPhoneMetadata() {
