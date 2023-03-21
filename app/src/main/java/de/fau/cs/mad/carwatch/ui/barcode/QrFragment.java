@@ -3,7 +3,6 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -57,6 +56,7 @@ public class QrFragment extends BarcodeFragment {
                 .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
                 .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)
                 .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
+                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.manualScan)
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
                 .apply();
     }
