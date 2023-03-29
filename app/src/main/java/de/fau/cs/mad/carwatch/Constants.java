@@ -64,6 +64,9 @@ public final class Constants {
     public static final int EXTRA_TIMER_ID_INITIAL = 0;
     public static final int EXTRA_SALIVA_ID_INITIAL = 0;
 
+    public static final int EXTRA_ALARM_ID_MANUAL = -1;
+    public static final int EXTRA_SALIVA_ID_MANUAL = -1;
+
     public static final int EXTRA_ALARM_ID_EVENING = 815;
 
     public static final int ALARM_OFFSET = Short.MAX_VALUE;

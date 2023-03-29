@@ -29,14 +29,15 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnDismissListener {
 
     private static final String TAG = Ean8Fragment.class.getSimpleName();
 
-    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
-    private int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
+    private int alarmId = Constants.EXTRA_ALARM_ID_MANUAL;
+    private int salivaId = Constants.EXTRA_SALIVA_ID_MANUAL;
 
     private long alarmTime = 0;
 
@@ -79,7 +80,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             }
 
             TimerHandler.cancelTimer(getContext(), alarmId);
-            if (alarmId != Constants.EXTRA_ALARM_ID_EVENING) {
+            if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && alarmId != Constants.EXTRA_ALARM_ID_MANUAL) {
                 if (salivaId != lastSalivaSample) {
                     alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
                 } else {
@@ -91,9 +92,12 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (salivaId == 0) {
+        if (salivaId == Constants.EXTRA_SALIVA_ID_INITIAL) {
+            finishActivity(this.alarmTime);
             // Show Reminder Dialog when scanning first saliva sample of the day
             showQuestionnaireReminderDialog();
+        } else if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
+            switchFragment();
         } else {
             finishActivity(this.alarmTime);
         }
@@ -204,6 +208,15 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
+        }
+    }
+
+    private void switchFragment() {
+        // called when Fragment is part of MainActivity
+        // check if current activity is MainActivity
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.navigate();
         }
     }
 

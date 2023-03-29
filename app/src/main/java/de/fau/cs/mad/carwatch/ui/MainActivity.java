@@ -207,15 +207,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.menu_scan:
-                Intent scanIntent = new Intent(this, BarcodeActivity.class);
-                startActivity(scanIntent);
+                navigate(R.id.navigation_scanner);
                 break;
             case R.id.menu_reregister:
                 sharedPreferences.edit().clear().apply();
                 Intent currIntent = getIntent();
                 finish();
                 startActivity(currIntent);
-                //startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.menu_app_info:
                 showAppInfoDialog();
