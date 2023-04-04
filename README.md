@@ -57,6 +57,9 @@ sampling. Psychoneuroendocrinology, 151, 106073. https://doi.org/10.1016/j.psyne
 
 ## Studies using CARWatch
 The following papers used CARWatch in their research:
+* Richer, R., Abel, L., Küderle, A., Eskofier, B. M., & Rohleder, N. (2023).
+  CARWatch – A smartphone application for improving the accuracy of cortisol awakening response
+  sampling. Psychoneuroendocrinology, 151, 106073. https://doi.org/10.1016/j.psyneuen.2023.106073
 * Richer, R., Küderle, A., Dörr, J., Rohleder, N., & Eskofier, B. M. (2021). 
   Assessing the Influence of the Inner Clock on the Cortisol Awakening Response and 
   Pre-Awakening Movement. 2021 IEEE EMBS International Conference on Biomedical and Health 
