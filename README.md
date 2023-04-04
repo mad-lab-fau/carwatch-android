@@ -1,7 +1,7 @@
 # CARWatch App
 
-[![Downloads](https://PlayBadges.pavi2410.me/badge/downloads?id=de.fau.cs.mad.carwatch&pretty)]
-[![Rating](https://PlayBadges.pavi2410.me/badge/ratings?id=de.fau.cs.mad.carwatch&pretty)]
+![Downloads](https://PlayBadges.pavi2410.me/badge/downloads?id=de.fau.cs.mad.carwatch&pretty)
+![Rating](https://PlayBadges.pavi2410.me/badge/ratings?id=de.fau.cs.mad.carwatch&pretty)
 
 CARWatch is an Android application for objectively saliva sampling times during 
 cortisol awakening response (CAR) studies.
