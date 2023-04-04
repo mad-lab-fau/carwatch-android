@@ -3,7 +3,7 @@
 ![Downloads](https://PlayBadges.pavi2410.me/badge/downloads?id=de.fau.cs.mad.carwatch&pretty)
 ![Rating](https://PlayBadges.pavi2410.me/badge/ratings?id=de.fau.cs.mad.carwatch&pretty)
 
-**Get CARWatch in the Play Store**:
+**Get CARWatch in the Play Store**:  
 [![Google Play](https://img.shields.io/badge/Google%20Play-CARWatch-3DDC84?logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=de.fau.cs.mad.carwatch)
 
 
