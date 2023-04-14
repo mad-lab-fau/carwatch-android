@@ -44,6 +44,7 @@ public final class Constants {
     public static final String PREF_SHARE_EMAIL_ADDRESS = "share_email_address"; // boolean
     public static final String PREF_CHECK_DUPLICATES = "check_duplicates"; // boolean
     public static final String PREF_MANUAL_SCAN = "enable_manual_scan"; // boolean
+    public static final String PREF_START_SAMPLE = "start_sample";
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
     public static final int REQUEST_CODE_NOTIFICATION_ACCESS = 0x35;
@@ -104,6 +105,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_SUBJECT_ID_SET = "subject_id_set";
     public static final String LOGGER_ACTION_NOTIFICATION_RECEIVED = "notification_received";
     public static final String LOGGER_ACTION_NOTIFICATION_REMOVED = "notification_removed";
+    public static final String LOGGER_ACTION_STUDY_DATA = "study_metadata";
 
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
@@ -142,9 +144,19 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_STUDY_DAYS = "D";
     public static final String QR_PARSER_PROPERTY_PARTICIPANTS = "S";
     public static final String QR_PARSER_PROPERTY_SALIVA_TIMES = "T";
+    public static final String QR_PARSER_PROPERTY_START_SAMPLE = "SS";
     public static final String QR_PARSER_PROPERTY_EVENING = "E";
     public static final String QR_PARSER_PROPERTY_CONTACT = "M";
     public static final String QR_PARSER_PROPERTY_DUPLICATES = "FD";
     public static final String QR_PARSER_PROPERTY_MANUAL_SCAN = "FM";
 
+    public static final String LOGGER_EXTRA_STUDY_NAME = "study_name";
+    public static final String LOGGER_EXTRA_SUBJECT_LIST = "subject_list";
+    public static final String LOGGER_EXTRA_SALIVA_TIMES = "saliva_times";
+    public static final String LOGGER_EXTRA_STUDY_DAYS = "study_days";
+    public static final String LOGGER_EXTRA_HAS_EVENING_SALIVETTE = "has_evening_salivette";
+    public static final String LOGGER_EXTRA_SHARE_EMAIL_ADDRESS = "share_email_address";
+    public static final String LOGGER_EXTRA_CHECK_DUPLICATES = "check_duplicates";
+    public static final String LOGGER_EXTRA_MANUAL_SCAN = "manual_scan";
+    public static final String LOGGER_EXTRA_SALIVA_IDS = "saliva_ids";
 }
