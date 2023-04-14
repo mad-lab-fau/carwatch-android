@@ -1,7 +1,5 @@
 package de.fau.cs.mad.carwatch.barcodedetection;
 
-import android.util.Log;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +19,7 @@ public class QrCodeParser {
     public String studyName;
     public HashSet<String> subjectList;
     public String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
+    public String startSample;
     public int studyDays;
     public boolean hasEveningSalivette;
     public String shareEmailAddress;
@@ -51,38 +50,24 @@ public class QrCodeParser {
 
         try {
             studyName = propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_NAME);
-            Log.d(TAG, "Parsed study name: " + studyName);
-
             subjectList = parseStringAsSet(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_PARTICIPANTS))
             );
-            Log.d(TAG, "Parsed subject list: " + subjectList);
-
             salivaTimes = propertyMap.get(Constants.QR_PARSER_PROPERTY_SALIVA_TIMES);
             // add offset of initial saliva sample
             salivaTimes = Constants.FIRST_SALIVA_SAMPLE_OFFSET + Constants.QR_PARSER_LIST_SEPARATOR + salivaTimes;
-            Log.d(TAG, "Parsed saliva times: " + salivaTimes);
-
+            startSample = propertyMap.get(Constants.QR_PARSER_PROPERTY_START_SAMPLE);
             studyDays = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_DAYS))
             );
-            Log.d(TAG, "Parsed study days: " + studyDays);
-
             hasEveningSalivette = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_EVENING))
             ) == 1;
-            Log.d(TAG, "Parsed has evening salivette: " + hasEveningSalivette);
-
             shareEmailAddress = propertyMap.get(Constants.QR_PARSER_PROPERTY_CONTACT);
-            Log.d(TAG, "Parsed share contact: " + shareEmailAddress);
-
             checkDuplicates = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_DUPLICATES))
             ) == 1;
-            Log.d(TAG, "Parsed check duplicates: " + checkDuplicates);
-
             manualScan = Integer.parseInt(Objects.requireNonNull(propertyMap.get(Constants.QR_PARSER_PROPERTY_MANUAL_SCAN))) == 1;
-            Log.d(TAG, "Parsed enable manual scan: " + manualScan);
 
         } catch (NullPointerException e) {
             throw new RuntimeException("QR-Code could not be parsed properly!");
