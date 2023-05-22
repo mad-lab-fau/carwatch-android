@@ -39,7 +39,7 @@ in a CAR study:
 
 ## How to cite
 If you use CARWatch in your research, please cite our Psychoneuroendocrinology 
-[paper](https://www.sciencedirect.com/science/article/pii/S0306453023000513):
+[article](https://www.sciencedirect.com/science/article/pii/S0306453023000513):
 
 ```
 Richer, R., Abel, L., Küderle, A., Eskofier, B. M., & Rohleder, N. (2023). 
