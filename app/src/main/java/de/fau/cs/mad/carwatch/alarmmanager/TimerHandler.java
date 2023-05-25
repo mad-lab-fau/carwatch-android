@@ -163,10 +163,12 @@ public class TimerHandler {
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, pendingFlags);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int startSampleIdx = Integer.parseInt(sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
         String contentText =
                 salivaId == eveningSalivaId ?
                         context.getString(R.string.timer_notification_text_evening) :
-                        context.getString(R.string.timer_notification_text, salivaId);
+                        context.getString(R.string.timer_notification_text, salivaId + startSampleIdx);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
