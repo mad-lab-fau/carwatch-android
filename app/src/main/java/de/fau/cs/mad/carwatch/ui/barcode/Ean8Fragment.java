@@ -41,7 +41,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
     private long alarmTime = 0;
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -70,10 +69,40 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             // create Json object and log information
             try {
                 JSONObject json = new JSONObject();
-                int dayId = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(Constants.PREF_DAY_COUNTER, 0);
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
+                String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+                int startIndex = Integer.parseInt(startSample.substring(1));
+                String samplePrefix = startSample.substring(0, 1);
+
+                // human-readable data from scanned barcode
+                int scannedDay = Integer.parseInt(barcodeValue.substring(3, 5));
+                int scannedSample = Integer.parseInt(barcodeValue.substring(5, 7));
+                String hrScannedSample = samplePrefix;
+                // evening barcode was scanned
+                if (scannedSample == lastSalivaSample + 1){
+                    hrScannedSample += Constants.EXTRA_SALIVA_ID_EVENING;
+                } else {
+                    int hrScannedSampleId = startIndex + scannedSample;
+                    hrScannedSample = samplePrefix + hrScannedSampleId;
+                }
+
+                // human-readable data from expected sample
+                String hrExpectedSample = samplePrefix;
+                if (alarmId == Constants.EXTRA_ALARM_ID_EVENING) {
+                    hrExpectedSample += Constants.EXTRA_SALIVA_ID_EVENING;
+                } else {
+                    int hrExpectedSampleId = salivaId + startIndex;
+                    hrExpectedSample += hrExpectedSampleId;
+                }
+
                 json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
                 json.put(Constants.LOGGER_EXTRA_SALIVA_ID, dayId * 100 + salivaId);
                 json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
+                json.put(Constants.LOGGER_EXTRA_SCANNED_DAY, scannedDay);
+                json.put(Constants.LOGGER_EXTRA_EXPECTED_DAY, dayId);
+                json.put(Constants.LOGGER_EXTRA_SCANNED_SAMPLE, hrScannedSample);
+                json.put(Constants.LOGGER_EXTRA_EXPECTED_SAMPLE, hrExpectedSample);
                 LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);
             } catch (JSONException e) {
                 e.printStackTrace();
