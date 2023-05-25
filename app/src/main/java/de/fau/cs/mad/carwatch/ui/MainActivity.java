@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -267,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
                     LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
 
                     logAppPhoneMetadata();
+                    logStudyData();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -350,6 +352,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void logStudyData() {
+        try {
+            // construct human-readable sample ids
+            boolean hasEveningSalivette = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+            String salivaTimesString = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "");
+            int[] salivaTimes = Utils.decodeArrayFromString(salivaTimesString);
+            String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, "");
+            String samplePrefix = startSample.substring(0, 1);
+            int startSampleIdx = Integer.parseInt(startSample.substring(1));
+            LinkedHashSet<String> salivaIds = new LinkedHashSet<>();
+            for (int i = startSampleIdx; i < salivaTimes.length + startSampleIdx; i++) {
+                String sampleId = samplePrefix + i;
+                salivaIds.add(sampleId);
+            }
+            if (hasEveningSalivette) {
+                salivaIds.add(samplePrefix + "A");
+            }
+            // log all relevant study data
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
+            json.put(Constants.LOGGER_EXTRA_SUBJECT_LIST, sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>()));
+            json.put(Constants.LOGGER_EXTRA_SALIVA_TIMES, salivaTimesString);
+            json.put(Constants.LOGGER_EXTRA_STUDY_DAYS, sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0));
+            json.put(Constants.LOGGER_EXTRA_SALIVA_IDS, salivaIds);
+            json.put(Constants.LOGGER_EXTRA_HAS_EVENING_SALIVETTE, hasEveningSalivette);
+            json.put(Constants.LOGGER_EXTRA_SHARE_EMAIL_ADDRESS, sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, ""));
+            json.put(Constants.LOGGER_EXTRA_CHECK_DUPLICATES, sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false));
+            json.put(Constants.LOGGER_EXTRA_MANUAL_SCAN, sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false));
+            LoggerUtil.log(Constants.LOGGER_ACTION_STUDY_DATA, json);
+        } catch (
+                JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void showAppInfoDialog() {
         AppInfoDialog dialog = new AppInfoDialog();
