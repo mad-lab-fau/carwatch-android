@@ -100,7 +100,6 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                     bedtimeViewModel.setSalivaTaken(true);
                     if (!UserPresentService.serviceRunning) {
                         UserPresentService.startService(getContext());
-                        showSensorHintDialog();
                     }
                     showBedtimeDialog(hasEveningSalivette);
                 }
@@ -140,7 +139,6 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 bedtimeViewModel.setSalivaTaken(true);
                 if (!UserPresentService.serviceRunning) {
                     UserPresentService.startService(getContext());
-                    showSensorHintDialog();
                 }
             }
         }
@@ -177,7 +175,6 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                         bedtimeViewModel.setSalivaTaken(true);
                         if (!UserPresentService.serviceRunning) {
                             UserPresentService.startService(getContext());
-                            showSensorHintDialog();
                         }
                     }
                 })
@@ -201,20 +198,4 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
-    private void showSensorHintDialog() {
-        if (getContext() == null) {
-            return;
-        }
-        Drawable icon = getResources().getDrawable(R.drawable.ic_help_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-        new AlertDialog.Builder(getContext())
-                .setTitle(getString(R.string.title_reminder_sensors))
-                .setCancelable(false)
-                .setIcon(icon)
-                .setMessage(getString(R.string.message_reminder_sensors))
-                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                })
-                .show();
-    }
 }
