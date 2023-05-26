@@ -91,13 +91,20 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 String hrExpectedSample = samplePrefix;
                 if (alarmId == Constants.EXTRA_ALARM_ID_EVENING) {
                     hrExpectedSample += Constants.EXTRA_SALIVA_ID_EVENING;
+                }else if(alarmId == Constants.EXTRA_ALARM_ID_MANUAL){
+                   hrExpectedSample += Constants.EXTRA_SALIVA_ID_MANUAL_HR;
                 } else {
                     int hrExpectedSampleId = salivaId + startIndex;
                     hrExpectedSample += hrExpectedSampleId;
                 }
 
+                int salivaDayId  = dayId * 100 + salivaId;
+                if(alarmId == Constants.EXTRA_ALARM_ID_MANUAL){
+                    salivaDayId = Constants.EXTRA_SALIVA_ID_MANUAL;
+                }
+
                 json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
-                json.put(Constants.LOGGER_EXTRA_SALIVA_ID, dayId * 100 + salivaId);
+                json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaDayId);
                 json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
                 json.put(Constants.LOGGER_EXTRA_SCANNED_DAY, scannedDay);
                 json.put(Constants.LOGGER_EXTRA_EXPECTED_DAY, dayId);

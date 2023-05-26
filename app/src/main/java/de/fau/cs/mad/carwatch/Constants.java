@@ -68,6 +68,7 @@ public final class Constants {
 
     public static final int EXTRA_ALARM_ID_MANUAL = -1;
     public static final int EXTRA_SALIVA_ID_MANUAL = -1;
+    public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
 
     public static final int EXTRA_ALARM_ID_EVENING = 815;
     public static final String EXTRA_SALIVA_ID_EVENING = "A";
