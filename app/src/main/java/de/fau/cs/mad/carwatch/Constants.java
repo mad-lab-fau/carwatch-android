@@ -23,9 +23,7 @@ public final class Constants {
 
     public static final int FIRST_SALIVA_SAMPLE_OFFSET = 0;
 
-    public static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
-    public static final String SETTINGS_ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
     public static final String PREF_FIRST_RUN_SUBJECT_ID = "first_run_subject_id"; // boolean
@@ -47,7 +45,6 @@ public final class Constants {
     public static final String PREF_START_SAMPLE = "start_sample";
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
-    public static final int REQUEST_CODE_NOTIFICATION_ACCESS = 0x35;
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
@@ -106,8 +103,6 @@ public final class Constants {
     public static final String LOGGER_ACTION_PHONE_BOOT_INIT = "phone_boot_init";
     public static final String LOGGER_ACTION_PHONE_BOOT_COMPLETE = "phone_boot_complete";
     public static final String LOGGER_ACTION_SUBJECT_ID_SET = "subject_id_set";
-    public static final String LOGGER_ACTION_NOTIFICATION_RECEIVED = "notification_received";
-    public static final String LOGGER_ACTION_NOTIFICATION_REMOVED = "notification_removed";
     public static final String LOGGER_ACTION_STUDY_DATA = "study_metadata";
 
     // Extras that can be added to the Logger
@@ -133,12 +128,6 @@ public final class Constants {
     public static final String LOGGER_EXTRA_PHONE_VERSION_RELEASE = "version_release"; // String
     public static final String LOGGER_EXTRA_SCREEN_BRIGHTNESS = "screen_brightness"; // float
     public static final String LOGGER_EXTRA_DISPLAY_NIGHT_MODE = "display_night_mode"; // int
-    public static final String LOGGER_EXTRA_NOTIFICATION_PACKAGE = "notification_package"; // String
-    public static final String LOGGER_EXTRA_NOTIFICATION_ID = "notification_id"; // int
-    public static final String LOGGER_EXTRA_NOTIFICATION_KEY = "notification_key"; // String
-    public static final String LOGGER_EXTRA_NOTIFICATION_POST_TIME = "notification_post_time"; // int
-    public static final String LOGGER_EXTRA_NOTIFICATION_CATEGORY = "notification_category"; // String
-    public static final String LOGGER_EXTRA_NOTIFICATION_REMOVED_REASON = "notification_removed_reason"; // int
 
     /**
      * Constants used in QR-encoded study data
