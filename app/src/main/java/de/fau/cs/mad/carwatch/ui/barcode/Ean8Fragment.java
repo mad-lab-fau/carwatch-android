@@ -130,8 +130,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
     public void onDismiss(DialogInterface dialog) {
         if (salivaId == Constants.EXTRA_SALIVA_ID_INITIAL) {
             finishActivity(this.alarmTime);
-            // Show Reminder Dialog when scanning first saliva sample of the day
-            showQuestionnaireReminderDialog();
         } else if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
             switchFragment();
         } else {
@@ -220,22 +218,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 .setMessage(R.string.message_barcode_already_scanned)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
-    }
-
-    private void showQuestionnaireReminderDialog() {
-        if (getContext() == null) {
-            return;
-        }
-
-        Drawable icon = getResources().getDrawable(R.drawable.ic_help_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.title_reminder_questionnaire)
-                .setMessage(R.string.message_reminder_questionnaire)
-                .setIcon(icon)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> finishActivity(this.alarmTime)).show();
     }
 
     private void finishActivity(long alarmTime) {
