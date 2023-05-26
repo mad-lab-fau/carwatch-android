@@ -87,8 +87,7 @@ public class TimerHandler {
     @SuppressLint("WrongConstant")
     public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId, int eveningSalivaId) {
         int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
-        //long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();TODO change back
-        long when = DateTime.now().plusSeconds(Constants.TIMER_DURATION).getMillis();
+        long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
