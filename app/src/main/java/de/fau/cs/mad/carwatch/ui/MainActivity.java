@@ -159,17 +159,6 @@ public class MainActivity extends AppCompatActivity {
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
         }
-
-        if (isNotificationServiceEnabled()) {
-            if (notificationServiceDialog != null) {
-                notificationServiceDialog.dismiss();
-            }
-        } else {
-            if (notificationServiceDialog == null) {
-                notificationServiceDialog = buildNotificationServiceAlertDialog();
-                notificationServiceDialog.show();
-            }
-        }
     }
 
     @Override
@@ -416,65 +405,5 @@ public class MainActivity extends AppCompatActivity {
         sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
-    }
-
-
-    /**
-     * Is Notification Service Enabled.
-     * Verifies if the notification listener service is enabled.
-     * Got it from: https://github.com/kpbird/NotificationListenerService-Example/blob/master/NLSExample/src/main/java/com/kpbird/nlsexample/NLService.java
-     *
-     * @return True if enabled, false otherwise.
-     */
-    private boolean isNotificationServiceEnabled() {
-        String pkgName = getPackageName();
-        final String flat = Settings.Secure.getString(getContentResolver(),
-                Constants.SETTINGS_ENABLED_NOTIFICATION_LISTENERS);
-        if (!TextUtils.isEmpty(flat)) {
-            for (String name : flat.split(":")) {
-                final ComponentName cn = ComponentName.unflattenFromString(name);
-                if (cn != null && TextUtils.equals(pkgName, cn.getPackageName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Build Notification Listener Alert Dialog.
-     * Builds the alert dialog that pops up if the user has not turned
-     * the Notification Listener Service on yet.
-     *
-     * @return An alert dialog which leads to the notification enabling screen
-     */
-    private AlertDialog buildNotificationServiceAlertDialog() {
-        AlertDialog.Builder alertDialogBuilder =
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle(R.string.notification_listener_service)
-                        .setMessage(R.string.notification_listener_service_explanation)
-                        .setPositiveButton(
-                                getString(R.string.ok), (dialog, which) -> startActivityForResult(
-                                        new Intent(Constants.ACTION_NOTIFICATION_LISTENER_SETTINGS),
-                                        Constants.REQUEST_CODE_NOTIFICATION_ACCESS)
-                        );
-
-        return alertDialogBuilder.create();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constants.REQUEST_CODE_NOTIFICATION_ACCESS) {
-            if (notificationServiceDialog != null) {
-                notificationServiceDialog.dismiss();
-
-                if (!isNotificationServiceEnabled()) {
-                    notificationServiceDialog.show();
-                }
-            }
-        }
     }
 }
