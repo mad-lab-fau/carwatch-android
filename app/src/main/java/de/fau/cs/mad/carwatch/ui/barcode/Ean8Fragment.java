@@ -107,7 +107,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaDayId);
                 json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
                 json.put(Constants.LOGGER_EXTRA_SCANNED_DAY, scannedDay);
-                json.put(Constants.LOGGER_EXTRA_EXPECTED_DAY, dayId);
+                json.put(Constants.LOGGER_EXTRA_EXPECTED_DAY, dayId + 1);
                 json.put(Constants.LOGGER_EXTRA_SCANNED_SAMPLE, hrScannedSample);
                 json.put(Constants.LOGGER_EXTRA_EXPECTED_SAMPLE, hrExpectedSample);
                 LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);
