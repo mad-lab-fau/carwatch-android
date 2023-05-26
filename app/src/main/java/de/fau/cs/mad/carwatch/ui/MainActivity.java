@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
                 salivaIds.add(sampleId);
             }
             if (hasEveningSalivette) {
-                salivaIds.add(samplePrefix + "A");
+                salivaIds.add(samplePrefix + Constants.EXTRA_SALIVA_ID_EVENING);
             }
             // log all relevant study data
             JSONObject json = new JSONObject();

@@ -53,6 +53,7 @@ public final class Constants {
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
     public static final int DEFAULT_ALARM_ID = 1; // id of morning alarm
+    public static final String DEFAULT_START_SAMPLE = "S0";
 
     public static final String EXTRA_ALARM_TIME = "extra_alarm_time";
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
@@ -67,8 +68,10 @@ public final class Constants {
 
     public static final int EXTRA_ALARM_ID_MANUAL = -1;
     public static final int EXTRA_SALIVA_ID_MANUAL = -1;
+    public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
 
     public static final int EXTRA_ALARM_ID_EVENING = 815;
+    public static final String EXTRA_SALIVA_ID_EVENING = "A";
 
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
@@ -116,6 +119,10 @@ public final class Constants {
     public static final String LOGGER_EXTRA_OTHER_BARCODES = "other_barcodes"; // String Set
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
     public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
+    public static final String LOGGER_EXTRA_SCANNED_DAY = "day_scanned"; // int
+    public static final String LOGGER_EXTRA_EXPECTED_DAY = "day_expected"; // int
+    public static final String LOGGER_EXTRA_SCANNED_SAMPLE = "sample_scanned"; // String
+    public static final String LOGGER_EXTRA_EXPECTED_SAMPLE = "sample_expected"; // String
     public static final String LOGGER_EXTRA_APP_VERSION_CODE = "version_code"; // int
     public static final String LOGGER_EXTRA_APP_VERSION_NAME = "version_name"; // String
     public static final String LOGGER_EXTRA_PHONE_BRAND = "brand"; // String
