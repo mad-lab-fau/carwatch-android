@@ -71,6 +71,7 @@ public class Utils {
                     case Manifest.permission.USE_FULL_SCREEN_INTENT:
                     case Manifest.permission.FOREGROUND_SERVICE:
                     case Manifest.permission.SCHEDULE_EXACT_ALARM:
+                    case Manifest.permission.POST_NOTIFICATIONS:
                         continue;
                 }
                 return false;
