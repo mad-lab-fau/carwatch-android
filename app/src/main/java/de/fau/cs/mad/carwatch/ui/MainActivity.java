@@ -1,14 +1,11 @@
 package de.fau.cs.mad.carwatch.ui;
 
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int CLICK_THRESHOLD_TOAST = 2;
     private static final int CLICK_THRESHOLD_KILL = 5;
 
-    private AlertDialog notificationServiceDialog;
     private AlertDialog subjectIdDialog;
     private AlertDialog scanQrDialog;
 
