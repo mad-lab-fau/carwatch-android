@@ -115,13 +115,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
-            // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
-            showScanQrDialog();
-        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
-            // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
-            showSubjectIdDialog();
-        }
         updateBottomNavigationBar();
     }
 
@@ -154,6 +147,13 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
+        }
+        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
+            showScanQrDialog();
+        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+            // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
+            showSubjectIdDialog();
         }
     }
 
