@@ -35,7 +35,7 @@ public final class Constants {
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
     public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean
-    public static final String PREF_SUBJECT_LIST = "subject_list"; //Array<String>
+    public static final String PREF_NUM_SUBJECTS = "num_subjects"; // int
     public static final String PREF_SALIVA_TIMES = "saliva_times"; //Array<Integer>
     public static final String PREF_NUM_DAYS = "study_days"; // int
     public static final String PREF_HAS_EVENING = "has_evening"; // boolean
@@ -138,7 +138,7 @@ public final class Constants {
     public static final String QR_PARSER_LIST_SEPARATOR = ",";
     public static final String QR_PARSER_PROPERTY_STUDY_NAME = "N";
     public static final String QR_PARSER_PROPERTY_STUDY_DAYS = "D";
-    public static final String QR_PARSER_PROPERTY_PARTICIPANTS = "S";
+    public static final String QR_PARSER_PROPERTY_NUM_SUBJECTS = "S";
     public static final String QR_PARSER_PROPERTY_SALIVA_TIMES = "T";
     public static final String QR_PARSER_PROPERTY_START_SAMPLE = "SS";
     public static final String QR_PARSER_PROPERTY_EVENING = "E";
@@ -147,7 +147,7 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_MANUAL_SCAN = "FM";
 
     public static final String LOGGER_EXTRA_STUDY_NAME = "study_name";
-    public static final String LOGGER_EXTRA_SUBJECT_LIST = "subject_list";
+    public static final String LOGGER_EXTRA_NUM_SUBJECTS = "num_subjects";
     public static final String LOGGER_EXTRA_SALIVA_TIMES = "saliva_times";
     public static final String LOGGER_EXTRA_STUDY_DAYS = "study_days";
     public static final String LOGGER_EXTRA_HAS_EVENING_SALIVETTE = "has_evening_salivette";

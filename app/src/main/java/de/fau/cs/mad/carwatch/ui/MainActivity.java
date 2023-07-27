@@ -34,10 +34,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
@@ -239,35 +237,21 @@ public class MainActivity extends AppCompatActivity {
         subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
             String subjectId = subjectIdEditText.getText().toString();
 
-            Set<String> subjectList = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>());
-            // check if subject id is valid
-            if (subjectList.contains(subjectId)) {
-                sharedPreferences.edit()
-                        .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
-                        .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                        .putInt(Constants.PREF_DAY_COUNTER, 0)
-                        .apply();
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
-                    LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+            // store subject id
+            sharedPreferences.edit()
+                    .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
+                    .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                    .putInt(Constants.PREF_DAY_COUNTER, 0)
+                    .apply();
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
 
-                    logAppPhoneMetadata();
-                    logStudyData();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                AlertDialog warningDialog =
-                        new AlertDialog.Builder(this)
-                                .setCancelable(false)
-                                .setTitle(getString(R.string.title_invalid_subject_id))
-                                .setMessage(getString(R.string.message_invalid_subject_id))
-                                .setPositiveButton(R.string.ok, (warnDialog, which) -> {
-                                })
-                                .create();
-
-                warningDialog.show();
+                logAppPhoneMetadata();
+                logStudyData();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
@@ -357,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
             // log all relevant study data
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
-            json.put(Constants.LOGGER_EXTRA_SUBJECT_LIST, sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>()));
+            json.put(Constants.LOGGER_EXTRA_NUM_SUBJECTS, sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_TIMES, salivaTimesString);
             json.put(Constants.LOGGER_EXTRA_STUDY_DAYS, sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_IDS, salivaIds);

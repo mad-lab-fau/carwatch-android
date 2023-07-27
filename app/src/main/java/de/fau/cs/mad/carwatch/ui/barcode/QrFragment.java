@@ -50,7 +50,7 @@ public class QrFragment extends BarcodeFragment {
     public void setStudyData(QrCodeParser parser) {
         sharedPreferences.edit()
                 .putString(Constants.PREF_STUDY_NAME, parser.studyName)
-                .putStringSet(Constants.PREF_SUBJECT_LIST, parser.subjectList)
+                .putInt(Constants.PREF_NUM_SUBJECTS, parser.numSubjects)
                 .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
                 .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
                 .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
