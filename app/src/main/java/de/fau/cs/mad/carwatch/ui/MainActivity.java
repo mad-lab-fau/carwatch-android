@@ -239,35 +239,21 @@ public class MainActivity extends AppCompatActivity {
         subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
             String subjectId = subjectIdEditText.getText().toString();
 
-            Set<String> subjectList = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>());
-            // check if subject id is valid
-            if (subjectList.contains(subjectId)) {
-                sharedPreferences.edit()
-                        .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
-                        .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                        .putInt(Constants.PREF_DAY_COUNTER, 0)
-                        .apply();
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
-                    LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+            // store subject id
+            sharedPreferences.edit()
+                    .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
+                    .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                    .putInt(Constants.PREF_DAY_COUNTER, 0)
+                    .apply();
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
+                LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
 
-                    logAppPhoneMetadata();
-                    logStudyData();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                AlertDialog warningDialog =
-                        new AlertDialog.Builder(this)
-                                .setCancelable(false)
-                                .setTitle(getString(R.string.title_invalid_subject_id))
-                                .setMessage(getString(R.string.message_invalid_subject_id))
-                                .setPositiveButton(R.string.ok, (warnDialog, which) -> {
-                                })
-                                .create();
-
-                warningDialog.show();
+                logAppPhoneMetadata();
+                logStudyData();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
