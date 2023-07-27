@@ -34,10 +34,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
@@ -343,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
             // log all relevant study data
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
-            json.put(Constants.LOGGER_EXTRA_SUBJECT_LIST, sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, new HashSet<>()));
+            json.put(Constants.LOGGER_EXTRA_NUM_SUBJECTS, sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_TIMES, salivaTimesString);
             json.put(Constants.LOGGER_EXTRA_STUDY_DAYS, sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_IDS, salivaIds);

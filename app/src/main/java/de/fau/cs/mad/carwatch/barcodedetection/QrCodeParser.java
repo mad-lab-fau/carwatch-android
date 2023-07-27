@@ -17,10 +17,10 @@ public class QrCodeParser {
 
     public String dataString;
     public String studyName;
-    public HashSet<String> subjectList;
     public String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
     public String startSample;
     public int studyDays;
+    public int numSubjects;
     public boolean hasEveningSalivette;
     public String shareEmailAddress;
     public boolean checkDuplicates;
@@ -50,15 +50,15 @@ public class QrCodeParser {
 
         try {
             studyName = propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_NAME);
-            subjectList = parseStringAsSet(Objects.requireNonNull(
-                    propertyMap.get(Constants.QR_PARSER_PROPERTY_PARTICIPANTS))
-            );
             salivaTimes = propertyMap.get(Constants.QR_PARSER_PROPERTY_SALIVA_TIMES);
             // add offset of initial saliva sample
             salivaTimes = Constants.FIRST_SALIVA_SAMPLE_OFFSET + Constants.QR_PARSER_LIST_SEPARATOR + salivaTimes;
             startSample = propertyMap.get(Constants.QR_PARSER_PROPERTY_START_SAMPLE);
             studyDays = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_DAYS))
+            );
+            numSubjects = Integer.parseInt(Objects.requireNonNull(
+                    propertyMap.get(Constants.QR_PARSER_PROPERTY_NUM_SUBJECTS))
             );
             hasEveningSalivette = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_EVENING))
@@ -72,10 +72,5 @@ public class QrCodeParser {
         } catch (NullPointerException e) {
             throw new RuntimeException("QR-Code could not be parsed properly!");
         }
-    }
-
-    private HashSet<String> parseStringAsSet(String encodedList) {
-        String[] result = encodedList.split(Constants.QR_PARSER_LIST_SEPARATOR);
-        return new HashSet<>(Arrays.asList(result));
     }
 }

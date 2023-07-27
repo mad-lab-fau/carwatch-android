@@ -21,7 +21,7 @@ public class BarcodeChecker {
     }
 
     public static BarcodeCheckResult isValidBarcode(String barcode, Set<String> scannedBarcodes, SharedPreferences sharedPreferences) {
-        int subjectRange = sharedPreferences.getStringSet(Constants.PREF_SUBJECT_LIST, null).size();
+        int subjectRange = sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0);
         int salivaRange = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")
                 .split(Constants.QR_PARSER_LIST_SEPARATOR)
                 .length + 1;
