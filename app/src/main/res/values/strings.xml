@@ -1,14 +1,14 @@
 <resources>
-    <string name="app_name">CAR Watch</string>
+    <string name="app_name">CARWatch</string>
 
     <string name="ok">OK</string>
 
     <string name="cancel">Cancel</string>
     <string name="alarm_notification_text">Alarm!</string>
-    <string name="timer_notification_text">Please take saliva sample #%1$d!</string>
+    <string name="timer_notification_text">Please take saliva sample #%1$d.</string>
     <string name="timer_notification_text_evening">Please take the evening saliva sample!</string>
-    <string name="timer_over_notification_text">Please take saliva sample #%1$d NOW!!!</string>
-    <string name="timer_over_notification_text_evening">Please take evening saliva sample NOW!!!</string>
+    <string name="timer_over_notification_text">Please take saliva sample #%1$d now!</string>
+    <string name="timer_over_notification_text_evening">Please take evening saliva sample now!</string>
 
     <!-- Activity Titles -->
     <string name="title_activity_settings">Settings</string>
@@ -38,24 +38,24 @@
     <string name="alarm_set_error">Error setting alarm.</string>
 
     <!-- Subject ID Dialog -->
-    <string name="title_subject_id">Enter Subject ID</string>
-    <string name="subject_id">Subject ID</string>
+    <string name="title_subject_id">Enter Participant ID</string>
+    <string name="subject_id">Participant ID</string>
     <string name="study_id">Study Name</string>
-    <string name="message_subject_id_short">Please enter the  Subject ID you got from us.</string>
-    <string name="message_subject_id">Please enter the Subject ID you got from us.</string>
-    <string name="title_invalid_subject_id">Invalid Subject ID</string>
-    <string name="message_invalid_subject_id">Invalid Subject ID! Please try again.</string>
+    <string name="message_subject_id_short">Please enter the  Participant ID you received from us.</string>
+    <string name="message_subject_id">Please enter the Participant ID you received from us.</string>
+    <string name="title_invalid_subject_id">Invalid Participant ID</string>
+    <string name="message_invalid_subject_id">Invalid Participant ID! Please try again.</string>
     <string name="title_kill_alarms">Warning</string>
     <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
     <!-- Barcode Scanner -->
-    <string name="prompt_point_at_a_barcode">Point your camera at a barcode</string>
+    <string name="prompt_point_at_a_barcode">Please point your camera at a barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
     <string name="prompt_barcode_scan_successful">Barcode scan successful!</string>
     <string name="text_barcode_scan_successful">Value: %1$s</string>
     <string name="title_barcode_invalid">Invalid Barcode</string>
-    <string name="title_qr_code_invalid">Invalid QR-Code</string>
-    <string name="message_barcode_invalid">Invalid Barcode! Please scan the correct barcode label on the salivette.</string>
+    <string name="title_qr_code_invalid">Invalid QR Code</string>
+    <string name="message_barcode_invalid">Invalid Barcode! Please scan the correct barcode label on the saliva tube.</string>
 
     <!-- Reminder Dialogs -->
     <string name="title_alarm_reminder">Alarm Set</string>
@@ -67,8 +67,8 @@
     <string name="message_reminder_sensors">Are all sensors in place?\n\nIf you use the sensor armband: Please remember to wear the sensor throughout your time in bed on your non-dominant hand!\n\nIf you use the ECG chest strap: Please make sure that it fits correctly and you moistened the electrodes before wearing.\n\nIf you use the Sleep analyzer mat: Please make sure it is plugged in, has power supply and is correctly placed under the bed sheets.</string>
 
     <!-- Wakeup Fragment -->
-    <string name="wakeup_title">Start Morning</string>
-    <string name="wakeup_text">We will now begin with the morning procedure.</string>
+    <string name="wakeup_title">Start Morning Sampling</string>
+    <string name="wakeup_text">We will now begin with collecting the morning saliva samples.</string>
     <string name="wakeup_message">Good Morning!\nDid you just wake up?</string>
 
     <!-- Bedtime Fragment -->
@@ -97,13 +97,13 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="app_active">CAR Watch Service is active.</string>
+    <string name="app_active">CARWatch Service is active.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Info</string>
     <string name="title_scan_qr">Scan Study QR Code</string>
-    <string name="message_scan_qr">First, we need to know further details about the study you\'re participating at. For this purpose, please scan the QR-Code that you received together with your study materials in the next step.</string>
-    <string name="message_qr_code_invalid">Invalid QR-Code! Please scan the QR-Code in your study materials.</string>
+    <string name="message_scan_qr">First, we need to know further details about the study you\'re participating at. For this purpose, please scan the QR Code that you received together with your study materials in the next step.</string>
+    <string name="message_qr_code_invalid">Invalid QR Code! Please scan the QR Code in your study materials.</string>
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
     <string name="menu_manual_scan">Scan Barcode</string>
