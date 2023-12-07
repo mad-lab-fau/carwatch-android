@@ -154,7 +154,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         icon.setTint(getResources().getColor(R.color.colorPrimary));
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
         int eveningSalivaId = salivaTimes.length + 1;
 

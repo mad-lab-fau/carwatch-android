@@ -59,7 +59,7 @@ public class TimerHandler {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
         int eveningSalivaId = salivaTimes.length + 1;
 

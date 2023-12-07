@@ -78,7 +78,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int eveningSalivaId = Utils.decodeArrayFromString(encodedSalivaTimes).length + 1;
 
         int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);

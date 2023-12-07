@@ -62,7 +62,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         }
 
         SharedPreferences sp = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int lastSalivaSample = Utils.decodeArrayFromString(encodedSalivaTimes).length - 1;
 
         if (alarmId != Constants.EXTRA_ALARM_ID_INITIAL) {

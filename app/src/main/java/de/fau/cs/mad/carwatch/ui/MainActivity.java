@@ -325,13 +325,15 @@ public class MainActivity extends AppCompatActivity {
         try {
             // construct human-readable sample ids
             boolean hasEveningSalivette = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+            String salivaDistancesString = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
             String salivaTimesString = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "");
-            int[] salivaTimes = Utils.decodeArrayFromString(salivaTimesString);
+            int[] salivaDistances = Utils.decodeArrayFromString(salivaDistancesString);
+            String[] salivaTimes = salivaTimesString.split(Constants.QR_PARSER_LIST_SEPARATOR);
             String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, "");
             String samplePrefix = startSample.substring(0, 1);
             int startSampleIdx = Integer.parseInt(startSample.substring(1));
             LinkedHashSet<String> salivaIds = new LinkedHashSet<>();
-            for (int i = startSampleIdx; i < salivaTimes.length + startSampleIdx; i++) {
+            for (int i = startSampleIdx; i < salivaDistances.length + startSampleIdx + salivaTimes.length; i++) {
                 String sampleId = samplePrefix + i;
                 salivaIds.add(sampleId);
             }
@@ -342,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
             json.put(Constants.LOGGER_EXTRA_NUM_SUBJECTS, sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0));
+            json.put(Constants.LOGGER_EXTRA_SALIVA_DISTANCES, salivaDistancesString);
             json.put(Constants.LOGGER_EXTRA_SALIVA_TIMES, salivaTimesString);
             json.put(Constants.LOGGER_EXTRA_STUDY_DAYS, sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_IDS, salivaIds);

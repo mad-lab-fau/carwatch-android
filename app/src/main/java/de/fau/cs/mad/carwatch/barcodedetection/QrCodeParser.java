@@ -17,6 +17,7 @@ public class QrCodeParser {
 
     public String dataString;
     public String studyName;
+    public String salivaDistances; // will be parsed later, since Arrays can't be stored in SP
     public String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
     public String startSample;
     public int studyDays;
@@ -50,9 +51,8 @@ public class QrCodeParser {
 
         try {
             studyName = propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_NAME);
+            salivaDistances = propertyMap.get(Constants.QR_PARSER_PROPERTY_SALIVA_DISTANCES);
             salivaTimes = propertyMap.get(Constants.QR_PARSER_PROPERTY_SALIVA_TIMES);
-            // add offset of initial saliva sample
-            salivaTimes = Constants.FIRST_SALIVA_SAMPLE_OFFSET + Constants.QR_PARSER_LIST_SEPARATOR + salivaTimes;
             startSample = propertyMap.get(Constants.QR_PARSER_PROPERTY_START_SAMPLE);
             studyDays = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_DAYS))

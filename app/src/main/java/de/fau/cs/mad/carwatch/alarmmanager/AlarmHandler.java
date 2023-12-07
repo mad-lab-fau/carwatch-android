@@ -323,7 +323,7 @@ public class AlarmHandler {
 
     private static void killAllOngoingAlarms(Context context, int alarmId) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
 
         for (int ignored : salivaTimes) {
