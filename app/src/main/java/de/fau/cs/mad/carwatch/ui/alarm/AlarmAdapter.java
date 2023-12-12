@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.R;
@@ -40,7 +41,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     public AlarmAdapter(List<Alarm> alarms, Resources resources) {
-        this.localAlarms = alarms;
+        this.localAlarms = alarms != null ? alarms : new ArrayList<>();
         this.resources = resources;
     }
 
@@ -60,10 +61,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         holder.getAlarmTextView().setText(item.getStringTime());
         holder.getAlarmTextView().setTextColor(resources.getColor(colorId));
         holder.getAlarmSwitch().setChecked(item.isActive());
-        holder.getAlarmSwitch().setOnCheckedChangeListener((compoundButton, checked) -> {
+        holder.getAlarmSwitch().setOnClickListener(view -> {
             // TODO trigger warning pop-up
-            item.setActive(checked);
-            int textColorId = checked ? R.color.colorAccent : R.color.colorGrey500;
+            item.setActive(!item.isActive());
+            int textColorId = item.isActive() ? R.color.colorAccent : R.color.colorGrey500;
             holder.getAlarmTextView().setTextColor(resources.getColor(textColorId));
             // TODO schedule alarm
         });
