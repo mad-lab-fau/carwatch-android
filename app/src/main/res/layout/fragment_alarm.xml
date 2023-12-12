@@ -59,6 +59,35 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/alarm_separator"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/alarm"
+            android:weightSum="1"
+            android:gravity="center">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="0.6"
+                android:layout_height="1dp"
+                android:background="@color/colorGrey300" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fixed_alarms"
+            android:layout_below="@id/alarm_separator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fixed_alarms_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
+
     </RelativeLayout>
 
     <data>

@@ -16,11 +16,16 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
@@ -35,6 +40,7 @@ public class AlarmFragment extends Fragment {
     private CoordinatorLayout coordinatorLayout;
 
     Alarm alarm;
+    private List<Alarm> fixedAlarms;
 
     private LinearLayout alarmLayout;
     private TextView timeTextView;
@@ -66,7 +72,18 @@ public class AlarmFragment extends Fragment {
             }
             setAlarmView(this.alarm);
         });
+
+        initializeFixedAlarmsAdapter(root);
+
         return root;
+    }
+
+    private void initializeFixedAlarmsAdapter(View root) {
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
+        AlarmAdapter adapter = new AlarmAdapter(fixedAlarms, getResources());
+        RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
     private void setAlarmView(Alarm alarm) {
