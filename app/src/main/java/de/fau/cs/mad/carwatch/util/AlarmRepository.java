@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.db.Alarm;
@@ -20,6 +21,7 @@ public class AlarmRepository {
 
     private final AlarmDao alarmModel;
     private final LiveData<Alarm> alarm;
+    private final LiveData<List<Alarm>> fixedAlarms;
 
     private AlarmRepository(Application application) {
         // Application is used instead of Context in order to prevent memory leaks
@@ -27,6 +29,7 @@ public class AlarmRepository {
         AlarmDatabase db = AlarmDatabase.getInstance(application);
         alarmModel = db.alarmModel();
         alarm = alarmModel.getAlarm();
+        fixedAlarms = alarmModel.getFixedAlarms();
     }
 
     public static AlarmRepository getInstance(Application application) {
@@ -39,6 +42,10 @@ public class AlarmRepository {
     // Observed LiveData will notify the observer when data has changed
     public LiveData<Alarm> getAlarm() {
         return alarm;
+    }
+
+    public LiveData<List<Alarm>> getFixedAlarms() {
+        return fixedAlarms;
     }
 
     public void insert(Alarm alarm) {

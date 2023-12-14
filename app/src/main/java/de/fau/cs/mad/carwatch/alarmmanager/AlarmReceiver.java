@@ -36,11 +36,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Create and add notification channel
-        if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            if (notificationManager != null) {
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
-                notificationManager.createNotificationChannel(channel);
-            }
+        if (VERSION.SDK_INT >= VERSION_CODES.O && notificationManager != null) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
+            notificationManager.createNotificationChannel(channel);
         }
 
         // stop user present service if running

@@ -18,7 +18,7 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
-    private final List<Alarm> localAlarms;
+    private final List<Alarm> localAlarms = new ArrayList<>();
     private final Resources resources;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -40,8 +40,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
     }
 
-    public AlarmAdapter(List<Alarm> alarms, Resources resources) {
-        this.localAlarms = alarms != null ? alarms : new ArrayList<>();
+    public AlarmAdapter(Resources resources) {
         this.resources = resources;
     }
 
@@ -73,5 +72,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return localAlarms.size();
+    }
+
+    public void setAlarms(List<Alarm> alarms) {
+        localAlarms.clear();
+        localAlarms.addAll(alarms);
     }
 }

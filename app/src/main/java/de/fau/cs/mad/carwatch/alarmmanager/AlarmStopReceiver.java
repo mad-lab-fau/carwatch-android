@@ -106,9 +106,26 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
         }
 
+        if (sp.getBoolean(Constants.PREF_FIRST_RUN_ALARM, false)) {
+            scheduleFixedAlarms(repository, sp);
+            sp.edit().putBoolean(Constants.PREF_FIRST_RUN_ALARM, false).apply();
+        }
+
         if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {
             context.startActivity(scannerIntent);
         }
+    }
 
+    private void scheduleFixedAlarms(AlarmRepository repository, SharedPreferences sp) {
+        String timesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        for (String timeString : timesString.split(",")) {
+            String parsedTime = timeString.substring(0, 2) + ":" + timeString.substring(2);
+            DateTime time = DateTime.now().withTime(LocalTime.parse(parsedTime));
+            Alarm fixedAlarm = new Alarm();
+            // TODO set id
+            fixedAlarm.setActive(true);
+            fixedAlarm.setTime(time);
+            repository.insert(fixedAlarm);
+        }
     }
 }

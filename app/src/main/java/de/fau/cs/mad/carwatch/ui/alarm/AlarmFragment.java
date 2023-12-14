@@ -2,7 +2,6 @@ package de.fau.cs.mad.carwatch.ui.alarm;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +23,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.databinding.FragmentAlarmBinding;
@@ -38,10 +34,7 @@ public class AlarmFragment extends Fragment {
 
     private AlarmViewModel alarmViewModel;
     private CoordinatorLayout coordinatorLayout;
-
-    Alarm alarm;
-    private List<Alarm> fixedAlarms;
-
+    private Alarm alarm;
     private LinearLayout alarmLayout;
     private TextView timeTextView;
     private SwitchMaterial activeSwitch;
@@ -66,11 +59,10 @@ public class AlarmFragment extends Fragment {
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarm().observe(getViewLifecycleOwner(), alarm -> {
             this.alarm = alarm;
-            // alarm was not created yet
             if (this.alarm == null) {
                 createInitialAlarm();
             }
-            setAlarmView(this.alarm);
+            setAlarmView();
         });
 
         initializeFixedAlarmsAdapter(root);
@@ -80,31 +72,26 @@ public class AlarmFragment extends Fragment {
 
     private void initializeFixedAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        AlarmAdapter adapter = new AlarmAdapter(fixedAlarms, getResources());
+        AlarmAdapter adapter = new AlarmAdapter(getResources());
         RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        // update adapter if alarms change
+        alarmViewModel.getFixedAlarms().observe(getViewLifecycleOwner(), adapter::setAlarms);
     }
 
-    private void setAlarmView(Alarm alarm) {
+    private void setAlarmView() {
         final Context context = getContext();
-        final Resources resources = getResources();
 
-        // set alarm time
         timeTextView.setText(alarm.getStringTime());
-        // set alarm activity
         activeSwitch.setChecked(alarm.isActive());
-        setAlarmColor();
+        setAlarmColor(alarm.isActive());
 
         // define behavior on activity switch change
         activeSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
             alarm.setActive(checked);
-            setAlarmColor();
-            if (checked) {
-                timeTextView.setTextColor(resources.getColor(R.color.colorAccent));
-            } else {
-                timeTextView.setTextColor(resources.getColor(R.color.colorGrey500));
-            }
+            setAlarmColor(checked);
             scheduleAlarm(context);
             updateAlarm();
         });
@@ -129,13 +116,10 @@ public class AlarmFragment extends Fragment {
         });
     }
 
-    private void setAlarmColor() {
+    private void setAlarmColor(boolean isActive) {
         // Set alarm TextView colors based on alarm's activity state
-        if (alarm.isActive()) {
-            timeTextView.setTextColor(getResources().getColor(R.color.colorAccent));
-        } else {
-            timeTextView.setTextColor(getResources().getColor(R.color.colorGrey500));
-        }
+        int colorId = isActive ? R.color.colorAccent : R.color.colorGrey500;
+        timeTextView.setTextColor(getResources().getColor(colorId));
     }
 
     private void updateAlarm() {

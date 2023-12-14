@@ -1,5 +1,7 @@
 package de.fau.cs.mad.carwatch.db;
 
+import java.util.List;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -16,6 +18,9 @@ import static androidx.room.OnConflictStrategy.REPLACE;
  */
 @Dao
 public interface AlarmDao {
+    @Query("SELECT * FROM alarm WHERE alarm_is_fixed = 1 ORDER BY alarm_time ASC")
+    LiveData<List<Alarm>> getFixedAlarms();
+
     @Query("select * from alarm")
     LiveData<Alarm> getAlarm();
 
