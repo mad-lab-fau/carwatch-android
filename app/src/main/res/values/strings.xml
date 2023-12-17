@@ -41,7 +41,7 @@
     <string name="title_subject_id">Enter Participant ID</string>
     <string name="subject_id">Participant ID</string>
     <string name="study_id">Study Name</string>
-    <string name="message_subject_id_short">Please enter the  Participant ID you received from us.</string>
+    <string name="message_subject_id_short">Please enter the Participant ID you received from us.</string>
     <string name="message_subject_id">Please enter the Participant ID you received from us.</string>
     <string name="title_invalid_subject_id">Invalid Participant ID</string>
     <string name="message_invalid_subject_id">Invalid Participant ID! Please try again.</string>

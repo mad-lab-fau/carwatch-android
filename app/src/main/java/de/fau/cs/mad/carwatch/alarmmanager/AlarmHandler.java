@@ -114,18 +114,27 @@ public class AlarmHandler {
         Period timeDiff = new Period(DateTime.now(), time);
         if (snackBarAnchor != null) {
             String timeDiffString = formatter.print(timeDiff);
+            String lang = Locale.getDefault().getLanguage();
 
-            if (Locale.getDefault().getLanguage().equals("de")) {
-                if (timeDiffString.length() == 0) {
-                    timeDiffString += "jetzt";
-                } else {
-                    timeDiffString = "in " + timeDiffString;
-                }
-            } else {
-                if (timeDiffString.length() != 0) {
-                    timeDiffString += " from ";
-                }
+            switch (lang) {
+                case "de":
+                    if (timeDiffString.length() == 0) {
+                        timeDiffString += "jetzt";
+                    } else {
+                        timeDiffString = "in " + timeDiffString;
+                    }
+                    break;
+                case "fr":
+                    if (timeDiffString.length() != 0) {
+                        timeDiffString = "pour " + timeDiffString;
+                    }
+                    break;
+                default:
+                    if (timeDiffString.length() != 0) {
+                        timeDiffString += " from ";
+                    }
             }
+
             Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
         }
     }
