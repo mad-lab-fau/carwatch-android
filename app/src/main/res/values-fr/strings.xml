@@ -34,7 +34,7 @@
     <string name="user_credentials">Identifiants de l\'utilisateur trice</string>
 
 
-    <string name="alarm_set">Alarme réglée %s minutes à partir de maintenant</string>
+    <string name="alarm_set">Alarme réglée %s à partir de maintenant.</string>
     <string name="alarm_cancelled">Alarme annulée</string>
     <string name="alarm_set_error">Erreur lors du réglage de l\'alarme</string>
 

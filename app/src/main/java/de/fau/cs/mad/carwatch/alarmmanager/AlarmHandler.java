@@ -47,22 +47,33 @@ public class AlarmHandler {
     private static final PeriodFormatter formatter;
 
     static {
-        if (Locale.getDefault().getLanguage().equals("de")) {
-            formatter = new PeriodFormatterBuilder()
-                    .appendHours()
-                    .appendSuffix(" Stunde", " Stunden")
-                    .appendSeparator(" und ")
-                    .appendMinutes()
-                    .appendSuffix(" Minute", " Minuten")
-                    .toFormatter();
-        } else {
-            formatter = new PeriodFormatterBuilder()
-                    .appendHours()
-                    .appendSuffix(" hour", " hours")
-                    .appendSeparator(" and ")
-                    .appendMinutes()
-                    .appendSuffix(" minute", " minutes")
-                    .toFormatter();
+        switch(Locale.getDefault().getLanguage()) {
+            case "de":
+                formatter = new PeriodFormatterBuilder()
+                        .appendHours()
+                        .appendSuffix(" Stunde", " Stunden")
+                        .appendSeparator(" und ")
+                        .appendMinutes()
+                        .appendSuffix(" Minute", " Minuten")
+                        .toFormatter();
+                break;
+            case "fr":
+                formatter = new PeriodFormatterBuilder()
+                        .appendHours()
+                        .appendSuffix(" heure", " heures")
+                        .appendSeparator(" et ")
+                        .appendMinutes()
+                        .appendSuffix(" minute", " minutes")
+                        .toFormatter();
+                break;
+            default:
+                formatter = new PeriodFormatterBuilder()
+                        .appendHours()
+                        .appendSuffix(" hour", " hours")
+                        .appendSeparator(" and ")
+                        .appendMinutes()
+                        .appendSuffix(" minute", " minutes")
+                        .toFormatter();
         }
     }
 
@@ -114,9 +125,8 @@ public class AlarmHandler {
         Period timeDiff = new Period(DateTime.now(), time);
         if (snackBarAnchor != null) {
             String timeDiffString = formatter.print(timeDiff);
-            String lang = Locale.getDefault().getLanguage();
 
-            switch (lang) {
+            switch (Locale.getDefault().getLanguage()) {
                 case "de":
                     if (timeDiffString.length() == 0) {
                         timeDiffString += "jetzt";
