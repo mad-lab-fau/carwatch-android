@@ -45,7 +45,7 @@ public final class Constants {
     public static final String PREF_CHECK_DUPLICATES = "check_duplicates"; // boolean
     public static final String PREF_MANUAL_SCAN = "enable_manual_scan"; // boolean
     public static final String PREF_START_SAMPLE = "start_sample";
-
+    public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;

@@ -107,7 +107,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
 
         if (sp.getBoolean(Constants.PREF_FIRST_RUN_ALARM, false)) {
-            scheduleFixedAlarms(repository, sp);
+            scheduleFixedAlarms(context, repository, sp);
             sp.edit().putBoolean(Constants.PREF_FIRST_RUN_ALARM, false).apply();
         }
 
@@ -116,16 +116,20 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
     }
 
-    private void scheduleFixedAlarms(AlarmRepository repository, SharedPreferences sp) {
+    private void scheduleFixedAlarms(Context context, AlarmRepository repository, SharedPreferences sp) {
         String timesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
         for (String timeString : timesString.split(",")) {
             String parsedTime = timeString.substring(0, 2) + ":" + timeString.substring(2);
             DateTime time = DateTime.now().withTime(LocalTime.parse(parsedTime));
             Alarm fixedAlarm = new Alarm();
-            // TODO set id
+            fixedAlarm.setId(id++);
             fixedAlarm.setActive(true);
+            fixedAlarm.setIsFixed(true);
             fixedAlarm.setTime(time);
             repository.insert(fixedAlarm);
+            AlarmHandler.scheduleAlarm(context, fixedAlarm);
         }
+        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, id).apply();
     }
 }

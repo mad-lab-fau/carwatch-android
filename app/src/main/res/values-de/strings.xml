@@ -35,6 +35,7 @@
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
     <string name="lights_out">Licht aus!</string>
 
+    <string name="cancel_fixed_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
     <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>

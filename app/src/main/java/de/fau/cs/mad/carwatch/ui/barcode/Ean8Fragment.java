@@ -8,11 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.collection.ArraySet;
+import androidx.preference.PreferenceManager;
 
 import com.google.mlkit.vision.barcode.common.Barcode;
 
@@ -61,15 +61,14 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             return;
         }
 
-        SharedPreferences sp = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String encodedSalivaTimes = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int lastSalivaSample = Utils.decodeArrayFromString(encodedSalivaTimes).length - 1;
 
         if (alarmId != Constants.EXTRA_ALARM_ID_INITIAL) {
             // create Json object and log information
             try {
                 JSONObject json = new JSONObject();
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
                 int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
                 String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
                 int startIndex = Integer.parseInt(startSample.substring(1));
@@ -141,15 +140,14 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
     @Override
     public void onChanged(Barcode mlKitBarcode) {
         if (mlKitBarcode != null) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
             BarcodeField barcode = new BarcodeField(Constants.BARCODE_TYPE_EAN8, mlKitBarcode.getRawValue());
-            Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
+            Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
 
             Log.d(TAG, "Detected Barcode: " + barcode.getValue());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
 
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes, sharedPreferences);
 
             Log.d(TAG, "Barcode scan: " + check);
@@ -168,7 +166,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                     break;
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
-                    sp.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
+                    sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
 
                     cancelTimer(alarmId, salivaId, barcode.getValue());
                     BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);

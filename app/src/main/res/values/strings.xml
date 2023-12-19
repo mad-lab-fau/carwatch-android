@@ -76,8 +76,9 @@
     <string name="bedtime_text">We will now begin with the evening procedure.</string>
     <string name="bedtime_message">Good Evening!\nAre you going to bed?</string>
 
-    <!-- Bedtime Fragment -->
+    <!-- Alarm Fragment -->
     <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>
+    <string name="cancel_fixed_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
 
     <string name="warning_title">Warning</string>
     <string name="warning_already_taken_wakeup">You have already taken all morning saliva samples!</string>

@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.ui.alarm;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +25,10 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.databinding.FragmentAlarmBinding;
@@ -32,7 +38,9 @@ public class AlarmFragment extends Fragment {
 
     private static final String TAG = AlarmFragment.class.getSimpleName();
 
+    private SharedPreferences sharedPreferences;
     private AlarmViewModel alarmViewModel;
+    private AlarmAdapter adapter;
     private CoordinatorLayout coordinatorLayout;
     private Alarm alarm;
     private LinearLayout alarmLayout;
@@ -43,6 +51,7 @@ public class AlarmFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         alarmViewModel = new ViewModelProvider(this).get(AlarmViewModel.class);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
         FragmentAlarmBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
         View root = dataBinding.getRoot();
@@ -72,13 +81,22 @@ public class AlarmFragment extends Fragment {
 
     private void initializeFixedAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        AlarmAdapter adapter = new AlarmAdapter(getResources());
+        adapter = new AlarmAdapter(getResources(), alarmViewModel);
         RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
         // update adapter if alarms change
-        alarmViewModel.getFixedAlarms().observe(getViewLifecycleOwner(), adapter::setAlarms);
+        alarmViewModel.getFixedAlarms().observe(getViewLifecycleOwner(), alarms -> {
+            List<Alarm> fixedAlarms = new ArrayList<>();
+            for (Alarm alarm : alarms) {
+                if (alarm.isFixed()) {
+                    fixedAlarms.add(alarm);
+                }
+            }
+            adapter.setAlarms(fixedAlarms);
+            adapter.notifyDataSetChanged();
+        });
     }
 
     private void setAlarmView() {
@@ -138,10 +156,13 @@ public class AlarmFragment extends Fragment {
     }
 
     private void createInitialAlarm() {
+        int id = sharedPreferences.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
         alarm = new Alarm();
+        alarm.setId(id);
         setInitialAlarmTime();
         alarmViewModel.insert(alarm);
         scheduleAlarm(getContext());
+        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
     }
 
     /**
