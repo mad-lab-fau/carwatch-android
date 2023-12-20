@@ -156,9 +156,7 @@ public class AlarmFragment extends Fragment {
     }
 
     private void createInitialAlarm() {
-        int id = sharedPreferences.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
         alarm = new Alarm();
-        alarm.setId(id);
         setInitialAlarmTime();
         alarmViewModel.insert(alarm);
         scheduleAlarm(getContext());
