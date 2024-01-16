@@ -37,6 +37,7 @@ public final class Constants {
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
     public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean
     public static final String PREF_NUM_SUBJECTS = "num_subjects"; // int
+    public static final String PREF_TOTAL_NUM_SAMPLES = "total_num_samples"; // int
     public static final String PREF_SALIVA_DISTANCES = "saliva_times"; // Array<Integer>
     public static final String PREF_SALIVA_TIMES = "saliva_absolute_times"; // Array<String>
     public static final String PREF_NUM_DAYS = "study_days"; // int
@@ -46,6 +47,7 @@ public final class Constants {
     public static final String PREF_MANUAL_SCAN = "enable_manual_scan"; // boolean
     public static final String PREF_START_SAMPLE = "start_sample";
     public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
+    public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
