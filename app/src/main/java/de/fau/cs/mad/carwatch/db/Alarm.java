@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.db;
 
-import static de.fau.cs.mad.carwatch.Constants.DEFAULT_ALARM_ID;
+import static de.fau.cs.mad.carwatch.Constants.EXTRA_SALIVA_ID_INITIAL;
+import static de.fau.cs.mad.carwatch.Constants.INITIAL_ALARM_ID;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -30,6 +31,9 @@ public class Alarm implements Parcelable {
     @ColumnInfo(name = "alarm_id")
     private int id;
 
+    @ColumnInfo(name = "saliva_id")
+    private int salivaId;
+
     @ColumnInfo(name = "alarm_time")
     private DateTime time;
 
@@ -44,7 +48,8 @@ public class Alarm implements Parcelable {
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
                 false,
                 false,
-                DEFAULT_ALARM_ID
+                INITIAL_ALARM_ID,
+                EXTRA_SALIVA_ID_INITIAL
         );
     }
 
@@ -55,6 +60,14 @@ public class Alarm implements Parcelable {
 
     public int getId() {
         return id;
+    }
+
+    public void setSalivaId(int salivaId) {
+        this.salivaId = salivaId;
+    }
+
+    public int getSalivaId() {
+        return this.salivaId;
     }
 
     public void setTime(DateTime time) {
@@ -78,11 +91,12 @@ public class Alarm implements Parcelable {
 
     // Ignored Members
     @Ignore
-    public Alarm(DateTime time, boolean active, boolean isFixed, int id) {
+    public Alarm(DateTime time, boolean active, boolean isFixed, int id, int salivaId) {
         this.time = time;
         this.active = active;
         this.isFixed = isFixed;
         this.id = id;
+        this.salivaId = salivaId;
     }
 
     /**
