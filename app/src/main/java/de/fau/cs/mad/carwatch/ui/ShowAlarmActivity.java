@@ -37,6 +37,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         }
 
         if (getIntent() != null) {
+            // TODO salivaId
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
             salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
         }
@@ -83,6 +84,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     private void stopAlarm() {
         Intent stopAlarmIntent = new Intent(this, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        // TODO salivaId
         stopAlarmIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_ACTIVITY);
         stopAlarmIntent.setAction("Stop Alarm");

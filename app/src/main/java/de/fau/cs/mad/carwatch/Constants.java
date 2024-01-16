@@ -53,7 +53,7 @@ public final class Constants {
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
-    public static final int DEFAULT_ALARM_ID = 1; // id of morning alarm
+    public static final int INITIAL_ALARM_ID = 1; // id of morning alarm
     public static final String DEFAULT_START_SAMPLE = "S0";
 
     public static final String EXTRA_ALARM_TIME = "extra_alarm_time";

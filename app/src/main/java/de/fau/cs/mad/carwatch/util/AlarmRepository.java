@@ -21,15 +21,15 @@ public class AlarmRepository {
 
     private final AlarmDao alarmModel;
     private final LiveData<Alarm> alarm;
-    private final LiveData<List<Alarm>> fixedAlarms;
+    private final LiveData<List<Alarm>> alarms;
 
     private AlarmRepository(Application application) {
         // Application is used instead of Context in order to prevent memory leaks
         // between Activity switches
         AlarmDatabase db = AlarmDatabase.getInstance(application);
         alarmModel = db.alarmModel();
-        alarm = alarmModel.getAlarm();
-        fixedAlarms = alarmModel.getFixedAlarms();
+        alarm = alarmModel.getAlarmLiveData();
+        alarms = alarmModel.getAlarms();
     }
 
     public static AlarmRepository getInstance(Application application) {
@@ -40,12 +40,16 @@ public class AlarmRepository {
     }
 
     // Observed LiveData will notify the observer when data has changed
-    public LiveData<Alarm> getAlarm() {
+    public LiveData<Alarm> getAlarmLiveData() {
         return alarm;
     }
 
-    public LiveData<List<Alarm>> getFixedAlarms() {
-        return fixedAlarms;
+    public LiveData<Alarm> getAlarmLiveData(int id) {
+        return alarmModel.getAlarmLiveData(id);
+    }
+
+    public LiveData<List<Alarm>> getAlarms() {
+        return alarms;
     }
 
     public void insert(Alarm alarm) {

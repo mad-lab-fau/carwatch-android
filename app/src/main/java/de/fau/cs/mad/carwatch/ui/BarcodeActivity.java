@@ -1,39 +1,54 @@
 package de.fau.cs.mad.carwatch.ui;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
+
+import java.util.concurrent.ExecutionException;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.ui.barcode.Ean8Fragment;
+import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 public class BarcodeActivity extends AppCompatActivity {
 
     private static final String TAG = BarcodeActivity.class.getSimpleName();
-
-    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
-    private int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode);
 
+        int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
+        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
         boolean dayFinished = false;
 
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
             dayFinished = getIntent().getIntExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_OK) == Activity.RESULT_CANCELED;
+        }
+
+        AlarmRepository repository = AlarmRepository.getInstance(this.getApplication());
+        Alarm alarm;
+
+        try {
+            alarm = repository.getAlarmById(alarmId);
+            salivaId = alarm.getSalivaId();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
+            e.printStackTrace();
         }
 
 

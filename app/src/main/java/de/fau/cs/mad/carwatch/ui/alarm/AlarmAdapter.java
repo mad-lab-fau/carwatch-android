@@ -104,7 +104,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     private void activateAlarm(View view, ViewHolder holder, Alarm alarm) {
         alarm.setActive(true);
-        AlarmHandler.scheduleAlarm(view.getContext(), alarm, view);
+        AlarmHandler.scheduleWakeUpAlarm(view.getContext(), alarm, view); // TODO change to "scheduleAlarm"
         holder.getAlarmTextView().setTextColor(resources.getColor(R.color.colorAccent));
         alarmViewModel.update(alarm);
     }

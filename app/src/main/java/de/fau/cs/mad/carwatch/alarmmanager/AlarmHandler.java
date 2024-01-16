@@ -19,12 +19,15 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -66,20 +69,18 @@ public class AlarmHandler {
         }
     }
 
-
-    public static void scheduleAlarm(@NonNull Context context, Alarm alarm) {
-        scheduleAlarm(context, alarm, null);
+    public static void scheduleWakeUpAlarm(@NonNull Context context, Alarm alarm) {
+        scheduleWakeUpAlarm(context, alarm, null);
     }
 
     /**
-     * Schedule alarm TimeShiftReceiver an hour before alarm's time using AlarmManager
+     * Schedule first alarm notification
      *
      * @param alarm Alarm to schedule
      */
-    public static void scheduleAlarm(@NonNull Context context, Alarm alarm, View snackBarAnchor) {
-        if (!alarm.isActive()) {
+    public static void scheduleWakeUpAlarm(@NonNull Context context, Alarm alarm, View snackBarAnchor) {
+        if (!alarm.isActive())
             return;
-        }
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -91,23 +92,58 @@ public class AlarmHandler {
             return;
         }
 
-        PendingIntent pendingIntent = getPendingIntent(context, alarm.getId());
-        PendingIntent pendingIntentShow = getPendingIntentShow(context, alarm.getId());
+        PendingIntent showIntent = getPendingIntentShow(context, alarm);
+        PendingIntent operation = getPendingIntent(context, alarm);
 
-        AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), pendingIntentShow);
-        alarmManager.setAlarmClock(info, pendingIntent);
+        AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), showIntent);
+        alarmManager.setAlarmClock(info, operation);
 
         logAlarmSet(alarm, alarm.getTimeToNextRing());
 
         ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
         PackageManager pm = context.getPackageManager();
-
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
 
-
         showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
+    }
+
+    public static void scheduleSalivaAlarms(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        AlarmRepository repo = AlarmRepository.getInstance((Application) context.getApplicationContext());
+
+        String fixedTimesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        String timeDistancesString = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        List<DateTime> alarmTimes = new ArrayList<>();
+        List<Boolean> isFixed = new ArrayList<>();
+        DateTime lastAlarmTime = DateTime.now();
+
+        for (String distanceString : timeDistancesString.split(",")) {
+            if (distanceString.isEmpty())
+                continue;
+            int distance = Integer.parseInt(distanceString);
+            lastAlarmTime = lastAlarmTime.plusMinutes(distance);
+            alarmTimes.add(lastAlarmTime);
+            isFixed.add(false);
+        }
+
+        for (String timeRaw : fixedTimesString.split(",")) {
+            if (timeRaw.isEmpty())
+                continue;
+            String time = timeRaw.substring(0, 2) + ":" + timeRaw.substring(2);
+            alarmTimes.add(DateTime.now().withTime(LocalTime.parse(time)));
+            isFixed.add(true);
+        }
+
+        int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
+        int salivaId = 0;
+        for (int i = 0; i < alarmTimes.size(); i++) {
+            Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++);
+            repo.insert(alarm);
+            AlarmHandler.scheduleWakeUpAlarm(context, alarm);
+        }
+        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, id).apply();
     }
 
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
@@ -130,45 +166,33 @@ public class AlarmHandler {
         }
     }
 
-    /**
-     * Schedule alarm notification based on absolute time
-     *
-     * @param timeToRing time to next alarm
-     * @param alarmId    ID of alarm to ring
-     */
-    public static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, int salivaId, View snackbarAnchor) {
-        PendingIntent pendingIntent = getPendingIntent(context, alarmId, salivaId);
-        PendingIntent pendingIntentShow = getPendingIntentShow(context, alarmId, salivaId);
-
-        scheduleAlarmAtTime(context, timeToRing, alarmId, pendingIntent, pendingIntentShow, snackbarAnchor);
-    }
-
-    /**
-     * Schedule alarm notification based on absolute time
-     *
-     * @param timeToRing time to next alarm
-     * @param alarmId    ID of alarm to ring
-     */
-    private static void scheduleAlarmAtTime(Context context, DateTime timeToRing, int alarmId, PendingIntent pendingIntent, PendingIntent pendingIntentShow, View snackbarAnchor) {
-        Log.d(TAG, "Setting timed alarm " + alarmId + " at " + timeToRing);
-
+    public static void scheduleSalivaAlarm(Context context, Alarm alarm, View snackbarAnchor) {
+        DateTime alarmTime = alarm.getTimeToNextRing();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(timeToRing.getMillis(), pendingIntentShow);
-            alarmManager.setAlarmClock(info, pendingIntent);
 
-            try {
-                // create Json object and log information
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
-                json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, timeToRing.getMillis());
-                LoggerUtil.log(Constants.LOGGER_ACTION_TIMER_SET, json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            showAlarmSetMessage(context, snackbarAnchor, timeToRing);
+        if (alarmManager == null) {
+            Log.e(TAG, "Could not set alarm with id: " + alarm.getId() + " at " + alarmTime.getMillis() + " because alarmManager is null");
+            return;
         }
+
+        PendingIntent showIntent = getPendingIntentShow(context, alarm);
+        PendingIntent subsequentOperation = getPendingIntent(context, alarm);
+
+        Log.d(TAG, "Setting timed alarm " + alarm.getId() + " at " + alarmTime);
+        AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarmTime.getMillis(), showIntent);
+        alarmManager.setAlarmClock(info, subsequentOperation);
+
+        try {
+            // create Json object and log information
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
+            json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, alarmTime.getMillis());
+            LoggerUtil.log(Constants.LOGGER_ACTION_TIMER_SET, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        showAlarmSetMessage(context, snackbarAnchor, alarmTime);
     }
 
     /**
@@ -248,46 +272,30 @@ public class AlarmHandler {
         }
     }
 
-    private static PendingIntent getPendingIntent(Context context, int alarmId) {
-        return getPendingIntent(context, alarmId, -1);
-    }
-
-    private static PendingIntent getPendingIntent(Context context, int alarmId, int salivaId) {
-        // Get PendingIntent to AlarmReceiver Broadcast
+    private static PendingIntent getPendingIntent(Context context, Alarm alarm) {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        if (salivaId != -1) {
-            intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
-        }
+        intent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
-        return PendingIntent.getBroadcast(context, alarmId, intent, pendingFlags);
+        return PendingIntent.getBroadcast(context, alarm.getId(), intent, getPendingIntentFlags());
     }
 
-    private static PendingIntent getPendingIntentShow(Context context, int alarmId) {
-        return getPendingIntentShow(context, alarmId, -1);
+    private static PendingIntent getPendingIntentShow(Context context, Alarm alarm) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
+
+        return PendingIntent.getActivity(
+                context,
+                Constants.REQUEST_CODE_ALARM_ACTIVITY,
+                intent,
+                getPendingIntentFlags());
     }
 
-    private static PendingIntent getPendingIntentShow(Context context, int alarmId, int salivaId) {
-        Intent intentShow = new Intent(context, MainActivity.class);
-        intentShow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intentShow.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        if (salivaId != -1) {
-            intentShow.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
-        }
-
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
-        return PendingIntent.getActivity(context, Constants.REQUEST_CODE_ALARM_ACTIVITY, intentShow, pendingFlags);
+    private static int getPendingIntentFlags() {
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
+        return pendingFlags;
     }
 
     private static void logAlarmSet(Alarm alarm, DateTime nextRing) {
@@ -308,9 +316,9 @@ public class AlarmHandler {
 
         AlarmRepository repo = AlarmRepository.getInstance(application);
 
-        if (repo.getAlarm() != null && repo.getAlarm().getValue() != null) {
+        if (repo.getAlarmLiveData() != null && repo.getAlarmLiveData().getValue() != null) {
             // cancel everything that's there: all alarms, all timer alarms...
-            Alarm alarm = repo.getAlarm().getValue();
+            Alarm alarm = repo.getAlarmLiveData().getValue();
             alarm.setActive(false);
             killAllOngoingAlarms(application, alarm.getId());
             repo.update(alarm);
@@ -322,6 +330,7 @@ public class AlarmHandler {
     }
 
     private static void killAllOngoingAlarms(Context context, int alarmId) {
+        // TODO adjust so that alarms are fetched from database
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);

@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.barcodedetection;
 
 import java.util.Set;
 
+import androidx.collection.ArraySet;
 import de.fau.cs.mad.carwatch.Constants;
 
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.INVALID;
@@ -20,28 +21,23 @@ public class BarcodeChecker {
         DUPLICATE_BARCODE
     }
 
-    public static BarcodeCheckResult isValidBarcode(String barcode, Set<String> scannedBarcodes, SharedPreferences sharedPreferences) {
-        int subjectRange = sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0);
-        int salivaRange = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "")
-                .split(Constants.QR_PARSER_LIST_SEPARATOR)
-                .length + 1;
-        int dayRange = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
+    public static BarcodeCheckResult isValidBarcode(String barcode, SharedPreferences sharedPreferences) {
+        Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
 
-        if (sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false) && scannedBarcodes.contains(barcode)) {
+        if (sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false) && scannedBarcodes.contains(barcode))
             return BarcodeCheckResult.DUPLICATE_BARCODE;
-        }
+
+        int numSubjects = sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0);
+        int numSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
 
         int barcodeVal = Integer.parseInt(barcode);
         int subjectId = (int) (barcodeVal / 1e4);
         int dayId = (int) (barcodeVal / 1e2) % 100;
         int salivaId = barcodeVal % 100;
 
-        if (subjectId <= subjectRange) {
-            if (dayId <= dayRange) {
-                if (salivaId <= salivaRange) {
-                    return VALID;
-                }
-            }
+        if (subjectId <= numSubjects && dayId <= numDays && salivaId <= numSamples) {
+            return VALID;
         }
 
         return BarcodeCheckResult.INVALID;

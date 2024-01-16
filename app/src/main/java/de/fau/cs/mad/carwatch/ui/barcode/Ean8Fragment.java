@@ -56,14 +56,14 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         this.salivaId = salivaId;
     }
 
-    private void cancelTimer(int alarmId, int salivaId, String barcodeValue) {
+    private void cancelTimer(String barcodeValue) {
         if (getContext() == null || alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
             return;
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String encodedSalivaTimes = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        int lastSalivaSample = Utils.decodeArrayFromString(encodedSalivaTimes).length - 1;
+        int idLastSample = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0) - 2;
+        int idEveningSample = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
 
         // create Json object and log information
         try {
@@ -75,13 +75,13 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
             // human-readable data from scanned barcode
             int scannedDay = Integer.parseInt(barcodeValue.substring(3, 5));
-            int scannedSample = Integer.parseInt(barcodeValue.substring(5, 7));
+            int scannedSampleId = Integer.parseInt(barcodeValue.substring(5, 7));
             String hrScannedSample = samplePrefix;
             // evening barcode was scanned
-            if (scannedSample == lastSalivaSample + 1){
+            if (scannedSampleId == idEveningSample) {
                 hrScannedSample += Constants.EXTRA_SALIVA_ID_EVENING;
             } else {
-                int hrScannedSampleId = startIndex + scannedSample;
+                int hrScannedSampleId = startIndex + scannedSampleId;
                 hrScannedSample = samplePrefix + hrScannedSampleId;
             }
 
@@ -89,15 +89,15 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             String hrExpectedSample = samplePrefix;
             if (alarmId == Constants.EXTRA_ALARM_ID_EVENING) {
                 hrExpectedSample += Constants.EXTRA_SALIVA_ID_EVENING;
-            }else if(alarmId == Constants.EXTRA_ALARM_ID_MANUAL){
-               hrExpectedSample += Constants.EXTRA_SALIVA_ID_MANUAL_HR;
+            } else if (alarmId == Constants.EXTRA_ALARM_ID_MANUAL) {
+                hrExpectedSample += Constants.EXTRA_SALIVA_ID_MANUAL_HR;
             } else {
                 int hrExpectedSampleId = salivaId + startIndex;
                 hrExpectedSample += hrExpectedSampleId;
             }
 
-            int salivaDayId  = dayId * 100 + salivaId;
-            if(alarmId == Constants.EXTRA_ALARM_ID_MANUAL){
+            int salivaDayId = dayId * 100 + salivaId;
+            if (alarmId == Constants.EXTRA_ALARM_ID_MANUAL) {
                 salivaDayId = Constants.EXTRA_SALIVA_ID_MANUAL;
             }
 
@@ -114,12 +114,8 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         }
 
         TimerHandler.cancelTimer(getContext(), alarmId);
-        if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && alarmId != Constants.EXTRA_ALARM_ID_MANUAL) {
-            if (salivaId != lastSalivaSample) {
-                alarmTime = TimerHandler.scheduleSalivaTimer(getContext(), alarmId, ++salivaId);
-            } else {
-                TimerHandler.finishTimer(getContext());
-            }
+        if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && alarmId != Constants.EXTRA_ALARM_ID_MANUAL && salivaId == idLastSample) {
+            TimerHandler.finishTimer(getContext());
         }
     }
 
@@ -146,7 +142,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             Log.d(TAG, "Detected Barcode: " + barcode.getValue());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
 
-            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), scannedBarcodes, sharedPreferences);
+            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), sharedPreferences);
 
             Log.d(TAG, "Barcode scan: " + check);
 
@@ -166,7 +162,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                     scannedBarcodes.add(barcode.getValue());
                     sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
 
-                    cancelTimer(alarmId, salivaId, barcode.getValue());
+                    cancelTimer(barcode.getValue());
                     BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
                     break;
                 case INVALID:

@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.util.Utils;
@@ -46,8 +47,9 @@ public class TimerHandler {
             // save the day the saliva sample was taken in order to prevent abuse
             sp.edit()
                     .putInt(Constants.PREF_DAY_COUNTER, ++dayId)
-                    .putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
                     .putInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL)
+                    .putBoolean(Constants.PREF_FIRST_RUN_ALARM, true)
+                    .putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
                     .apply();
 
         } catch (JSONException e) {
@@ -55,36 +57,31 @@ public class TimerHandler {
         }
     }
 
-    public static long scheduleSalivaTimer(Context context, int alarmId, int salivaId) {
-
+    public static void scheduleSpontaneousAwakeningTimer(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-
         String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+
+        if (encodedSalivaTimes.isEmpty()) {
+            return;
+        }
+
         int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
         int eveningSalivaId = salivaTimes.length + 1;
 
-        if (salivaId < salivaTimes.length) {
-            sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarmId).apply();
+        DateTime timeToRing = DateTime.now().plusMinutes(salivaTimes[Constants.EXTRA_SALIVA_ID_INITIAL]);
+        Alarm alarm = new Alarm(timeToRing, true, false, Constants.INITIAL_ALARM_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
 
-            if (salivaTimes[salivaId] == 0) {
-                // first saliva sample => directly schedule barcode scan timer
-                scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
-                return 0;
-            } else {
-                alarmId += Constants.ALARM_OFFSET;
-                DateTime timeToRing = DateTime.now().plusMinutes(salivaTimes[salivaId]);
-                AlarmHandler.scheduleAlarmAtTime(context, timeToRing, alarmId, salivaId, null);
-                return timeToRing.getMillis();
-            }
-        } else if (salivaId == eveningSalivaId) {
-            // evening saliva sample => directly schedule barcode scan timer
-            scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
-            return 0;
+        sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarm.getId()).apply();
+
+        if (salivaTimes[alarm.getSalivaId()] == 0) {
+            scheduleSalivaCountdown(context, alarm.getId(), alarm.getSalivaId(), eveningSalivaId);
+        } else {
+            AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
         }
-        return 0;
     }
 
     @SuppressLint("WrongConstant")
+    // TODO get saliva id from shared preferences
     public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId, int eveningSalivaId) {
         int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
         long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();

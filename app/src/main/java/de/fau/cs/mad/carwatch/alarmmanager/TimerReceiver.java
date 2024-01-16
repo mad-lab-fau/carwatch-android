@@ -31,11 +31,6 @@ public class TimerReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
-        int eveningSalivaId = salivaTimes.length + 1;
 
         // Create and add notification channel
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
@@ -47,12 +42,13 @@ public class TimerReceiver extends BroadcastReceiver {
 
         int timerId = intent.getIntExtra(Constants.EXTRA_TIMER_ID, Constants.EXTRA_TIMER_ID_INITIAL);
         int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
+        int eveningSalivaId = PreferenceManager.getDefaultSharedPreferences(context).getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
 
         Notification notification = TimerHandler.buildAlarmNotification(context, timerId, salivaId, eveningSalivaId);
 
         // Play alarm ringing sound
-        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
-        alarmSoundControl.playAlarmSound(context);
+//        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
+//        alarmSoundControl.playAlarmSound(context);
 
         if (notificationManager != null) {
             notificationManager.notify(timerId, notification);

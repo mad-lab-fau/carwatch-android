@@ -30,7 +30,7 @@ public class BootService extends JobIntentService implements Observer<Alarm> {
     public void onCreate() {
         super.onCreate();
         repository = AlarmRepository.getInstance(getApplication());
-        repository.getAlarm().observeForever(this);
+        repository.getAlarmLiveData().observeForever(this);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BootService extends JobIntentService implements Observer<Alarm> {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         if (repository != null) {
-            repository.getAlarm().removeObserver(this);
+            repository.getAlarmLiveData().removeObserver(this);
         }
     }
 
@@ -65,7 +65,7 @@ public class BootService extends JobIntentService implements Observer<Alarm> {
             return;
         }
         if (alarm.isActive()) {
-            AlarmHandler.scheduleAlarm(this, alarm);
+            AlarmHandler.scheduleWakeUpAlarm(this, alarm);
         }
     }
 }

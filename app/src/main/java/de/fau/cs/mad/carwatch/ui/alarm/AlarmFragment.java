@@ -66,10 +66,11 @@ public class AlarmFragment extends Fragment {
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
 
         // Add an observer on the LiveData returned by getAlarm
-        alarmViewModel.getAlarm().observe(getViewLifecycleOwner(), alarm -> {
-            this.alarm = alarm;
-            if (this.alarm == null) {
-                createInitialAlarm();
+        alarmViewModel.getAlarmLiveData(Constants.INITIAL_ALARM_ID).observe(getViewLifecycleOwner(), alarm -> {
+            if (alarm == null) {
+                initializeAlarm();
+            } else {
+                this.alarm = alarm;
             }
             setAlarmView();
         });
@@ -87,14 +88,15 @@ public class AlarmFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         // update adapter if alarms change
-        alarmViewModel.getFixedAlarms().observe(getViewLifecycleOwner(), alarms -> {
-            List<Alarm> fixedAlarms = new ArrayList<>();
+        alarmViewModel.getAlarms().observe(getViewLifecycleOwner(), alarms -> {
+            List<Alarm> salivaAlarms = new ArrayList<>();
+            // initial alarm is not shown in list
             for (Alarm alarm : alarms) {
-                if (alarm.isFixed()) {
-                    fixedAlarms.add(alarm);
+                if (alarm.getId() != Constants.INITIAL_ALARM_ID) {
+                    salivaAlarms.add(alarm);
                 }
             }
-            adapter.setAlarms(fixedAlarms);
+            adapter.setAlarms(salivaAlarms);
             adapter.notifyDataSetChanged();
         });
     }
@@ -149,30 +151,21 @@ public class AlarmFragment extends Fragment {
 
     private void scheduleAlarm(Context context) {
         if (alarm.isActive()) {
-            AlarmHandler.scheduleAlarm(context, alarm, coordinatorLayout);
+            AlarmHandler.scheduleWakeUpAlarm(context, alarm, coordinatorLayout);
         } else {
             AlarmHandler.cancelAlarm(context, alarm, coordinatorLayout);
         }
     }
 
-    private void createInitialAlarm() {
+    private void initializeAlarm() {
         alarm = new Alarm();
-        setInitialAlarmTime();
+        DateTime time = DateTime.now().plusSeconds(30);
+
+        timeTextView.setText(time.toString("HH:mm"));
+        alarm.setTime(time);
         alarmViewModel.insert(alarm);
         scheduleAlarm(getContext());
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
-    }
-
-    /**
-     * Initialize TimeTextView and Alarm's time with current time
-     */
-    private void setInitialAlarmTime() {
-        // Get time and set it to alarm time TextView
-        DateTime time = DateTime.now();
-
-        String currentTime = time.toString("HH:mm");
-        timeTextView.setText(currentTime);
-        alarm.setTime(time);
     }
 
     private void showAlarmReminderDialog() {
@@ -183,8 +176,6 @@ public class AlarmFragment extends Fragment {
                 .setTitle(R.string.title_alarm_reminder)
                 .setMessage(R.string.message_alarm_reminder)
                 .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-
-                }).show();
+                .setPositiveButton(R.string.ok, (dialog, which) -> {}).show();
     }
 }

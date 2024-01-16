@@ -16,6 +16,8 @@ import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -23,7 +25,6 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
-import de.fau.cs.mad.carwatch.util.Utils;
 
 /**
  * BroadcastReceiver to stop alarm ringing
@@ -35,7 +36,19 @@ public class AlarmStopReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-        int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
+
+        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
+        Alarm alarm;
+
+        try {
+            alarm = repository.getAlarmById(alarmId);
+            alarm.setActive(false);
+            repository.updateActive(alarm);
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
+            e.printStackTrace();
+            return;
+        }
 
         AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
         if (alarmSource == null) {
@@ -43,16 +56,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             alarmSource = AlarmSource.SOURCE_UNKNOWN;
         }
 
-        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
-        try {
-            Alarm alarm = repository.getAlarmById(alarmId);
-            if (alarm != null) {
-                alarm.setActive(false);
-                repository.updateActive(alarm);
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
 
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.stopAlarmSound();
@@ -62,7 +65,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
             json.put(Constants.LOGGER_EXTRA_ALARM_SOURCE, alarmSource.ordinal());
-            json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaId);
+            json.put(Constants.LOGGER_EXTRA_SALIVA_ID, alarm.getSalivaId());
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_STOP, json);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -78,58 +81,46 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        int eveningSalivaId = Utils.decodeArrayFromString(encodedSalivaTimes).length + 1;
 
-        int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
-        if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_INITIAL && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
+        int currentAlarmId = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
+        if (currentAlarmId != Constants.EXTRA_ALARM_ID_INITIAL && currentAlarmId % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
             // There's already a saliva procedure running at the moment
-            Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing + " already running at the moment!");
+            Log.d(TAG, "Saliva procedure with alarm id " + currentAlarmId + " already running at the moment!");
             setResultCode(Activity.RESULT_CANCELED);
+            return;
+        }
+
+        final DateTime midnight = LocalTime.MIDNIGHT.toDateTimeToday();
+
+        if (timeTaken.equals(midnight) && alarmSource == AlarmSource.SOURCE_ACTIVITY) {
+            // morning already finished => return (with result code)
+            setResultCode(Activity.RESULT_CANCELED);
+            return;
+        }
+
+        if (!timeTaken.equals(midnight)) {
+            int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
+            TimerHandler.scheduleSalivaCountdown(context, alarmId, alarm.getSalivaId(), eveningSalivaId);
+        }
+
+        if (sp.getBoolean(Constants.PREF_FIRST_RUN_ALARM, false)) {
+            AlarmHandler.scheduleSalivaAlarms(context);
+            sp.edit().putBoolean(Constants.PREF_FIRST_RUN_ALARM, false).apply();
+        }
+
+        if (alarmSource != AlarmSource.SOURCE_NOTIFICATION) {
+            // barcode activity is automatically started if alarm is stopped by AlarmStopActivity
             return;
         }
 
         Intent scannerIntent = new Intent(context, BarcodeActivity.class);
         scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        // morning already finished => return (with result code)
-        if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-            if (alarmSource == AlarmSource.SOURCE_ACTIVITY) {
-                setResultCode(Activity.RESULT_CANCELED);
-                return;
-            } else {
-                scannerIntent.putExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_CANCELED);
-            }
-        } else {
-            TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
+        if (timeTaken.equals(midnight)) {
+            scannerIntent.putExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_CANCELED);
         }
 
-        if (sp.getBoolean(Constants.PREF_FIRST_RUN_ALARM, false)) {
-            scheduleFixedAlarms(context, repository, sp);
-            sp.edit().putBoolean(Constants.PREF_FIRST_RUN_ALARM, false).apply();
-        }
-
-        if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {
-            context.startActivity(scannerIntent);
-        }
-    }
-
-    private void scheduleFixedAlarms(Context context, AlarmRepository repository, SharedPreferences sp) {
-        String timesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
-        int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
-        for (String timeString : timesString.split(",")) {
-            String parsedTime = timeString.substring(0, 2) + ":" + timeString.substring(2);
-            DateTime time = DateTime.now().withTime(LocalTime.parse(parsedTime));
-            Alarm fixedAlarm = new Alarm();
-            fixedAlarm.setId(id++);
-            fixedAlarm.setActive(true);
-            fixedAlarm.setIsFixed(true);
-            fixedAlarm.setTime(time);
-            repository.insert(fixedAlarm);
-            AlarmHandler.scheduleAlarm(context, fixedAlarm);
-        }
-        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, id).apply();
+        context.startActivity(scannerIntent);
     }
 }
