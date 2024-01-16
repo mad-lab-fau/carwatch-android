@@ -42,10 +42,10 @@ public class QrCodeParser {
                     throw new RuntimeException("Invalid QR-Code!");
                 }
             } else {
-                propertyMap.put(
-                        property.split(Constants.QR_PARSER_SPECIFIER)[0],
-                        property.split(Constants.QR_PARSER_SPECIFIER)[1]
-                );
+                String[] pair = property.split(Constants.QR_PARSER_SPECIFIER);
+                String key = pair[0];
+                String value = pair.length > 1 ? pair[1] : "";
+                propertyMap.put(key, value);
             }
         }
 
