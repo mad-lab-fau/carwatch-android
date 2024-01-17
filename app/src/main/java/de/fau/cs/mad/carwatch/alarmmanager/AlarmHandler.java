@@ -109,18 +109,24 @@ public class AlarmHandler {
         showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
     }
 
+    /**
+     * Schedule all saliva alarms with relative and fixed times except for the first relative one
+     *
+     * @param context Context to use
+     */
     public static void scheduleSalivaAlarms(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         AlarmRepository repo = AlarmRepository.getInstance((Application) context.getApplicationContext());
 
         String fixedTimesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
         String timeDistancesString = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        String[] timeDistances = timeDistancesString.split(",");
         List<DateTime> alarmTimes = new ArrayList<>();
         List<Boolean> isFixed = new ArrayList<>();
         DateTime lastAlarmTime = DateTime.now();
 
-        for (String distanceString : timeDistancesString.split(",")) {
-            if (distanceString.isEmpty())
+        for (String distanceString : timeDistances) {
+            if (distanceString.isEmpty() || distanceString.equals("0"))
                 continue;
             int distance = Integer.parseInt(distanceString);
             lastAlarmTime = lastAlarmTime.plusMinutes(distance);
@@ -137,11 +143,15 @@ public class AlarmHandler {
         }
 
         int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
-        int salivaId = 0;
+        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
+        if (timeDistancesString.startsWith("0"))
+            // if first sample request has no offset, it was already scheduled with the first alarm
+            salivaId++;
+
         for (int i = 0; i < alarmTimes.size(); i++) {
             Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++);
             repo.insert(alarm);
-            AlarmHandler.scheduleWakeUpAlarm(context, alarm);
+            AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
         }
         sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, id).apply();
     }

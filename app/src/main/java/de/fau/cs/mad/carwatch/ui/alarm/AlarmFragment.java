@@ -160,10 +160,13 @@ public class AlarmFragment extends Fragment {
     private void initializeAlarm() {
         alarm = new Alarm();
         DateTime time = DateTime.now().plusSeconds(30);
+        String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        boolean requestSaliva = salivaDistances.startsWith("0");
 
-        timeTextView.setText(time.toString("HH:mm"));
         alarm.setTime(time);
+        alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
         alarmViewModel.insert(alarm);
+        timeTextView.setText(time.toString("HH:mm"));
         scheduleAlarm(getContext());
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
     }

@@ -62,7 +62,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int idLastSample = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0) - 2;
+        int idLastSample = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0) - 1;
         int idEveningSample = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
 
         // create Json object and log information

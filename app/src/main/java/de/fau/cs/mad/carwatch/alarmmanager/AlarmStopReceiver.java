@@ -80,6 +80,19 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+        if (sp.getBoolean(Constants.PREF_FIRST_RUN_ALARM, false)) {
+            AlarmHandler.scheduleSalivaAlarms(context);
+            sp.edit().putBoolean(Constants.PREF_FIRST_RUN_ALARM, false).apply();
+        }
+
+        if (alarm.getSalivaId() == -1) {
+            // no saliva procedure requested
+            Log.d(TAG, "No saliva procedure requested for alarm with id " + alarmId);
+            setResultCode(Activity.RESULT_CANCELED);
+            return;
+        }
+
         DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
 
         int currentAlarmId = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
@@ -90,7 +103,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             return;
         }
 
-        final DateTime midnight = LocalTime.MIDNIGHT.toDateTimeToday();
+        DateTime midnight = LocalTime.MIDNIGHT.toDateTimeToday();
 
         if (timeTaken.equals(midnight) && alarmSource == AlarmSource.SOURCE_ACTIVITY) {
             // morning already finished => return (with result code)
@@ -101,11 +114,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         if (!timeTaken.equals(midnight)) {
             int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
             TimerHandler.scheduleSalivaCountdown(context, alarmId, alarm.getSalivaId(), eveningSalivaId);
-        }
-
-        if (sp.getBoolean(Constants.PREF_FIRST_RUN_ALARM, false)) {
-            AlarmHandler.scheduleSalivaAlarms(context);
-            sp.edit().putBoolean(Constants.PREF_FIRST_RUN_ALARM, false).apply();
         }
 
         if (alarmSource != AlarmSource.SOURCE_NOTIFICATION) {
