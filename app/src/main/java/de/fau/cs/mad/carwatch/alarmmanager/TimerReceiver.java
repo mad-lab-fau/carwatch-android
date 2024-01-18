@@ -46,8 +46,8 @@ public class TimerReceiver extends BroadcastReceiver {
         Notification notification = TimerHandler.buildAlarmNotification(context, timerId, salivaId);
 
         // Play alarm ringing sound
-//        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
-//        alarmSoundControl.playAlarmSound(context);
+        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
+        alarmSoundControl.playAlarmSound(context);
 
         if (notificationManager != null) {
             notificationManager.notify(timerId, notification);
