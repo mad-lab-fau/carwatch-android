@@ -110,7 +110,7 @@ public class AlarmHandler {
     }
 
     /**
-     * Schedule all saliva alarms with relative and fixed times except for the first relative one
+     * Schedule all saliva alarms with relative and fixed times except for the wake-up alarm
      *
      * @param context Context to use
      */
@@ -154,6 +154,7 @@ public class AlarmHandler {
             AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
         }
         sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, id).apply();
+        sp.edit().putBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, true).apply();
     }
 
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
@@ -340,7 +341,6 @@ public class AlarmHandler {
     }
 
     private static void killAllOngoingAlarms(Context context, int alarmId) {
-        // TODO adjust so that alarms are fetched from database
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
