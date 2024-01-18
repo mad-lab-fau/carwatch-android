@@ -144,6 +144,9 @@ public class Utils {
      * Convert shared preferences string encoding a list of integers back to an int[]
      */
     public static int[] decodeArrayFromString(String input) {
+        if (input == null || input.isEmpty())
+            return new int[0];
+
         String[] list = input.split(Constants.QR_PARSER_LIST_SEPARATOR);
         int[] output = new int[list.length];
         for (int i = 0; i < output.length; i++) {

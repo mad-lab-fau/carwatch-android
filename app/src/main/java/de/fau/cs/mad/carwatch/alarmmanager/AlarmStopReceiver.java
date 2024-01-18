@@ -86,7 +86,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         if (alarm.getSalivaId() == -1) {
             // no saliva procedure requested
             Log.d(TAG, "No saliva procedure requested for alarm with id " + alarmId);
-            setResultCode(Activity.RESULT_CANCELED);
+            if (alarmSource == AlarmSource.SOURCE_ACTIVITY)
+                setResultCode(Activity.RESULT_CANCELED);
             return;
         }
 
