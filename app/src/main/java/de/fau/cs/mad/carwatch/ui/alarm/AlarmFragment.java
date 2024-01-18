@@ -66,7 +66,7 @@ public class AlarmFragment extends Fragment {
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
 
         // Add an observer on the LiveData returned by getAlarm
-        alarmViewModel.getAlarmLiveData(Constants.INITIAL_ALARM_ID).observe(getViewLifecycleOwner(), alarm -> {
+        alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
             if (alarm == null) {
                 initializeAlarm();
             } else {
@@ -92,7 +92,7 @@ public class AlarmFragment extends Fragment {
             List<Alarm> salivaAlarms = new ArrayList<>();
             // initial alarm is not shown in list
             for (Alarm alarm : alarms) {
-                if (alarm.getId() != Constants.INITIAL_ALARM_ID) {
+                if (alarm.getId() != Constants.EXTRA_ALARM_ID_INITIAL) {
                     salivaAlarms.add(alarm);
                 }
             }

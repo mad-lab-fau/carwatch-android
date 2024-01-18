@@ -66,7 +66,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 // create Json object and log information
                 try {
                     JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.INITIAL_ALARM_ID);
+                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
                     LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -123,7 +123,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     if (sp.getString(Constants.PREF_SALIVA_DISTANCES, "").equals("0")) {
                         TimerHandler.scheduleSpontaneousAwakeningTimer(getContext());
                         Intent intent = new Intent(getContext(), BarcodeActivity.class);
-                        intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.INITIAL_ALARM_ID);
+                        intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
                         intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
                         startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
                     }

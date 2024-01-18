@@ -21,8 +21,6 @@ public final class Constants {
             new LocalTime(5, 0).toDateTimeToday().plusDays(1)
     };
 
-    public static final int FIRST_SALIVA_SAMPLE_OFFSET = 0;
-
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
@@ -53,7 +51,6 @@ public final class Constants {
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
-    public static final int INITIAL_ALARM_ID = 1; // id of morning alarm
     public static final String DEFAULT_START_SAMPLE = "S0";
 
     public static final String EXTRA_ALARM_TIME = "extra_alarm_time";

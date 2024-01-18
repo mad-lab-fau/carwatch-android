@@ -1,7 +1,7 @@
 package de.fau.cs.mad.carwatch.db;
 
+import static de.fau.cs.mad.carwatch.Constants.EXTRA_ALARM_ID_INITIAL;
 import static de.fau.cs.mad.carwatch.Constants.EXTRA_SALIVA_ID_INITIAL;
-import static de.fau.cs.mad.carwatch.Constants.INITIAL_ALARM_ID;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -48,7 +48,7 @@ public class Alarm implements Parcelable {
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
                 false,
                 false,
-                INITIAL_ALARM_ID,
+                EXTRA_ALARM_ID_INITIAL,
                 EXTRA_SALIVA_ID_INITIAL
         );
     }

@@ -30,7 +30,6 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
-import de.fau.cs.mad.carwatch.util.Utils;
 
 public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnDismissListener {
 
@@ -57,7 +56,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
     }
 
     private void cancelTimer(String barcodeValue) {
-        if (getContext() == null || alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
+        if (getContext() == null) {
             return;
         }
 
