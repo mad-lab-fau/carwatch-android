@@ -42,9 +42,8 @@ public class TimerReceiver extends BroadcastReceiver {
 
         int timerId = intent.getIntExtra(Constants.EXTRA_TIMER_ID, Constants.EXTRA_TIMER_ID_INITIAL);
         int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
-        int eveningSalivaId = PreferenceManager.getDefaultSharedPreferences(context).getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
 
-        Notification notification = TimerHandler.buildAlarmNotification(context, timerId, salivaId, eveningSalivaId);
+        Notification notification = TimerHandler.buildAlarmNotification(context, timerId, salivaId);
 
         // Play alarm ringing sound
 //        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();

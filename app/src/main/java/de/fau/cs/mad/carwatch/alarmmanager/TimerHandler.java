@@ -25,7 +25,6 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
-import de.fau.cs.mad.carwatch.util.Utils;
 
 public class TimerHandler {
 
@@ -58,31 +57,17 @@ public class TimerHandler {
     }
 
     public static void scheduleSpontaneousAwakeningTimer(Context context) {
+        DateTime timeToRing = DateTime.now();
+        Alarm alarm = new Alarm(timeToRing, true, false, Constants.EXTRA_ALARM_ID_INITIAL, Constants.EXTRA_SALIVA_ID_INITIAL);
+
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-
-        if (encodedSalivaTimes.isEmpty()) {
-            return;
-        }
-
-        int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
-        int eveningSalivaId = salivaTimes.length + 1;
-
-        DateTime timeToRing = DateTime.now().plusMinutes(salivaTimes[Constants.EXTRA_SALIVA_ID_INITIAL]);
-        Alarm alarm = new Alarm(timeToRing, true, false, Constants.INITIAL_ALARM_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
-
         sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarm.getId()).apply();
 
-        if (salivaTimes[alarm.getSalivaId()] == 0) {
-            scheduleSalivaCountdown(context, alarm.getId(), alarm.getSalivaId(), eveningSalivaId);
-        } else {
-            AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
-        }
+        scheduleSalivaCountdown(context, alarm.getId(), alarm.getSalivaId());
     }
 
     @SuppressLint("WrongConstant")
-    // TODO get saliva id from shared preferences
-    public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId, int eveningSalivaId) {
+    public static void scheduleSalivaCountdown(Context context, int alarmId, int salivaId) {
         int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
         long when = DateTime.now().plusMinutes(Constants.TIMER_DURATION).getMillis();
 
@@ -97,7 +82,7 @@ public class TimerHandler {
             }
         }
 
-        Notification notification = buildCountdownNotification(context, timerId, salivaId, when, eveningSalivaId);
+        Notification notification = buildCountdownNotification(context, timerId, salivaId, when);
 
         if (alarmManager != null) {
             PendingIntent pendingIntent = getTimerPendingIntent(context, timerId, salivaId);
@@ -143,7 +128,7 @@ public class TimerHandler {
     }
 
 
-    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when, int eveningSalivaId) {
+    private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         Intent contentIntent = new Intent(context, BarcodeActivity.class);
         contentIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
@@ -159,10 +144,10 @@ public class TimerHandler {
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, pendingFlags);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int startSampleIdx = Integer.parseInt(sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
-        String contentText =
-                salivaId == eveningSalivaId ?
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
+        String contentText = salivaId == eveningSalivaId ?
                         context.getString(R.string.timer_notification_text_evening) :
                         context.getString(R.string.timer_notification_text, salivaId + startSampleIdx);
 
@@ -181,7 +166,7 @@ public class TimerHandler {
         return builder.build();
     }
 
-    public static Notification buildAlarmNotification(Context context, int timerId, int salivaId, int eveningSalivaId) {
+    public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         // Full screen Intent
         Intent fullScreenIntent = new Intent(context, BarcodeActivity.class);
@@ -197,10 +182,14 @@ public class TimerHandler {
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, pendingFlags);
 
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
+
         String contentText =
                 salivaId == eveningSalivaId ?
                         context.getString(R.string.timer_over_notification_text_evening) :
-                        context.getString(R.string.timer_over_notification_text, salivaId);
+                        context.getString(R.string.timer_over_notification_text, salivaId + startSampleIdx);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
