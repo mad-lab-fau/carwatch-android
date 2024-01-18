@@ -45,7 +45,8 @@ public class BarcodeActivity extends AppCompatActivity {
 
         try {
             alarm = repository.getAlarmById(alarmId);
-            salivaId = alarm.getSalivaId();
+            if (alarm != null)
+                salivaId = alarm.getSalivaId();
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
             e.printStackTrace();
