@@ -167,7 +167,6 @@ public class AlarmFragment extends Fragment {
         alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
         alarmViewModel.insert(alarm);
         timeTextView.setText(time.toString("HH:mm"));
-        scheduleAlarm(getContext());
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
     }
 
