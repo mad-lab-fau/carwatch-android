@@ -110,8 +110,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
 
         if (!timeTaken.equals(midnight)) {
-            int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
-            TimerHandler.scheduleSalivaCountdown(context, alarmId, alarm.getSalivaId(), eveningSalivaId);
+            TimerHandler.scheduleSalivaCountdown(context, alarmId, alarm.getSalivaId());
         }
 
         if (alarmSource != AlarmSource.SOURCE_NOTIFICATION) {
