@@ -16,8 +16,6 @@ import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -81,9 +79,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
-        if (sp.getBoolean(Constants.PREF_FIRST_RUN_ALARM, false)) {
+        if (!sp.getBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, true)) {
             AlarmHandler.scheduleSalivaAlarms(context);
-            sp.edit().putBoolean(Constants.PREF_FIRST_RUN_ALARM, false).apply();
         }
 
         if (alarm.getSalivaId() == -1) {

@@ -118,9 +118,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                         delegate.applyDayNight();
                     }
 
-                    AlarmHandler.scheduleSalivaAlarms(getContext());
+                    if (!sp.getBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, true)) {
+                        AlarmHandler.scheduleSalivaAlarms(getContext());
+                    }
 
-                    if (sp.getString(Constants.PREF_SALIVA_DISTANCES, "").equals("0")) {
+                    if (sp.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0")) {
                         TimerHandler.scheduleSpontaneousAwakeningTimer(getContext());
                         Intent intent = new Intent(getContext(), BarcodeActivity.class);
                         intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);

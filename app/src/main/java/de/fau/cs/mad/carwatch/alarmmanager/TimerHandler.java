@@ -47,7 +47,7 @@ public class TimerHandler {
             sp.edit()
                     .putInt(Constants.PREF_DAY_COUNTER, ++dayId)
                     .putInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL)
-                    .putBoolean(Constants.PREF_FIRST_RUN_ALARM, true)
+                    .putBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, false)
                     .putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
                     .apply();
 

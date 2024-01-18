@@ -66,7 +66,7 @@ public class QrFragment extends BarcodeFragment {
                 .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
                 .putBoolean(Constants.PREF_MANUAL_SCAN, parser.manualScan)
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
-                .putBoolean(Constants.PREF_FIRST_RUN_ALARM, true)
+                .putBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, false)
                 .putString(Constants.PREF_START_SAMPLE, parser.startSample)
                 .apply();
     }
