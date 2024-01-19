@@ -114,7 +114,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
         TimerHandler.cancelTimer(getContext(), alarmId);
         if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && alarmId != Constants.EXTRA_ALARM_ID_MANUAL && salivaId == idLastSample) {
-            TimerHandler.finishTimer(getContext());
+            TimerHandler.finishDay(getContext());
         }
     }
 
