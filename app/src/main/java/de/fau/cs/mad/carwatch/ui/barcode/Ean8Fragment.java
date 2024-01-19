@@ -61,7 +61,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int idLastSample = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0) - 1;
         int idEveningSample = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
 
         // create Json object and log information
@@ -113,7 +112,12 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         }
 
         TimerHandler.cancelTimer(getContext(), alarmId);
-        if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && alarmId != Constants.EXTRA_ALARM_ID_MANUAL && salivaId == idLastSample) {
+
+        int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 2);
+        int numScannedBarcode = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>()).size();
+        boolean lastSampleWasTaken = totalNumSamples == numScannedBarcode;
+
+        if (lastSampleWasTaken) {
             TimerHandler.finishDay(getContext());
         }
     }
