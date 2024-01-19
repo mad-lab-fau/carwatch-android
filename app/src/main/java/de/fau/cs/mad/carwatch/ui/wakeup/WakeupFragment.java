@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.ui.wakeup;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -25,15 +26,19 @@ import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.ExecutionException;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
+import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.AlertActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
+import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 public class WakeupFragment extends Fragment implements View.OnClickListener {
 
@@ -109,6 +114,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     }
 
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    disableRegularAlarm(getContext());
 
                     // disable night mode
                     if (getActivity() != null) {
@@ -131,6 +137,26 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     }
                 })
                 .show();
+    }
+
+    private void disableRegularAlarm(Context context) {
+        if (getActivity() == null)
+            return;
+
+        AlarmRepository repository = AlarmRepository.getInstance(getActivity().getApplication());
+        try {
+            Alarm alarm = repository.getAlarmById(Constants.EXTRA_ALARM_ID_INITIAL);
+            if (alarm == null)
+                return;
+
+            View view = getActivity() == null ? null : getActivity().findViewById(R.id.coordinator);
+
+            AlarmHandler.cancelAlarm(context, alarm, view);
+            alarm.setActive(false);
+            repository.update(alarm);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showWakeupWarningDialog() {
