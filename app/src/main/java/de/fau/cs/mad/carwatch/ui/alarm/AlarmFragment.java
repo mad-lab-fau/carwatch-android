@@ -45,6 +45,7 @@ public class AlarmFragment extends Fragment {
     private Alarm alarm;
     private LinearLayout alarmLayout;
     private TextView timeTextView;
+    private TextView salivaAlarmsHeader;
     private SwitchMaterial activeSwitch;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,6 +65,7 @@ public class AlarmFragment extends Fragment {
         alarmLayout = root.findViewById(R.id.alarm);
         timeTextView = root.findViewById(R.id.alarm_time_text);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
+        salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -98,6 +100,7 @@ public class AlarmFragment extends Fragment {
             }
             adapter.setAlarms(salivaAlarms);
             adapter.notifyDataSetChanged();
+            salivaAlarmsHeader.setVisibility(salivaAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         });
     }
 
