@@ -37,7 +37,6 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.BootCompletedReceiver;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
-import de.fau.cs.mad.carwatch.util.Utils;
 
 
 /**
@@ -326,29 +325,16 @@ public class AlarmHandler {
         LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_KILLALL, new JSONObject());
 
         AlarmRepository repo = AlarmRepository.getInstance(application);
+        List<Alarm> alarms = repo.getAlarms().getValue();
 
-        if (repo.getAlarmLiveData() != null && repo.getAlarmLiveData().getValue() != null) {
-            // cancel everything that's there: all alarms, all timer alarms...
-            Alarm alarm = repo.getAlarmLiveData().getValue();
+        if (alarms == null)
+            return;
+
+        for (Alarm alarm : alarms) {
+            cancelAlarmAtTime(application, alarm.getId());
+            TimerHandler.cancelTimer(application, alarm.getId());
             alarm.setActive(false);
-            killAllOngoingAlarms(application, alarm.getId());
             repo.update(alarm);
-        }
-
-        // cancel a potential alarm session from evening (has a special id)
-        TimerHandler.cancelTimer(application, Constants.EXTRA_ALARM_ID_EVENING);
-        killAllOngoingAlarms(application, Constants.EXTRA_ALARM_ID_EVENING);
-    }
-
-    private static void killAllOngoingAlarms(Context context, int alarmId) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
-
-        for (int ignored : salivaTimes) {
-            cancelAlarmAtTime(context, alarmId);
-            TimerHandler.cancelTimer(context, alarmId);
-            alarmId += Constants.ALARM_OFFSET;
         }
     }
 }
