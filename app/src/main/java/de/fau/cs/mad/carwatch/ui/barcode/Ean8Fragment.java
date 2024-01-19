@@ -71,27 +71,23 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             int startIndex = Integer.parseInt(startSample.substring(1));
             String samplePrefix = startSample.substring(0, 1);
 
-            // human-readable data from scanned barcode
             int scannedDay = Integer.parseInt(barcodeValue.substring(3, 5));
             int scannedSampleId = Integer.parseInt(barcodeValue.substring(5, 7));
-            String hrScannedSample = samplePrefix;
-            // evening barcode was scanned
-            if (scannedSampleId == idEveningSample) {
-                hrScannedSample += Constants.EXTRA_SALIVA_ID_EVENING;
-            } else {
-                int hrScannedSampleId = startIndex + scannedSampleId;
-                hrScannedSample = samplePrefix + hrScannedSampleId;
-            }
+            String scannedSample = samplePrefix;
+            scannedSample += scannedSampleId == idEveningSample
+                    ? Constants.EXTRA_SALIVA_ID_EVENING
+                    : scannedSampleId;
 
-            // human-readable data from expected sample
-            String hrExpectedSample = samplePrefix;
-            if (alarmId == Constants.EXTRA_ALARM_ID_EVENING) {
-                hrExpectedSample += Constants.EXTRA_SALIVA_ID_EVENING;
-            } else if (alarmId == Constants.EXTRA_ALARM_ID_MANUAL) {
-                hrExpectedSample += Constants.EXTRA_SALIVA_ID_MANUAL_HR;
-            } else {
-                int hrExpectedSampleId = salivaId + startIndex;
-                hrExpectedSample += hrExpectedSampleId;
+            String expectedSample = samplePrefix;
+            switch (alarmId) {
+                case Constants.EXTRA_ALARM_ID_EVENING:
+                    expectedSample += Constants.EXTRA_SALIVA_ID_EVENING;
+                    break;
+                case Constants.EXTRA_ALARM_ID_MANUAL:
+                    expectedSample += Constants.EXTRA_SALIVA_ID_MANUAL_HR;
+                    break;
+                default:
+                    expectedSample += salivaId + startIndex;
             }
 
             int salivaDayId = dayId * 100 + salivaId;
@@ -104,8 +100,8 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
             json.put(Constants.LOGGER_EXTRA_SCANNED_DAY, scannedDay);
             json.put(Constants.LOGGER_EXTRA_EXPECTED_DAY, dayId + 1);
-            json.put(Constants.LOGGER_EXTRA_SCANNED_SAMPLE, hrScannedSample);
-            json.put(Constants.LOGGER_EXTRA_EXPECTED_SAMPLE, hrExpectedSample);
+            json.put(Constants.LOGGER_EXTRA_SCANNED_SAMPLE, scannedSample);
+            json.put(Constants.LOGGER_EXTRA_EXPECTED_SAMPLE, expectedSample);
             LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);
         } catch (JSONException e) {
             e.printStackTrace();
