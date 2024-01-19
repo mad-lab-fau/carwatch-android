@@ -159,7 +159,7 @@ public class AlarmFragment extends Fragment {
 
     private void initializeAlarm() {
         alarm = new Alarm();
-        DateTime time = DateTime.now().plusSeconds(30);
+        DateTime time = DateTime.now();
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
         boolean requestSaliva = salivaDistances.startsWith("0");
 
