@@ -49,22 +49,33 @@ public class AlarmHandler {
     private static final PeriodFormatter formatter;
 
     static {
-        if (Locale.getDefault().getLanguage().equals("de")) {
-            formatter = new PeriodFormatterBuilder()
-                    .appendHours()
-                    .appendSuffix(" Stunde", " Stunden")
-                    .appendSeparator(" und ")
-                    .appendMinutes()
-                    .appendSuffix(" Minute", " Minuten")
-                    .toFormatter();
-        } else {
-            formatter = new PeriodFormatterBuilder()
-                    .appendHours()
-                    .appendSuffix(" hour", " hours")
-                    .appendSeparator(" and ")
-                    .appendMinutes()
-                    .appendSuffix(" minute", " minutes")
-                    .toFormatter();
+        switch(Locale.getDefault().getLanguage()) {
+            case "de":
+                formatter = new PeriodFormatterBuilder()
+                        .appendHours()
+                        .appendSuffix(" Stunde", " Stunden")
+                        .appendSeparator(" und ")
+                        .appendMinutes()
+                        .appendSuffix(" Minute", " Minuten")
+                        .toFormatter();
+                break;
+            case "fr":
+                formatter = new PeriodFormatterBuilder()
+                        .appendHours()
+                        .appendSuffix(" heure", " heures")
+                        .appendSeparator(" et ")
+                        .appendMinutes()
+                        .appendSuffix(" minute", " minutes")
+                        .toFormatter();
+                break;
+            default:
+                formatter = new PeriodFormatterBuilder()
+                        .appendHours()
+                        .appendSuffix(" hour", " hours")
+                        .appendSeparator(" and ")
+                        .appendMinutes()
+                        .appendSuffix(" minute", " minutes")
+                        .toFormatter();
         }
     }
 
@@ -161,17 +172,25 @@ public class AlarmHandler {
         if (snackBarAnchor != null) {
             String timeDiffString = formatter.print(timeDiff);
 
-            if (Locale.getDefault().getLanguage().equals("de")) {
-                if (timeDiffString.length() == 0) {
-                    timeDiffString += "jetzt";
-                } else {
-                    timeDiffString = "in " + timeDiffString;
-                }
-            } else {
-                if (timeDiffString.length() != 0) {
-                    timeDiffString += " from ";
-                }
+            switch (Locale.getDefault().getLanguage()) {
+                case "de":
+                    if (timeDiffString.length() == 0) {
+                        timeDiffString += "jetzt";
+                    } else {
+                        timeDiffString = "in " + timeDiffString;
+                    }
+                    break;
+                case "fr":
+                    if (timeDiffString.length() != 0) {
+                        timeDiffString = "pour " + timeDiffString;
+                    }
+                    break;
+                default:
+                    if (timeDiffString.length() != 0) {
+                        timeDiffString += " from ";
+                    }
             }
+
             Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
         }
     }
