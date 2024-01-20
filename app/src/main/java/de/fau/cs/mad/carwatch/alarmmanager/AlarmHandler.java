@@ -168,31 +168,28 @@ public class AlarmHandler {
     }
 
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
+        if (snackBarAnchor == null)
+            return;
+
         Period timeDiff = new Period(DateTime.now(), time);
-        if (snackBarAnchor != null) {
-            String timeDiffString = formatter.print(timeDiff);
+        String timeDiffString = formatter.print(timeDiff);
 
-            switch (Locale.getDefault().getLanguage()) {
-                case "de":
-                    if (timeDiffString.length() == 0) {
-                        timeDiffString += "jetzt";
-                    } else {
-                        timeDiffString = "in " + timeDiffString;
-                    }
-                    break;
-                case "fr":
-                    if (timeDiffString.length() != 0) {
-                        timeDiffString = "pour " + timeDiffString;
-                    }
-                    break;
-                default:
-                    if (timeDiffString.length() != 0) {
-                        timeDiffString += " from ";
-                    }
-            }
-
-            Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
+        switch (Locale.getDefault().getLanguage()) {
+            case "de":
+                timeDiffString += timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString;
+                break;
+            case "fr":
+                if (!timeDiffString.isEmpty()) {
+                    timeDiffString = "pour " + timeDiffString;
+                }
+                break;
+            default:
+                if (!timeDiffString.isEmpty()) {
+                    timeDiffString += " from ";
+                }
         }
+
+        Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
     }
 
     public static void scheduleSalivaAlarm(Context context, Alarm alarm, View snackbarAnchor) {
