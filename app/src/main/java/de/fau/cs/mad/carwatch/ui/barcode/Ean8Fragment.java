@@ -74,7 +74,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             int scannedDay = Integer.parseInt(barcodeValue.substring(3, 5));
             int scannedSampleId = Integer.parseInt(barcodeValue.substring(5, 7));
             String scannedSample = samplePrefix;
-            scannedSample += scannedSampleId == idEveningSample
+            scannedSample += scannedSampleId == idEveningSample + startIndex
                     ? Constants.EXTRA_SALIVA_ID_EVENING
                     : scannedSampleId;
 
