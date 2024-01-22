@@ -114,6 +114,7 @@ public class AlarmFragment extends Fragment {
         // define behavior on activity switch change
         activeSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
             alarm.setActive(checked);
+            setInitialSalivaId();
             setAlarmColor(checked);
             scheduleAlarm(context);
             updateAlarm();
@@ -132,11 +133,18 @@ public class AlarmFragment extends Fragment {
                 alarm.setTime(selectedTime.toDateTimeToday());
                 timeTextView.setText(selectedTime.toString("HH:mm"));
                 alarm.setActive(true);
+                setInitialSalivaId();
                 scheduleAlarm(context);
                 updateAlarm();
             }, time.getHourOfDay(), time.getMinuteOfHour(), true);
             timePicker.show();
         });
+    }
+
+    private void setInitialSalivaId() {
+        String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        boolean requestSaliva = salivaDistances.startsWith("0");
+        alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
     }
 
     private void setAlarmColor(boolean isActive) {
@@ -162,12 +170,10 @@ public class AlarmFragment extends Fragment {
 
     private void initializeAlarm() {
         alarm = new Alarm();
-        DateTime time = DateTime.now();
-        String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        boolean requestSaliva = salivaDistances.startsWith("0");
 
+        DateTime time = DateTime.now();
         alarm.setTime(time);
-        alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
+        setInitialSalivaId();
         alarmViewModel.insert(alarm);
         timeTextView.setText(time.toString("HH:mm"));
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
