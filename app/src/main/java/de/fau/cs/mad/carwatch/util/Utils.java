@@ -23,11 +23,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -86,6 +88,11 @@ public class Utils {
                     .getPackageManager()
                     .getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
             String[] ps = info.requestedPermissions;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                List<String> list = new ArrayList<>(Arrays.asList(ps));
+                list.remove("android.permission.USE_EXACT_ALARM");
+                ps = list.toArray(new String[0]);
+            }
             return (ps != null && ps.length > 0) ? ps : new String[0];
         } catch (Exception e) {
             return new String[0];
