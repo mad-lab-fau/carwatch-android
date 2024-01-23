@@ -126,18 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void navigate() {
-        if (checkInterval(DateTime.now(), Constants.MORNING_TIMES)) {
-            navController.navigate(R.id.navigation_wakeup);
-        } else if (checkInterval(DateTime.now(), Constants.EVENING_TIMES)) {
-            navController.navigate(R.id.navigation_bedtime);
-        } else {
-            navController.navigate(R.id.navigation_alarm);
-        }
-    }
-
-
-    private boolean checkInterval(DateTime time, DateTime[] interval) {
-        return new Interval(interval[0], interval[1]).contains(time);
+        navController.navigate(R.id.navigation_wakeup);
     }
 
     @Override
