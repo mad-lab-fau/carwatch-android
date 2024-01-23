@@ -27,8 +27,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.json.JSONException;
 import org.json.JSONObject;
 
