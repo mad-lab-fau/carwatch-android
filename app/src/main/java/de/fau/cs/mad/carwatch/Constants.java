@@ -25,12 +25,11 @@ public final class Constants {
 
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
     public static final String PREF_FIRST_RUN_SUBJECT_ID = "first_run_subject_id"; // boolean
-    public static final String PREF_SALIVA_ALARMS_ARE_SCHEDULED = "first_run_alarm"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_SUBJECT_ID = "subject_id"; // String
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
-    public static final String PREF_MORNING_TAKEN = "morning_taken"; // long (day)
-    public static final String PREF_MORNING_ONGOING = "morning_ongoing"; // int (alarmId)
+    public static final String PREF_CURRENT_DATE = "morning_taken"; // long (day)
+    public static final String PREF_ID_ONGOING_ALARM = "morning_ongoing"; // int (alarmId)
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
     public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean

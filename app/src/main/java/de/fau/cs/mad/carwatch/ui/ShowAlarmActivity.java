@@ -124,7 +124,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     }
 
     private boolean checkAlarmOngoing() {
-        int alarmIdOngoing = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
+        int alarmIdOngoing = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL);
         // There's already a saliva procedure running at the moment
         return (alarmIdOngoing != Constants.EXTRA_ALARM_ID_INITIAL) && (alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET);
     }

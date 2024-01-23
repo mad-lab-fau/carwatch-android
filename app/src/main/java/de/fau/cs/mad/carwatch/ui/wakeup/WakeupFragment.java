@@ -77,19 +77,15 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
 
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-                DateTime date = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                DateTime date = new DateTime(sp.getLong(Constants.PREF_CURRENT_DATE, 0));
                 if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-                    showWakeupWarningDialog();
+//                    showWakeupWarningDialog();
+                    if (getActivity() != null)
+                        Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
                 } else {
                     // no morning procedure ongoing yet
-                    if (sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL) == Constants.EXTRA_ALARM_ID_INITIAL) {
-                        showWakeupDialog();
-                    } else {
-                        if (getActivity() != null) {
-                            Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
-                        }
-                    }
+                    showWakeupDialog();
                 }
                 break;
         }
@@ -114,7 +110,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     }
 
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-                    disableRegularAlarm(getContext());
+                    initializeDay();
 
                     // disable night mode
                     if (getActivity() != null) {
@@ -122,10 +118,6 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                         AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
                         delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                         delegate.applyDayNight();
-                    }
-
-                    if (!sp.getBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, true)) {
-                        AlarmHandler.scheduleSalivaAlarms(getContext());
                     }
 
                     if (sp.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0")) {
@@ -139,7 +131,19 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
-    private void disableRegularAlarm(Context context) {
+    private void initializeDay() {
+        Context context = requireContext();
+        AlarmHandler.rescheduleSalivaAlarms(context);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, -1) + 1;
+
+        sp.edit()
+                .putLong(Constants.PREF_CURRENT_DATE, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
+                .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .apply();
+
+
         if (getActivity() == null)
             return;
 

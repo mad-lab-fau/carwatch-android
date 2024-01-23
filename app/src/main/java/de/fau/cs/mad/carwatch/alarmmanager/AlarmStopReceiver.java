@@ -33,6 +33,25 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
+        alarmSoundControl.stopAlarmSound();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        DateTime date = new DateTime(sharedPreferences.getLong(Constants.PREF_CURRENT_DATE, 0));
+        boolean firstAlarmProcessAlreadyFinished = false;
+        if (date.isBefore(LocalTime.MIDNIGHT.toDateTimeToday())) {
+            AlarmHandler.rescheduleSalivaAlarms(context);
+            int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, -1) + 1;
+            sharedPreferences.edit()
+                    .putLong(Constants.PREF_CURRENT_DATE, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
+                    .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
+                    .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                    .apply();
+
+        } else {
+            firstAlarmProcessAlreadyFinished = true;
+        }
+
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
 
         AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
@@ -54,10 +73,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             alarmSource = AlarmSource.SOURCE_UNKNOWN;
         }
 
-
-        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
-        alarmSoundControl.stopAlarmSound();
-
         try {
             // create Json object and log information
             JSONObject json = new JSONObject();
@@ -77,11 +92,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-
-        if (!sp.getBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, true)) {
-            AlarmHandler.scheduleSalivaAlarms(context);
-        }
 
         if (alarm.getSalivaId() == -1) {
             // no saliva procedure requested
@@ -91,9 +101,14 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             return;
         }
 
-        DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
+        if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL && firstAlarmProcessAlreadyFinished) {
+            Log.d(TAG, "First alarm process already finished for alarm with id " + alarmId);
+            if (alarmSource == AlarmSource.SOURCE_ACTIVITY)
+                setResultCode(Activity.RESULT_CANCELED);
+            return;
+        }
 
-        int currentAlarmId = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
+        int currentAlarmId = sharedPreferences.getInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL);
         if (currentAlarmId != Constants.EXTRA_ALARM_ID_INITIAL && currentAlarmId % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
             // There's already a saliva procedure running at the moment
             Log.d(TAG, "Saliva procedure with alarm id " + currentAlarmId + " already running at the moment!");
@@ -101,17 +116,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             return;
         }
 
-        DateTime midnight = LocalTime.MIDNIGHT.toDateTimeToday();
-
-        if (timeTaken.equals(midnight) && alarmSource == AlarmSource.SOURCE_ACTIVITY) {
-            // morning already finished => return (with result code)
-            setResultCode(Activity.RESULT_CANCELED);
-            return;
-        }
-
-        if (!timeTaken.equals(midnight)) {
-            TimerHandler.scheduleSalivaCountdown(context, alarmId, alarm.getSalivaId());
-        }
+        TimerHandler.scheduleSalivaCountdown(context, alarmId, alarm.getSalivaId());
 
         if (alarmSource != AlarmSource.SOURCE_NOTIFICATION) {
             // barcode activity is automatically started if alarm is stopped by AlarmStopActivity
@@ -121,10 +126,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         Intent scannerIntent = new Intent(context, BarcodeActivity.class);
         scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        if (timeTaken.equals(midnight)) {
-            scannerIntent.putExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_CANCELED);
-        }
 
         context.startActivity(scannerIntent);
     }

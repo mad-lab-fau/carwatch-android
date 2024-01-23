@@ -241,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
             sharedPreferences.edit()
                     .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
                     .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                    .putInt(Constants.PREF_DAY_COUNTER, 0)
                     .apply();
             try {
                 JSONObject json = new JSONObject();

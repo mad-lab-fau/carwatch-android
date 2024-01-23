@@ -120,51 +120,13 @@ public class AlarmHandler {
     }
 
     /**
-     * Schedule all saliva alarms with relative and fixed times except for the wake-up alarm
+     * deletes and re-schedules all saliva alarms with relative and fixed times except for the wake-up alarm
      *
      * @param context Context to use
      */
-    public static void scheduleSalivaAlarms(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        AlarmRepository repo = AlarmRepository.getInstance((Application) context.getApplicationContext());
-
-        String fixedTimesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
-        String timeDistancesString = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        String[] timeDistances = timeDistancesString.split(",");
-        List<DateTime> alarmTimes = new ArrayList<>();
-        List<Boolean> isFixed = new ArrayList<>();
-        DateTime lastAlarmTime = DateTime.now();
-
-        for (String distanceString : timeDistances) {
-            if (distanceString.isEmpty() || distanceString.equals("0"))
-                continue;
-            int distance = Integer.parseInt(distanceString);
-            lastAlarmTime = lastAlarmTime.plusMinutes(distance);
-            alarmTimes.add(lastAlarmTime);
-            isFixed.add(false);
-        }
-
-        for (String timeRaw : fixedTimesString.split(",")) {
-            if (timeRaw.isEmpty())
-                continue;
-            String time = timeRaw.substring(0, 2) + ":" + timeRaw.substring(2);
-            alarmTimes.add(DateTime.now().withTime(LocalTime.parse(time)));
-            isFixed.add(true);
-        }
-
-        int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
-        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
-        if (timeDistancesString.startsWith("0"))
-            // if first sample request has no offset, it was already scheduled with the first alarm
-            salivaId++;
-
-        for (int i = 0; i < alarmTimes.size(); i++) {
-            Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++);
-            repo.insert(alarm);
-            AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
-        }
-        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, id).apply();
-        sp.edit().putBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, true).apply();
+    public static void rescheduleSalivaAlarms(Context context) {
+        deleteSalivaAlarms(context);
+        scheduleSalivaAlarms(context);
     }
 
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
@@ -269,6 +231,65 @@ public class AlarmHandler {
         }
     }
 
+    private static void deleteSalivaAlarms(Context context) {
+        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
+        List<Alarm> alarms = repository.getAlarms().getValue();
+
+        if (alarms == null)
+            return;
+
+        for (Alarm alarm : alarms) {
+            if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL)
+                continue;
+            repository.delete(alarm);
+        }
+
+        // reset alarm id counter
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1).apply();
+    }
+
+    private static void scheduleSalivaAlarms(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        AlarmRepository repo = AlarmRepository.getInstance((Application) context.getApplicationContext());
+
+        String fixedTimesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        String timeDistancesString = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        String[] timeDistances = timeDistancesString.split(",");
+        List<DateTime> alarmTimes = new ArrayList<>();
+        List<Boolean> isFixed = new ArrayList<>();
+        DateTime lastAlarmTime = DateTime.now();
+
+        for (String distanceString : timeDistances) {
+            if (distanceString.isEmpty() || distanceString.equals("0"))
+                continue;
+            int distance = Integer.parseInt(distanceString);
+            lastAlarmTime = lastAlarmTime.plusMinutes(distance);
+            alarmTimes.add(lastAlarmTime);
+            isFixed.add(false);
+        }
+
+        for (String timeRaw : fixedTimesString.split(",")) {
+            if (timeRaw.isEmpty())
+                continue;
+            String time = timeRaw.substring(0, 2) + ":" + timeRaw.substring(2);
+            alarmTimes.add(DateTime.now().withTime(LocalTime.parse(time)));
+            isFixed.add(true);
+        }
+
+        int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
+        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
+        if (timeDistancesString.startsWith("0"))
+            // if first sample request has no offset, it was already scheduled with the first alarm
+            salivaId++;
+
+        for (int i = 0; i < alarmTimes.size(); i++) {
+            Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++);
+            repo.insert(alarm);
+            AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
+        }
+        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, id).apply();
+    }
 
     private static void cancelAlarmAtTime(Context context, int alarmId) {
         // Get PendingIntent to AlarmReceiver Broadcast channel

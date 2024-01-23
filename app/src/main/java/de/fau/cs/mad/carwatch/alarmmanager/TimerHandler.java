@@ -2,7 +2,6 @@ package de.fau.cs.mad.carwatch.alarmmanager;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -17,45 +16,29 @@ import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
-import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 public class TimerHandler {
 
     private static final String TAG = TimerHandler.class.getSimpleName();
-
     private static final String CHANNEL_ID = TAG + "Channel";
 
     public static void finishDay(Context context) {
-        try {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        sp.edit().putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL).apply();
 
-            // create Json object and log information
+        try {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_DAY_COUNTER, dayId);
             LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
-
-            deleteSalivaAlarms(context);
-
-            // save the day the saliva sample was taken in order to prevent abuse
-            sp.edit()
-                    .putInt(Constants.PREF_DAY_COUNTER, ++dayId)
-                    .putInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL)
-                    .putBoolean(Constants.PREF_SALIVA_ALARMS_ARE_SCHEDULED, false)
-                    .putLong(Constants.PREF_MORNING_TAKEN, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
-                    .apply();
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -66,7 +49,7 @@ public class TimerHandler {
         Alarm alarm = new Alarm(timeToRing, true, false, Constants.EXTRA_ALARM_ID_INITIAL, Constants.EXTRA_SALIVA_ID_INITIAL);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putInt(Constants.PREF_MORNING_ONGOING, alarm.getId()).apply();
+        sp.edit().putInt(Constants.PREF_ID_ONGOING_ALARM, alarm.getId()).apply();
 
         scheduleSalivaCountdown(context, alarm.getId(), alarm.getSalivaId());
     }
@@ -131,25 +114,6 @@ public class TimerHandler {
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.stopAlarmSound();
     }
-
-    private static void deleteSalivaAlarms(Context context) {
-        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
-        List<Alarm> alarms = repository.getAlarms().getValue();
-
-        if (alarms == null)
-            return;
-
-        for (Alarm alarm : alarms) {
-            if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL)
-                continue;
-            repository.delete(alarm);
-        }
-
-        // reset alarm id counter
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1).apply();
-    }
-
 
     private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
