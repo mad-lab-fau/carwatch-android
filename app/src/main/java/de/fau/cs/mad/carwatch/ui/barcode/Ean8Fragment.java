@@ -37,7 +37,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
     private int alarmId = Constants.EXTRA_ALARM_ID_MANUAL;
     private int salivaId = Constants.EXTRA_SALIVA_ID_MANUAL;
-
     private long alarmTime = 0;
 
     @Override
@@ -47,12 +46,89 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         workflowModel.setWorkflowState(WorkflowState.DETECTING);
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (salivaId == Constants.EXTRA_SALIVA_ID_INITIAL) {
+            finishActivity(this.alarmTime);
+        } else if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
+            switchFragment();
+        } else {
+            finishActivity(this.alarmTime);
+        }
+
+    }
+
+    @Override
+    public void onChanged(Barcode mlKitBarcode) {
+        if (mlKitBarcode != null) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+
+            BarcodeField barcode = new BarcodeField(Constants.BARCODE_TYPE_EAN8, mlKitBarcode.getRawValue());
+            Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
+
+            Log.d(TAG, "Detected Barcode: " + barcode.getValue());
+            Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
+
+            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), sharedPreferences);
+
+            Log.d(TAG, "Barcode scan: " + check);
+
+            switch (check) {
+                case DUPLICATE_BARCODE:
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
+                        json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
+                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    showBarcodeAlreadyScannedDialog();
+                    break;
+                case VALID:
+                    scannedBarcodes.add(barcode.getValue());
+                    sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
+
+                    cancelTimer(barcode.getValue());
+                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
+                    break;
+                case INVALID:
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
+                        LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    showInvalidBarcodeDialog();
+                    break;
+            }
+        }
+    }
+
     public void setAlarmId(int alarmId) {
         this.alarmId = alarmId;
     }
 
     public void setSalivaId(int salivaId) {
         this.salivaId = salivaId;
+    }
+
+    @Override
+    protected void showInvalidBarcodeDialog() {
+        if (getContext() == null) {
+            return;
+        }
+
+        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
+        icon.setTint(getResources().getColor(R.color.colorPrimary));
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_barcode_invalid)
+                .setIcon(icon)
+                .setMessage(R.string.message_barcode_invalid)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
     private void cancelTimer(String barcodeValue) {
@@ -116,83 +192,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         if (lastSampleWasTaken) {
             TimerHandler.finishDay(getContext());
         }
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        if (salivaId == Constants.EXTRA_SALIVA_ID_INITIAL) {
-            finishActivity(this.alarmTime);
-        } else if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
-            switchFragment();
-        } else {
-            finishActivity(this.alarmTime);
-        }
-
-    }
-
-    @Override
-    public void onChanged(Barcode mlKitBarcode) {
-        if (mlKitBarcode != null) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-
-            BarcodeField barcode = new BarcodeField(Constants.BARCODE_TYPE_EAN8, mlKitBarcode.getRawValue());
-            Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
-
-            Log.d(TAG, "Detected Barcode: " + barcode.getValue());
-            Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
-
-            BarcodeCheckResult check = BarcodeChecker.isValidBarcode(barcode.getValue(), sharedPreferences);
-
-            Log.d(TAG, "Barcode scan: " + check);
-
-            switch (check) {
-                case DUPLICATE_BARCODE:
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
-                        json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
-                        LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    showBarcodeAlreadyScannedDialog();
-                    break;
-                case VALID:
-                    scannedBarcodes.add(barcode.getValue());
-                    sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
-
-                    cancelTimer(barcode.getValue());
-                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
-                    break;
-                case INVALID:
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
-                        LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    showInvalidBarcodeDialog();
-                    break;
-            }
-        }
-    }
-
-    @Override
-    protected void showInvalidBarcodeDialog() {
-        if (getContext() == null) {
-            return;
-        }
-
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.title_barcode_invalid)
-                .setIcon(icon)
-                .setMessage(R.string.message_barcode_invalid)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
     private void showBarcodeAlreadyScannedDialog() {
