@@ -112,10 +112,10 @@ public class AlarmFragment extends Fragment {
         setAlarmColor(alarm.isActive());
 
         // define behavior on activity switch change
-        activeSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-            alarm.setActive(checked);
+        activeSwitch.setOnClickListener(view -> {
+            alarm.setActive(activeSwitch.isChecked());
             setInitialSalivaId();
-            setAlarmColor(checked);
+            setAlarmColor(activeSwitch.isChecked());
             scheduleAlarm(context);
             updateAlarm();
         });
