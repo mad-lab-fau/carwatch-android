@@ -37,7 +37,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
     private int alarmId = Constants.EXTRA_ALARM_ID_MANUAL;
     private int salivaId = Constants.EXTRA_SALIVA_ID_MANUAL;
-    private long alarmTime = 0;
 
     @Override
     public void onResume() {
@@ -48,14 +47,11 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (salivaId == Constants.EXTRA_SALIVA_ID_INITIAL) {
-            finishActivity(this.alarmTime);
-        } else if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
+        if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
             switchFragment();
         } else {
-            finishActivity(this.alarmTime);
+            finishActivity();
         }
-
     }
 
     @Override
@@ -210,22 +206,17 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
-    private void finishActivity(long alarmTime) {
+    private void finishActivity() {
         if (getActivity() != null) {
-            Intent intent = new Intent();
-            intent.putExtra(Constants.EXTRA_ALARM_TIME, alarmTime);
-            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().setResult(Activity.RESULT_OK, new Intent());
             getActivity().finish();
         }
     }
 
     private void switchFragment() {
-        // called when Fragment is part of MainActivity
-        // check if current activity is MainActivity
         if (getActivity() instanceof MainActivity) {
             MainActivity mainActivity = (MainActivity) getActivity();
             mainActivity.navigate();
         }
     }
-
 }

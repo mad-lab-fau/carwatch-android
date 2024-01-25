@@ -33,6 +33,7 @@
     <string name="user_credentials">User Credentials</string>
 
     <!-- Snackbar messages -->
+    <string name="saliva_alarms_set">The saliva sample alarms were scheduled.</string>
     <string name="alarm_set">Alarm set for %snow.</string>
     <string name="alarm_cancelled">Alarm cancelled.</string>
     <string name="alarm_set_error">Error setting alarm.</string>

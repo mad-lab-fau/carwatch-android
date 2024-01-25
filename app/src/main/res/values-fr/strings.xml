@@ -37,6 +37,7 @@
     <string name="alarm_set">Alarme réglée %s à partir de maintenant.</string>
     <string name="alarm_cancelled">Alarme annulée</string>
     <string name="alarm_set_error">Erreur lors du réglage de l\'alarme</string>
+    <string name="saliva_alarms_set">Les échantillons de salive ont été programmés.</string>
 
 
     <string name="title_subject_id">Entrer l\'ID de participant</string>

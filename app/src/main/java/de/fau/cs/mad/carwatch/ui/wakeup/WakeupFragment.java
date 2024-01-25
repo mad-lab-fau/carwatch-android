@@ -91,7 +91,6 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     private void showWakeupDialog() {
         if (getContext() == null) {
             return;
@@ -126,6 +125,8 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                         intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
                         intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
                         startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
+                    } else {
+                        AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
                     }
                 })
                 .show();
@@ -160,31 +161,6 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void showWakeupWarningDialog() {
-        if (getContext() == null) {
-            return;
-        }
-
-        Intent intent = new Intent(getActivity(), AlertActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (getActivity() == null || data == null) {
-            return;
-        }
-
-        if (requestCode == Constants.REQUEST_CODE_SCAN) {
-            if (resultCode == Activity.RESULT_OK) {
-                long alarmTime = data.getLongExtra(Constants.EXTRA_ALARM_TIME, 0);
-                DateTime time = new DateTime(alarmTime);
-                AlarmHandler.showAlarmSetMessage(getContext(), getActivity().findViewById(R.id.coordinator), time);
-            }
         }
     }
 }

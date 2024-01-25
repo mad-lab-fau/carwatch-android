@@ -5,6 +5,7 @@
     <string name="alarm_notification_text">Alarm!</string>
     <string name="alarm_set">Der Wecker klingelt %s.</string>
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
+    <string name="saliva_alarms_set">Die Probenwecker wurden gestellt.</string>
     <string name="cancel">Abbrechen</string>
     <string name="menu_kill">Kill Alarms</string>
     <string name="menu_share">Logs teilen …</string>

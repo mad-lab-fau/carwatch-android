@@ -129,28 +129,19 @@ public class AlarmHandler {
         scheduleSalivaAlarms(context);
     }
 
+    public static void showMessageSalivaAlarmsScheduled(Context context, View anchor) {
+        if (anchor == null || context == null)
+            return;
+
+        String message = context.getString(R.string.saliva_alarms_set);
+        Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show();
+    }
+
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
         if (snackBarAnchor == null)
             return;
 
-        Period timeDiff = new Period(DateTime.now(), time);
-        String timeDiffString = formatter.print(timeDiff);
-
-        switch (Locale.getDefault().getLanguage()) {
-            case "de":
-                timeDiffString += timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString;
-                break;
-            case "fr":
-                if (!timeDiffString.isEmpty()) {
-                    timeDiffString = "pour " + timeDiffString;
-                }
-                break;
-            default:
-                if (!timeDiffString.isEmpty()) {
-                    timeDiffString += " from ";
-                }
-        }
-
+        String timeDiffString = createTimeDiffString(time);
         Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
     }
 
@@ -343,6 +334,20 @@ public class AlarmHandler {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
         return pendingFlags;
+    }
+
+    private static String createTimeDiffString(DateTime nextRingTime) {
+        Period timeDiff = new Period(DateTime.now(), nextRingTime);
+        String timeDiffString = formatter.print(timeDiff);
+
+        switch (Locale.getDefault().getLanguage()) {
+            case "de":
+                return timeDiffString + (timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString);
+            case "fr":
+                return timeDiffString.isEmpty() ? "" : "pour " + timeDiffString;
+            default:
+                return timeDiffString.isEmpty() ? "" : timeDiffString + " from ";
+        }
     }
 
     private static void logAlarmSet(Alarm alarm, DateTime nextRing) {
