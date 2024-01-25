@@ -1,6 +1,5 @@
 package de.fau.cs.mad.carwatch.ui.wakeup;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -34,7 +32,6 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.ui.AlertActivity;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
@@ -124,7 +121,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                         Intent intent = new Intent(getContext(), BarcodeActivity.class);
                         intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
                         intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
-                        startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
+                        startActivity(intent);
                     } else {
                         AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
                     }
