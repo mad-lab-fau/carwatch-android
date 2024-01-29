@@ -55,7 +55,7 @@ public class QrFragment extends BarcodeFragment {
         int eveningSampleId = parser.hasEveningSalivette ? numSamples - 1 : -1;
         sharedPreferences.edit()
                 .putString(Constants.PREF_STUDY_NAME, parser.studyName)
-                .putInt(Constants.PREF_NUM_SUBJECTS, parser.numSubjects)
+                .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.numParticipants)
                 .putString(Constants.PREF_SALIVA_DISTANCES, parser.salivaDistances)
                 .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
                 .putInt(Constants.PREF_TOTAL_NUM_SAMPLES, numSamples)
@@ -71,8 +71,8 @@ public class QrFragment extends BarcodeFragment {
 
         if (!parser.participantId.isEmpty()) {
             sharedPreferences.edit()
-                    .putString(Constants.PREF_SUBJECT_ID, parser.participantId)
-                    .putBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, true)
+                    .putString(Constants.PREF_PARTICIPANT_ID, parser.participantId)
+                    .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
         }
     }

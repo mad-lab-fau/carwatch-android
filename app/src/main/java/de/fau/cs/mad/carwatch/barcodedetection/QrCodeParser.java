@@ -19,7 +19,7 @@ public class QrCodeParser {
     public String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
     public String startSample;
     public int studyDays;
-    public int numSubjects;
+    public int numParticipants;
     public String participantId = "";
     public boolean hasEveningSalivette;
     public String shareEmailAddress;
@@ -56,8 +56,8 @@ public class QrCodeParser {
             studyDays = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_DAYS))
             );
-            numSubjects = Integer.parseInt(Objects.requireNonNull(
-                    propertyMap.get(Constants.QR_PARSER_PROPERTY_NUM_SUBJECTS))
+            numParticipants = Integer.parseInt(Objects.requireNonNull(
+                    propertyMap.get(Constants.QR_PARSER_PROPERTY_NUM_PARTICIPANTS))
             );
             hasEveningSalivette = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_EVENING))

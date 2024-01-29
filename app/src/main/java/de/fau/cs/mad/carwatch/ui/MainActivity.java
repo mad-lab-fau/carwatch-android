@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int CLICK_THRESHOLD_TOAST = 2;
     private static final int CLICK_THRESHOLD_KILL = 5;
 
-    private AlertDialog subjectIdDialog;
+    private AlertDialog participantIdDialog;
     private AlertDialog scanQrDialog;
 
     @Override
@@ -136,9 +136,9 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
             // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
             showScanQrDialog();
-        } else if (!sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, false)) {
+        } else if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
             // if participant ID was not included in QR code => display participant ID dialog
-            showSubjectIdDialog();
+            showParticipantIdDialog();
         }
     }
 
@@ -159,10 +159,10 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_share:
                 String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
-                String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
+                String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, null);
 
                 try {
-                    File zipFile = LoggerUtil.zipDirectory(this, studyName, subjectId);
+                    File zipFile = LoggerUtil.zipDirectory(this, studyName, participantId);
                     createFileShareDialog(zipFile);
                 } catch (FileNotFoundException e) {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
@@ -199,40 +199,40 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // dismiss optional dialogs to prevent leaking windows
-        if (subjectIdDialog != null) {
-            subjectIdDialog.dismiss();
+        if (participantIdDialog != null) {
+            participantIdDialog.dismiss();
         }
         if (scanQrDialog != null) {
             scanQrDialog.dismiss();
         }
     }
 
-    private void showSubjectIdDialog() {
+    private void showParticipantIdDialog() {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        final View dialogView = getLayoutInflater().inflate(R.layout.widget_subject_id_dialog, null);
-        final EditText subjectIdEditText = dialogView.findViewById(R.id.edit_text_subject_id);
+        final View dialogView = getLayoutInflater().inflate(R.layout.widget_participant_id_dialog, null);
+        final EditText participantIdEditText = dialogView.findViewById(R.id.edit_text_participant_id);
 
 
-        subjectIdDialog = dialogBuilder
+        participantIdDialog = dialogBuilder
                 .setCancelable(false)
-                .setTitle(getString(R.string.title_subject_id))
-                .setMessage(getString(R.string.message_subject_id))
+                .setTitle(getString(R.string.title_participant_id))
+                .setMessage(getString(R.string.message_participant_id))
                 .setView(dialogView)
                 .setPositiveButton(R.string.ok, null)
                 .create();
 
-        subjectIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String subjectId = subjectIdEditText.getText().toString();
+        participantIdDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String participantId = participantIdEditText.getText().toString();
 
-            // store subject id
+            // store participant id
             sharedPreferences.edit()
-                    .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                    .putBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, true)
+                    .putString(Constants.PREF_PARTICIPANT_ID, participantId)
+                    .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
             try {
                 JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_SUBJECT_ID, subjectId);
-                LoggerUtil.log(Constants.LOGGER_ACTION_SUBJECT_ID_SET, json);
+                json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, participantId);
+                LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
 
                 logAppPhoneMetadata();
                 logStudyData();
@@ -240,12 +240,12 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, false)) {
+            if (sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
                 // if default settings were changed successfully => dismiss Dialog
                 dialog.dismiss();
             }
         }));
-        subjectIdDialog.show();
+        participantIdDialog.show();
     }
 
     private void showScanQrDialog() {
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
             // log all relevant study data
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
-            json.put(Constants.LOGGER_EXTRA_NUM_SUBJECTS, sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0));
+            json.put(Constants.LOGGER_EXTRA_NUM_PARTICIPANTS, sharedPreferences.getInt(Constants.PREF_NUM_PARTICIPANTS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_DISTANCES, salivaDistancesString);
             json.put(Constants.LOGGER_EXTRA_SALIVA_TIMES, salivaTimesString);
             json.put(Constants.LOGGER_EXTRA_STUDY_DAYS, sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0));

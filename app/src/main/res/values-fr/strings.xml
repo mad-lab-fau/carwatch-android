@@ -40,13 +40,13 @@
     <string name="saliva_alarms_set">Les échantillons de salive ont été programmés.</string>
 
 
-    <string name="title_subject_id">Entrer l\'ID de participant</string>
-    <string name="subject_id">ID de participant</string>
+    <string name="title_participant_id">Entrer l\'ID de participant</string>
+    <string name="participant_id">ID de participant</string>
     <string name="study_id">Nom de l\'étude</string>
-    <string name="message_subject_id_short">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
-    <string name="message_subject_id">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
-    <string name="title_invalid_subject_id">ID du participant invalide</string>
-    <string name="message_invalid_subject_id">ID du participant invalide! Veuillez réessayer.</string>
+    <string name="message_participant_id_short">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
+    <string name="message_participant_id">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
+    <string name="title_invalid_participant_id">ID du participant invalide</string>
+    <string name="message_invalid_participant_id">ID du participant invalide! Veuillez réessayer.</string>
     <string name="title_kill_alarms">Avertissement</string>
     <string name="message_kill_alarms">Êtes-vous sûre de vouloir annuler toutes les alarmes et les minuteries de prélèvements ? Cette action ne peut pas être annulée!</string>
 

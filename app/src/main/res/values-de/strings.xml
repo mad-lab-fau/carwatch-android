@@ -10,9 +10,9 @@
     <string name="menu_kill">Kill Alarms</string>
     <string name="menu_share">Logs teilen …</string>
     <string name="study_id">Name der Studie</string>
-    <string name="subject_id">Probanden-ID</string>
-    <string name="message_subject_id_short">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
-    <string name="message_subject_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
+    <string name="participant_id">Probanden-ID</string>
+    <string name="message_participant_id_short">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
+    <string name="message_participant_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
     <string name="prompt_point_at_a_barcode">Bitte richten Sie Ihre Kamera auf einen Barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
@@ -27,7 +27,7 @@
     <string name="title_dashboard">Alarm</string>
     <string name="title_wakeup">Aufstehen</string>
     <string name="title_bedtime">Bettzeit</string>
-    <string name="title_subject_id">Probanden-ID eingeben</string>
+    <string name="title_participant_id">Probanden-ID eingeben</string>
     <string name="user_credentials">Benutzerinformationen</string>
 
 
@@ -65,8 +65,8 @@
     <string name="title_activity_scan">Barcode einscannen</string>
 
     <string name="app_active">CARWatch Service ist aktiv.</string>
-    <string name="title_invalid_subject_id">Ungültiger Probanden-Code</string>
-    <string name="message_invalid_subject_id">Ungültiger  Probanden-Code! Bitte versuchen Sie es erneut.</string>
+    <string name="title_invalid_participant_id">Ungültiger Probanden-Code</string>
+    <string name="message_invalid_participant_id">Ungültiger  Probanden-Code! Bitte versuchen Sie es erneut.</string>
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>

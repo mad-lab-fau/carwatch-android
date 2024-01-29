@@ -38,14 +38,14 @@
     <string name="alarm_cancelled">Alarm cancelled.</string>
     <string name="alarm_set_error">Error setting alarm.</string>
 
-    <!-- Subject ID Dialog -->
-    <string name="title_subject_id">Enter Participant ID</string>
-    <string name="subject_id">Participant ID</string>
+    <!-- Participant ID Dialog -->
+    <string name="title_participant_id">Enter Participant ID</string>
+    <string name="participant_id">Participant ID</string>
     <string name="study_id">Study Name</string>
-    <string name="message_subject_id_short">Please enter the Participant ID you received from us.</string>
-    <string name="message_subject_id">Please enter the Participant ID you received from us.</string>
-    <string name="title_invalid_subject_id">Invalid Participant ID</string>
-    <string name="message_invalid_subject_id">Invalid Participant ID! Please try again.</string>
+    <string name="message_participant_id_short">Please enter the Participant ID you received from us.</string>
+    <string name="message_participant_id">Please enter the Participant ID you received from us.</string>
+    <string name="title_invalid_participant_id">Invalid Participant ID</string>
+    <string name="message_invalid_participant_id">Invalid Participant ID! Please try again.</string>
     <string name="title_kill_alarms">Warning</string>
     <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
