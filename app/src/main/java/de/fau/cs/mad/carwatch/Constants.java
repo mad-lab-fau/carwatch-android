@@ -24,7 +24,7 @@ public final class Constants {
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
-    public static final String PREF_FIRST_RUN_SUBJECT_ID = "first_run_subject_id"; // boolean
+    public static final String PREF_SUBJECT_ID_WAS_SET = "subject_id_was_set"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_SUBJECT_ID = "subject_id"; // String
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
@@ -146,6 +146,7 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_CONTACT = "M";
     public static final String QR_PARSER_PROPERTY_DUPLICATES = "FD";
     public static final String QR_PARSER_PROPERTY_MANUAL_SCAN = "FM";
+    public static final String QR_PARSER_PROPERTY_PARTICIPANT_ID = "P";
 
     public static final String LOGGER_EXTRA_STUDY_NAME = "study_name";
     public static final String LOGGER_EXTRA_NUM_SUBJECTS = "num_subjects";

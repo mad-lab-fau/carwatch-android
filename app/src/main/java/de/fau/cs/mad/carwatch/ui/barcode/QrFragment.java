@@ -68,6 +68,13 @@ public class QrFragment extends BarcodeFragment {
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
                 .putString(Constants.PREF_START_SAMPLE, parser.startSample)
                 .apply();
+
+        if (!parser.participantId.isEmpty()) {
+            sharedPreferences.edit()
+                    .putString(Constants.PREF_SUBJECT_ID, parser.participantId)
+                    .putBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, true)
+                    .apply();
+        }
     }
 
     @Override

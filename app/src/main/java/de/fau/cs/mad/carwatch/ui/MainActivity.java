@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
             // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
             showScanQrDialog();
-        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
-            // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
+        } else if (!sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, false)) {
+            // if participant ID was not included in QR code => display participant ID dialog
             showSubjectIdDialog();
         }
     }
@@ -226,8 +226,8 @@ public class MainActivity extends AppCompatActivity {
 
             // store subject id
             sharedPreferences.edit()
-                    .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
                     .putString(Constants.PREF_SUBJECT_ID, subjectId)
+                    .putBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, true)
                     .apply();
             try {
                 JSONObject json = new JSONObject();
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
+            if (sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_WAS_SET, false)) {
                 // if default settings were changed successfully => dismiss Dialog
                 dialog.dismiss();
             }
