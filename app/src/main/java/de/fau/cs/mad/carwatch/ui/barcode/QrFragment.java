@@ -74,6 +74,14 @@ public class QrFragment extends BarcodeFragment {
                     .putString(Constants.PREF_PARTICIPANT_ID, parser.participantId)
                     .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
+
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, parser.participantId);
+                LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -139,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
             // if participant ID was not included in QR code => display participant ID dialog
             showParticipantIdDialog();
+        } else {
+            logAppPhoneMetadata();
+            logStudyData();
         }
     }
 
@@ -212,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
         final View dialogView = getLayoutInflater().inflate(R.layout.widget_participant_id_dialog, null);
         final EditText participantIdEditText = dialogView.findViewById(R.id.edit_text_participant_id);
 
-
         participantIdDialog = dialogBuilder
                 .setCancelable(false)
                 .setTitle(getString(R.string.title_participant_id))
@@ -229,13 +231,14 @@ public class MainActivity extends AppCompatActivity {
                     .putString(Constants.PREF_PARTICIPANT_ID, participantId)
                     .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
+
+            logAppPhoneMetadata();
+            logStudyData();
+
             try {
                 JSONObject json = new JSONObject();
                 json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, participantId);
                 LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
-
-                logAppPhoneMetadata();
-                logStudyData();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
