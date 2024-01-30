@@ -38,8 +38,10 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         DateTime date = new DateTime(sharedPreferences.getLong(Constants.PREF_CURRENT_DATE, 0));
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
         boolean firstAlarmProcessAlreadyFinished = false;
-        if (date.isBefore(LocalTime.MIDNIGHT.toDateTimeToday())) {
+
+        if (date.isBefore(LocalTime.MIDNIGHT.toDateTimeToday()) && alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
             AlarmHandler.rescheduleSalivaAlarms(context);
             int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, -1) + 1;
             sharedPreferences.edit()
@@ -51,8 +53,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         } else {
             firstAlarmProcessAlreadyFinished = true;
         }
-
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
 
         AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
         Alarm alarm;

@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -108,14 +109,9 @@ public class AlarmHandler {
         AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarm.getTimeToNextRing().getMillis(), showIntent);
         alarmManager.setAlarmClock(info, operation);
 
+        setBootCompletedReceiverEnabledSetting(context, true);
+
         logAlarmSet(alarm, alarm.getTimeToNextRing());
-
-        ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
-        PackageManager pm = context.getPackageManager();
-        pm.setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
-
         showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
     }
 
@@ -146,6 +142,9 @@ public class AlarmHandler {
     }
 
     public static void scheduleSalivaAlarm(Context context, Alarm alarm, View snackbarAnchor) {
+        if (!alarm.isActive())
+            return;
+
         DateTime alarmTime = alarm.getTimeToNextRing();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -160,6 +159,8 @@ public class AlarmHandler {
         Log.d(TAG, "Setting timed alarm " + alarm.getId() + " at " + alarmTime);
         AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(alarmTime.getMillis(), showIntent);
         alarmManager.setAlarmClock(info, subsequentOperation);
+
+        setBootCompletedReceiverEnabledSetting(context, true);
 
         try {
             // create Json object and log information
@@ -189,32 +190,41 @@ public class AlarmHandler {
         } else {
             pendingFlags = PendingIntent.FLAG_NO_CREATE;
         }
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, pendingFlags);
 
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, pendingFlags);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        // PendingIntent may be null if the alarm hasn't been set
-        if (alarmManager != null && pendingIntent != null) {
-            Log.d(TAG, "Cancelling alarm " + alarm.getId());
+        if (alarmManager == null || pendingIntent == null)
+            // PendingIntent may be null if the alarm hasn't been set
+            return;
 
-            try {
-                // create Json object and log information
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
-                LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_CANCEL, json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            alarmManager.cancel(pendingIntent);
-
-            ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
-            PackageManager pm = context.getPackageManager();
-
-            pm.setComponentEnabledSetting(receiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
+        try {
+            // create Json object and log information
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
+            LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_CANCEL, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
+        alarmManager.cancel(pendingIntent);
+
+        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
+        List<Alarm> alarms = repository.getAlarms().getValue();
+        boolean enabledAlarmRemains = false;
+
+        if (alarms == null)
+            return;
+
+        for (Alarm a : alarms) {
+            if (a.isActive()) {
+                enabledAlarmRemains = true;
+                break;
+            }
+        }
+
+        if (!enabledAlarmRemains)
+            setBootCompletedReceiverEnabledSetting(context, false);
 
         if (snackBarAnchor != null) {
             // Show snackbar to notify user
@@ -223,21 +233,29 @@ public class AlarmHandler {
     }
 
     private static void deleteSalivaAlarms(Context context) {
-        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
-        List<Alarm> alarms = repository.getAlarms().getValue();
+        AlarmRepository repository = AlarmRepository.getInstance(context);
 
-        if (alarms == null)
-            return;
+        try {
+            List<Alarm> alarms = repository.getAll();
 
-        for (Alarm alarm : alarms) {
-            if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL)
-                continue;
-            repository.delete(alarm);
+            if (alarms == null) {
+                return;
+            }
+
+
+            for (Alarm alarm : alarms) {
+                if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL)
+                    continue;
+                repository.delete(alarm);
+            }
+
+            // reset alarm id counter
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1).apply();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.d(TAG, "Failed fetching alarms");
+            e.printStackTrace();
         }
-
-        // reset alarm id counter
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1).apply();
     }
 
     private static void scheduleSalivaAlarms(Context context) {
@@ -334,6 +352,13 @@ public class AlarmHandler {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
         return pendingFlags;
+    }
+
+    private static void setBootCompletedReceiverEnabledSetting(Context context, boolean setEnabled) {
+        int flag = setEnabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        ComponentName receiver = new ComponentName(context, BootCompletedReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(receiver, flag, PackageManager.DONT_KILL_APP);
     }
 
     private static String createTimeDiffString(DateTime nextRingTime) {

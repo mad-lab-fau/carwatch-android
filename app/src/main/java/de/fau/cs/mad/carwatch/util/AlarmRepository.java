@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.util;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
@@ -32,9 +33,25 @@ public class AlarmRepository {
         alarms = alarmModel.getAlarms();
     }
 
+    private AlarmRepository(Context context) {
+        // Application is used instead of Context in order to prevent memory leaks
+        // between Activity switches
+        AlarmDatabase db = AlarmDatabase.getInstance(context);
+        alarmModel = db.alarmModel();
+        alarm = alarmModel.getAlarmLiveData();
+        alarms = alarmModel.getAlarms();
+    }
+
     public static AlarmRepository getInstance(Application application) {
         if (sAlarmRepository == null) {
             sAlarmRepository = new AlarmRepository(application);
+        }
+        return sAlarmRepository;
+    }
+
+    public static AlarmRepository getInstance(Context context) {
+        if (sAlarmRepository == null) {
+            sAlarmRepository = new AlarmRepository(context);
         }
         return sAlarmRepository;
     }
@@ -50,6 +67,10 @@ public class AlarmRepository {
 
     public LiveData<List<Alarm>> getAlarms() {
         return alarms;
+    }
+
+    public List<Alarm> getAll() throws ExecutionException, InterruptedException {
+        return new GetAllAsyncTask(alarmModel).execute().get();
     }
 
     public void insert(Alarm alarm) {
@@ -166,6 +187,19 @@ public class AlarmRepository {
         @Override
         protected Alarm doInBackground(final Integer... params) {
             return alarmModel.getById(params[0]);
+        }
+    }
+    private static class GetAllAsyncTask extends AsyncTask<Void, Void, List<Alarm>> {
+
+        private final AlarmDao alarmModel;
+
+        GetAllAsyncTask(AlarmDao alarmModel) {
+            this.alarmModel = alarmModel;
+        }
+
+        @Override
+        protected List<Alarm> doInBackground(Void... voids) {
+            return alarmModel.getAll();
         }
     }
 }
