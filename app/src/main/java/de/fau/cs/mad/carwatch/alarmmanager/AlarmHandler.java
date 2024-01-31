@@ -238,22 +238,23 @@ public class AlarmHandler {
         try {
             List<Alarm> alarms = repository.getAll();
 
-            if (alarms == null) {
+            if (alarms == null)
                 return;
-            }
-
 
             for (Alarm alarm : alarms) {
                 if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL)
                     continue;
+                alarm.setActive(false);
+                cancelAlarm(context, alarm, null);
                 repository.delete(alarm);
+                Log.d(TAG, "Deleted saliva alarm " + alarm.getId());
             }
 
             // reset alarm id counter
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1).apply();
         } catch (ExecutionException | InterruptedException e) {
-            Log.d(TAG, "Failed fetching alarms");
+            Log.d(TAG, "Could not delete yesterdays saliva alarms: failed to get alarms from database");
             e.printStackTrace();
         }
     }
