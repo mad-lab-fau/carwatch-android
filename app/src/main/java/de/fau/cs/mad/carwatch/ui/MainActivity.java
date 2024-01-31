@@ -1,5 +1,7 @@
 package de.fau.cs.mad.carwatch.ui;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,6 +41,7 @@ import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
@@ -355,7 +358,13 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setTitle(getString(R.string.title_kill_alarms))
                 .setMessage(getString(R.string.message_kill_alarms))
-                .setPositiveButton(R.string.yes, (dialog, which) -> AlarmHandler.killAll(getApplication()))
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    AlarmHandler.killAll(getApplication());
+                    AlarmSoundControl.getInstance().stopAlarmSound();
+                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (notificationManager != null)
+                        notificationManager.cancelAll();
+                })
                 .setNegativeButton(R.string.cancel, ((dialog, which) -> {
                 }))
                 .show();
