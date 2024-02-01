@@ -262,11 +262,6 @@ public class MainActivity extends AppCompatActivity {
                         .create();
 
         scanQrDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-
-            sharedPreferences.edit()
-                    .putInt(Constants.PREF_DAY_COUNTER, 0)
-                    .apply();
-
             Intent intent = new Intent(this, QrActivity.class);
             startActivity(intent);
 

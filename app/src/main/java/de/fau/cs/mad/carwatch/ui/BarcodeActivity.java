@@ -80,7 +80,7 @@ public class BarcodeActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
-        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, -1) + 1;
+        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
         int numDailySamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
         int numScannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>()).size();
         boolean dayFinished = numScannedBarcodes >= numDailySamples * dayCounter;
