@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.ui;
 
 import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import androidx.collection.ArraySet;
 import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.ui.barcode.Ean8Fragment;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
@@ -101,4 +103,17 @@ public class BarcodeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        stopAlarmNotification();
+    }
+
+    private void stopAlarmNotification() {
+        AlarmSoundControl soundControl = AlarmSoundControl.getInstance();
+        soundControl.stopAlarmSound();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null)
+            notificationManager.cancelAll();
+    }
 }
