@@ -80,7 +80,13 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
                 if (!date.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
                     showWakeupDialog();
-                } else if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && getActivity() != null) {
+                    break;
+                }
+                if (getActivity() == null)
+                    break;
+                if (dayCounter > numDays) {
+                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), Snackbar.LENGTH_SHORT).show();
+                } else {
                     Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
                 }
                 break;

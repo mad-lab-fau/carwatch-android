@@ -40,6 +40,7 @@
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
     <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>
+    <string name="warning_study_finished">Sie haben die Studie bereits abgeschlossen.</string>
 
     <string name="wakeup_title">Den Morgen beginnen</string>
     <string name="wakeup_text">Wir beginnen nun mit dem Morgenprozedere</string>
