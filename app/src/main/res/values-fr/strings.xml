@@ -39,6 +39,9 @@
     <string name="alarm_set_error">Erreur lors du réglage de l\'alarme</string>
     <string name="saliva_alarms_set">Les échantillons de salive ont été programmés.</string>
 
+    <!-- Open battery settings dialog -->
+    <string name="title_battery_optimization">Optimisation de la batterie</string>
+    <string name="message_battery_optimization">Veuillez désactiver l\'optimisation de la batterie pour CARWatch afin de garantir un déclenchement fiable des alarmes.</string>
 
     <string name="title_subject_id">Entrer l\'ID de participant</string>
     <string name="subject_id">ID de participant</string>

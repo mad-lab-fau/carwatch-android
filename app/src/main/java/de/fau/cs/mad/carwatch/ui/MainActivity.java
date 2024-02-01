@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AlertDialog subjectIdDialog;
     private AlertDialog scanQrDialog;
+    private AlertDialog openBatteryOptimizationDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +134,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
         }
-        if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
+        if (!sharedPreferences.getBoolean(Constants.PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS, false) && !Utils.batteryOptimizationIgnored(this)) {
+            openBatteryOptimizationDialog();
+        } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
             // if user launched app for the first time (PREF_FIRST_RUN_QR) => display Dialog to scan study QR code
             showScanQrDialog();
         } else if (sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, true)) {
@@ -208,6 +212,9 @@ public class MainActivity extends AppCompatActivity {
         if (scanQrDialog != null) {
             scanQrDialog.dismiss();
         }
+        if (openBatteryOptimizationDialog != null) {
+            openBatteryOptimizationDialog.dismiss();
+        }
     }
 
     private void showSubjectIdDialog() {
@@ -271,6 +278,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
         scanQrDialog.show();
+    }
+
+    private void openBatteryOptimizationDialog() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        openBatteryOptimizationDialog = dialogBuilder
+                .setCancelable(false)
+                .setTitle(getString(R.string.title_battery_optimization))
+                .setMessage(getString(R.string.message_battery_optimization))
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    Utils.openBatteryOptimizationSettings(this);
+                    sharedPreferences.edit().putBoolean(Constants.PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS, true).apply();
+                    openBatteryOptimizationDialog.dismiss();
+                })
+                .create();
+        openBatteryOptimizationDialog.show();
     }
 
     private void updateBottomNavigationBar() {
