@@ -37,6 +37,7 @@
     <string name="alarm_set">Alarme réglée %s à partir de maintenant.</string>
     <string name="alarm_cancelled">Alarme annulée</string>
     <string name="alarm_set_error">Erreur lors du réglage de l\'alarme</string>
+    <string name="saliva_alarms_set">Les échantillons de salive ont été programmés.</string>
 
     <!-- Open battery settings dialog -->
     <string name="title_battery_optimization">Optimisation de la batterie</string>
@@ -78,15 +79,18 @@
 
     <string name="bedtime_title">Débutez votre prélèvement du soir</string>
     <string name="bedtime_text">Nous allons maintenant procéder au prélèvement de l\'échantillon de salive du soir</string>
-    <string name="bedtime_message">Bonne soirée! Vous-couchez vous ?</string>
+    <string name="bedtime_message">Bonne soirée! Vous-couchez vous?</string>
 
 
     <string name="set_alarm_message">Veuillez régler l\'heure d\'alarme souhaitée pour demain.</string>
+    <string name="saliva_alarms_header">Réveil pour les échantillons de salive</string>
+    <string name="cancel_fixed_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
 
     <string name="warning_title">Avertissement</string>
     <string name="warning_already_taken_wakeup">Vous avez déjà complété tous les échantillons de salive du matin</string>
     <string name="warning_already_taken_bedtime">Vous avez déjà complété votre échantillon de salive du soir</string>
     <string name="warning_already_report_wakeup">Vous avez déjà enregistré l\'heure de réveil!</string>
+    <string name="warning_study_finished">Vous avez déjà terminé l\'étude.</string>
 
     <string name="feedback_thanks">Merci pour vos commentaires!</string>
     <string name="good_night">Merci et bonne nuit!</string>

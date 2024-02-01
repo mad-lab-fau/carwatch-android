@@ -21,8 +21,6 @@ public final class Constants {
             new LocalTime(5, 0).toDateTimeToday().plusDays(1)
     };
 
-    public static final int FIRST_SALIVA_SAMPLE_OFFSET = 0;
-
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
@@ -31,26 +29,28 @@ public final class Constants {
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_SUBJECT_ID = "subject_id"; // String
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
-    public static final String PREF_MORNING_TAKEN = "morning_taken"; // long (day)
-    public static final String PREF_MORNING_ONGOING = "morning_ongoing"; // int (alarmId)
+    public static final String PREF_CURRENT_DATE = "morning_taken"; // long (day)
+    public static final String PREF_ID_ONGOING_ALARM = "morning_ongoing"; // int (alarmId)
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
     public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean
     public static final String PREF_NUM_SUBJECTS = "num_subjects"; // int
-    public static final String PREF_SALIVA_TIMES = "saliva_times"; //Array<Integer>
+    public static final String PREF_TOTAL_NUM_SAMPLES = "total_num_samples"; // int
+    public static final String PREF_SALIVA_DISTANCES = "saliva_times"; // Array<Integer>
+    public static final String PREF_SALIVA_TIMES = "saliva_absolute_times"; // Array<String>
     public static final String PREF_NUM_DAYS = "study_days"; // int
     public static final String PREF_HAS_EVENING = "has_evening"; // boolean
     public static final String PREF_SHARE_EMAIL_ADDRESS = "share_email_address"; // boolean
     public static final String PREF_CHECK_DUPLICATES = "check_duplicates"; // boolean
     public static final String PREF_MANUAL_SCAN = "enable_manual_scan"; // boolean
     public static final String PREF_START_SAMPLE = "start_sample";
-
+    public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
+    public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
-    public static final int DEFAULT_ALARM_ID = 1; // id of morning alarm
     public static final String DEFAULT_START_SAMPLE = "S0";
 
     public static final String EXTRA_ALARM_TIME = "extra_alarm_time";
@@ -140,7 +140,8 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_STUDY_NAME = "N";
     public static final String QR_PARSER_PROPERTY_STUDY_DAYS = "D";
     public static final String QR_PARSER_PROPERTY_NUM_SUBJECTS = "S";
-    public static final String QR_PARSER_PROPERTY_SALIVA_TIMES = "T";
+    public static final String QR_PARSER_PROPERTY_SALIVA_DISTANCES = "T";
+    public static final String QR_PARSER_PROPERTY_SALIVA_TIMES = "A";
     public static final String QR_PARSER_PROPERTY_START_SAMPLE = "SS";
     public static final String QR_PARSER_PROPERTY_EVENING = "E";
     public static final String QR_PARSER_PROPERTY_CONTACT = "M";
@@ -149,7 +150,8 @@ public final class Constants {
 
     public static final String LOGGER_EXTRA_STUDY_NAME = "study_name";
     public static final String LOGGER_EXTRA_NUM_SUBJECTS = "num_subjects";
-    public static final String LOGGER_EXTRA_SALIVA_TIMES = "saliva_times";
+    public static final String LOGGER_EXTRA_SALIVA_DISTANCES = "saliva_times";
+    public static final String LOGGER_EXTRA_SALIVA_TIMES = "saliva_absolute_times";
     public static final String LOGGER_EXTRA_STUDY_DAYS = "study_days";
     public static final String LOGGER_EXTRA_HAS_EVENING_SALIVETTE = "has_evening_salivette";
     public static final String LOGGER_EXTRA_SHARE_EMAIL_ADDRESS = "share_email_address";

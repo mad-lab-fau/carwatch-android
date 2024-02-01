@@ -5,6 +5,7 @@
     <string name="alarm_notification_text">Alarm!</string>
     <string name="alarm_set">Der Wecker klingelt %s.</string>
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
+    <string name="saliva_alarms_set">Die Probenwecker wurden gestellt.</string>
     <string name="cancel">Abbrechen</string>
     <string name="menu_kill">Kill Alarms</string>
     <string name="menu_share">Logs teilen …</string>
@@ -35,9 +36,11 @@
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
     <string name="lights_out">Licht aus!</string>
 
+    <string name="cancel_fixed_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
     <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>
+    <string name="warning_study_finished">Sie haben die Studie bereits abgeschlossen.</string>
 
     <string name="wakeup_title">Den Morgen beginnen</string>
     <string name="wakeup_text">Wir beginnen nun mit dem Morgenprozedere</string>
@@ -80,6 +83,7 @@
     <string name="app_info">Info</string>
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
+    <string name="saliva_alarms_header">Wecker für Speichelproben</string>
     <string name="title_scan_qr">QR-Code der Studie Einscannen</string>
     <string name="message_scan_qr">Zunächst benötigen wir einige Details über die Studie an der Sie teilnehmen möchten. Scannen Sie dazu im nächsten Schritt bitte den QR-Code ein, den Sie zusammen mit den Studienmaterialien erhalten haben.</string>
     <string name="title_qr_code_invalid">Ungültiger QR-Code</string>

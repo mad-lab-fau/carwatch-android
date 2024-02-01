@@ -33,6 +33,7 @@
     <string name="user_credentials">User Credentials</string>
 
     <!-- Snackbar messages -->
+    <string name="saliva_alarms_set">The saliva sample alarms were scheduled.</string>
     <string name="alarm_set">Alarm set for %snow.</string>
     <string name="alarm_cancelled">Alarm cancelled.</string>
     <string name="alarm_set_error">Error setting alarm.</string>
@@ -80,13 +81,16 @@
     <string name="bedtime_text">We will now begin with the evening procedure.</string>
     <string name="bedtime_message">Good Evening!\nAre you going to bed?</string>
 
-    <!-- Bedtime Fragment -->
+    <!-- Alarm Fragment -->
     <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>
+    <string name="saliva_alarms_header">Saliva sample alarms</string>
+    <string name="cancel_fixed_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
 
     <string name="warning_title">Warning</string>
     <string name="warning_already_taken_wakeup">You have already taken all morning saliva samples!</string>
     <string name="warning_already_taken_bedtime">You have already taken the evening saliva sample</string>
     <string name="warning_already_report_wakeup">You already reported your wakeup!</string>
+    <string name="warning_study_finished">You have already finished the study.</string>
 
     <string name="feedback_thanks">Thank you for your feedback!</string>
     <string name="good_night">Thank you and good night!</string>

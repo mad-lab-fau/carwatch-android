@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -34,7 +33,6 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
-import de.fau.cs.mad.carwatch.util.Utils;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
@@ -154,9 +152,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         icon.setTint(getResources().getColor(R.color.colorPrimary));
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
-        int[] salivaTimes = Utils.decodeArrayFromString(encodedSalivaTimes);
-        int eveningSalivaId = salivaTimes.length + 1;
+        int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
 
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.bedtime_title))
@@ -165,7 +161,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 .setMessage(getString(R.string.bedtime_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                     if (hasEveningSalivette) {
-                        TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, eveningSalivaId, eveningSalivaId);
+                        TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, eveningSalivaId);
 
                         Intent intent = new Intent(getContext(), BarcodeActivity.class);
                         intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
@@ -197,5 +193,4 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 })
                 .show();
     }
-
 }

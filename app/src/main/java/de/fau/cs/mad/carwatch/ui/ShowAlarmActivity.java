@@ -7,18 +7,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
+import java.util.concurrent.ExecutionException;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSource;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmStopReceiver;
+import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.ui.alarm.ShowAlarmFragment;
 import de.fau.cs.mad.carwatch.ui.barcode.Ean8Fragment;
 import de.fau.cs.mad.carwatch.ui.widgets.SwipeButton;
+import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.OnSwipeListener {
 
@@ -38,7 +43,18 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-            salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
+        }
+
+        AlarmRepository repository = AlarmRepository.getInstance(getApplication());
+        Alarm alarm;
+
+        try {
+            alarm = repository.getAlarmById(alarmId);
+            salivaId = alarm.getSalivaId();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
+            e.printStackTrace();
+            return;
         }
 
         keepScreenOn();
@@ -91,7 +107,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (getResultCode() == Activity.RESULT_CANCELED) {
-                    if (checkAlarmOngoing()) {
+                    if (checkAlarmOngoing() || salivaId == -1) {
                         finish();
                     } else {
                         Intent alertIntent = new Intent(ShowAlarmActivity.this, AlertActivity.class);
@@ -108,7 +124,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
     }
 
     private boolean checkAlarmOngoing() {
-        int alarmIdOngoing = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
+        int alarmIdOngoing = PreferenceManager.getDefaultSharedPreferences(this).getInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL);
         // There's already a saliva procedure running at the moment
         return (alarmIdOngoing != Constants.EXTRA_ALARM_ID_INITIAL) && (alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET);
     }

@@ -1,10 +1,12 @@
 package de.fau.cs.mad.carwatch.util;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.db.Alarm;
@@ -20,13 +22,24 @@ public class AlarmRepository {
 
     private final AlarmDao alarmModel;
     private final LiveData<Alarm> alarm;
+    private final LiveData<List<Alarm>> alarms;
 
     private AlarmRepository(Application application) {
         // Application is used instead of Context in order to prevent memory leaks
         // between Activity switches
         AlarmDatabase db = AlarmDatabase.getInstance(application);
         alarmModel = db.alarmModel();
-        alarm = alarmModel.getAlarm();
+        alarm = alarmModel.getAlarmLiveData();
+        alarms = alarmModel.getAlarms();
+    }
+
+    private AlarmRepository(Context context) {
+        // Application is used instead of Context in order to prevent memory leaks
+        // between Activity switches
+        AlarmDatabase db = AlarmDatabase.getInstance(context);
+        alarmModel = db.alarmModel();
+        alarm = alarmModel.getAlarmLiveData();
+        alarms = alarmModel.getAlarms();
     }
 
     public static AlarmRepository getInstance(Application application) {
@@ -36,9 +49,28 @@ public class AlarmRepository {
         return sAlarmRepository;
     }
 
+    public static AlarmRepository getInstance(Context context) {
+        if (sAlarmRepository == null) {
+            sAlarmRepository = new AlarmRepository(context);
+        }
+        return sAlarmRepository;
+    }
+
     // Observed LiveData will notify the observer when data has changed
-    public LiveData<Alarm> getAlarm() {
+    public LiveData<Alarm> getAlarmLiveData() {
         return alarm;
+    }
+
+    public LiveData<Alarm> getAlarmLiveData(int id) {
+        return alarmModel.getAlarmLiveData(id);
+    }
+
+    public LiveData<List<Alarm>> getAlarms() {
+        return alarms;
+    }
+
+    public List<Alarm> getAll() throws ExecutionException, InterruptedException {
+        return new GetAllAsyncTask(alarmModel).execute().get();
     }
 
     public void insert(Alarm alarm) {
@@ -155,6 +187,19 @@ public class AlarmRepository {
         @Override
         protected Alarm doInBackground(final Integer... params) {
             return alarmModel.getById(params[0]);
+        }
+    }
+    private static class GetAllAsyncTask extends AsyncTask<Void, Void, List<Alarm>> {
+
+        private final AlarmDao alarmModel;
+
+        GetAllAsyncTask(AlarmDao alarmModel) {
+            this.alarmModel = alarmModel;
+        }
+
+        @Override
+        protected List<Alarm> doInBackground(Void... voids) {
+            return alarmModel.getAll();
         }
     }
 }

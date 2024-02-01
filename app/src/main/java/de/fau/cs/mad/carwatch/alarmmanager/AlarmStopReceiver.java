@@ -23,7 +23,6 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
-import de.fau.cs.mad.carwatch.util.Utils;
 
 /**
  * BroadcastReceiver to stop alarm ringing
@@ -34,41 +33,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-        int salivaId = intent.getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
-
-        AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
-        if (alarmSource == null) {
-            // this should never happen!
-            alarmSource = AlarmSource.SOURCE_UNKNOWN;
-        }
-
-        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
-        try {
-            Alarm alarm = repository.getAlarmById(alarmId);
-            if (alarm != null) {
-                alarm.setActive(false);
-                repository.updateActive(alarm);
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.stopAlarmSound();
-
-        try {
-            // create Json object and log information
-            JSONObject json = new JSONObject();
-            json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
-            json.put(Constants.LOGGER_EXTRA_ALARM_SOURCE, alarmSource.ordinal());
-            json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaId);
-            LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_STOP, json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Log.d(TAG, "Stopping Alarm: " + alarmId);
 
         // Dismiss notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -76,39 +42,92 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             notificationManager.cancelAll();
         }
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        DateTime timeTaken = new DateTime(sp.getLong(Constants.PREF_MORNING_TAKEN, 0));
-        String encodedSalivaTimes = sp.getString(Constants.PREF_SALIVA_TIMES, "");
-        int eveningSalivaId = Utils.decodeArrayFromString(encodedSalivaTimes).length + 1;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        DateTime date = new DateTime(sharedPreferences.getLong(Constants.PREF_CURRENT_DATE, 0));
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+        boolean firstAlarmProcessAlreadyFinished = false;
+        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
+        boolean studyIsFinished = dayCounter > numDays;
 
-        int alarmIdOngoing = sp.getInt(Constants.PREF_MORNING_ONGOING, Constants.EXTRA_ALARM_ID_INITIAL);
-        if (alarmIdOngoing != Constants.EXTRA_ALARM_ID_INITIAL && alarmIdOngoing % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
+        if (date.isBefore(LocalTime.MIDNIGHT.toDateTimeToday()) && alarmId == Constants.EXTRA_ALARM_ID_INITIAL && !studyIsFinished) {
+            AlarmHandler.rescheduleSalivaAlarms(context);
+            sharedPreferences.edit()
+                    .putLong(Constants.PREF_CURRENT_DATE, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
+                    .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
+                    .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                    .apply();
+
+        } else {
+            firstAlarmProcessAlreadyFinished = true;
+        }
+
+        AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
+        Alarm alarm;
+
+        try {
+            alarm = repository.getAlarmById(alarmId);
+            alarm.setActive(false);
+            repository.updateActive(alarm);
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
+            e.printStackTrace();
+            return;
+        }
+
+        AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
+        if (alarmSource == null) {
+            // this should never happen!
+            alarmSource = AlarmSource.SOURCE_UNKNOWN;
+        }
+
+        try {
+            // create Json object and log information
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
+            json.put(Constants.LOGGER_EXTRA_ALARM_SOURCE, alarmSource.ordinal());
+            json.put(Constants.LOGGER_EXTRA_SALIVA_ID, alarm.getSalivaId());
+            LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_STOP, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "Stopping Alarm: " + alarmId);
+
+        if (alarm.getSalivaId() == -1) {
+            // no saliva procedure requested
+            Log.d(TAG, "No saliva procedure requested for alarm with id " + alarmId);
+            if (alarmSource == AlarmSource.SOURCE_ACTIVITY)
+                setResultCode(Activity.RESULT_CANCELED);
+            return;
+        }
+
+        if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL && firstAlarmProcessAlreadyFinished) {
+            Log.d(TAG, "First alarm process already finished for alarm with id " + alarmId);
+            if (alarmSource == AlarmSource.SOURCE_ACTIVITY)
+                setResultCode(Activity.RESULT_CANCELED);
+            return;
+        }
+
+        int currentAlarmId = sharedPreferences.getInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL);
+        if (currentAlarmId != Constants.EXTRA_ALARM_ID_INITIAL && currentAlarmId % Constants.ALARM_OFFSET != alarmId % Constants.ALARM_OFFSET) {
             // There's already a saliva procedure running at the moment
-            Log.d(TAG, "Saliva procedure with alarm id " + alarmIdOngoing + " already running at the moment!");
+            Log.d(TAG, "Saliva procedure with alarm id " + currentAlarmId + " already running at the moment!");
             setResultCode(Activity.RESULT_CANCELED);
+            return;
+        }
+
+        TimerHandler.scheduleSalivaCountdown(context, alarmId, alarm.getSalivaId());
+
+        if (alarmSource != AlarmSource.SOURCE_NOTIFICATION) {
+            // barcode activity is automatically started if alarm is stopped by AlarmStopActivity
             return;
         }
 
         Intent scannerIntent = new Intent(context, BarcodeActivity.class);
         scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
         scannerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        // morning already finished => return (with result code)
-        if (timeTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-            if (alarmSource == AlarmSource.SOURCE_ACTIVITY) {
-                setResultCode(Activity.RESULT_CANCELED);
-                return;
-            } else {
-                scannerIntent.putExtra(Constants.EXTRA_DAY_FINISHED, Activity.RESULT_CANCELED);
-            }
-        } else {
-            TimerHandler.scheduleSalivaCountdown(context, alarmId, salivaId, eveningSalivaId);
-        }
-
-        if (alarmSource == AlarmSource.SOURCE_NOTIFICATION) {
-            context.startActivity(scannerIntent);
-        }
-
+        context.startActivity(scannerIntent);
     }
 }

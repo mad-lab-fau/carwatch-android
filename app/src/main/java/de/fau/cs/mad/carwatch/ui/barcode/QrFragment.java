@@ -48,10 +48,18 @@ public class QrFragment extends BarcodeFragment {
     }
 
     public void setStudyData(QrCodeParser parser) {
+        int numEveningSamples = parser.hasEveningSalivette ? 1 : 0;
+        int numMorningSamples = parser.salivaDistances.equals("") ? 0 : parser.salivaDistances.split(",").length;
+        int numFixedSamples = parser.salivaTimes.equals("") ? 0 : parser.salivaTimes.split(",").length;
+        int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
+        int eveningSampleId = parser.hasEveningSalivette ? numSamples - 1 : -1;
         sharedPreferences.edit()
                 .putString(Constants.PREF_STUDY_NAME, parser.studyName)
                 .putInt(Constants.PREF_NUM_SUBJECTS, parser.numSubjects)
+                .putString(Constants.PREF_SALIVA_DISTANCES, parser.salivaDistances)
                 .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
+                .putInt(Constants.PREF_TOTAL_NUM_SAMPLES, numSamples)
+                .putInt(Constants.PREF_EVENING_SALIVA_ID, eveningSampleId)
                 .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
                 .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
                 .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)

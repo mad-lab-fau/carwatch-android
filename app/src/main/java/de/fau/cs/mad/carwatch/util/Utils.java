@@ -23,8 +23,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -176,6 +176,9 @@ public class Utils {
      * Convert shared preferences string encoding a list of integers back to an int[]
      */
     public static int[] decodeArrayFromString(String input) {
+        if (input == null || input.isEmpty())
+            return new int[0];
+
         String[] list = input.split(Constants.QR_PARSER_LIST_SEPARATOR);
         int[] output = new int[list.length];
         for (int i = 0; i < output.length; i++) {

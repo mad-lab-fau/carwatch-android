@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.db;
 
-import static de.fau.cs.mad.carwatch.Constants.DEFAULT_ALARM_ID;
+import static de.fau.cs.mad.carwatch.Constants.EXTRA_ALARM_ID_INITIAL;
+import static de.fau.cs.mad.carwatch.Constants.EXTRA_SALIVA_ID_INITIAL;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -30,17 +31,25 @@ public class Alarm implements Parcelable {
     @ColumnInfo(name = "alarm_id")
     private int id;
 
+    @ColumnInfo(name = "saliva_id")
+    private int salivaId;
+
     @ColumnInfo(name = "alarm_time")
     private DateTime time;
 
     @ColumnInfo(name = "alarm_active")
     private boolean active;
 
+    @ColumnInfo(name = "alarm_is_fixed")
+    private boolean isFixed;
+
     public Alarm() {
         this(
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
                 false,
-                DEFAULT_ALARM_ID
+                false,
+                EXTRA_ALARM_ID_INITIAL,
+                EXTRA_SALIVA_ID_INITIAL
         );
     }
 
@@ -51,6 +60,14 @@ public class Alarm implements Parcelable {
 
     public int getId() {
         return id;
+    }
+
+    public void setSalivaId(int salivaId) {
+        this.salivaId = salivaId;
+    }
+
+    public int getSalivaId() {
+        return this.salivaId;
     }
 
     public void setTime(DateTime time) {
@@ -65,17 +82,21 @@ public class Alarm implements Parcelable {
         return active;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+    public void setActive(boolean active) { this.active = active; }
+
+    public boolean isFixed() { return isFixed; }
+
+    public void setIsFixed(boolean isFixed) { this.isFixed = isFixed; }
 
 
     // Ignored Members
     @Ignore
-    public Alarm(DateTime time, boolean active, int id) {
+    public Alarm(DateTime time, boolean active, boolean isFixed, int id, int salivaId) {
         this.time = time;
         this.active = active;
+        this.isFixed = isFixed;
         this.id = id;
+        this.salivaId = salivaId;
     }
 
     /**
@@ -113,6 +134,7 @@ public class Alarm implements Parcelable {
         out.writeInt(id);
         out.writeLong(DateConverter.toTimestamp(time));
         out.writeInt(active ? 1 : 0);
+        out.writeInt(isFixed ? 1 : 0);
     }
 
     @Ignore
@@ -135,6 +157,7 @@ public class Alarm implements Parcelable {
         Long timestamp = in.readLong();
         time = DateConverter.toDate(timestamp);
         active = in.readInt() != 0;
+        isFixed = in.readInt() != 0;
     }
 
 

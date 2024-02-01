@@ -1,5 +1,7 @@
 package de.fau.cs.mad.carwatch.ui;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,8 +29,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +41,7 @@ import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
@@ -127,18 +128,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void navigate() {
-        if (checkInterval(DateTime.now(), Constants.MORNING_TIMES)) {
-            navController.navigate(R.id.navigation_wakeup);
-        } else if (checkInterval(DateTime.now(), Constants.EVENING_TIMES)) {
-            navController.navigate(R.id.navigation_bedtime);
-        } else {
-            navController.navigate(R.id.navigation_alarm);
-        }
-    }
-
-
-    private boolean checkInterval(DateTime time, DateTime[] interval) {
-        return new Interval(interval[0], interval[1]).contains(time);
+        navController.navigate(R.id.navigation_wakeup);
     }
 
     @Override
@@ -248,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
             sharedPreferences.edit()
                     .putBoolean(Constants.PREF_FIRST_RUN_SUBJECT_ID, false)
                     .putString(Constants.PREF_SUBJECT_ID, subjectId)
-                    .putInt(Constants.PREF_DAY_COUNTER, 0)
                     .apply();
             try {
                 JSONObject json = new JSONObject();
@@ -280,11 +269,6 @@ public class MainActivity extends AppCompatActivity {
                         .create();
 
         scanQrDialog.setOnShowListener(dialog -> ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
-
-            sharedPreferences.edit()
-                    .putInt(Constants.PREF_DAY_COUNTER, 0)
-                    .apply();
-
             Intent intent = new Intent(this, QrActivity.class);
             startActivity(intent);
 
@@ -347,13 +331,15 @@ public class MainActivity extends AppCompatActivity {
         try {
             // construct human-readable sample ids
             boolean hasEveningSalivette = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+            String salivaDistancesString = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
             String salivaTimesString = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "");
-            int[] salivaTimes = Utils.decodeArrayFromString(salivaTimesString);
+            int[] salivaDistances = Utils.decodeArrayFromString(salivaDistancesString);
+            String[] salivaTimes = salivaTimesString.split(Constants.QR_PARSER_LIST_SEPARATOR);
             String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, "");
             String samplePrefix = startSample.substring(0, 1);
             int startSampleIdx = Integer.parseInt(startSample.substring(1));
             LinkedHashSet<String> salivaIds = new LinkedHashSet<>();
-            for (int i = startSampleIdx; i < salivaTimes.length + startSampleIdx; i++) {
+            for (int i = startSampleIdx; i < salivaDistances.length + startSampleIdx + salivaTimes.length; i++) {
                 String sampleId = samplePrefix + i;
                 salivaIds.add(sampleId);
             }
@@ -364,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
             json.put(Constants.LOGGER_EXTRA_NUM_SUBJECTS, sharedPreferences.getInt(Constants.PREF_NUM_SUBJECTS, 0));
+            json.put(Constants.LOGGER_EXTRA_SALIVA_DISTANCES, salivaDistancesString);
             json.put(Constants.LOGGER_EXTRA_SALIVA_TIMES, salivaTimesString);
             json.put(Constants.LOGGER_EXTRA_STUDY_DAYS, sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_IDS, salivaIds);
@@ -388,7 +375,13 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setTitle(getString(R.string.title_kill_alarms))
                 .setMessage(getString(R.string.message_kill_alarms))
-                .setPositiveButton(R.string.yes, (dialog, which) -> AlarmHandler.killAll(getApplication()))
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    AlarmHandler.killAll(getApplication());
+                    AlarmSoundControl.getInstance().stopAlarmSound();
+                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (notificationManager != null)
+                        notificationManager.cancelAll();
+                })
                 .setNegativeButton(R.string.cancel, ((dialog, which) -> {
                 }))
                 .show();
