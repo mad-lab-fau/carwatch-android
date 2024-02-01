@@ -368,7 +368,7 @@ public class AlarmHandler {
 
         switch (Locale.getDefault().getLanguage()) {
             case "de":
-                return timeDiffString + (timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString);
+                return (timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString);
             case "fr":
                 return timeDiffString.isEmpty() ? "" : "pour " + timeDiffString;
             default:
