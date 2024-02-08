@@ -46,6 +46,7 @@ public final class Constants {
     public static final String PREF_START_SAMPLE = "start_sample";
     public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
+    public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
@@ -75,7 +76,6 @@ public final class Constants {
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
-    public static final String ACTION_STOP_TIMER = "Stop Timer";
 
     public static final String BARCODE_TYPE_EAN8 = "ean8";
     public static final String BARCODE_TYPE_QR = "qr";

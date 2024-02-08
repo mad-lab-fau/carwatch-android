@@ -52,6 +52,9 @@ public class TimerReceiver extends BroadcastReceiver {
         if (notificationManager != null) {
             notificationManager.notify(timerId, notification);
         }
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, true).apply();
     }
 
 

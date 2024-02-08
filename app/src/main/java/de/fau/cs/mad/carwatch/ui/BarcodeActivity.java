@@ -28,14 +28,13 @@ import de.fau.cs.mad.carwatch.util.AlarmRepository;
 public class BarcodeActivity extends AppCompatActivity {
 
     private static final String TAG = BarcodeActivity.class.getSimpleName();
+    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode);
 
-        int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
-        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
@@ -43,6 +42,7 @@ public class BarcodeActivity extends AppCompatActivity {
 
         AlarmRepository repository = AlarmRepository.getInstance(this.getApplication());
         Alarm alarm;
+        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
         try {
             alarm = repository.getAlarmById(alarmId);
@@ -106,14 +106,21 @@ public class BarcodeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        stopAlarmNotification();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
+        boolean stopNotification = sharedPreferences.getBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false);
+        if (stopNotification) {
+            stopAlarmNotification();
+            sharedPreferences.edit().putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false).apply();
+        }
     }
 
     private void stopAlarmNotification() {
-        AlarmSoundControl soundControl = AlarmSoundControl.getInstance();
-        soundControl.stopAlarmSound();
+        int notificationId = alarmId + Constants.ALARM_OFFSET_TIMER;
+        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
+        alarmSoundControl.stopAlarmSound();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null)
-            notificationManager.cancelAll();
+            notificationManager.cancel(notificationId);
     }
 }

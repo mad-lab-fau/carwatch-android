@@ -120,15 +120,6 @@
         </receiver>
 
         <receiver
-            android:name=".alarmmanager.TimerStopReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="Stop Timer" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
             android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
             android:exported="false" />

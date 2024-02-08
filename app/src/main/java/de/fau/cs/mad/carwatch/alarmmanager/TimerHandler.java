@@ -189,7 +189,6 @@ public class TimerHandler {
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(contentText)
-                .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();
