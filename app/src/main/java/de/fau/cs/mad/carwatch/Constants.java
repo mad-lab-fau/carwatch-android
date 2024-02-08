@@ -75,6 +75,7 @@ public final class Constants {
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
+    public static final String ACTION_STOP_TIMER = "Stop Timer";
 
     public static final String BARCODE_TYPE_EAN8 = "ean8";
     public static final String BARCODE_TYPE_QR = "qr";
