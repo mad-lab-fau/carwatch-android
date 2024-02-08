@@ -168,7 +168,6 @@ public class TimerHandler {
         }
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, pendingFlags);
-        PendingIntent stopIntent = getTimerStopIntent(context, alarmId);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
@@ -192,20 +191,6 @@ public class TimerHandler {
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();
-    }
-
-    private static PendingIntent getTimerStopIntent(Context context, int alarmId) {
-        Intent intent = new Intent(context, TimerStopReceiver.class);
-        intent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        intent.setAction(Constants.ACTION_STOP_TIMER);
-
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
-        return PendingIntent.getBroadcast(context, 0, intent, pendingFlags);
     }
 
     private static PendingIntent getTimerPendingIntent(Context context, int timerId, int salivaId) {
