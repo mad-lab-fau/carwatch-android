@@ -40,6 +40,7 @@
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
     <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>
+    <string name="warning_study_finished">Sie haben die Studie bereits abgeschlossen.</string>
 
     <string name="wakeup_title">Den Morgen beginnen</string>
     <string name="wakeup_text">Wir beginnen nun mit dem Morgenprozedere</string>
@@ -73,6 +74,10 @@
     <string name="hint_clicks_kill_alarms">Noch %1$d Klicks, um alle Alarme zu beenden.</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
+
+    <!-- Open battery settings dialog -->
+    <string name="title_battery_optimization">Batterieoptimierung</string>
+    <string name="message_battery_optimization">Bitte deaktivieren Sie die Batterieoptimierung für CARWatch, um sicherzustellen, dass die Wecker zuverlässig funktionieren.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Info</string>

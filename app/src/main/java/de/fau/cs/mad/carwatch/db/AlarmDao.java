@@ -30,6 +30,9 @@ public interface AlarmDao {
     @Query("SELECT * FROM alarm WHERE alarm_id=:id")
     Alarm getById(int id);
 
+    @Query("SELECT * FROM alarm")
+    List<Alarm> getAll();
+
     @Insert(onConflict = IGNORE)
     void insert(Alarm alarm);
 

@@ -36,12 +36,22 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
         alarmSoundControl.stopAlarmSound();
 
+        // Dismiss notification
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         DateTime date = new DateTime(sharedPreferences.getLong(Constants.PREF_CURRENT_DATE, 0));
+        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
         boolean firstAlarmProcessAlreadyFinished = false;
-        if (date.isBefore(LocalTime.MIDNIGHT.toDateTimeToday())) {
+        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
+        boolean studyIsFinished = dayCounter > numDays;
+
+        if (date.isBefore(LocalTime.MIDNIGHT.toDateTimeToday()) && alarmId == Constants.EXTRA_ALARM_ID_INITIAL && !studyIsFinished) {
             AlarmHandler.rescheduleSalivaAlarms(context);
-            int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, -1) + 1;
             sharedPreferences.edit()
                     .putLong(Constants.PREF_CURRENT_DATE, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
                     .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
@@ -51,8 +61,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         } else {
             firstAlarmProcessAlreadyFinished = true;
         }
-
-        int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
 
         AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
         Alarm alarm;
@@ -85,13 +93,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
 
         Log.d(TAG, "Stopping Alarm: " + alarmId);
-
-        // Dismiss notification
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.cancelAll();
-        }
-
 
         if (alarm.getSalivaId() == -1) {
             // no saliva procedure requested

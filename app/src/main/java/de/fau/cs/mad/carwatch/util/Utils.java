@@ -19,11 +19,14 @@ package de.fau.cs.mad.carwatch.util;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.os.Build;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -78,6 +81,28 @@ public class Utils {
                 }
                 return false;
             }
+        }
+        return true;
+    }
+
+    public static void openBatteryOptimizationSettings(Context context) {
+        Intent intent = new Intent();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+        } else {
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
+        }
+
+        context.startActivity(intent);
+    }
+
+    public static boolean batteryOptimizationIgnored(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (pm != null)
+                return pm.isIgnoringBatteryOptimizations(context.getPackageName());
         }
         return true;
     }

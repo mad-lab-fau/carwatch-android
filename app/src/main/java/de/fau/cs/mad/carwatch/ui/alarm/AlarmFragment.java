@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,20 +89,26 @@ public class AlarmFragment extends Fragment {
         RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+        setSalivaAlarmAdapterItems(alarmViewModel.getAlarms().getValue());
 
         // update adapter if alarms change
-        alarmViewModel.getAlarms().observe(getViewLifecycleOwner(), alarms -> {
-            List<Alarm> salivaAlarms = new ArrayList<>();
-            // initial alarm is not shown in list
-            for (Alarm alarm : alarms) {
-                if (alarm.getId() != Constants.EXTRA_ALARM_ID_INITIAL) {
-                    salivaAlarms.add(alarm);
-                }
+        alarmViewModel.getAlarms().observe(getViewLifecycleOwner(), this::setSalivaAlarmAdapterItems);
+    }
+
+    private void setSalivaAlarmAdapterItems(List<Alarm> alarms) {
+        if (alarms == null)
+            return;
+
+        List<Alarm> salivaAlarms = new ArrayList<>();
+        // initial alarm is not shown in list
+        for (Alarm alarm : alarms) {
+            if (alarm.getId() != Constants.EXTRA_ALARM_ID_INITIAL) {
+                salivaAlarms.add(alarm);
             }
-            adapter.setAlarms(salivaAlarms);
-            adapter.notifyDataSetChanged();
-            salivaAlarmsHeader.setVisibility(salivaAlarms.isEmpty() ? View.GONE : View.VISIBLE);
-        });
+        }
+        adapter.setAlarms(salivaAlarms);
+        adapter.notifyDataSetChanged();
+        salivaAlarmsHeader.setVisibility(salivaAlarms.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void setAlarmView() {

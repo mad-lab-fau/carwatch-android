@@ -24,6 +24,7 @@ public final class Constants {
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
+    public static final String PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS = "requested_ignore_battery_optimizations"; // boolean
     public static final String PREF_PARTICIPANT_ID_WAS_SET = "participant_id_was_set"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_PARTICIPANT_ID = "participant_id"; // String
@@ -45,6 +46,7 @@ public final class Constants {
     public static final String PREF_START_SAMPLE = "start_sample";
     public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
+    public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
@@ -52,23 +54,18 @@ public final class Constants {
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
     public static final String DEFAULT_START_SAMPLE = "S0";
 
-    public static final String EXTRA_ALARM_TIME = "extra_alarm_time";
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
     public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
     public static final String EXTRA_SOURCE = "extra_source";
-    public static final String EXTRA_DAY_FINISHED = "day_finished";
-
+    public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
+    public static final String EXTRA_SALIVA_ID_EVENING = "A";
     public static final int EXTRA_ALARM_ID_INITIAL = 0;
     public static final int EXTRA_TIMER_ID_INITIAL = 0;
     public static final int EXTRA_SALIVA_ID_INITIAL = 0;
-
     public static final int EXTRA_ALARM_ID_MANUAL = -1;
     public static final int EXTRA_SALIVA_ID_MANUAL = -1;
-    public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
-
     public static final int EXTRA_ALARM_ID_EVENING = 815;
-    public static final String EXTRA_SALIVA_ID_EVENING = "A";
 
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;

@@ -76,13 +76,18 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
 
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
                 DateTime date = new DateTime(sp.getLong(Constants.PREF_CURRENT_DATE, 0));
-                if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-//                    showWakeupWarningDialog();
-                    if (getActivity() != null)
-                        Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
-                } else {
-                    // no morning procedure ongoing yet
+                int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+                int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
+                if (!date.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
                     showWakeupDialog();
+                    break;
+                }
+                if (getActivity() == null)
+                    break;
+                if (dayCounter > numDays) {
+                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -133,7 +138,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         Context context = requireContext();
         AlarmHandler.rescheduleSalivaAlarms(context);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, -1) + 1;
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
 
         sp.edit()
                 .putLong(Constants.PREF_CURRENT_DATE, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())

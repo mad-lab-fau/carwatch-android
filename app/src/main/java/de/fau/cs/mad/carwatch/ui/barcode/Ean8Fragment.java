@@ -134,7 +134,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         int idEveningSample = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
-        int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
+        int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
         String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
 
         // create Json object and log information
@@ -171,7 +171,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
             json.put(Constants.LOGGER_EXTRA_SALIVA_ID, salivaDayId);
             json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
             json.put(Constants.LOGGER_EXTRA_SCANNED_DAY, scannedDay);
-            json.put(Constants.LOGGER_EXTRA_EXPECTED_DAY, dayId + 1);
+            json.put(Constants.LOGGER_EXTRA_EXPECTED_DAY, dayId);
             json.put(Constants.LOGGER_EXTRA_SCANNED_SAMPLE, scannedSample);
             json.put(Constants.LOGGER_EXTRA_EXPECTED_SAMPLE, expectedSample);
             LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);

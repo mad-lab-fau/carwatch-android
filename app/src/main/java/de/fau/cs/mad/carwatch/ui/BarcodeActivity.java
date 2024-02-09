@@ -1,6 +1,7 @@
 package de.fau.cs.mad.carwatch.ui;
 
 import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import androidx.collection.ArraySet;
 import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.ui.barcode.Ean8Fragment;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
@@ -26,14 +28,13 @@ import de.fau.cs.mad.carwatch.util.AlarmRepository;
 public class BarcodeActivity extends AppCompatActivity {
 
     private static final String TAG = BarcodeActivity.class.getSimpleName();
+    private int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode);
 
-        int alarmId = Constants.EXTRA_ALARM_ID_INITIAL;
-        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
@@ -41,6 +42,7 @@ public class BarcodeActivity extends AppCompatActivity {
 
         AlarmRepository repository = AlarmRepository.getInstance(this.getApplication());
         Alarm alarm;
+        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
 
         try {
             alarm = repository.getAlarmById(alarmId);
@@ -80,7 +82,7 @@ public class BarcodeActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
-        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, -1) + 1;
+        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
         int numDailySamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
         int numScannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>()).size();
         boolean dayFinished = numScannedBarcodes >= numDailySamples * dayCounter;
@@ -101,4 +103,24 @@ public class BarcodeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
+        boolean stopNotification = sharedPreferences.getBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false);
+        if (stopNotification) {
+            stopAlarmNotification();
+            sharedPreferences.edit().putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false).apply();
+        }
+    }
+
+    private void stopAlarmNotification() {
+        int notificationId = alarmId + Constants.ALARM_OFFSET_TIMER;
+        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
+        alarmSoundControl.stopAlarmSound();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null)
+            notificationManager.cancel(notificationId);
+    }
 }
