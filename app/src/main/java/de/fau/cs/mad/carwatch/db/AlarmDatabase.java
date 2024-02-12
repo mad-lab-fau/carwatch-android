@@ -26,15 +26,6 @@ public abstract class AlarmDatabase extends RoomDatabase {
     @VisibleForTesting
     private static final String DATABASE_NAME = "alarm-db";
 
-    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // Add the new column to the table
-            database.execSQL("ALTER TABLE alarm ADD COLUMN alarm_is_fixed INTEGER NOT NULL DEFAULT 0");
-            database.execSQL("ALTER TABLE alarm ADD COLUMN saliva_id INTEGER NOT NULL DEFAULT 0");
-        }
-    };
-
     public abstract AlarmDao alarmModel();
 
     public static AlarmDatabase getInstance(final Context context) {
@@ -45,7 +36,6 @@ public abstract class AlarmDatabase extends RoomDatabase {
                             AlarmDatabase.class, DATABASE_NAME)
                             .fallbackToDestructiveMigration()
                             .addCallback(roomDatabaseCallback)
-                            .addMigrations(MIGRATION_1_2)
                             .build();
                 }
             }
