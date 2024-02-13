@@ -47,44 +47,6 @@ public class QrFragment extends BarcodeFragment {
         workflowModel.setWorkflowState(WorkflowState.DETECTING);
     }
 
-    public void setStudyData(QrCodeParser parser) {
-        int numEveningSamples = parser.hasEveningSalivette ? 1 : 0;
-        int numMorningSamples = parser.salivaDistances.equals("") ? 0 : parser.salivaDistances.split(",").length;
-        int numFixedSamples = parser.salivaTimes.equals("") ? 0 : parser.salivaTimes.split(",").length;
-        int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
-        int eveningSampleId = parser.hasEveningSalivette ? numSamples - 1 : -1;
-        sharedPreferences.edit()
-                .putString(Constants.PREF_STUDY_NAME, parser.studyName)
-                .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.numParticipants)
-                .putString(Constants.PREF_SALIVA_DISTANCES, parser.salivaDistances)
-                .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
-                .putInt(Constants.PREF_TOTAL_NUM_SAMPLES, numSamples)
-                .putInt(Constants.PREF_EVENING_SALIVA_ID, eveningSampleId)
-                .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
-                .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
-                .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)
-                .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
-                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.manualScan)
-                .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
-                .putString(Constants.PREF_START_SAMPLE, parser.startSample)
-                .apply();
-
-        if (!parser.participantId.isEmpty()) {
-            sharedPreferences.edit()
-                    .putString(Constants.PREF_PARTICIPANT_ID, parser.participantId)
-                    .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
-                    .apply();
-
-            try {
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, parser.participantId);
-                LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public void onChanged(Barcode mlKitBarcode) {
         if (mlKitBarcode != null) {
@@ -133,11 +95,47 @@ public class QrFragment extends BarcodeFragment {
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
+    private void setStudyData(QrCodeParser parser) {
+        int numEveningSamples = parser.hasEveningSalivette ? 1 : 0;
+        int numMorningSamples = parser.salivaDistances.equals("") ? 0 : parser.salivaDistances.split(",").length;
+        int numFixedSamples = parser.salivaTimes.equals("") ? 0 : parser.salivaTimes.split(",").length;
+        int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
+        int eveningSampleId = parser.hasEveningSalivette ? numSamples - 1 : -1;
+        sharedPreferences.edit()
+                .putString(Constants.PREF_STUDY_NAME, parser.studyName)
+                .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.numParticipants)
+                .putString(Constants.PREF_SALIVA_DISTANCES, parser.salivaDistances)
+                .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
+                .putInt(Constants.PREF_TOTAL_NUM_SAMPLES, numSamples)
+                .putInt(Constants.PREF_EVENING_SALIVA_ID, eveningSampleId)
+                .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
+                .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
+                .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)
+                .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
+                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.manualScan)
+                .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
+                .putString(Constants.PREF_START_SAMPLE, parser.startSample)
+                .apply();
+
+        if (!parser.participantId.isEmpty()) {
+            sharedPreferences.edit()
+                    .putString(Constants.PREF_PARTICIPANT_ID, parser.participantId)
+                    .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
+                    .apply();
+            try {
+                JSONObject jsonPartId = new JSONObject();
+                jsonPartId.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, parser.participantId);
+                LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, jsonPartId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void finishActivity() {
         if (getActivity() != null) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
         }
     }
-
 }
