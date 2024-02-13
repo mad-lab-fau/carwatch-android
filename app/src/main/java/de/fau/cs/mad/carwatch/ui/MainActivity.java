@@ -146,6 +146,11 @@ public class MainActivity extends AppCompatActivity {
         } else if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
             // if participant ID was not included in QR code => display participant ID dialog
             showParticipantIdDialog();
+        } else if (!sharedPreferences.getBoolean(Constants.PREF_METADATA_WAS_LOGGED, false)) {
+            logAppPhoneMetadata();
+            logStudyData();
+            logParticipantId();
+            sharedPreferences.edit().putBoolean(Constants.PREF_METADATA_WAS_LOGGED, true).apply();
         }
     }
 
@@ -239,14 +244,6 @@ public class MainActivity extends AppCompatActivity {
                     .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
 
-            try {
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, participantId);
-                LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
             dialog.dismiss();
         }));
         participantIdDialog.show();
@@ -268,8 +265,6 @@ public class MainActivity extends AppCompatActivity {
 
             if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
                 // log metadata after study properties were set
-                logStudyData();
-                logAppPhoneMetadata();
                 dialog.dismiss();
             }
         }));
@@ -317,33 +312,31 @@ public class MainActivity extends AppCompatActivity {
             json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_RELEASE, Build.VERSION.RELEASE); // this
 
             LoggerUtil.log(Constants.LOGGER_ACTION_PHONE_METADATA, json);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private void logStudyData() {
+        boolean hasEveningSalivette = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+        String salivaDistancesString = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        String salivaTimesString = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "");
+        int[] salivaDistances = Utils.decodeArrayFromString(salivaDistancesString);
+        String[] salivaTimes = salivaTimesString.split(Constants.QR_PARSER_LIST_SEPARATOR);
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, "");
+        String samplePrefix = startSample.substring(0, 1);
+        int startSampleIdx = Integer.parseInt(startSample.substring(1));
+        LinkedHashSet<String> salivaIds = new LinkedHashSet<>();
+        for (int i = startSampleIdx; i < salivaDistances.length + startSampleIdx + salivaTimes.length; i++) {
+            String sampleId = samplePrefix + i;
+            salivaIds.add(sampleId);
+        }
+        if (hasEveningSalivette) {
+            salivaIds.add(samplePrefix + Constants.EXTRA_SALIVA_ID_EVENING);
+        }
+        // log all relevant study data
+        JSONObject json = new JSONObject();
         try {
-            // construct human-readable sample ids
-            boolean hasEveningSalivette = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
-            String salivaDistancesString = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-            String salivaTimesString = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "");
-            int[] salivaDistances = Utils.decodeArrayFromString(salivaDistancesString);
-            String[] salivaTimes = salivaTimesString.split(Constants.QR_PARSER_LIST_SEPARATOR);
-            String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, "");
-            String samplePrefix = startSample.substring(0, 1);
-            int startSampleIdx = Integer.parseInt(startSample.substring(1));
-            LinkedHashSet<String> salivaIds = new LinkedHashSet<>();
-            for (int i = startSampleIdx; i < salivaDistances.length + startSampleIdx + salivaTimes.length; i++) {
-                String sampleId = samplePrefix + i;
-                salivaIds.add(sampleId);
-            }
-            if (hasEveningSalivette) {
-                salivaIds.add(samplePrefix + Constants.EXTRA_SALIVA_ID_EVENING);
-            }
-            // log all relevant study data
-            JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
             json.put(Constants.LOGGER_EXTRA_NUM_PARTICIPANTS, sharedPreferences.getInt(Constants.PREF_NUM_PARTICIPANTS, 0));
             json.put(Constants.LOGGER_EXTRA_SALIVA_DISTANCES, salivaDistancesString);
@@ -355,8 +348,18 @@ public class MainActivity extends AppCompatActivity {
             json.put(Constants.LOGGER_EXTRA_CHECK_DUPLICATES, sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false));
             json.put(Constants.LOGGER_EXTRA_MANUAL_SCAN, sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false));
             LoggerUtil.log(Constants.LOGGER_ACTION_STUDY_DATA, json);
-        } catch (
-                JSONException e) {
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logParticipantId() {
+        String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, "");
+        try {
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, participantId);
+            LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
