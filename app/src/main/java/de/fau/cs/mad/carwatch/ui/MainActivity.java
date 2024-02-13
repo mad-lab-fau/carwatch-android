@@ -146,9 +146,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
             // if participant ID was not included in QR code => display participant ID dialog
             showParticipantIdDialog();
-        } else {
-            logAppPhoneMetadata();
-            logStudyData();
         }
     }
 
@@ -242,9 +239,6 @@ public class MainActivity extends AppCompatActivity {
                     .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
 
-            logAppPhoneMetadata();
-            logStudyData();
-
             try {
                 JSONObject json = new JSONObject();
                 json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, participantId);
@@ -253,10 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
-                // if default settings were changed successfully => dismiss Dialog
-                dialog.dismiss();
-            }
+            dialog.dismiss();
         }));
         participantIdDialog.show();
     }
@@ -276,7 +267,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
 
             if (!sharedPreferences.getBoolean(Constants.PREF_FIRST_RUN_QR, true)) {
-                // if default settings were changed successfully => dismiss Dialog
+                // log metadata after study properties were set
+                logStudyData();
+                logAppPhoneMetadata();
                 dialog.dismiss();
             }
         }));
