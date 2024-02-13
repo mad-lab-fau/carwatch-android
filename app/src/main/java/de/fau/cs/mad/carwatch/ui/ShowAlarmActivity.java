@@ -112,6 +112,7 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
                     } else {
                         Intent alertIntent = new Intent(ShowAlarmActivity.this, AlertActivity.class);
                         startActivity(alertIntent);
+                        finish();
                     }
                 }
 

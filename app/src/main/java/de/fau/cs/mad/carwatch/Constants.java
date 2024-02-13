@@ -100,6 +100,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_PHONE_BOOT_INIT = "phone_boot_init";
     public static final String LOGGER_ACTION_PHONE_BOOT_COMPLETE = "phone_boot_complete";
     public static final String LOGGER_ACTION_PARTICIPANT_ID_SET = "participant_id_set";
+    public static final String LOGGER_APP_UPDATE_COMPLETE = "app_update_complete";
     public static final String LOGGER_ACTION_STUDY_DATA = "study_metadata";
 
     // Extras that can be added to the Logger

@@ -106,6 +106,15 @@
         </receiver>
 
         <receiver
+            android:name=".userpresent.AppUpdateReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name=".alarmmanager.AlarmReceiver"
             android:enabled="true"
             android:exported="false" />

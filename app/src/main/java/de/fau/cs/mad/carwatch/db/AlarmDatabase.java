@@ -8,6 +8,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import de.fau.cs.mad.carwatch.db.converter.BooleanArrayConverter;
@@ -16,7 +17,7 @@ import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 /**
  * Backend Database
  */
-@Database(entities = {Alarm.class}, version = 1, exportSchema = false)
+@Database(entities = {Alarm.class}, version = 2, exportSchema = false)
 @TypeConverters({DateConverter.class, BooleanArrayConverter.class})
 public abstract class AlarmDatabase extends RoomDatabase {
 
