@@ -48,14 +48,15 @@ public class MetadataLogger {
         boolean hasEveningSample = sp.getBoolean(Constants.PREF_HAS_EVENING, false);
         String salivaDistancesString = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         String salivaTimesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
-        int[] salivaDistances = Utils.decodeArrayFromString(salivaDistancesString);
-        String[] salivaTimes = salivaTimesString.split(Constants.QR_PARSER_LIST_SEPARATOR);
+        int numDistances = salivaDistancesString.isEmpty() ? 0 : salivaDistancesString.split(Constants.QR_PARSER_LIST_SEPARATOR).length;
+        int numTimes = salivaTimesString.isEmpty() ? 0 : salivaTimesString.split(Constants.QR_PARSER_LIST_SEPARATOR).length;
         String startSample = sp.getString(Constants.PREF_START_SAMPLE, "");
         String samplePrefix = startSample.substring(0, 1);
         int startSampleIdx = Integer.parseInt(startSample.substring(1));
         LinkedHashSet<String> salivaIds = new LinkedHashSet<>();
-        for (int i = startSampleIdx; i < salivaDistances.length + startSampleIdx + salivaTimes.length; i++) {
-            String sampleId = samplePrefix + i;
+        for (int i = 0; i < numDistances + numTimes; i++) {
+            int sampleIdx = startSampleIdx + i;
+            String sampleId = samplePrefix + sampleIdx;
             salivaIds.add(sampleId);
         }
         if (hasEveningSample) {
