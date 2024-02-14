@@ -203,5 +203,6 @@ public class Ean8Fragment extends BarcodeFragment {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, true);
         startActivity(intent);
+        getActivity().finish();
     }
 }
