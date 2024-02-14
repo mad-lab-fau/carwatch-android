@@ -24,6 +24,7 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.logger.MetadataLogger;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.barcodedetection.QrCodeParser;
 
@@ -122,13 +123,12 @@ public class QrFragment extends BarcodeFragment {
                     .putString(Constants.PREF_PARTICIPANT_ID, parser.participantId)
                     .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
-            try {
-                JSONObject jsonPartId = new JSONObject();
-                jsonPartId.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, parser.participantId);
-                LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, jsonPartId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
+            // log metadata after participant id was set to ensure correct log filename
+            MetadataLogger.logDeviceProperties();
+            MetadataLogger.logAppMetadata();
+            MetadataLogger.logStudyData(requireContext());
+            MetadataLogger.logParticipantId(requireContext());
         }
     }
 

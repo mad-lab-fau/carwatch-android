@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,15 +28,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 
-import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
@@ -45,6 +39,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.logger.MetadataLogger;
 import de.fau.cs.mad.carwatch.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -146,11 +141,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
             // if participant ID was not included in QR code => display participant ID dialog
             showParticipantIdDialog();
-        } else if (!sharedPreferences.getBoolean(Constants.PREF_METADATA_WAS_LOGGED, false)) {
-            logAppPhoneMetadata();
-            logStudyData();
-            logParticipantId();
-            sharedPreferences.edit().putBoolean(Constants.PREF_METADATA_WAS_LOGGED, true).apply();
         }
     }
 
@@ -244,6 +234,12 @@ public class MainActivity extends AppCompatActivity {
                     .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
 
+            // log metadata after participant id was set to ensure correct log filename
+            MetadataLogger.logDeviceProperties();
+            MetadataLogger.logAppMetadata();
+            MetadataLogger.logStudyData(this);
+            MetadataLogger.logParticipantId(this);
+
             dialog.dismiss();
         }));
         participantIdDialog.show();
@@ -292,76 +288,6 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         Menu navMenu = navView.getMenu();
         navMenu.findItem(R.id.navigation_scanner).setVisible(showScanItem);
-    }
-
-    private void logAppPhoneMetadata() {
-        try {
-            // App Metadata – Version Code and Version Name
-            JSONObject json = new JSONObject();
-            json.put(Constants.LOGGER_EXTRA_APP_VERSION_CODE, BuildConfig.VERSION_CODE);
-            json.put(Constants.LOGGER_EXTRA_APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-            LoggerUtil.log(Constants.LOGGER_ACTION_APP_METADATA, json);
-
-            // Phone Metadata – Brand, Manufacturer, Model, Android SDK level, Security Patch (if applicable), Build Release
-            json = new JSONObject();
-            json.put(Constants.LOGGER_EXTRA_PHONE_BRAND, Build.BRAND);
-            json.put(Constants.LOGGER_EXTRA_PHONE_MANUFACTURER, Build.MANUFACTURER);
-            json.put(Constants.LOGGER_EXTRA_PHONE_MODEL, Build.MODEL);
-            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_SDK_LEVEL, Build.VERSION.SDK_INT);
-            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_SECURITY_PATCH, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? Build.VERSION.SECURITY_PATCH : ""); // this
-            json.put(Constants.LOGGER_EXTRA_PHONE_VERSION_RELEASE, Build.VERSION.RELEASE); // this
-
-            LoggerUtil.log(Constants.LOGGER_ACTION_PHONE_METADATA, json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void logStudyData() {
-        boolean hasEveningSalivette = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
-        String salivaDistancesString = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        String salivaTimesString = sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "");
-        int[] salivaDistances = Utils.decodeArrayFromString(salivaDistancesString);
-        String[] salivaTimes = salivaTimesString.split(Constants.QR_PARSER_LIST_SEPARATOR);
-        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, "");
-        String samplePrefix = startSample.substring(0, 1);
-        int startSampleIdx = Integer.parseInt(startSample.substring(1));
-        LinkedHashSet<String> salivaIds = new LinkedHashSet<>();
-        for (int i = startSampleIdx; i < salivaDistances.length + startSampleIdx + salivaTimes.length; i++) {
-            String sampleId = samplePrefix + i;
-            salivaIds.add(sampleId);
-        }
-        if (hasEveningSalivette) {
-            salivaIds.add(samplePrefix + Constants.EXTRA_SALIVA_ID_EVENING);
-        }
-        // log all relevant study data
-        JSONObject json = new JSONObject();
-        try {
-            json.put(Constants.LOGGER_EXTRA_STUDY_NAME, sharedPreferences.getString(Constants.PREF_STUDY_NAME, ""));
-            json.put(Constants.LOGGER_EXTRA_NUM_PARTICIPANTS, sharedPreferences.getInt(Constants.PREF_NUM_PARTICIPANTS, 0));
-            json.put(Constants.LOGGER_EXTRA_SALIVA_DISTANCES, salivaDistancesString);
-            json.put(Constants.LOGGER_EXTRA_SALIVA_TIMES, salivaTimesString);
-            json.put(Constants.LOGGER_EXTRA_STUDY_DAYS, sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0));
-            json.put(Constants.LOGGER_EXTRA_SALIVA_IDS, salivaIds);
-            json.put(Constants.LOGGER_EXTRA_HAS_EVENING_SALIVETTE, hasEveningSalivette);
-            json.put(Constants.LOGGER_EXTRA_SHARE_EMAIL_ADDRESS, sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, ""));
-            json.put(Constants.LOGGER_EXTRA_CHECK_DUPLICATES, sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false));
-            json.put(Constants.LOGGER_EXTRA_MANUAL_SCAN, sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false));
-            LoggerUtil.log(Constants.LOGGER_ACTION_STUDY_DATA, json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void logParticipantId() {
-        String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, "");
-        try {
-            JSONObject json = new JSONObject();
-            json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, participantId);
-            LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     private void showAppInfoDialog() {
