@@ -27,11 +27,10 @@ import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
-import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 
-public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnDismissListener {
+public class Ean8Fragment extends BarcodeFragment {
 
     private static final String TAG = Ean8Fragment.class.getSimpleName();
 
@@ -43,15 +42,6 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         super.onResume();
         cameraSource.setFrameProcessor(new BarcodeProcessor(graphicOverlay, workflowModel, Barcode.FORMAT_EAN_8));
         workflowModel.setWorkflowState(WorkflowState.DETECTING);
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
-            switchFragment();
-        } else {
-            finishActivity();
-        }
     }
 
     @Override
@@ -86,7 +76,7 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                     sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
 
                     cancelTimer(barcode.getValue());
-                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
+                    finishScanningProcess();
                     break;
                 case INVALID:
                     try {
@@ -206,17 +196,12 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
-    private void finishActivity() {
-        if (getActivity() != null) {
-            getActivity().setResult(Activity.RESULT_OK, new Intent());
-            getActivity().finish();
-        }
-    }
+    private void finishScanningProcess() {
+        if (getActivity() == null)
+            return;
 
-    private void switchFragment() {
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity) getActivity();
-            mainActivity.navigate();
-        }
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.putExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, true);
+        startActivity(intent);
     }
 }

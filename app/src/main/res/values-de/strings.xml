@@ -93,5 +93,6 @@
     <string name="menu_reregister">Neu registrieren</string>
     <string name="title_scanner">Scannen</string>
     <string name="menu_manual_scan">Barcode scannen</string>
+    <string name="message_barcode_scanned_successfully">Der Barcode wurde erfolgreich gescannt!</string>
 
 </resources>

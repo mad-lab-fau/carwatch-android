@@ -42,7 +42,6 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
-import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.util.Utils;
@@ -110,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
             };
             Logger.addLogAdapter(sAdapter);
         }
+
+        if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
+            Snackbar.make(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -147,12 +150,6 @@ public class MainActivity extends AppCompatActivity {
             // if user launched app for the first time (PREF_FIRST_RUN_SUBJECT_ID) => display Dialog to enter Subject ID
             showSubjectIdDialog();
         }
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        BarcodeResultFragment.dismiss(getSupportFragmentManager());
     }
 
     @Override
