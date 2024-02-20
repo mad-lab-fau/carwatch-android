@@ -23,7 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity
+            android:name=".ui.onboarding.SlideShowActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
