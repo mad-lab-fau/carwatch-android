@@ -79,6 +79,10 @@
     <string name="title_battery_optimization">Batterieoptimierung</string>
     <string name="message_battery_optimization">Bitte deaktivieren Sie die Batterieoptimierung für CARWatch, um sicherzustellen, dass die Wecker zuverlässig funktionieren.</string>
 
+    <!-- Slide Show Activity -->
+    <string name="btn_next">Weiter</string>
+    <string name="btn_skip_all">Alle überspringen</string>
+
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Info</string>
     <string name="title_share_dialog">Logs teilen via…</string>

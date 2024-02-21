@@ -43,6 +43,10 @@
     <string name="title_battery_optimization">Optimisation de la batterie</string>
     <string name="message_battery_optimization">Veuillez désactiver l\'optimisation de la batterie pour CARWatch afin de garantir un déclenchement fiable des alarmes.</string>
 
+    <!-- Slide Show Activity -->
+    <string name="btn_next">Suivant</string>
+    <string name="btn_skip_all">Passer tout</string>
+
     <string name="title_subject_id">Entrer l\'ID de participant</string>
     <string name="subject_id">ID de participant</string>
     <string name="study_id">Nom de l\'étude</string>

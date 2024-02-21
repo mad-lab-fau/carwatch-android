@@ -53,6 +53,10 @@
     <string name="title_battery_optimization">Battery Optimization</string>
     <string name="message_battery_optimization">Please disable battery optimization for CARWatch to ensure that the alarms will be triggered reliably. </string>
 
+    <!-- Slide Show Activity -->
+    <string name="btn_next">Next</string>
+    <string name="btn_skip_all">Skip all</string>
+
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Please point your camera at a barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
