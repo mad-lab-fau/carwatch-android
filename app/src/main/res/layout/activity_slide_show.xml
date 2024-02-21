@@ -8,11 +8,13 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/slide_show_fragment"
+        android:name="de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_welcome_text" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,14 +43,15 @@
 
             <Button
                 android:id="@+id/btn_skip_slides"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text="@string/btn_skip_all"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_dots"
