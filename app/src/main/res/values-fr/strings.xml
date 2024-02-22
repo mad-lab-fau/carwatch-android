@@ -58,6 +58,7 @@
     <string name="message_kill_alarms">Êtes-vous sûre de vouloir annuler toutes les alarmes et les minuteries de prélèvements ? Cette action ne peut pas être annulée!</string>
 
 
+    <string name="message_welcome">Bienvenue en CARWatch!</string>
     <string name="prompt_point_at_a_barcode">Veuillez pointer votre caméra vers un code-barres</string>
     <string name="prompt_scanning">Scan en cours…</string>
     <string name="prompt_barcode_scan_successful">Numérisation du code-barres réussie!</string>
