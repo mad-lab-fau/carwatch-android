@@ -10,13 +10,15 @@
         android:id="@+id/slide_show_fragment"
         android:name="de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/fragment_welcome_text" />
 
     <LinearLayout
+        android:id="@+id/slide_navigation"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="vertical"
