@@ -64,7 +64,8 @@
                 app:layout_constraintStart_toEndOf="@id/btn_skip_slides"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tabBackground="@drawable/slide_tab_selector"
-                app:tabGravity="center" />
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp" />
 
             <Button
                 android:id="@+id/btn_next_slide"
