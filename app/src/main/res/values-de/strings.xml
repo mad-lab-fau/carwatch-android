@@ -14,7 +14,6 @@
     <string name="message_subject_id_short">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="message_subject_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
-    <string name="message_welcome">Willkommen bei CARWatch!</string>
     <string name="prompt_point_at_a_barcode">Bitte richten Sie Ihre Kamera auf einen Barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
     <string name="prompt_barcode_scan_successful">Barcode erfolgreich gescannt!</string>
@@ -83,6 +82,8 @@
     <!-- Slide Show Activity -->
     <string name="btn_next">Weiter</string>
     <string name="btn_skip_all">Alle überspringen</string>
+    <string name="headline_welcome">Willkommen bei CARWatch!</string>
+    <string name="message_permission_request">Um die App optimal nutzen zu können, benötigen wir die Berechtigung, Benachrichtungen anzuzeigen um Sie über anstehende Proben zu informieren und außerdem Kamerazugriff, damit Sie die Barcodes auf den Proben scannen können.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Info</string>

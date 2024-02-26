@@ -2,7 +2,6 @@ package de.fau.cs.mad.carwatch.ui.onboarding;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -21,13 +20,18 @@ import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.Slide;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 public class SlideShowActivity extends AppCompatActivity {
 
     public static final String TAG = SlideShowActivity.class.getSimpleName();
 
-    private final List<Fragment> slides = new ArrayList<>();
+    private final List<Slide> slides = new ArrayList<>();
     private final int firstSkippableSlide = 1;
+    private int permissionRequestSlide = 0;
     private int currentSlide = 0;
     private SharedPreferences sharedPreferences;
     private Button skipButton;
@@ -62,6 +66,10 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void initializeSlides() {
+        permissionRequestSlide = 1;
+
+        slides.add(new WelcomeText());
+        slides.add(new PermissionRequest());
     }
 
     private void initializeNextButton() {
@@ -85,6 +93,9 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void showNextSlide() {
+        if (currentSlide == permissionRequestSlide)
+            Utils.requestRuntimePermissions(this);
+
         if (currentSlide < slides.size() - 1) {
             currentSlide++;
 
