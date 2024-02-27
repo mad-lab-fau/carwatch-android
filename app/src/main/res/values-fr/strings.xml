@@ -53,7 +53,7 @@
     <string name="subject_id">ID de participant</string>
     <string name="study_id">Nom de l\'étude</string>
     <string name="message_subject_id_short">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
-    <string name="message_subject_id">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
+    <string name="message_subject_id">Veuillez entrer l\'ID de participant que vous avez reçu de notre part:</string>
     <string name="title_invalid_subject_id">ID du participant invalide</string>
     <string name="message_invalid_subject_id">ID du participant invalide! Veuillez réessayer.</string>
     <string name="title_kill_alarms">Avertissement</string>
