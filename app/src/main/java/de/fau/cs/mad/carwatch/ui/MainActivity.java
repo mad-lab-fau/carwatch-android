@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int[] NAV_IDS = {R.id.navigation_wakeup, R.id.navigation_alarm, R.id.navigation_bedtime, R.id.navigation_scanner};
 
-    public static DiskLogAdapter sAdapter;
+    private static DiskLogAdapter sAdapter;
 
     private SharedPreferences sharedPreferences;
 
@@ -100,16 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
-        if (sAdapter == null) {
-            sAdapter = new DiskLogAdapter(LoggerUtil.getFormatStrategy(this)) {
-                @Override
-                public boolean isLoggable(int priority, @Nullable String tag) {
-                    return true;
-                }
-            };
-            Logger.addLogAdapter(sAdapter);
-        }
+        initializeLoggingUtil(this);
     }
 
     @Override
@@ -129,6 +120,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void navigate() {
         navController.navigate(R.id.navigation_wakeup);
+    }
+
+    public static void initializeLoggingUtil(Context context) {
+        if (sAdapter != null)
+            return;
+        sAdapter = new DiskLogAdapter(LoggerUtil.getFormatStrategy(context)) {
+            @Override
+            public boolean isLoggable(int priority, @Nullable String tag) {
+                return true;
+            }
+        };
+        Logger.addLogAdapter(sAdapter);
     }
 
     @Override

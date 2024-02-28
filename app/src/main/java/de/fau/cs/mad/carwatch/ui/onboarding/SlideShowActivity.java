@@ -45,10 +45,15 @@ public class SlideShowActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         setColorScheme();
+        initializeLoggingUtil();
         initializeSlides();
         initializeSkipButton();
         initializeNextButton();
         initializeCurrentSlideIndicator();
+    }
+
+    private void initializeLoggingUtil() {
+        MainActivity.initializeLoggingUtil(this);
     }
 
     private void setColorScheme() {
