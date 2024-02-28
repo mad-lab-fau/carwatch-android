@@ -1,37 +1,40 @@
 package de.fau.cs.mad.carwatch.ui.barcode;
 
-import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
-import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
-
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.preference.PreferenceManager;
 
 import com.google.mlkit.vision.barcode.common.Barcode;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.databinding.ObservableBoolean;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
-import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.barcodedetection.QrCodeParser;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
 
-public class QrFragment extends BarcodeFragment {
+import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
+import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
+
+public class QrFragment extends BarcodeFragment implements WelcomeSlide {
 
     private static final String TAG = QrFragment.class.getSimpleName();
 
     private SharedPreferences sharedPreferences;
+    private final ObservableBoolean isSkipButtonVisible = new ObservableBoolean(false);
+    private final ObservableBoolean isNextButtonEnabled = new ObservableBoolean(false);
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +48,26 @@ public class QrFragment extends BarcodeFragment {
         super.onResume();
         cameraSource.setFrameProcessor(new BarcodeProcessor(graphicOverlay, workflowModel, Barcode.FORMAT_QR_CODE));
         workflowModel.setWorkflowState(WorkflowState.DETECTING);
+    }
+
+    @Override
+    public Fragment getFragment() {
+        return this;
+    }
+
+    @Override
+    public ObservableBoolean getSkipButtonIsVisible() {
+        return isSkipButtonVisible;
+    }
+
+    @Override
+    public ObservableBoolean getNextButtonIsEnabled() {
+        return isNextButtonEnabled;
+    }
+
+    @Override
+    public void onSlideFinished() {
+        // Do nothing
     }
 
     public void setStudyData(QrCodeParser parser) {
@@ -85,7 +108,8 @@ public class QrFragment extends BarcodeFragment {
             switch (check) {
                 case VALID:
                     setStudyData(parser);
-                    finishActivity();
+                    isNextButtonEnabled.set(true);
+                    isNextButtonEnabled.notifyChange();
                     break;
                 case INVALID:
                     try {
@@ -117,12 +141,4 @@ public class QrFragment extends BarcodeFragment {
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
-
-    private void finishActivity() {
-        if (getActivity() != null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
-        }
-    }
-
 }
