@@ -22,6 +22,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.ParticipantIdQuery;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
@@ -99,6 +100,11 @@ public class SlideShowActivity extends AppCompatActivity {
     private void nextSlide() {
         WelcomeSlide currentSlide = slides.get(currentSlidePosition);
         currentSlide.onSlideFinished();
+
+        int qrCodeSlidePos = 2;
+        if (currentSlidePosition == qrCodeSlidePos && !sharedPreferences.contains(Constants.PREF_SUBJECT_ID)) {
+            slides.add(currentSlidePosition + 1, new ParticipantIdQuery());
+        }
 
         if (currentSlidePosition >= slides.size() - 1) {
             finishSlideShow();
