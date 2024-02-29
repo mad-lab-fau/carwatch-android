@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui.onboarding;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -42,6 +43,7 @@ public class SlideShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_show);
+        tabDots = findViewById(R.id.tab_dots);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -50,7 +52,6 @@ public class SlideShowActivity extends AppCompatActivity {
         initializeSlides();
         initializeSkipButton();
         initializeNextButton();
-        initializeCurrentSlideIndicator();
     }
 
     private void initializeLoggingUtil() {
@@ -71,9 +72,10 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void initializeSlides() {
-        slides.add(new WelcomeText());
-        slides.add(new PermissionRequest());
-        slides.add(new QrFragment());
+        addSlide(new WelcomeText());
+        addSlide(new PermissionRequest());
+        addSlide(new QrFragment());
+        highlightDot(currentSlidePosition);
     }
 
 
@@ -82,28 +84,13 @@ public class SlideShowActivity extends AppCompatActivity {
         nextButton.setOnClickListener(v -> nextSlide());
     }
 
-    private void initializeCurrentSlideIndicator() {
-        tabDots = findViewById(R.id.tab_dots);
-        for (int i = 0; i < slides.size(); i++) {
-            tabDots.addTab(tabDots.newTab());
-        }
-
-        // disable onclick of tab dots
-        LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
-        for (int i = 0; i < tabStrip.getChildCount(); i++) {
-            tabStrip.getChildAt(i).setOnTouchListener((v, event) -> true);
-        }
-
-        highlightDot(currentSlidePosition);
-    }
-
     private void nextSlide() {
         WelcomeSlide currentSlide = slides.get(currentSlidePosition);
         currentSlide.onSlideFinished();
 
         int qrCodeSlidePos = 2;
         if (currentSlidePosition == qrCodeSlidePos && !sharedPreferences.contains(Constants.PREF_SUBJECT_ID)) {
-            slides.add(currentSlidePosition + 1, new ParticipantIdQuery());
+            addSlide(currentSlidePosition + 1, new ParticipantIdQuery());
         }
 
         if (currentSlidePosition >= slides.size() - 1) {
@@ -135,12 +122,21 @@ public class SlideShowActivity extends AppCompatActivity {
         });
     }
 
+    private void addSlide(WelcomeSlide slide) {
+        addSlide(slides.size(), slide);
+    }
+
+    private void addSlide(int position, WelcomeSlide slide) {
+        slides.add(position, slide);
+        tabDots.addTab(tabDots.newTab());
+        disableTabDotOnClick(position);
+    }
+
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.slide_show_fragment, fragment);
         transaction.commit();
-
     }
 
     private void highlightDot(int position) {
@@ -148,6 +144,11 @@ public class SlideShowActivity extends AppCompatActivity {
         if (tab != null) {
             tab.select();
         }
+    }
+
+    private void disableTabDotOnClick(int position) {
+        LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
+        tabStrip.getChildAt(position).setOnTouchListener((v, event) -> true);
     }
 
     private void finishSlideShow() {
