@@ -57,6 +57,7 @@ public final class Constants {
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
     public static final String DEFAULT_START_SAMPLE = "S0";
 
+    public static final String EXTRA_SLIDE_SHOW_TYPE = "extra_slide_show_type";
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
     public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";

@@ -176,9 +176,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menu_reregister:
                 sharedPreferences.edit().clear().apply();
-                Intent currIntent = getIntent();
+                Intent intent = new Intent(this, SlideShowActivity.class);
+                intent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_APP_INITIALIZATION_SLIDES);
+                startActivity(intent);
                 finish();
-                startActivity(currIntent);
                 break;
             case R.id.menu_app_info:
                 showAppInfoDialog();

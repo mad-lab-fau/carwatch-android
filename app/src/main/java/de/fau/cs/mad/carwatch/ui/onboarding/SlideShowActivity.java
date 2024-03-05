@@ -31,9 +31,14 @@ import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
 public class SlideShowActivity extends AppCompatActivity {
 
     public static final String TAG = SlideShowActivity.class.getSimpleName();
+    public static final int SHOW_ALL_SLIDES = 0;
+    public static final int SHOW_APP_INITIALIZATION_SLIDES = 1;
+    public static final int SHOW_TUTORIAL_SLIDES = 2;
 
     private final List<WelcomeSlide> slides = new ArrayList<>();
+    private int slideShowType;
     private int currentSlidePosition = 0;
+    private int qrScannerSlidePosition = -1;
     private SharedPreferences sharedPreferences;
     private Button skipButton;
     private Button nextButton;
@@ -48,6 +53,8 @@ public class SlideShowActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         currentSlidePosition = sharedPreferences.getInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, Constants.INITIAL_TUTORIAL_SLIDE);
 
+        slideShowType = getIntent().getIntExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SHOW_ALL_SLIDES);
+
         initializeSlides();
         initializeSkipButton();
         initializeNextButton();
@@ -60,14 +67,20 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void initializeSlides() {
-        addSlide(new WelcomeText());
-        addSlide(new PermissionRequest());
-        addSlide(new QrFragment());
-
-        List<TutorialSlide> tutorialSlides = createTutorialSlides(false);
-
-        for (WelcomeSlide slide : tutorialSlides) {
-            addSlide(slide);
+        switch (slideShowType) {
+            case SHOW_APP_INITIALIZATION_SLIDES:
+                addSlide(new QrFragment());
+                qrScannerSlidePosition = 0;
+                break;
+            default:
+                addSlide(new WelcomeText());
+                addSlide(new PermissionRequest());
+                addSlide(new QrFragment());
+                qrScannerSlidePosition = 2;
+                for (TutorialSlide slide : createTutorialSlides(false)) {
+                    addSlide(slide);
+                }
+                break;
         }
     }
 
@@ -116,8 +129,7 @@ public class SlideShowActivity extends AppCompatActivity {
         WelcomeSlide currentSlide = slides.get(currentSlidePosition);
         currentSlide.onSlideFinished();
 
-        int qrCodeSlidePos = 2;
-        if (currentSlidePosition == qrCodeSlidePos) {
+        if (currentSlidePosition == qrScannerSlidePosition) {
             int tutorialSlidePos = currentSlidePosition + 1;
 
             if (!sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_IS_SET, false)) {
@@ -125,7 +137,7 @@ public class SlideShowActivity extends AppCompatActivity {
                 tutorialSlidePos++;
             }
 
-            if (sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false)) {
+            if (sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false) && slideShowType == SHOW_ALL_SLIDES) {
                 useTutorialSlidesWithExtendedMenu(tutorialSlidePos);
             }
         }
