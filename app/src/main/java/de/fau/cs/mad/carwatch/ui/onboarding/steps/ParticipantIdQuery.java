@@ -57,7 +57,10 @@ public class ParticipantIdQuery extends BaseWelcomeSlide {
     public void onSlideFinished() {
         String participantId = participantIdEditText.getText().toString();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        sharedPreferences.edit().putString(Constants.PREF_SUBJECT_ID, participantId).apply();
+        sharedPreferences.edit()
+                .putString(Constants.PREF_SUBJECT_ID, participantId)
+                .putBoolean(Constants.PREF_SUBJECT_ID_IS_SET, false)
+                .apply();
         logInitialData(sharedPreferences);
     }
 

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.databinding.Observable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -47,24 +46,12 @@ public class SlideShowActivity extends AppCompatActivity {
         tabDots = findViewById(R.id.tab_dots);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        currentSlidePosition = sharedPreferences.getInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, Constants.INITIAL_TUTORIAL_SLIDE);
 
-        setColorScheme();
-        initializeLoggingUtil();
         initializeSlides();
         initializeSkipButton();
         initializeNextButton();
-    }
-
-    private void initializeLoggingUtil() {
-        MainActivity.initializeLoggingUtil(this);
-    }
-
-    private void setColorScheme() {
-        AppCompatDelegate delegate = getDelegate();
-        boolean enableNightMode = sharedPreferences.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
-        int colorScheme = enableNightMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
-        AppCompatDelegate.setDefaultNightMode(colorScheme);
-        delegate.applyDayNight();
+        showSlide(currentSlidePosition);
     }
 
     private void initializeSkipButton() {
@@ -98,8 +85,6 @@ public class SlideShowActivity extends AppCompatActivity {
         addSlide(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId));
         addSlide(TutorialSlide.newInstance(bedtimeScreenHeadline, bedtimeScreenDescription, bedtimeScreenImageId));
         addSlide(TutorialSlide.newInstance(scanScreenHeadline, scanScreenDescription, scanScreenImageId));
-
-        highlightDot(currentSlidePosition);
     }
 
 
@@ -108,12 +93,19 @@ public class SlideShowActivity extends AppCompatActivity {
         nextButton.setOnClickListener(v -> nextSlide());
     }
 
+    private void showSlide(int position) {
+        WelcomeSlide slide = slides.get(position);
+        initButtonsForSlide(slide);
+        replaceFragment(slide.getFragment());
+        highlightDot(position);
+    }
+
     private void nextSlide() {
         WelcomeSlide currentSlide = slides.get(currentSlidePosition);
         currentSlide.onSlideFinished();
 
         int qrCodeSlidePos = 2;
-        if (currentSlidePosition == qrCodeSlidePos && !sharedPreferences.contains(Constants.PREF_SUBJECT_ID)) {
+        if (currentSlidePosition == qrCodeSlidePos && !sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_IS_SET, false)) {
             addSlide(currentSlidePosition + 1, new ParticipantIdQuery());
         }
 
@@ -123,10 +115,8 @@ public class SlideShowActivity extends AppCompatActivity {
         }
 
         currentSlidePosition++;
-        WelcomeSlide nextSlide = slides.get(currentSlidePosition);
-        initButtonsForSlide(nextSlide);
-        replaceFragment(nextSlide.getFragment());
-        highlightDot(currentSlidePosition);
+        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, currentSlidePosition).apply();
+        showSlide(currentSlidePosition);
     }
 
     private void initButtonsForSlide(WelcomeSlide slide) {
@@ -188,6 +178,7 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void finishSlideShow() {
+        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, Constants.TUTORIAL_FINISHED_SLIDE_ID).apply();
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(mainActivityIntent);
         finish();

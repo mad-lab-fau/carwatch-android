@@ -23,8 +23,9 @@ public final class Constants {
 
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
+    public static final String PREF_CURRENT_TUTORIAL_SLIDE = "current_tutorial_slide"; // int
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
-    public static final String PREF_FIRST_RUN_SUBJECT_ID = "first_run_subject_id"; // boolean
+    public static final String PREF_SUBJECT_ID_IS_SET = "first_run_subject_id"; // boolean
     public static final String PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS = "requested_ignore_battery_optimizations"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_SUBJECT_ID = "subject_id"; // String
@@ -47,8 +48,11 @@ public final class Constants {
     public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
     public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
-    public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
 
+    public static final int INITIAL_TUTORIAL_SLIDE = 0;
+    public static final int TUTORIAL_FINISHED_SLIDE_ID = -1;
+
+    public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
