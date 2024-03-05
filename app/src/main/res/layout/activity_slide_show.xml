@@ -11,7 +11,7 @@
         android:name="de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="55dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +20,7 @@
     <LinearLayout
         android:id="@+id/slide_navigation"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="55dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -45,9 +45,10 @@
 
             <Button
                 android:id="@+id/btn_skip_slides"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
+                android:layout_width="130dp"
+                android:layout_height="54dp"
                 android:layout_margin="5dp"
+                android:paddingHorizontal="0dp"
                 android:text="@string/btn_skip_all"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -69,8 +70,8 @@
 
             <Button
                 android:id="@+id/btn_next_slide"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
+                android:layout_width="130dp"
+                android:layout_height="54dp"
                 android:layout_margin="5dp"
                 android:text="@string/btn_next"
                 app:layout_constraintBottom_toBottomOf="parent"

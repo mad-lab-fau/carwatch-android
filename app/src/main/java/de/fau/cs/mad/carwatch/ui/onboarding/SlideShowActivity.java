@@ -128,8 +128,8 @@ public class SlideShowActivity extends AppCompatActivity {
 
     private void addSlide(int position, WelcomeSlide slide) {
         slides.add(position, slide);
-        tabDots.addTab(tabDots.newTab());
-        disableTabDotOnClick(position);
+        tabDots.addTab(tabDots.newTab(), position);
+        prepareTabDot(position);
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -146,9 +146,21 @@ public class SlideShowActivity extends AppCompatActivity {
         }
     }
 
-    private void disableTabDotOnClick(int position) {
+    private void prepareTabDot(int position) {
         LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
-        tabStrip.getChildAt(position).setOnTouchListener((v, event) -> true);
+        View tab = tabStrip.getChildAt(position);
+
+        // disable onclick
+        tab.setOnTouchListener((v, event) -> true);
+
+        // decrease space between dots
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tab.getLayoutParams();
+        params.weight = 0;
+        params.width = 15;
+        params.setMarginStart(10);
+        params.setMarginEnd(10);
+        tab.setLayoutParams(params);
+        tabDots.requestLayout();
     }
 
     private void finishSlideShow() {

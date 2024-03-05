@@ -55,7 +55,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Next</string>
-    <string name="btn_skip_all">Skip all</string>
+    <string name="btn_skip_all">Skip tutorial</string>
     <string name="headline_welcome">Welcome to CARWatch!</string>
     <string name="message_permission_request">For an optimal performance we need the permission to send notifications in order to inform you about upcoming samples and camera access to be able to scan the barcodes</string>
 

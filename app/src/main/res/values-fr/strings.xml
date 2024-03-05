@@ -45,7 +45,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Suivant</string>
-    <string name="btn_skip_all">Passer tout</string>
+    <string name="btn_skip_all">Sauter le tutoriel</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
     <string name="message_permission_request">Pour une performance optimale, nous avons besoin de l\'autorisation d\'envoyer des notifications afin de vous informer des échantillons à venir et de l\'accès à l\'appareil photo pour pouvoir scanner les codes-barres.</string>
 
