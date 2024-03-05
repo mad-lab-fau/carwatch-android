@@ -18,6 +18,7 @@
     <string name="menu_reregister">Reregister</string>
     <string name="menu_share">Share Logs …</string>
     <string name="menu_kill">Kill Alarms</string>
+    <string name="menu_show_tutorial">Show Tutorial</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>

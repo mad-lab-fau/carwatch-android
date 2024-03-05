@@ -181,11 +181,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 break;
+            case R.id.menu_show_tutorial:
+                sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE).apply();
+                Intent tutorialIntent = new Intent(this, SlideShowActivity.class);
+                tutorialIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_TUTORIAL_SLIDES);
+                startActivity(tutorialIntent);
+                break;
             case R.id.menu_app_info:
                 showAppInfoDialog();
                 break;
-
-
         }
         return super.onOptionsItemSelected(item);
     }

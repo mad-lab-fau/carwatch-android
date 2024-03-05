@@ -19,7 +19,7 @@
     <string name="menu_reregister">Réenregistrer</string>
     <string name="menu_share">Partager les données…</string>
     <string name="menu_kill">Arrêter les alarmes</string>
-
+    <string name="menu_show_tutorial">Afficher le tutoriel</string>
 
     <string name="stop">Arrêter</string>
 

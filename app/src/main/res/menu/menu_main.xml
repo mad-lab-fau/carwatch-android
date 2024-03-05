@@ -22,6 +22,10 @@
         android:title="@string/menu_reregister" />
 
     <item
+        android:id="@+id/menu_show_tutorial"
+        android:title="@string/menu_show_tutorial" />
+
+    <item
         android:id="@+id/menu_app_info"
         android:title="@string/app_info" />
 </menu>

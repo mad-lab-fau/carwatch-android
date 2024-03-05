@@ -61,6 +61,15 @@ public class SlideShowActivity extends AppCompatActivity {
         showSlide(currentSlidePosition);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // if the user leaves the app during the tutorial, we assume that the tutorial is finished
+        if (slideShowType == SHOW_TUTORIAL_SLIDES) {
+            sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.SLIDESHOW_FINISHED_SLIDE_ID).apply();
+        }
+    }
+
     private void initializeSkipButton() {
         skipButton = findViewById(R.id.btn_skip_slides);
         skipButton.setOnClickListener(v -> finishSlideShow());
@@ -71,6 +80,12 @@ public class SlideShowActivity extends AppCompatActivity {
             case SHOW_APP_INITIALIZATION_SLIDES:
                 addSlide(new QrFragment());
                 qrScannerSlidePosition = 0;
+                break;
+            case SHOW_TUTORIAL_SLIDES:
+                boolean manualScanEnabled = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false);
+                for (TutorialSlide slide : createTutorialSlides(manualScanEnabled)) {
+                    addSlide(slide);
+                }
                 break;
             default:
                 addSlide(new WelcomeText());

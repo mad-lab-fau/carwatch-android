@@ -105,8 +105,9 @@
     <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
     <string name="title_barcode_already_scanned">Doppelter Barcode!</string>
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
-    <string name="menu_reregister">Neu registrieren</string>
     <string name="title_scanner">Scannen</string>
+    <string name="menu_reregister">Neu registrieren</string>
     <string name="menu_manual_scan">Barcode scannen</string>
+    <string name="menu_show_tutorial">Tutorial zeigen</string>
 
 </resources>
