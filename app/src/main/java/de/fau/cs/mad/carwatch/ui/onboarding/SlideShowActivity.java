@@ -64,7 +64,16 @@ public class SlideShowActivity extends AppCompatActivity {
         addSlide(new PermissionRequest());
         addSlide(new QrFragment());
 
-        boolean manualScanEnabled = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, true);
+        List<TutorialSlide> tutorialSlides = createTutorialSlides(false);
+
+        for (WelcomeSlide slide : tutorialSlides) {
+            addSlide(slide);
+        }
+    }
+
+    private List<TutorialSlide> createTutorialSlides(boolean manualScanEnabled) {
+        List<TutorialSlide> tutorialSlides = new ArrayList<>();
+
         int wakeupScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_wakeup_screen_extended_menu : R.drawable.img_screenshot_wakeup_screen_small_menu;
         int alarmScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_alarm_screen_extended_menu : R.drawable.img_screenshot_alarm_screen_small_menu;
         int bedtimeScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_bedtime_screen_extended_menu : R.drawable.img_screenshot_bedtime_screen_small_menu;
@@ -78,13 +87,16 @@ public class SlideShowActivity extends AppCompatActivity {
         String alarmScreenDescription = getString(R.string.description_alarm_tutorial);
         String bedtimeScreenDescription = getString(R.string.description_bedtime_screen_tutorial);
         String scanScreenDescription = getString(R.string.description_scan_screen_tutorial);
+
         if (manualScanEnabled)
             scanScreenDescription += " " + getString(R.string.scan_screen_navigation_hint);
 
-        addSlide(TutorialSlide.newInstance(wakeupScreenHeadline, wakeupScreenDescription, wakeupScreenImageId));
-        addSlide(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId));
-        addSlide(TutorialSlide.newInstance(bedtimeScreenHeadline, bedtimeScreenDescription, bedtimeScreenImageId));
-        addSlide(TutorialSlide.newInstance(scanScreenHeadline, scanScreenDescription, scanScreenImageId));
+        tutorialSlides.add(TutorialSlide.newInstance(wakeupScreenHeadline, wakeupScreenDescription, wakeupScreenImageId));
+        tutorialSlides.add(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId));
+        tutorialSlides.add(TutorialSlide.newInstance(bedtimeScreenHeadline, bedtimeScreenDescription, bedtimeScreenImageId));
+        tutorialSlides.add(TutorialSlide.newInstance(scanScreenHeadline, scanScreenDescription, scanScreenImageId));
+
+        return tutorialSlides;
     }
 
 
@@ -105,8 +117,17 @@ public class SlideShowActivity extends AppCompatActivity {
         currentSlide.onSlideFinished();
 
         int qrCodeSlidePos = 2;
-        if (currentSlidePosition == qrCodeSlidePos && !sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_IS_SET, false)) {
-            addSlide(currentSlidePosition + 1, new ParticipantIdQuery());
+        if (currentSlidePosition == qrCodeSlidePos) {
+            int tutorialSlidePos = currentSlidePosition + 1;
+
+            if (!sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_IS_SET, false)) {
+                addSlide(currentSlidePosition + 1, new ParticipantIdQuery());
+                tutorialSlidePos++;
+            }
+
+            if (sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false)) {
+                useTutorialSlidesWithExtendedMenu(tutorialSlidePos);
+            }
         }
 
         if (currentSlidePosition >= slides.size() - 1) {
@@ -134,6 +155,13 @@ public class SlideShowActivity extends AppCompatActivity {
                 nextButton.setEnabled(slide.getNextButtonIsEnabled().get());
             }
         });
+    }
+
+    private void useTutorialSlidesWithExtendedMenu(int firstSlidePos) {
+        List<TutorialSlide> tutorialSlides = createTutorialSlides(true);
+        for (int i = 0; i < tutorialSlides.size(); i++) {
+            slides.set(firstSlidePos + i, tutorialSlides.get(i));
+        }
     }
 
     private void addSlide(WelcomeSlide slide) {
