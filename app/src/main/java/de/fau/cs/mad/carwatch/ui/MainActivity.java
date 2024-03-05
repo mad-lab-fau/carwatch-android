@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         initializeLoggingUtil(this);
 
-        if (sharedPreferences.getInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, Constants.INITIAL_TUTORIAL_SLIDE) != Constants.TUTORIAL_FINISHED_SLIDE_ID) {
+        if (sharedPreferences.getInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE) != Constants.SLIDESHOW_FINISHED_SLIDE_ID) {
             Intent intent = new Intent(this, SlideShowActivity.class);
             startActivity(intent);
             finish();

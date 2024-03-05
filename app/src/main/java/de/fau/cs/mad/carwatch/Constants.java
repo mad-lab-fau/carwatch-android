@@ -23,7 +23,7 @@ public final class Constants {
 
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
-    public static final String PREF_CURRENT_TUTORIAL_SLIDE = "current_tutorial_slide"; // int
+    public static final String PREF_CURRENT_SLIDE_SHOW_SLIDE = "current_tutorial_slide"; // int
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
     public static final String PREF_SUBJECT_ID_IS_SET = "first_run_subject_id"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
@@ -48,8 +48,8 @@ public final class Constants {
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
     public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
 
-    public static final int INITIAL_TUTORIAL_SLIDE = 0;
-    public static final int TUTORIAL_FINISHED_SLIDE_ID = -1;
+    public static final int INITIAL_SLIDE_SHOW_SLIDE = 0;
+    public static final int SLIDESHOW_FINISHED_SLIDE_ID = -1;
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
     public static final int REQUEST_CODE_SCAN = 0xCAFE;

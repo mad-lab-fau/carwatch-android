@@ -51,7 +51,7 @@ public class SlideShowActivity extends AppCompatActivity {
         tabDots = findViewById(R.id.tab_dots);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        currentSlidePosition = sharedPreferences.getInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, Constants.INITIAL_TUTORIAL_SLIDE);
+        currentSlidePosition = sharedPreferences.getInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE);
 
         slideShowType = getIntent().getIntExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SHOW_ALL_SLIDES);
 
@@ -148,7 +148,7 @@ public class SlideShowActivity extends AppCompatActivity {
         }
 
         currentSlidePosition++;
-        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, currentSlidePosition).apply();
+        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, currentSlidePosition).apply();
         showSlide(currentSlidePosition);
     }
 
@@ -218,7 +218,7 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void finishSlideShow() {
-        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_TUTORIAL_SLIDE, Constants.TUTORIAL_FINISHED_SLIDE_ID).apply();
+        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.SLIDESHOW_FINISHED_SLIDE_ID).apply();
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(mainActivityIntent);
         finish();
