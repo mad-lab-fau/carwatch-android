@@ -58,6 +58,15 @@
     <string name="btn_skip_all">Skip tutorial</string>
     <string name="headline_welcome">Welcome to CARWatch!</string>
     <string name="message_permission_request">For an optimal performance we need the permission to send notifications in order to inform you about upcoming samples and camera access to be able to scan the barcodes</string>
+    <string name="headline_wakeup_screen_tutorial">Report waking up</string>
+    <string name="description_wakeup_screen_tutorial">You only need to report your awakening if you didn\'t set an alarm for the morning or woke up before the alarm went off. Clicking the \"Yes\" Button will schedule the sample alarms for the upcoming day.</string>
+    <string name="headline_alarm_tutorial">Track your alarms</string>
+    <string name="description_alarm_tutorial">This screen provides an overview of past and upcoming alarms. To schedule your wake-up alarm for the following day simply click on the top alarm time. The remaining sample alarms are scheduled right after you woke up.</string>
+    <string name="headline_bedtime_screen_tutorial">Report going to bed</string>
+    <string name="description_bedtime_screen_tutorial">Here, you can initiate the evening procedure before going to bed. You only need to do this if the study requires you to take an evening sample. The \"Lights out!\" Button will activate the app\'s dark mode.</string>
+    <string name="headline_scan_screen_tutorial">Scan your sample</string>
+    <string name="description_scan_screen_tutorial">The barcode scanner opens automatically when you have to take a sample. After sampling, simply scan the barcode on the sample tube so that the sample can later be linked to the time of sampling.</string>
+    <string name="scan_screen_navigation_hint">If, for example, you have skipped a sample or need to take a sample that wasn\'t planned, you can open the scanner using the navigation bar at the bottom.</string>
 
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Please point your camera at a barcode</string>

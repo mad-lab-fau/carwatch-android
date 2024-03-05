@@ -48,6 +48,15 @@
     <string name="btn_skip_all">Sauter le tutoriel</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
     <string name="message_permission_request">Pour une performance optimale, nous avons besoin de l\'autorisation d\'envoyer des notifications afin de vous informer des échantillons à venir et de l\'accès à l\'appareil photo pour pouvoir scanner les codes-barres.</string>
+    <string name="headline_wakeup_screen_tutorial">Commencer la matinée</string>
+    <string name="description_wakeup_screen_tutorial">Vous ne devez utiliser cette fonction que si vous n\'aviez pas réglé de réveil pour le matin ou si vous vous êtes réveillé avant que le réveil ne sonne. En appuyant sur le bouton \"Oui\", les réveils d\'échantillons sont configurés pour le jour suivant.</string>
+    <string name="headline_alarm_tutorial">Suivez vos alarmes!</string>
+    <string name="description_alarm_tutorial">Dans cet aperçu, vous voyez tous les réveils d\'essai passés et ceux qui sont encore à venir. Pour programmer une alarme pour le lendemain matin, il suffit d\'appuyer sur l\'heure du haut. Les autres réveils d\'essai seront réglés le lendemain matin, après votre réveil.</string>
+    <string name="headline_bedtime_screen_tutorial">Aller au lit</string>
+    <string name="description_bedtime_screen_tutorial">Ici, vous pouvez commencer la procédure du soir avant d\'aller vous coucher. Cela n\'est nécessaire que si vous devez prendre un échantillon le soir pour l\'étude. Le bouton \"Extinction des lumières!\" active le mode sombre de l\'application.</string>
+    <string name="headline_scan_screen_tutorial">Scanner l\'échantillon</string>
+    <string name="description_scan_screen_tutorial">Le lecteur de code-barres s\'ouvre automatiquement lorsque vous devez prélever un échantillon. Il suffit alors de scanner le code-barres qui se trouve sur le tube d\'échantillon.</string>
+    <string name="scan_screen_navigation_hint">Le lecteur de codes-barres peut en outre être ouvert via la barre de navigation inférieure.</string>
 
     <string name="title_subject_id">Entrer l\'ID de participant</string>
     <string name="subject_id">ID de participant</string>

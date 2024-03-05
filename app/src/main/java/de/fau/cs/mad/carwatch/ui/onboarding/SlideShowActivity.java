@@ -25,6 +25,7 @@ import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.ParticipantIdQuery;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.TutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
 
@@ -75,6 +76,29 @@ public class SlideShowActivity extends AppCompatActivity {
         addSlide(new WelcomeText());
         addSlide(new PermissionRequest());
         addSlide(new QrFragment());
+
+        boolean manualScanEnabled = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, true);
+        int wakeupScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_wakeup_screen_extended_menu : R.drawable.img_screenshot_wakeup_screen_small_menu;
+        int alarmScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_alarm_screen_extended_menu : R.drawable.img_screenshot_alarm_screen_small_menu;
+        int bedtimeScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_bedtime_screen_extended_menu : R.drawable.img_screenshot_bedtime_screen_small_menu;
+        int scanScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_barcode_cam_extended_menu : R.drawable.img_screenshot_barcode_cam_no_nav_bar;
+
+        String wakeupScreenHeadline = getString(R.string.headline_wakeup_screen_tutorial);
+        String alarmScreenHeadline = getString(R.string.headline_alarm_tutorial);
+        String bedtimeScreenHeadline = getString(R.string.headline_bedtime_screen_tutorial);
+        String scanScreenHeadline = getString(R.string.headline_scan_screen_tutorial);
+        String wakeupScreenDescription = getString(R.string.description_wakeup_screen_tutorial);
+        String alarmScreenDescription = getString(R.string.description_alarm_tutorial);
+        String bedtimeScreenDescription = getString(R.string.description_bedtime_screen_tutorial);
+        String scanScreenDescription = getString(R.string.description_scan_screen_tutorial);
+        if (manualScanEnabled)
+            scanScreenDescription += " " + getString(R.string.scan_screen_navigation_hint);
+
+        addSlide(TutorialSlide.newInstance(wakeupScreenHeadline, wakeupScreenDescription, wakeupScreenImageId));
+        addSlide(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId));
+        addSlide(TutorialSlide.newInstance(bedtimeScreenHeadline, bedtimeScreenDescription, bedtimeScreenImageId));
+        addSlide(TutorialSlide.newInstance(scanScreenHeadline, scanScreenDescription, scanScreenImageId));
+
         highlightDot(currentSlidePosition);
     }
 
