@@ -26,7 +26,6 @@ public final class Constants {
     public static final String PREF_CURRENT_TUTORIAL_SLIDE = "current_tutorial_slide"; // int
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
     public static final String PREF_SUBJECT_ID_IS_SET = "first_run_subject_id"; // boolean
-    public static final String PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS = "requested_ignore_battery_optimizations"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_SUBJECT_ID = "subject_id"; // String
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
