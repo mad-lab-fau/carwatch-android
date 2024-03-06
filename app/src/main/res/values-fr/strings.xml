@@ -47,7 +47,10 @@
     <string name="btn_next">Suivant</string>
     <string name="btn_skip_all">Sauter le tutoriel</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
-    <string name="message_permission_request">Pour une performance optimale, nous avons besoin de l\'autorisation d\'envoyer des notifications afin de vous informer des échantillons à venir et de l\'accès à l\'appareil photo pour pouvoir scanner les codes-barres.</string>
+    <string name="headline_permission_request_slide">TODO</string>
+    <string name="message_permission_request">TODO</string>
+    <string name="message_camera_access">TODO</string>
+    <string name="message_notification_permission">TODO</string>
     <string name="headline_wakeup_screen_tutorial">Commencer la matinée</string>
     <string name="description_wakeup_screen_tutorial">Vous ne devez utiliser cette fonction que si vous n\'aviez pas réglé de réveil pour le matin ou si vous vous êtes réveillé avant que le réveil ne sonne. En appuyant sur le bouton \"Oui\", les réveils d\'échantillons sont configurés pour le jour suivant.</string>
     <string name="headline_alarm_tutorial">Suivez vos alarmes!</string>
