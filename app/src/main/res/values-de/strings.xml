@@ -82,6 +82,7 @@
     <!-- Slide Show Activity -->
     <string name="btn_next">Weiter</string>
     <string name="btn_skip_all">Tutorial überspringen</string>
+    <string name="description_app_icon">Das Icon der CARWatch app</string>
     <string name="headline_welcome">Willkommen bei CARWatch!</string>
     <string name="headline_permission_request_slide">Funktionen freischalten!</string>
     <string name="message_permission_request">Damit Sie die App optimal nutzen können, benötigen wir folgende Berechtigungen:</string>

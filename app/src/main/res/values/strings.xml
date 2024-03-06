@@ -57,6 +57,7 @@
     <!-- Slide Show Activity -->
     <string name="btn_next">Next</string>
     <string name="btn_skip_all">Skip tutorial</string>
+    <string name="description_app_icon">The icon of the CARWatch app</string>
     <string name="headline_welcome">Welcome to CARWatch!</string>
     <string name="headline_permission_request_slide">Unlock Features!</string>
     <string name="message_permission_request">To enable all of the features, our app requires following permissions:</string>

@@ -46,6 +46,7 @@
     <!-- Slide Show Activity -->
     <string name="btn_next">Suivant</string>
     <string name="btn_skip_all">Sauter le tutoriel</string>
+    <string name="description_app_icon">TODO</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
     <string name="headline_permission_request_slide">TODO</string>
     <string name="message_permission_request">TODO</string>
