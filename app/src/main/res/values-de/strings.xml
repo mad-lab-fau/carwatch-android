@@ -90,6 +90,7 @@
     <string name="message_notification_permission">Die Berechtigung, Benachrichtigungen zu senden, um über anstehende Proben zu informieren</string>
     <string name="headline_wakeup_screen_tutorial">Den Morgen starten</string>
     <string name="description_wakeup_screen_tutorial">Diese Funktion müssen Sie nur nutzen, wenn Sie keinen Wecker für den Morgen gestellt hatten oder aufgewacht sind, bevor der Wecker geklingelt hat. Durch drücken des \"Ja\" Buttons, werden die Probenwecker für den kommenden Tag eingerichtet.</string>
+    <string name="description_bedtime_screen_tutorial_short">Mit dem \"Licht aus!\" Buttons lässt sich der Dunkelmodus aktivieren.</string>
     <string name="headline_alarm_tutorial">Die Probenwecker</string>
     <string name="description_alarm_tutorial">In dieser Übersicht sehen Sie alle vergangenen und die noch anstehenden Probewecker. Um einen Wecker für den nächsten Morgen zu stellen, drücken Sie einfach auf die oberste Zeit. Die übrigen Probewecker werden am nächsten Morgen, nachdem Sie aufgewacht sind, gestellt.</string>
     <string name="headline_bedtime_screen_tutorial">Zu Bett gehen</string>

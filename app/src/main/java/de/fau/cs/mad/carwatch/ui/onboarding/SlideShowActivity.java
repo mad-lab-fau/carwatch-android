@@ -82,8 +82,7 @@ public class SlideShowActivity extends AppCompatActivity {
                 qrScannerSlidePosition = 0;
                 break;
             case SHOW_TUTORIAL_SLIDES:
-                boolean manualScanEnabled = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false);
-                for (TutorialSlide slide : createTutorialSlides(manualScanEnabled)) {
+                for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
                 }
                 break;
@@ -92,15 +91,17 @@ public class SlideShowActivity extends AppCompatActivity {
                 addSlide(new PermissionRequest());
                 addSlide(new QrFragment());
                 qrScannerSlidePosition = 2;
-                for (TutorialSlide slide : createTutorialSlides(false)) {
+                for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
                 }
                 break;
         }
     }
 
-    private List<TutorialSlide> createTutorialSlides(boolean manualScanEnabled) {
+    private List<TutorialSlide> createTutorialSlides() {
         List<TutorialSlide> tutorialSlides = new ArrayList<>();
+        boolean manualScanEnabled = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false);
+        boolean eveningSampleRequired = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
 
         int wakeupScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_wakeup_screen_extended_menu : R.drawable.img_screenshot_wakeup_screen_small_menu;
         int alarmScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_alarm_screen_extended_menu : R.drawable.img_screenshot_alarm_screen_small_menu;
@@ -113,7 +114,7 @@ public class SlideShowActivity extends AppCompatActivity {
         String scanScreenHeadline = getString(R.string.headline_scan_screen_tutorial);
         String wakeupScreenDescription = getString(R.string.description_wakeup_screen_tutorial);
         String alarmScreenDescription = getString(R.string.description_alarm_tutorial);
-        String bedtimeScreenDescription = getString(R.string.description_bedtime_screen_tutorial);
+        String bedtimeScreenDescription = eveningSampleRequired ? getString(R.string.description_bedtime_screen_tutorial) : getString(R.string.description_bedtime_screen_tutorial_short);
         String scanScreenDescription = getString(R.string.description_scan_screen_tutorial);
 
         if (manualScanEnabled)
@@ -152,8 +153,9 @@ public class SlideShowActivity extends AppCompatActivity {
                 tutorialSlidePos++;
             }
 
-            if (sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false) && slideShowType == SHOW_ALL_SLIDES) {
-                useTutorialSlidesWithExtendedMenu(tutorialSlidePos);
+            if (slideShowType == SHOW_ALL_SLIDES) {
+                // recreate tutorial slides after study configuration was loaded
+                recreateTutorialSlides(tutorialSlidePos);
             }
         }
 
@@ -184,8 +186,12 @@ public class SlideShowActivity extends AppCompatActivity {
         });
     }
 
-    private void useTutorialSlidesWithExtendedMenu(int firstSlidePos) {
-        List<TutorialSlide> tutorialSlides = createTutorialSlides(true);
+    /**
+     * Replaces the tutorial slides with respect to the study configuration
+     * @param firstSlidePos the position of the first tutorial slide
+     */
+    private void recreateTutorialSlides(int firstSlidePos) {
+        List<TutorialSlide> tutorialSlides = createTutorialSlides();
         for (int i = 0; i < tutorialSlides.size(); i++) {
             slides.set(firstSlidePos + i, tutorialSlides.get(i));
         }

@@ -54,6 +54,7 @@
     <string name="message_notification_permission">TODO</string>
     <string name="headline_wakeup_screen_tutorial">Commencer la matinée</string>
     <string name="description_wakeup_screen_tutorial">Vous ne devez utiliser cette fonction que si vous n\'aviez pas réglé de réveil pour le matin ou si vous vous êtes réveillé avant que le réveil ne sonne. En appuyant sur le bouton \"Oui\", les réveils d\'échantillons sont configurés pour le jour suivant.</string>
+    <string name="description_bedtime_screen_tutorial_short">TODO</string>
     <string name="headline_alarm_tutorial">Suivez vos alarmes!</string>
     <string name="description_alarm_tutorial">Dans cet aperçu, vous voyez tous les réveils d\'essai passés et ceux qui sont encore à venir. Pour programmer une alarme pour le lendemain matin, il suffit d\'appuyer sur l\'heure du haut. Les autres réveils d\'essai seront réglés le lendemain matin, après votre réveil.</string>
     <string name="headline_bedtime_screen_tutorial">Aller au lit</string>
