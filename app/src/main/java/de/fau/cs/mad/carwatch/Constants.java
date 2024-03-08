@@ -24,6 +24,7 @@ public final class Constants {
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
     public static final String PREF_CURRENT_SLIDE_SHOW_SLIDE = "current_tutorial_slide"; // int
+    public static final String PREF_CURRENT_NAV_ELEMENT = "current_nav_element"; // int
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
     public static final String PREF_SUBJECT_ID_IS_SET = "first_run_subject_id"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
@@ -95,6 +96,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED = "duplicate_barcode_scanned";
     public static final String LOGGER_ACTION_SPONTANEOUS_AWAKENING = "spontaneous_awakening";
     public static final String LOGGER_ACTION_LIGHTS_OUT = "lights_out";
+    public static final String LOGGER_ACTION_LIGHTS_ON = "lights_on";
     public static final String LOGGER_ACTION_DAY_FINISHED = "day_finished";
     public static final String LOGGER_ACTION_SERVICE_STARTED = "service_started";
     public static final String LOGGER_ACTION_SERVICE_STOPPED = "service_stopped";

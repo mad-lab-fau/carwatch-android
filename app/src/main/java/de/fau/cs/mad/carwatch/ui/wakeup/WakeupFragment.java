@@ -113,14 +113,6 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
                     initializeDay();
 
-                    // disable night mode
-                    if (getActivity() != null) {
-                        sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false).apply();
-                        AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
-                        delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                        delegate.applyDayNight();
-                    }
-
                     if (sp.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0")) {
                         TimerHandler.scheduleSpontaneousAwakeningTimer(getContext());
                         Intent intent = new Intent(getContext(), BarcodeActivity.class);

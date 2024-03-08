@@ -53,23 +53,11 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/button_lights_out_outline"
+            android:id="@+id/button_toggle_night_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/button_container"
-            android:textSize="18sp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Accent"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:text="@string/lights_out" />
-
-        <Button
-            android:id="@+id/button_lights_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/button_container"
-            android:visibility="gone"
             android:textSize="18sp"
             style="@style/Widget.MaterialComponents.Button.Accent"
             android:layout_marginTop="@dimen/activity_horizontal_margin"

@@ -116,6 +116,7 @@
     <string name="good_night">Merci et bonne nuit!</string>
     <string name="good_night_saliva">Veuillez d\'abord prendre votre échantillon de salive du soir! Commencez la procédure en appuyant sur le bouton \'Oui\'.</string>
     <string name="lights_out">Extinction des lumières!</string>
+    <string name="lights_on">Lumière allumée!</string>
 
     <string name="title_share_dialog">Partager les données via…</string>
 

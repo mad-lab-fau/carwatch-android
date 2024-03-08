@@ -118,6 +118,7 @@
     <string name="good_night">Thank you and good night!</string>
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
+    <string name="lights_on">Lights on!</string>
 
     <string name="title_share_dialog">Share Logs via…</string>
 
