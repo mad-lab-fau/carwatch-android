@@ -9,7 +9,7 @@ public class WelcomeText extends BaseWelcomeSlide {
 
     public WelcomeText () {
         super();
-        isSkipButtonVisible.set(false);
+        canShowNextSlide.set(true);
     }
 
     @Override

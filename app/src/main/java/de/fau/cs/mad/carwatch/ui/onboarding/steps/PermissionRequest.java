@@ -20,7 +20,7 @@ public class PermissionRequest extends BaseWelcomeSlide {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isSkipButtonVisible.set(false);
+        canShowNextSlide.set(true);
     }
 
     @Override

@@ -28,8 +28,6 @@ public class ParticipantIdQuery extends BaseWelcomeSlide {
 
     public ParticipantIdQuery() {
         super();
-        isNextButtonEnabled.set(false);
-        isSkipButtonVisible.set(false);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,8 +40,8 @@ public class ParticipantIdQuery extends BaseWelcomeSlide {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    isNextButtonEnabled.set(charSequence.length() > 0);
-                    isNextButtonEnabled.notifyChange();
+                    canShowNextSlide.set(charSequence.length() > 0);
+                    canShowNextSlide.notifyChange();
                 }
 
                 @Override

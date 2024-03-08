@@ -10,8 +10,9 @@ import androidx.fragment.app.Fragment;
 
 public abstract class BaseWelcomeSlide extends Fragment implements WelcomeSlide {
 
-    protected final ObservableBoolean isSkipButtonVisible = new ObservableBoolean(true);
-    protected final ObservableBoolean isNextButtonEnabled = new ObservableBoolean(true);
+    protected final ObservableBoolean isSkipButtonVisible = new ObservableBoolean(false);
+    protected final ObservableBoolean canShowNextSlide = new ObservableBoolean(false);
+    protected final ObservableBoolean canShowPreviousSlide = new ObservableBoolean(false);
 
     public BaseWelcomeSlide() {
         super();
@@ -34,8 +35,13 @@ public abstract class BaseWelcomeSlide extends Fragment implements WelcomeSlide 
     }
 
     @Override
-    public ObservableBoolean getNextButtonIsEnabled() {
-        return isNextButtonEnabled;
+    public ObservableBoolean getCanShowNextSlide() {
+        return canShowNextSlide;
+    }
+
+    @Override
+    public ObservableBoolean getCanShowPreviousSlide() {
+        return canShowPreviousSlide;
     }
 
     @Override

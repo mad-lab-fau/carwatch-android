@@ -17,16 +17,18 @@ public class TutorialSlide extends BaseWelcomeSlide {
     private static final String ARG_HEADLINE = "headline";
     private static final String ARG_DESCRIPTION = "description";
     private static final String ARG_IMAGE_ID = "imageId";
+    private static final String ARG_CAN_SHOW_PREVIOUS_SLIDE = "canShowPreviousSlide";
     private String headline;
     private String description;
     private int imageId;
 
-    public static TutorialSlide newInstance(String headline, String description, int imageId) {
+    public static TutorialSlide newInstance(String headline, String description, int imageId, boolean canShowPreviousSlide) {
         TutorialSlide fragment = new TutorialSlide();
         Bundle args = new Bundle();
         args.putString(ARG_HEADLINE, headline);
         args.putString(ARG_DESCRIPTION, description);
         args.putInt(ARG_IMAGE_ID, imageId);
+        args.putBoolean(ARG_CAN_SHOW_PREVIOUS_SLIDE, canShowPreviousSlide);
         fragment.setArguments(args);
         return fragment;
     }
@@ -34,10 +36,13 @@ public class TutorialSlide extends BaseWelcomeSlide {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        canShowNextSlide.set(true);
+        isSkipButtonVisible.set(true);
         if (getArguments() != null) {
             headline = getArguments().getString(ARG_HEADLINE);
             description = getArguments().getString(ARG_DESCRIPTION);
             imageId = getArguments().getInt(ARG_IMAGE_ID);
+            canShowPreviousSlide.set(getArguments().getBoolean(ARG_CAN_SHOW_PREVIOUS_SLIDE));
         }
     }
 

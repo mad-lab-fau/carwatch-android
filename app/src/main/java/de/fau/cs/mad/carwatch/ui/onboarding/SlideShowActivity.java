@@ -15,9 +15,11 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.Observable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+import androidx.transition.TransitionInflater;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
@@ -27,6 +29,7 @@ import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.TutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
+import de.fau.cs.mad.carwatch.util.OnSwipeTouchListener;
 
 public class SlideShowActivity extends AppCompatActivity {
 
@@ -39,6 +42,8 @@ public class SlideShowActivity extends AppCompatActivity {
     private int slideShowType;
     private int currentSlidePosition = 0;
     private int qrScannerSlidePosition = -1;
+    private boolean canShowNextSlide = false;
+    private boolean canShowPreviousSlide = false;
     private SharedPreferences sharedPreferences;
     private Button skipButton;
     private Button nextButton;
@@ -56,9 +61,29 @@ public class SlideShowActivity extends AppCompatActivity {
         slideShowType = getIntent().getIntExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SHOW_ALL_SLIDES);
 
         initializeSlides();
+        addSwipeListener();
         initializeSkipButton();
         initializeNextButton();
         showSlide(currentSlidePosition);
+    }
+
+    private void addSwipeListener() {
+        FragmentContainerView slideShowFragment = findViewById(R.id.slide_show_fragment);
+        slideShowFragment.setOnTouchListener(new OnSwipeTouchListener(this) {
+             @Override
+             public void onSwipeLeft() {
+                 if (canShowNextSlide) {
+                     nextSlide();
+                 }
+             }
+
+            @Override
+            public void onSwipeRight() {
+                if (canShowPreviousSlide) {
+                    previousSlide();
+                }
+            }
+        });
     }
 
     @Override
@@ -120,10 +145,10 @@ public class SlideShowActivity extends AppCompatActivity {
         if (manualScanEnabled)
             scanScreenDescription += " " + getString(R.string.scan_screen_navigation_hint);
 
-        tutorialSlides.add(TutorialSlide.newInstance(wakeupScreenHeadline, wakeupScreenDescription, wakeupScreenImageId));
-        tutorialSlides.add(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId));
-        tutorialSlides.add(TutorialSlide.newInstance(bedtimeScreenHeadline, bedtimeScreenDescription, bedtimeScreenImageId));
-        tutorialSlides.add(TutorialSlide.newInstance(scanScreenHeadline, scanScreenDescription, scanScreenImageId));
+        tutorialSlides.add(TutorialSlide.newInstance(wakeupScreenHeadline, wakeupScreenDescription, wakeupScreenImageId, false));
+        tutorialSlides.add(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId, true));
+        tutorialSlides.add(TutorialSlide.newInstance(bedtimeScreenHeadline, bedtimeScreenDescription, bedtimeScreenImageId, true));
+        tutorialSlides.add(TutorialSlide.newInstance(scanScreenHeadline, scanScreenDescription, scanScreenImageId, true));
 
         return tutorialSlides;
     }
@@ -139,6 +164,16 @@ public class SlideShowActivity extends AppCompatActivity {
         initButtonsForSlide(slide);
         replaceFragment(slide.getFragment());
         highlightDot(position);
+    }
+
+    private void previousSlide() {
+        if (currentSlidePosition <= 0) {
+            return;
+        }
+        currentSlidePosition--;
+        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, currentSlidePosition).apply();
+        setSlideTransition(currentSlidePosition, currentSlidePosition + 1);
+        showSlide(currentSlidePosition);
     }
 
     private void nextSlide() {
@@ -166,22 +201,46 @@ public class SlideShowActivity extends AppCompatActivity {
 
         currentSlidePosition++;
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, currentSlidePosition).apply();
+        setSlideTransition(currentSlidePosition, currentSlidePosition - 1);
         showSlide(currentSlidePosition);
     }
 
+    private void setSlideTransition(int positionNextSlide, int positionPrevSlide) {
+        boolean enterRight = positionNextSlide > positionPrevSlide;
+        TransitionInflater inflater = TransitionInflater.from(this);
+
+        if (0 <= positionPrevSlide && positionPrevSlide < slides.size()) {
+            Fragment prevSlide = slides.get(positionPrevSlide).getFragment();
+            prevSlide.setExitTransition(inflater.inflateTransition(enterRight ? R.transition.slide_left : R.transition.slide_right));
+        }
+        if (0 <= positionNextSlide && positionNextSlide < slides.size()) {
+            Fragment nextSlide = slides.get(positionNextSlide).getFragment();
+            nextSlide.setEnterTransition(inflater.inflateTransition(enterRight ? R.transition.slide_right : R.transition.slide_left));
+        }
+    }
+
     private void initButtonsForSlide(WelcomeSlide slide) {
+        canShowNextSlide = slide.getCanShowNextSlide().get();
+        canShowPreviousSlide = slide.getCanShowPreviousSlide().get();
         setSkipButtonVisibility(slide.getSkipButtonIsVisible().get());
-        nextButton.setEnabled(slide.getNextButtonIsEnabled().get());
+        nextButton.setEnabled(canShowNextSlide);
         slide.getSkipButtonIsVisible().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
                 setSkipButtonVisibility(slide.getSkipButtonIsVisible().get());
             }
         });
-        slide.getNextButtonIsEnabled().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+        slide.getCanShowNextSlide().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
-                nextButton.setEnabled(slide.getNextButtonIsEnabled().get());
+                canShowNextSlide = slide.getCanShowNextSlide().get();
+                nextButton.setEnabled(canShowNextSlide);
+            }
+        });
+        slide.getCanShowPreviousSlide().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                canShowPreviousSlide = slide.getCanShowPreviousSlide().get();
             }
         });
     }

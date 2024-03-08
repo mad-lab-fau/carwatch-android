@@ -8,7 +8,9 @@ public interface WelcomeSlide {
 
     ObservableBoolean getSkipButtonIsVisible();
 
-    ObservableBoolean getNextButtonIsEnabled();
+    ObservableBoolean getCanShowNextSlide();
+
+    ObservableBoolean getCanShowPreviousSlide();
 
     void onSlideFinished();
 }

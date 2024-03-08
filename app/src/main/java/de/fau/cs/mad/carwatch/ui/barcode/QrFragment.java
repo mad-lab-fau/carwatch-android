@@ -33,7 +33,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
 
     private SharedPreferences sharedPreferences;
     private final ObservableBoolean isSkipButtonVisible = new ObservableBoolean(false);
-    private final ObservableBoolean isNextButtonEnabled = new ObservableBoolean(false);
+    private final ObservableBoolean canShowNextSlide = new ObservableBoolean(false);
 
 
     @Override
@@ -61,8 +61,13 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
     }
 
     @Override
-    public ObservableBoolean getNextButtonIsEnabled() {
-        return isNextButtonEnabled;
+    public ObservableBoolean getCanShowNextSlide() {
+        return canShowNextSlide;
+    }
+
+    @Override
+    public ObservableBoolean getCanShowPreviousSlide() {
+        return new ObservableBoolean(false);
     }
 
     @Override
@@ -108,8 +113,8 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
             switch (check) {
                 case VALID:
                     setStudyData(parser);
-                    isNextButtonEnabled.set(true);
-                    isNextButtonEnabled.notifyChange();
+                    canShowNextSlide.set(true);
+                    canShowNextSlide.notifyChange();
                     break;
                 case INVALID:
                     try {
