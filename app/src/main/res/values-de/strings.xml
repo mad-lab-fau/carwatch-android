@@ -100,7 +100,7 @@
     <string name="description_scan_screen_tutorial">Der Barcodescanner öffnet sich automatisch, wenn Sie eine Probe nehmen müssen. Scannen Sie dann einfach den Barcode, welcher sich auf dem Probenröhrchen befindet.</string>
     <string name="scan_screen_navigation_hint">Der Barcodescanner lässt sich außerdem über die untere Navigationsleiste öffnen.</string>
     <string name="headline_slide_show_end">Probenahme starten!</string>
-    <string name="text_slide_show_end">Die App ist nun bereit. Um die Studie zu starten, stellen Sie sich einen Wecker für den nächsten Tag oder melden Sie Ihr Aufwachen am Morgen.</string>
+    <string name="text_slide_show_end">Die App ist nun bereit. Um die Studie zu starten, stellen Sie sich einen Wecker für den nächsten Tag oder melden Sie Ihr Aufwachen am Morgen. Wenn Sie die App neu konfigurieren oder das Tutorial erneut durchführen möchten, drücken Sie die entsprechenden Einträge im Menü oben rechts.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Info</string>
