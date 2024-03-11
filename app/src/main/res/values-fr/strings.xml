@@ -62,6 +62,8 @@
     <string name="headline_scan_screen_tutorial">Scanner l\'échantillon</string>
     <string name="description_scan_screen_tutorial">Le lecteur de code-barres s\'ouvre automatiquement lorsque vous devez prélever un échantillon. Il suffit alors de scanner le code-barres qui se trouve sur le tube d\'échantillon.</string>
     <string name="scan_screen_navigation_hint">Le lecteur de codes-barres peut en outre être ouvert via la barre de navigation inférieure.</string>
+    <string name="headline_slide_show_end">Début de l\'échantillonnage!</string>
+    <string name="text_slide_show_end">L\'application est maintenant prête à fonctionner. Pour commencer l\'étude, réglez l\'alarme pour le lendemain ou signalez votre réveil le matin.</string>
 
     <string name="title_subject_id">Entrer l\'ID de participant</string>
     <string name="subject_id">ID de participant</string>

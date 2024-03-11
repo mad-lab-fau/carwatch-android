@@ -24,6 +24,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.EndTutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.ParticipantIdQuery;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.TutorialSlide;
@@ -119,6 +120,7 @@ public class SlideShowActivity extends AppCompatActivity {
                 for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
                 }
+                addSlide(new EndTutorialSlide());
                 break;
         }
     }
