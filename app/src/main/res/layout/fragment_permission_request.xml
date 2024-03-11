@@ -15,7 +15,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="10dp"
         android:text="@string/headline_permission_request_slide"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+        android:textSize="24sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
         android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="10dp"
         android:text="@string/message_permission_request"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textSize="18sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -36,15 +36,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:textSize="24sp"
-            android:textColor="@color/colorBlack" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/tv_tutorial_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
