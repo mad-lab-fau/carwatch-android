@@ -1,8 +1,6 @@
 package de.fau.cs.mad.carwatch.barcodedetection;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,7 +19,8 @@ public class QrCodeParser {
     public String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
     public String startSample;
     public int studyDays;
-    public int numSubjects;
+    public int numParticipants;
+    public String participantId = "";
     public boolean hasEveningSalivette;
     public String shareEmailAddress;
     public boolean checkDuplicates;
@@ -57,8 +56,8 @@ public class QrCodeParser {
             studyDays = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_DAYS))
             );
-            numSubjects = Integer.parseInt(Objects.requireNonNull(
-                    propertyMap.get(Constants.QR_PARSER_PROPERTY_NUM_SUBJECTS))
+            numParticipants = Integer.parseInt(Objects.requireNonNull(
+                    propertyMap.get(Constants.QR_PARSER_PROPERTY_NUM_PARTICIPANTS))
             );
             hasEveningSalivette = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_EVENING))
@@ -68,6 +67,8 @@ public class QrCodeParser {
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_DUPLICATES))
             ) == 1;
             manualScan = Integer.parseInt(Objects.requireNonNull(propertyMap.get(Constants.QR_PARSER_PROPERTY_MANUAL_SCAN))) == 1;
+            if (propertyMap.containsKey(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID))
+                participantId = propertyMap.get(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID);
 
         } catch (NullPointerException e) {
             throw new RuntimeException("QR-Code could not be parsed properly!");

@@ -33,7 +33,6 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
-import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
@@ -95,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+
+        if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
+            Snackbar.make(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -151,12 +155,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        BarcodeResultFragment.dismiss(getSupportFragmentManager());
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -167,10 +165,10 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_share:
                 String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
-                String subjectId = sharedPreferences.getString(Constants.PREF_SUBJECT_ID, null);
+                String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, null);
 
                 try {
-                    File zipFile = LoggerUtil.zipDirectory(this, studyName, subjectId);
+                    File zipFile = LoggerUtil.zipDirectory(this, studyName, participantId);
                     createFileShareDialog(zipFile);
                 } catch (FileNotFoundException e) {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();

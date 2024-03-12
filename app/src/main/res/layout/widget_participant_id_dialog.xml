@@ -6,12 +6,12 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/edit_text_subject_id"
+        android:id="@+id/edit_text_participant_id"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/activity_horizontal_margin"
-        android:hint="@string/subject_id"
+        android:hint="@string/participant_id"
         android:inputType="text" />
 
 </LinearLayout>

@@ -26,16 +26,17 @@ public final class Constants {
     public static final String PREF_CURRENT_SLIDE_SHOW_SLIDE = "current_tutorial_slide"; // int
     public static final String PREF_CURRENT_NAV_ELEMENT = "current_nav_element"; // int
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
-    public static final String PREF_SUBJECT_ID_IS_SET = "first_run_subject_id"; // boolean
+    public static final String PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS = "requested_ignore_battery_optimizations"; // boolean
+    public static final String PREF_PARTICIPANT_ID_WAS_SET = "first_run_subject_id"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
-    public static final String PREF_SUBJECT_ID = "subject_id"; // String
+    public static final String PREF_PARTICIPANT_ID = "subject_id"; // String
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
     public static final String PREF_CURRENT_DATE = "morning_taken"; // long (day)
     public static final String PREF_ID_ONGOING_ALARM = "morning_ongoing"; // int (alarmId)
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
     public static final String PREF_NIGHT_MODE_ENABLED = "night_mode"; // boolean
-    public static final String PREF_NUM_SUBJECTS = "num_subjects"; // int
+    public static final String PREF_NUM_PARTICIPANTS = "num_subjects"; // int
     public static final String PREF_TOTAL_NUM_SAMPLES = "total_num_samples"; // int
     public static final String PREF_SALIVA_DISTANCES = "saliva_times"; // Array<Integer>
     public static final String PREF_SALIVA_TIMES = "saliva_absolute_times"; // Array<String>
@@ -63,6 +64,7 @@ public final class Constants {
     public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
     public static final String EXTRA_SOURCE = "extra_source";
+    public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
     public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
     public static final String EXTRA_SALIVA_ID_EVENING = "A";
     public static final int EXTRA_ALARM_ID_INITIAL = 0;
@@ -105,8 +107,8 @@ public final class Constants {
     public static final String LOGGER_ACTION_USER_PRESENT = "user_present";
     public static final String LOGGER_ACTION_PHONE_BOOT_INIT = "phone_boot_init";
     public static final String LOGGER_ACTION_PHONE_BOOT_COMPLETE = "phone_boot_complete";
+    public static final String LOGGER_ACTION_PARTICIPANT_ID_SET = "participant_id_set";
     public static final String LOGGER_APP_UPDATE_COMPLETE = "app_update_complete";
-    public static final String LOGGER_ACTION_SUBJECT_ID_SET = "subject_id_set";
     public static final String LOGGER_ACTION_STUDY_DATA = "study_metadata";
 
     // Extras that can be added to the Logger
@@ -117,7 +119,7 @@ public final class Constants {
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String
     public static final String LOGGER_EXTRA_OTHER_BARCODES = "other_barcodes"; // String Set
     public static final String LOGGER_EXTRA_DAY_COUNTER = "day_counter"; // int
-    public static final String LOGGER_EXTRA_SUBJECT_ID = "subject_id"; // String
+    public static final String LOGGER_EXTRA_PARTICIPANT_ID = "participant_id"; // String
     public static final String LOGGER_EXTRA_SCANNED_DAY = "day_scanned"; // int
     public static final String LOGGER_EXTRA_EXPECTED_DAY = "day_expected"; // int
     public static final String LOGGER_EXTRA_SCANNED_SAMPLE = "sample_scanned"; // String
@@ -142,7 +144,7 @@ public final class Constants {
     public static final String QR_PARSER_LIST_SEPARATOR = ",";
     public static final String QR_PARSER_PROPERTY_STUDY_NAME = "N";
     public static final String QR_PARSER_PROPERTY_STUDY_DAYS = "D";
-    public static final String QR_PARSER_PROPERTY_NUM_SUBJECTS = "S";
+    public static final String QR_PARSER_PROPERTY_NUM_PARTICIPANTS = "NP";
     public static final String QR_PARSER_PROPERTY_SALIVA_DISTANCES = "T";
     public static final String QR_PARSER_PROPERTY_SALIVA_TIMES = "A";
     public static final String QR_PARSER_PROPERTY_START_SAMPLE = "SS";
@@ -150,9 +152,10 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_CONTACT = "M";
     public static final String QR_PARSER_PROPERTY_DUPLICATES = "FD";
     public static final String QR_PARSER_PROPERTY_MANUAL_SCAN = "FM";
+    public static final String QR_PARSER_PROPERTY_PARTICIPANT_ID = "PID";
 
     public static final String LOGGER_EXTRA_STUDY_NAME = "study_name";
-    public static final String LOGGER_EXTRA_NUM_SUBJECTS = "num_subjects";
+    public static final String LOGGER_EXTRA_NUM_PARTICIPANTS = "num_participants";
     public static final String LOGGER_EXTRA_SALIVA_DISTANCES = "saliva_times";
     public static final String LOGGER_EXTRA_SALIVA_TIMES = "saliva_absolute_times";
     public static final String LOGGER_EXTRA_STUDY_DAYS = "study_days";

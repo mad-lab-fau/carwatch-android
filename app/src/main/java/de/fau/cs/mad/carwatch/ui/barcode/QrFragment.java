@@ -1,5 +1,8 @@
 package de.fau.cs.mad.carwatch.ui.barcode;
 
+import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
+import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
+
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,9 +26,8 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.barcodedetection.QrCodeParser;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
+import de.fau.cs.mad.carwatch.logger.MetadataLogger;
 
-import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
-import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
 public class QrFragment extends BarcodeFragment implements WelcomeSlide {
 
@@ -75,29 +77,6 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
         // Do nothing
     }
 
-    public void setStudyData(QrCodeParser parser) {
-        int numEveningSamples = parser.hasEveningSalivette ? 1 : 0;
-        int numMorningSamples = parser.salivaDistances.equals("") ? 0 : parser.salivaDistances.split(",").length;
-        int numFixedSamples = parser.salivaTimes.equals("") ? 0 : parser.salivaTimes.split(",").length;
-        int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
-        int eveningSampleId = parser.hasEveningSalivette ? numSamples - 1 : -1;
-        sharedPreferences.edit()
-                .putString(Constants.PREF_STUDY_NAME, parser.studyName)
-                .putInt(Constants.PREF_NUM_SUBJECTS, parser.numSubjects)
-                .putString(Constants.PREF_SALIVA_DISTANCES, parser.salivaDistances)
-                .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
-                .putInt(Constants.PREF_TOTAL_NUM_SAMPLES, numSamples)
-                .putInt(Constants.PREF_EVENING_SALIVA_ID, eveningSampleId)
-                .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
-                .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
-                .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)
-                .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
-                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.manualScan)
-                .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
-                .putString(Constants.PREF_START_SAMPLE, parser.startSample)
-                .apply();
-    }
-
     @Override
     public void onChanged(Barcode mlKitBarcode) {
         if (mlKitBarcode != null) {
@@ -145,5 +124,41 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                 .setMessage(R.string.message_qr_code_invalid)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
+    }
+
+    private void setStudyData(QrCodeParser parser) {
+        int numEveningSamples = parser.hasEveningSalivette ? 1 : 0;
+        int numMorningSamples = parser.salivaDistances.equals("") ? 0 : parser.salivaDistances.split(",").length;
+        int numFixedSamples = parser.salivaTimes.equals("") ? 0 : parser.salivaTimes.split(",").length;
+        int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
+        int eveningSampleId = parser.hasEveningSalivette ? numSamples - 1 : -1;
+        sharedPreferences.edit()
+                .putString(Constants.PREF_STUDY_NAME, parser.studyName)
+                .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.numParticipants)
+                .putString(Constants.PREF_SALIVA_DISTANCES, parser.salivaDistances)
+                .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
+                .putInt(Constants.PREF_TOTAL_NUM_SAMPLES, numSamples)
+                .putInt(Constants.PREF_EVENING_SALIVA_ID, eveningSampleId)
+                .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
+                .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
+                .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)
+                .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
+                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.manualScan)
+                .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
+                .putString(Constants.PREF_START_SAMPLE, parser.startSample)
+                .apply();
+
+        if (!parser.participantId.isEmpty()) {
+            sharedPreferences.edit()
+                    .putString(Constants.PREF_PARTICIPANT_ID, parser.participantId)
+                    .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
+                    .apply();
+
+            // log metadata after participant id was set to ensure correct log filename
+            MetadataLogger.logDeviceProperties();
+            MetadataLogger.logAppMetadata();
+            MetadataLogger.logStudyData(requireContext());
+            MetadataLogger.logParticipantId(requireContext());
+        }
     }
 }
