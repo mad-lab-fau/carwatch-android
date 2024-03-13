@@ -185,7 +185,7 @@ public class SlideShowActivity extends AppCompatActivity {
         if (currentSlidePosition == qrScannerSlidePosition) {
             int tutorialSlidePos = currentSlidePosition + 1;
 
-            if (!sharedPreferences.getBoolean(Constants.PREF_SUBJECT_ID_IS_SET, false)) {
+            if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
                 addSlide(currentSlidePosition + 1, new ParticipantIdQuery());
                 tutorialSlidePos++;
             }
