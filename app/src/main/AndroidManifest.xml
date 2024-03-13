@@ -66,18 +66,6 @@
             android:taskAffinity=""
             android:turnScreenOn="true" />
 
-        <activity
-            android:name=".ui.QrActivity"
-            android:excludeFromRecents="true"
-            android:label="@string/title_scan_qr"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:taskAffinity=""
-            android:turnScreenOn="true" />
-
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />
