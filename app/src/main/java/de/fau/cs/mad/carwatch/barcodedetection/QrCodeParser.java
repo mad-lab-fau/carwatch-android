@@ -1,5 +1,7 @@
 package de.fau.cs.mad.carwatch.barcodedetection;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -13,7 +15,8 @@ public class QrCodeParser {
 
     private static final String TAG = QrCodeParser.class.getSimpleName();
 
-    private final String dataString;
+    private final Map<String, String> propertyMap = new HashMap<>();
+    private boolean isValid = true;
     private String studyName;
     private String salivaDistances; // will be parsed later, since Arrays can't be stored in SP
     private String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
@@ -27,7 +30,11 @@ public class QrCodeParser {
     private boolean isManualScanEnabled;
 
     public QrCodeParser(String dataString) {
-        this.dataString = dataString;
+        parse(dataString);
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 
     public String getStudyName() {
@@ -84,48 +91,72 @@ public class QrCodeParser {
         return isManualScanEnabled;
     }
 
-    public void parse() {
+    private void parse(String dataString) {
         String[] properties = dataString.split(Constants.QR_PARSER_SEPARATOR);
-        Map<String, String> propertyMap = new HashMap<>();
+
+        if (properties.length < 1) {
+            setInvalid("No QR-Code data found!");
+            return;
+        }
+
+        if (!properties[0].equals(Constants.QR_PARSER_APP_ID)) {
+            setInvalid("App ID not found. First QR code entry was: " + properties[0]);
+            return;
+        }
 
         for (String property : properties) {
-            // first element needs to be app id
-            if (property.equals(properties[0])) {
-                if (!properties[0].equals(Constants.QR_PARSER_APP_ID)) {
-                    throw new RuntimeException("Invalid QR-Code!");
-                }
-            } else {
-                String[] pair = property.split(Constants.QR_PARSER_SPECIFIER);
-                String key = pair[0];
-                String value = pair.length > 1 ? pair[1] : "";
-                propertyMap.put(key, value);
-            }
+            if (property.equals(Constants.QR_PARSER_APP_ID))
+                continue;
+
+            String[] pair = property.split(Constants.QR_PARSER_SPECIFIER);
+            String key = pair[0];
+            String value = pair.length > 1 ? pair[1] : "";
+            propertyMap.put(key, value);
+        }
+
+        studyName = getStringProperty(Constants.QR_PARSER_PROPERTY_STUDY_NAME);
+        salivaDistances = getStringProperty(Constants.QR_PARSER_PROPERTY_SALIVA_DISTANCES);
+        salivaTimes = getStringProperty(Constants.QR_PARSER_PROPERTY_SALIVA_TIMES);
+        startSample = getStringProperty(Constants.QR_PARSER_PROPERTY_START_SAMPLE);
+        studyDays = getIntProperty(Constants.QR_PARSER_PROPERTY_STUDY_DAYS);
+        numParticipants = getIntProperty(Constants.QR_PARSER_PROPERTY_NUM_PARTICIPANTS);
+        hasEveningSample = getIntProperty(Constants.QR_PARSER_PROPERTY_EVENING) == 1;
+        shareEmailAddress = getStringProperty(Constants.QR_PARSER_PROPERTY_CONTACT);
+        isCheckDuplicatesEnabled = getIntProperty(Constants.QR_PARSER_PROPERTY_DUPLICATES) == 1;
+        isManualScanEnabled = getIntProperty(Constants.QR_PARSER_PROPERTY_MANUAL_SCAN) == 1;
+        participantId = getStringProperty(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID, false);
+    }
+
+    private void setInvalid(String error) {
+        isValid = false;
+        Log.d(TAG, error);
+    }
+
+    private String getStringProperty(String key) {
+        return getStringProperty(key, true);
+    }
+
+    private String getStringProperty(String key, boolean isMandatory) {
+        if (propertyMap.containsKey(key))
+            return propertyMap.get(key);
+
+        if (isMandatory)
+            setInvalid("Property " + key + " not found in QR-Code!");
+
+        return "";
+    }
+
+    private int getIntProperty(String key) {
+        if (!propertyMap.containsKey(key)) {
+            setInvalid("Property " + key + " not found in QR-Code!");
+            return 0;
         }
 
         try {
-            studyName = propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_NAME);
-            salivaDistances = propertyMap.get(Constants.QR_PARSER_PROPERTY_SALIVA_DISTANCES);
-            salivaTimes = propertyMap.get(Constants.QR_PARSER_PROPERTY_SALIVA_TIMES);
-            startSample = propertyMap.get(Constants.QR_PARSER_PROPERTY_START_SAMPLE);
-            studyDays = Integer.parseInt(Objects.requireNonNull(
-                    propertyMap.get(Constants.QR_PARSER_PROPERTY_STUDY_DAYS))
-            );
-            numParticipants = Integer.parseInt(Objects.requireNonNull(
-                    propertyMap.get(Constants.QR_PARSER_PROPERTY_NUM_PARTICIPANTS))
-            );
-            hasEveningSample = Integer.parseInt(Objects.requireNonNull(
-                    propertyMap.get(Constants.QR_PARSER_PROPERTY_EVENING))
-            ) == 1;
-            shareEmailAddress = propertyMap.get(Constants.QR_PARSER_PROPERTY_CONTACT);
-            isCheckDuplicatesEnabled = Integer.parseInt(Objects.requireNonNull(
-                    propertyMap.get(Constants.QR_PARSER_PROPERTY_DUPLICATES))
-            ) == 1;
-            isManualScanEnabled = Integer.parseInt(Objects.requireNonNull(propertyMap.get(Constants.QR_PARSER_PROPERTY_MANUAL_SCAN))) == 1;
-            if (propertyMap.containsKey(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID))
-                participantId = propertyMap.get(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID);
-
-        } catch (NullPointerException e) {
-            throw new RuntimeException("QR-Code could not be parsed properly!");
+            return Integer.parseInt(Objects.requireNonNull(propertyMap.get(key)));
+        } catch (NumberFormatException e) {
+            setInvalid("Property " + key + " could not be parsed to int!");
+            return 0;
         }
     }
 }

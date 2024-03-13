@@ -44,12 +44,6 @@ public class BarcodeChecker {
     }
 
     public static BarcodeCheckResult isValidQrCode(QrCodeParser parser) {
-        try {
-            parser.parse();
-        } catch (RuntimeException e) {
-            Log.d(TAG, "Error Encoding QR-Code: " + e.getMessage());
-            return INVALID;
-        }
-        return VALID;
+        return parser.isValid() ? VALID : INVALID;
     }
 }
