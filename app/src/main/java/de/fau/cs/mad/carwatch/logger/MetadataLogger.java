@@ -27,7 +27,6 @@ public class MetadataLogger {
             LoggerUtil.log(Constants.LOGGER_ACTION_PHONE_METADATA, json);
         } catch (JSONException e) {
             LoggerUtil.log(Constants.LOGGER_ACTION_PHONE_METADATA, "Failed to log device properties: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -39,7 +38,6 @@ public class MetadataLogger {
             LoggerUtil.log(Constants.LOGGER_ACTION_APP_METADATA, json);
         } catch (Exception e) {
             LoggerUtil.log(Constants.LOGGER_ACTION_APP_METADATA, "Failed to log app metadata: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -78,7 +76,6 @@ public class MetadataLogger {
             LoggerUtil.log(Constants.LOGGER_ACTION_STUDY_DATA, json);
         } catch (JSONException e) {
             LoggerUtil.log(Constants.LOGGER_ACTION_STUDY_DATA, "Failed to log study data: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -90,8 +87,7 @@ public class MetadataLogger {
             json.put(Constants.LOGGER_EXTRA_PARTICIPANT_ID, participantId);
             LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, json);
         } catch (JSONException e) {
-            LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, "Failed to log participant id: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.log(Constants.LOGGER_ACTION_PARTICIPANT_ID_SET, "Value: " + participantId);
         }
     }
 }
