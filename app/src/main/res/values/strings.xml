@@ -40,13 +40,8 @@
     <string name="alarm_set_error">Error setting alarm.</string>
 
     <!-- Participant ID Dialog -->
-    <string name="title_participant_id">Enter Participant ID</string>
     <string name="participant_id">Participant ID</string>
-    <string name="study_id">Study Name</string>
-    <string name="message_participant_id_short">Please enter the Participant ID you received from us.</string>
     <string name="message_participant_id">Please enter the Participant ID you received from us.</string>
-    <string name="title_invalid_participant_id">Invalid Participant ID</string>
-    <string name="message_invalid_participant_id">Invalid Participant ID! Please try again.</string>
     <string name="title_kill_alarms">Warning</string>
     <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
@@ -134,8 +129,6 @@
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Info</string>
-    <string name="title_scan_qr">Scan Study QR Code</string>
-    <string name="message_scan_qr">First, we need to know further details about the study you\'re participating at. For this purpose, please scan the QR Code that you received together with your study materials in the next step.</string>
     <string name="message_qr_code_invalid">Invalid QR Code! Please scan the QR Code in your study materials.</string>
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>

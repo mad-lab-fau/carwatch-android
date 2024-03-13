@@ -8,9 +8,7 @@
         <EditTextPreference
             android:key="participant_id"
             android:defaultValue="AB12C"
-            android:summary="@string/message_participant_id_short"
-            android:dialogMessage="@string/message_participant_id"
-            android:title="@string/title_participant_id" />
+            android:summary="@string/message_participant_id" />
 
     </PreferenceCategory>
 

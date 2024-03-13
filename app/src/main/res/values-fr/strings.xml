@@ -65,15 +65,8 @@
     <string name="headline_slide_show_end">Début de l\'échantillonnage!</string>
     <string name="text_slide_show_end">L\'application est maintenant prête à fonctionner. Pour commencer l\'étude, réglez l\'alarme pour le lendemain ou signalez votre réveil le matin. Si vous avez besoin de reconfigurer l\'application ou si vous voulez refaire le tutoriel, appuyez sur les entrées correspondantes dans le menu en haut à droite.</string>
 
-    <string name="title_subject_id">Entrer l\'ID de participant</string>
-    <string name="subject_id">ID de participant</string>
-    <string name="title_participant_id">Entrer l\'ID de participant</string>
     <string name="participant_id">ID de participant</string>
-    <string name="study_id">Nom de l\'étude</string>
-    <string name="message_participant_id_short">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
     <string name="message_participant_id">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
-    <string name="title_invalid_participant_id">ID du participant invalide</string>
-    <string name="message_invalid_participant_id">ID du participant invalide! Veuillez réessayer.</string>
     <string name="title_kill_alarms">Avertissement</string>
     <string name="message_kill_alarms">Êtes-vous sûre de vouloir annuler toutes les alarmes et les minuteries de prélèvements ? Cette action ne peut pas être annulée!</string>
 
@@ -134,8 +127,6 @@
 
     <string name="app_version">Version d\'application:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info">Informations</string>
-    <string name="title_scan_qr">Scanner le code QR de l\'étude</string>
-    <string name="message_scan_qr">Tout d\'abord, nous avons besoin de connaître davantage de détails sur l\'étude à laquelle vous participez. À cette fin, veuillez scanner le code QR que vous avez reçu avec vos documents d\'étude à l\'étape suivante.</string>
     <string name="message_qr_code_invalid">Code QR invalide! Veuillez scanner le code QR figurant dans vos documents d\'étude.</string>
     <string name="title_barcode_already_scanned">Code-barres en double!</string>
     <string name="message_barcode_already_scanned">Ce code-barres a déjà été scanné auparavant. Veuillez vérifier et assurez-vous d\'utiliser une nouvelle salivette.</string>

@@ -11,14 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="@string/message_subject_id"
+        android:text="@string/message_participant_id"
         android:textSize="20sp"/>
 
     <EditText
         android:id="@+id/et_participant_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/subject_id"
+        android:hint="@string/participant_id"
         android:importantForAutofill="no"
         android:inputType="text" />
 
