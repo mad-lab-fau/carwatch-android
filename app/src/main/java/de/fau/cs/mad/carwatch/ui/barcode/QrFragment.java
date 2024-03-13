@@ -127,30 +127,35 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
     }
 
     private void setStudyData(QrCodeParser parser) {
-        int numEveningSamples = parser.hasEveningSalivette ? 1 : 0;
-        int numMorningSamples = parser.salivaDistances.equals("") ? 0 : parser.salivaDistances.split(",").length;
-        int numFixedSamples = parser.salivaTimes.equals("") ? 0 : parser.salivaTimes.split(",").length;
+        String salivaDistances = parser.getSalivaDistances();
+        String salivaTimes = parser.getSalivaTimes();
+
+        int numEveningSamples = parser.hasEveningSample() ? 1 : 0;
+        int numMorningSamples = salivaDistances.isEmpty() ? 0 : salivaDistances.split(",").length;
+        int numFixedSamples = salivaTimes.isEmpty() ? 0 : salivaTimes.split(",").length;
         int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
-        int eveningSampleId = parser.hasEveningSalivette ? numSamples - 1 : -1;
+        int eveningSampleId = parser.hasEveningSample() ? numSamples - 1 : -1;
         sharedPreferences.edit()
-                .putString(Constants.PREF_STUDY_NAME, parser.studyName)
-                .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.numParticipants)
-                .putString(Constants.PREF_SALIVA_DISTANCES, parser.salivaDistances)
-                .putString(Constants.PREF_SALIVA_TIMES, parser.salivaTimes)
+                .putString(Constants.PREF_STUDY_NAME, parser.getStudyName())
+                .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.getNumParticipants())
+                .putString(Constants.PREF_SALIVA_DISTANCES, salivaDistances)
+                .putString(Constants.PREF_SALIVA_TIMES, salivaTimes)
                 .putInt(Constants.PREF_TOTAL_NUM_SAMPLES, numSamples)
                 .putInt(Constants.PREF_EVENING_SALIVA_ID, eveningSampleId)
-                .putInt(Constants.PREF_NUM_DAYS, parser.studyDays)
-                .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSalivette)
-                .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.shareEmailAddress)
-                .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.checkDuplicates)
-                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.manualScan)
+                .putInt(Constants.PREF_NUM_DAYS, parser.getStudyDays())
+                .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSample())
+                .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.getShareEmailAddress())
+                .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.isCheckDuplicatesEnabled())
+                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.isManualScanEnabled())
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
-                .putString(Constants.PREF_START_SAMPLE, parser.startSample)
+                .putString(Constants.PREF_START_SAMPLE, parser.getStartSample())
                 .apply();
 
-        if (!parser.participantId.isEmpty()) {
+        String participantId = parser.getParticipantId();
+
+        if (!participantId.isEmpty()) {
             sharedPreferences.edit()
-                    .putString(Constants.PREF_PARTICIPANT_ID, parser.participantId)
+                    .putString(Constants.PREF_PARTICIPANT_ID, participantId)
                     .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, true)
                     .apply();
 

@@ -13,21 +13,75 @@ public class QrCodeParser {
 
     private static final String TAG = QrCodeParser.class.getSimpleName();
 
-    public String dataString;
-    public String studyName;
-    public String salivaDistances; // will be parsed later, since Arrays can't be stored in SP
-    public String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
-    public String startSample;
-    public int studyDays;
-    public int numParticipants;
-    public String participantId = "";
-    public boolean hasEveningSalivette;
-    public String shareEmailAddress;
-    public boolean checkDuplicates;
-    public boolean manualScan;
+    private final String dataString;
+    private String studyName;
+    private String salivaDistances; // will be parsed later, since Arrays can't be stored in SP
+    private String salivaTimes; // will be parsed later, since Arrays can't be stored in SP
+    private String startSample;
+    private int studyDays;
+    private int numParticipants;
+    private String participantId = "";
+    private boolean hasEveningSample;
+    private String shareEmailAddress;
+    private boolean isCheckDuplicatesEnabled;
+    private boolean isManualScanEnabled;
 
     public QrCodeParser(String dataString) {
         this.dataString = dataString;
+    }
+
+    public String getStudyName() {
+        return studyName;
+    }
+
+    /**
+     * Returns the distances between the saliva samples as a string in the format "x,y,z"
+     * where x, y, z are the distances in minutes.
+     * @return saliva distances
+     */
+    public String getSalivaDistances() {
+        return salivaDistances;
+    }
+
+    /**
+     * Returns the times of the saliva samples as a string in the format "x,y,z".
+     * where x, y, z are the times in the format "HHmm".
+     * @return saliva times
+     */
+    public String getSalivaTimes() {
+        return salivaTimes;
+    }
+
+    public String getStartSample() {
+        return startSample;
+    }
+
+    public int getStudyDays() {
+        return studyDays;
+    }
+
+    public int getNumParticipants() {
+        return numParticipants;
+    }
+
+    public String getParticipantId() {
+        return participantId;
+    }
+
+    public boolean hasEveningSample() {
+        return hasEveningSample;
+    }
+
+    public String getShareEmailAddress() {
+        return shareEmailAddress;
+    }
+
+    public boolean isCheckDuplicatesEnabled() {
+        return isCheckDuplicatesEnabled;
+    }
+
+    public boolean isManualScanEnabled() {
+        return isManualScanEnabled;
     }
 
     public void parse() {
@@ -59,14 +113,14 @@ public class QrCodeParser {
             numParticipants = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_NUM_PARTICIPANTS))
             );
-            hasEveningSalivette = Integer.parseInt(Objects.requireNonNull(
+            hasEveningSample = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_EVENING))
             ) == 1;
             shareEmailAddress = propertyMap.get(Constants.QR_PARSER_PROPERTY_CONTACT);
-            checkDuplicates = Integer.parseInt(Objects.requireNonNull(
+            isCheckDuplicatesEnabled = Integer.parseInt(Objects.requireNonNull(
                     propertyMap.get(Constants.QR_PARSER_PROPERTY_DUPLICATES))
             ) == 1;
-            manualScan = Integer.parseInt(Objects.requireNonNull(propertyMap.get(Constants.QR_PARSER_PROPERTY_MANUAL_SCAN))) == 1;
+            isManualScanEnabled = Integer.parseInt(Objects.requireNonNull(propertyMap.get(Constants.QR_PARSER_PROPERTY_MANUAL_SCAN))) == 1;
             if (propertyMap.containsKey(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID))
                 participantId = propertyMap.get(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID);
 
