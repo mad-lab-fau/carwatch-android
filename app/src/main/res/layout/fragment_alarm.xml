@@ -94,7 +94,9 @@
                 android:id="@+id/fixed_alarms_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                tools:listitem="@layout/item_fixed_alarm"
+                tools:itemCount="3" />
         </LinearLayout>
 
     </RelativeLayout>
