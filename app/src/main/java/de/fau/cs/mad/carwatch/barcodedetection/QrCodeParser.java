@@ -30,7 +30,8 @@ public class QrCodeParser {
     private boolean isManualScanEnabled;
 
     public QrCodeParser(String dataString) {
-        parse(dataString);
+        String versionizedDataString = QrLegacy.adaptToCurrentVersion(dataString);
+        parse(versionizedDataString);
     }
 
     public boolean isValid() {

@@ -153,6 +153,7 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_DUPLICATES = "FD";
     public static final String QR_PARSER_PROPERTY_MANUAL_SCAN = "FM";
     public static final String QR_PARSER_PROPERTY_PARTICIPANT_ID = "PID";
+    public static final String QR_PARSER_PROPERTY_WEB_APP_VERSION = "V";
 
     public static final String LOGGER_EXTRA_STUDY_NAME = "study_name";
     public static final String LOGGER_EXTRA_NUM_PARTICIPANTS = "num_participants";
