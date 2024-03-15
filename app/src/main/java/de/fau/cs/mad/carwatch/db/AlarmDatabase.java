@@ -21,6 +21,13 @@ import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 @TypeConverters({DateConverter.class, BooleanArrayConverter.class})
 public abstract class AlarmDatabase extends RoomDatabase {
 
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE alarm ADD COLUMN was_sample_taken INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
     private static volatile AlarmDatabase sInstance;
 
     @VisibleForTesting
@@ -35,6 +42,7 @@ public abstract class AlarmDatabase extends RoomDatabase {
                     sInstance = Room.databaseBuilder(context.getApplicationContext(),
                             AlarmDatabase.class, DATABASE_NAME)
                             .fallbackToDestructiveMigration()
+                            .addMigrations(MIGRATION_1_2)
                             .addCallback(roomDatabaseCallback)
                             .build();
                 }
