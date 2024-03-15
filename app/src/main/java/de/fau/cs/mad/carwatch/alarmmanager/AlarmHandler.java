@@ -294,7 +294,7 @@ public class AlarmHandler {
             salivaId++;
 
         for (int i = 0; i < alarmTimes.size(); i++) {
-            Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++);
+            Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++, false);
             repo.insert(alarm);
             AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
         }

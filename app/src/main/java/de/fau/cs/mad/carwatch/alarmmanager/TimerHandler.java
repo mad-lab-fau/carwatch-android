@@ -46,7 +46,7 @@ public class TimerHandler {
 
     public static void scheduleSpontaneousAwakeningTimer(Context context) {
         DateTime timeToRing = DateTime.now();
-        Alarm alarm = new Alarm(timeToRing, true, false, Constants.EXTRA_ALARM_ID_INITIAL, Constants.EXTRA_SALIVA_ID_INITIAL);
+        Alarm alarm = new Alarm(timeToRing, true, false, Constants.EXTRA_ALARM_ID_INITIAL, Constants.EXTRA_SALIVA_ID_INITIAL, false);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         sp.edit().putInt(Constants.PREF_ID_ONGOING_ALARM, alarm.getId()).apply();
