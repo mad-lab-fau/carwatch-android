@@ -4,10 +4,10 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -48,6 +48,7 @@ public class AlarmFragment extends Fragment {
     private TextView timeTextView;
     private TextView salivaAlarmsHeader;
     private SwitchMaterial activeSwitch;
+    private ImageView checkIcon;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class AlarmFragment extends Fragment {
         timeTextView = root.findViewById(R.id.alarm_time_text);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
+        checkIcon = root.findViewById(R.id.iv_check_icon);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -117,6 +119,7 @@ public class AlarmFragment extends Fragment {
         timeTextView.setText(alarm.getStringTime());
         activeSwitch.setChecked(alarm.isActive());
         setAlarmColor(alarm.isActive());
+        setAlarmViewIconProps();
 
         // define behavior on activity switch change
         activeSwitch.setOnClickListener(view -> {
@@ -158,6 +161,13 @@ public class AlarmFragment extends Fragment {
         // Set alarm TextView colors based on alarm's activity state
         int colorId = isActive ? R.color.colorAccent : R.color.colorGrey500;
         timeTextView.setTextColor(getResources().getColor(colorId));
+    }
+
+    private void setAlarmViewIconProps() {
+        if (!sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0")) {
+            checkIcon.setVisibility(View.GONE);
+        } else if (alarm != null)
+            checkIcon.setVisibility(alarm.wasSampleTaken() ? View.VISIBLE : View.GONE);
     }
 
     private void updateAlarm() {
