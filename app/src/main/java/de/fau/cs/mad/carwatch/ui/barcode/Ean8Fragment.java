@@ -3,8 +3,6 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -20,15 +18,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
+import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
+import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 public class Ean8Fragment extends BarcodeFragment {
 
@@ -74,7 +76,7 @@ public class Ean8Fragment extends BarcodeFragment {
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
                     sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
-
+                    cancelAlarm();
                     cancelTimer(barcode.getValue());
                     finishScanningProcess();
                     break;
@@ -115,6 +117,23 @@ public class Ean8Fragment extends BarcodeFragment {
                 .setMessage(R.string.message_barcode_invalid)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
+    }
+
+    private void cancelAlarm() {
+        AlarmRepository repository = AlarmRepository.getInstance(getContext());
+        Alarm alarm;
+
+        try {
+            alarm = repository.getAlarmById(alarmId);
+            if (alarm != null) {
+                AlarmHandler.cancelAlarm(getContext(), alarm, null);
+                alarm.setWasSampleTaken(true);
+                alarm.setActive(false);
+                repository.update(alarm);
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database: "  + e.getMessage());
+        }
     }
 
     private void cancelTimer(String barcodeValue) {
