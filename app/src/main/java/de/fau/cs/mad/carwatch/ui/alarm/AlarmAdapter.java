@@ -82,6 +82,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         holder.getAlarmTextView().setText(item.getStringTime());
         holder.getAlarmTextView().setTextColor(resources.getColor(colorId));
         holder.getAlarmSwitch().setChecked(item.isActive());
+        holder.getAlarmSwitch().setEnabled(!item.wasSampleTaken());
         holder.getAlarmSwitch().setOnClickListener(view -> {
             if (item.isActive()) {
                 deactivateAlarm(view, holder, item);
