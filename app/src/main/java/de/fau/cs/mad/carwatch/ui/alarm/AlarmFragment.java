@@ -47,6 +47,7 @@ public class AlarmFragment extends Fragment {
     private LinearLayout alarmLayout;
     private TextView timeTextView;
     private TextView salivaAlarmsHeader;
+    private TextView sampleNameTextView;
     private SwitchMaterial activeSwitch;
     private ImageView checkIcon;
 
@@ -66,6 +67,7 @@ public class AlarmFragment extends Fragment {
 
         alarmLayout = root.findViewById(R.id.alarm);
         timeTextView = root.findViewById(R.id.alarm_time_text);
+        sampleNameTextView = root.findViewById(R.id.tv_sample_name);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
         checkIcon = root.findViewById(R.id.iv_check_icon);
@@ -87,7 +89,7 @@ public class AlarmFragment extends Fragment {
 
     private void initializeFixedAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        adapter = new AlarmAdapter(getResources(), alarmViewModel);
+        adapter = new AlarmAdapter(getResources(), alarmViewModel, getSampleIdPrefix(), getStartSampleId());
         RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -116,6 +118,7 @@ public class AlarmFragment extends Fragment {
     private void setAlarmView() {
         final Context context = getContext();
 
+        initializeSampleIdTextView();
         timeTextView.setText(alarm.getStringTime());
         activeSwitch.setChecked(alarm.isActive());
         setAlarmColor(alarm.isActive());
@@ -149,6 +152,16 @@ public class AlarmFragment extends Fragment {
             }, time.getHourOfDay(), time.getMinuteOfHour(), true);
             timePicker.show();
         });
+    }
+
+    private void initializeSampleIdTextView() {
+        boolean firstAlarmHasSample = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0");
+        int adjustedSalivaId = alarm.getSalivaId() + getStartSampleId();
+        String sampleName = getSampleIdPrefix() + adjustedSalivaId + ":";
+
+        sampleNameTextView.setVisibility(firstAlarmHasSample ? View.VISIBLE : View.GONE);
+        sampleNameTextView.setText(sampleName);
+
     }
 
     private void setInitialSalivaId() {
@@ -205,5 +218,19 @@ public class AlarmFragment extends Fragment {
                 .setMessage(R.string.message_alarm_reminder)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {}).show();
+    }
+
+    private String getSampleIdPrefix() {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        return !startSample.isEmpty() ? startSample.substring(0, 1) : Constants.DEFAULT_START_SAMPLE.substring(0, 1);
+    }
+
+    private int getStartSampleId() {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        try {
+            return Integer.parseInt(startSample.substring(1));
+        } catch (NumberFormatException e) {
+            return Integer.parseInt(Constants.DEFAULT_START_SAMPLE.substring(1));
+        }
     }
 }

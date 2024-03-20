@@ -27,9 +27,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private final List<Alarm> localAlarms = new ArrayList<>();
     private final Resources resources;
     private final AlarmViewModel alarmViewModel;
+    private final String sampleIdPrefix;
+    private final int startSampleId;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final SwitchMaterial alarmSwitch;
+        private final TextView sampleNameTextView;
         private final TextView alarmTextView;
         private final ImageView scannerIcon;
         private final ImageView checkIcon;
@@ -38,6 +41,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             super(view);
 
             alarmSwitch = view.findViewById(R.id.alarm_active_switch);
+            sampleNameTextView = view.findViewById(R.id.tv_sample_name);
             alarmTextView = view.findViewById(R.id.alarm_time_text);
             scannerIcon = view.findViewById(R.id.iv_scanner_icon);
             checkIcon = view.findViewById(R.id.iv_check_icon);
@@ -58,11 +62,17 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         public ImageView getCheckIcon() {
             return checkIcon;
         }
+
+        public TextView getSampleNameTextView() {
+            return sampleNameTextView;
+        }
     }
 
-    public AlarmAdapter(Resources resources, AlarmViewModel alarmViewModel) {
+    public AlarmAdapter(Resources resources, AlarmViewModel alarmViewModel, String sampleIdPrefix, int startSampleid) {
         this.resources = resources;
         this.alarmViewModel = alarmViewModel;
+        this.sampleIdPrefix = sampleIdPrefix;
+        this.startSampleId = startSampleid;
     }
 
     @NonNull
@@ -78,7 +88,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Alarm item = localAlarms.get(position);
         int colorId = item.isActive() ? R.color.colorAccent : R.color.colorGrey500;
+        int adjustedSampleId = item.getSalivaId() + startSampleId;
+        String sampleName = sampleIdPrefix + adjustedSampleId + ":";
         setIconProperties(holder, item);
+        holder.getSampleNameTextView().setText(sampleName);
         holder.getAlarmTextView().setText(item.getStringTime());
         holder.getAlarmTextView().setTextColor(resources.getColor(colorId));
         holder.getAlarmSwitch().setChecked(item.isActive());

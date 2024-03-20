@@ -31,4 +31,11 @@
     <dimen name="barcode_field_label_size">12sp</dimen>
     <dimen name="barcode_field_label_padding">4dp</dimen>
 
+    <!-- alarm overview -->
+    <dimen name="sample_suffix_icon_width">40dp</dimen>
+    <dimen name="sample_suffix_icon_margin_start">5dp</dimen>
+    <dimen name="manual_scan_icon_height">40dp</dimen>
+    <dimen name="check_icon_height">30dp</dimen>
+    <dimen name="sample_prefix_text_size">30sp</dimen>
+
 </resources>
