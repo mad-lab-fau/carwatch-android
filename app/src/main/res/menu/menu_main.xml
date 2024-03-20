@@ -9,10 +9,6 @@
         android:id="@+id/menu_kill"
         android:title="@string/menu_kill" />
 
-    <item
-        android:id="@+id/menu_scan"
-        android:title="@string/menu_manual_scan" />
-
     <!--<item
         android:id="@+id/menu_service"
         android:title="Service" />-->

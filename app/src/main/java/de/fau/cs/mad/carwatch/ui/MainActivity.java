@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final int[] NAV_IDS = {R.id.navigation_wakeup, R.id.navigation_alarm, R.id.navigation_bedtime, R.id.navigation_scanner};
+    private static final int[] NAV_IDS = {R.id.navigation_wakeup, R.id.navigation_alarm, R.id.navigation_bedtime};
 
     private static DiskLogAdapter sAdapter;
 
@@ -114,12 +114,6 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0]).apply();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        updateBottomNavigationBar();
-    }
-
     public void navigate(int navId) {
         for (int id : NAV_IDS) {
             if (id == navId) {
@@ -183,9 +177,6 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.menu_scan:
-                navigate(R.id.navigation_scanner);
-                break;
             case R.id.menu_reregister:
                 sharedPreferences.edit().clear().apply();
                 Intent intent = new Intent(this, SlideShowActivity.class);
@@ -204,14 +195,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void updateBottomNavigationBar() {
-        // control bottom navigation view options
-        boolean showScanItem = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        Menu navMenu = navView.getMenu();
-        navMenu.findItem(R.id.navigation_scanner).setVisible(showScanItem);
     }
 
     private void showAppInfoDialog() {

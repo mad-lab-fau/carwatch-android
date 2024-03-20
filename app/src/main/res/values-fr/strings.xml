@@ -27,9 +27,6 @@
     <string name="title_dashboard">Alarme</string>
     <string name="title_wakeup">Réveil</string>
     <string name="title_bedtime">Heure du coucher</string>
-    <string name="title_scanner">Numérisez</string>
-
-
 
     <string name="user_credentials">Identifiants de l\'utilisateur trice</string>
 
@@ -130,7 +127,6 @@
     <string name="message_qr_code_invalid">Code QR invalide! Veuillez scanner le code QR figurant dans vos documents d\'étude.</string>
     <string name="title_barcode_already_scanned">Code-barres en double!</string>
     <string name="message_barcode_already_scanned">Ce code-barres a déjà été scanné auparavant. Veuillez vérifier et assurez-vous d\'utiliser une nouvelle salivette.</string>
-    <string name="menu_manual_scan">Scannez le code-barres</string>
     <string name="message_barcode_scanned_successfully">Le code-barres a été scanné avec succès!</string>
 
 </resources>
