@@ -99,6 +99,7 @@
     <string name="set_alarm_message">Veuillez régler l\'heure d\'alarme souhaitée pour demain.</string>
     <string name="saliva_alarms_header">Réveil pour les échantillons de salive</string>
     <string name="cancel_fixed_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
+    <string name="open_scanner_before_alarm_message">Cet échantillon est prévu pour plus tard. Êtes-vous sûr de vouloir scanner l\'échantillon maintenant?</string>
 
     <string name="warning_title">Avertissement</string>
     <string name="warning_already_taken_wakeup">Vous avez déjà complété tous les échantillons de salive du matin</string>
