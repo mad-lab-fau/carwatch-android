@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui.alarm;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         private final TextView alarmTextView;
         private final ImageView scannerIcon;
         private final ImageView checkIcon;
+        private final ImageView sampleStatusIcon;
 
         public ViewHolder(View view) {
             super(view);
@@ -48,6 +50,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             alarmTextView = view.findViewById(R.id.alarm_time_text);
             scannerIcon = view.findViewById(R.id.iv_scanner_icon);
             checkIcon = view.findViewById(R.id.iv_check_icon);
+            sampleStatusIcon = view.findViewById(R.id.iv_sample_status_icon);
         }
 
         public SwitchMaterial getAlarmSwitch() {
@@ -68,6 +71,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         public TextView getSampleNameTextView() {
             return sampleNameTextView;
+        }
+
+        public ImageView getSampleStatusIcon() {
+            return sampleStatusIcon;
         }
     }
 
@@ -121,6 +128,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private void setIconProperties(@NonNull ViewHolder holder, @NonNull Alarm alarm) {
         int checkVisibility = alarm.wasSampleTaken() ? View.VISIBLE : View.GONE;
         int scannerVisibility = alarm.wasSampleTaken() ? View.GONE : View.VISIBLE;
+        int statusIconVisibility = alarm.wasSampleTaken() ? View.GONE : View.VISIBLE;
         holder.getCheckIcon().setVisibility(checkVisibility);
         holder.getScannerIcon().setVisibility(scannerVisibility);
         holder.getScannerIcon().setOnClickListener(view -> {
@@ -130,6 +138,22 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 openScanner(view.getContext(), alarm);
             }
         });
+        holder.getSampleStatusIcon().setVisibility(statusIconVisibility);
+        boolean isBeforeSampleTime = DateTime.now().isBefore(alarm.getTime());
+        int src = isBeforeSampleTime ? R.drawable.ic_hourglass : R.drawable.ic_pending;
+        holder.getSampleStatusIcon().setImageResource(src);
+
+        if (isBeforeSampleTime) {
+            switchIconAfterAlarm(holder.getSampleStatusIcon(), alarm.getTimeToNextRing());
+        }
+    }
+
+    private void switchIconAfterAlarm(ImageView sampleStatusIcon, DateTime timeToNextRing) {
+        long delay = timeToNextRing.getMillis() - DateTime.now().getMillis();
+        new Handler().postDelayed(() -> {
+            if (sampleStatusIcon != null)
+                sampleStatusIcon.setImageResource(R.drawable.ic_pending);
+        }, delay);
     }
 
     private void showOpenScannerDialog(Context context, Alarm alarm) {
