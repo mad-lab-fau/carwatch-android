@@ -1,7 +1,5 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -21,11 +19,9 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.db.Alarm;
-import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
     private final List<Alarm> localAlarms = new ArrayList<>();
@@ -131,13 +127,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         int statusIconVisibility = alarm.wasSampleTaken() ? View.GONE : View.VISIBLE;
         holder.getCheckIcon().setVisibility(checkVisibility);
         holder.getScannerIcon().setVisibility(scannerVisibility);
-        holder.getScannerIcon().setOnClickListener(view -> {
-            if (DateTime.now().isBefore(alarm.getTime())) {
-                showOpenScannerDialog(view.getContext(), alarm);
-            } else {
-                openScanner(view.getContext(), alarm);
-            }
-        });
+        holder.getScannerIcon().setOnClickListener(view -> AlarmViewFunctionalities.requestOpenBarcodeScanner(view.getContext(), alarm));
         holder.getSampleStatusIcon().setVisibility(statusIconVisibility);
         boolean isBeforeSampleTime = DateTime.now().isBefore(alarm.getTime());
         int src = isBeforeSampleTime ? R.drawable.ic_hourglass : R.drawable.ic_pending;
@@ -154,24 +144,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             if (sampleStatusIcon != null)
                 sampleStatusIcon.setImageResource(R.drawable.ic_pending);
         }, delay);
-    }
-
-    private void showOpenScannerDialog(Context context, Alarm alarm) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-        AlertDialog dialog = dialogBuilder
-                .setTitle(R.string.warning_title)
-                .setMessage(R.string.open_scanner_before_alarm_message)
-                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {})
-                .setPositiveButton(R.string.ok, (dialogInterface, i) -> openScanner(context, alarm))
-                .create();
-        dialog.show();
-    }
-
-    private void openScanner(Context context, Alarm alarm) {
-        Intent intent = new Intent(context, BarcodeActivity.class);
-        intent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
-        intent.putExtra(Constants.EXTRA_SALIVA_ID, alarm.getSalivaId());
-        context.startActivity(intent);
     }
 
     private void deactivateAlarm(View view, ViewHolder holder, Alarm alarm) {
