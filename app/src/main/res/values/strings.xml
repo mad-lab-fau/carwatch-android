@@ -22,6 +22,7 @@
 
     <!-- Notification -->
     <string name="stop">Stop</string>
+    <string name="open_scanner">Open scanner</string>
 
     <!-- App Bar Titles -->
     <string name="title_dashboard">Alarm</string>

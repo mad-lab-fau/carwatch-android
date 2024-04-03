@@ -178,6 +178,9 @@ public class TimerHandler {
                         context.getString(R.string.timer_over_notification_text_evening) :
                         context.getString(R.string.timer_over_notification_text, salivaId + startSampleIdx);
 
+        Intent stopAlarmIntent = new Intent(context, TimerStopReceiver.class);
+        PendingIntent stopAlarmPendingIntent = PendingIntent.getBroadcast(context, 0, stopAlarmIntent, pendingFlags);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
@@ -188,6 +191,8 @@ public class TimerHandler {
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(contentText)
+                .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
+                .addAction(R.drawable.ic_barcode_scanner_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();

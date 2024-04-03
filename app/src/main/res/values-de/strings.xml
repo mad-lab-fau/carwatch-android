@@ -17,6 +17,7 @@
     <string name="prompt_barcode_scan_successful">Barcode erfolgreich gescannt!</string>
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
     <string name="stop">Stop</string>
+    <string name="open_scanner">Scanner öffnen</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d.</string>
     <string name="timer_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe.</string>
     <string name="timer_over_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d jetzt!</string>

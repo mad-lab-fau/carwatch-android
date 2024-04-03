@@ -22,7 +22,7 @@
     <string name="menu_show_tutorial">Afficher le tutoriel</string>
 
     <string name="stop">Arrêter</string>
-
+    <string name="open_scanner">Scanner ouvert</string>
 
     <string name="title_dashboard">Alarme</string>
     <string name="title_wakeup">Réveil</string>
