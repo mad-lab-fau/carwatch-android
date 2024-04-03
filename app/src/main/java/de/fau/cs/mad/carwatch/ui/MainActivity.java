@@ -123,10 +123,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void navigate() {
-        navController.navigate(R.id.navigation_wakeup);
-    }
-
     public static void initializeLoggingUtil(Context context) {
         if (sAdapter != null)
             return;
