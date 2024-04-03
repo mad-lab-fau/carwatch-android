@@ -127,13 +127,12 @@ public class SlideShowActivity extends AppCompatActivity {
 
     private List<TutorialSlide> createTutorialSlides() {
         List<TutorialSlide> tutorialSlides = new ArrayList<>();
-        boolean manualScanEnabled = sharedPreferences.getBoolean(Constants.PREF_MANUAL_SCAN, false);
         boolean eveningSampleRequired = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
 
-        int wakeupScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_wakeup_screen_extended_menu : R.drawable.img_screenshot_wakeup_screen_small_menu;
-        int alarmScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_alarm_screen_extended_menu : R.drawable.img_screenshot_alarm_screen_small_menu;
-        int bedtimeScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_bedtime_screen_extended_menu : R.drawable.img_screenshot_bedtime_screen_small_menu;
-        int scanScreenImageId = manualScanEnabled ? R.drawable.img_screenshot_barcode_cam_extended_menu : R.drawable.img_screenshot_barcode_cam_no_nav_bar;
+        int wakeupScreenImageId = R.drawable.img_screenshot_wakeup_screen_small_menu;
+        int alarmScreenImageId = R.drawable.img_screenshot_alarm_screen_small_menu;
+        int bedtimeScreenImageId = R.drawable.img_screenshot_bedtime_screen_small_menu;
+        int scanScreenImageId = R.drawable.img_screenshot_barcode_cam_no_nav_bar;
 
         String wakeupScreenHeadline = getString(R.string.headline_wakeup_screen_tutorial);
         String alarmScreenHeadline = getString(R.string.headline_alarm_tutorial);
@@ -143,9 +142,6 @@ public class SlideShowActivity extends AppCompatActivity {
         String alarmScreenDescription = getString(R.string.description_alarm_tutorial);
         String bedtimeScreenDescription = eveningSampleRequired ? getString(R.string.description_bedtime_screen_tutorial) : getString(R.string.description_bedtime_screen_tutorial_short);
         String scanScreenDescription = getString(R.string.description_scan_screen_tutorial);
-
-        if (manualScanEnabled)
-            scanScreenDescription += " " + getString(R.string.scan_screen_navigation_hint);
 
         tutorialSlides.add(TutorialSlide.newInstance(wakeupScreenHeadline, wakeupScreenDescription, wakeupScreenImageId, false));
         tutorialSlides.add(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId, true));

@@ -43,7 +43,6 @@ public final class Constants {
     public static final String PREF_HAS_EVENING = "has_evening"; // boolean
     public static final String PREF_SHARE_EMAIL_ADDRESS = "share_email_address"; // boolean
     public static final String PREF_CHECK_DUPLICATES = "check_duplicates"; // boolean
-    public static final String PREF_MANUAL_SCAN = "enable_manual_scan"; // boolean
     public static final String PREF_START_SAMPLE = "start_sample";
     public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
@@ -151,7 +150,6 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_EVENING = "E";
     public static final String QR_PARSER_PROPERTY_CONTACT = "M";
     public static final String QR_PARSER_PROPERTY_DUPLICATES = "FD";
-    public static final String QR_PARSER_PROPERTY_MANUAL_SCAN = "FM";
     public static final String QR_PARSER_PROPERTY_PARTICIPANT_ID = "PID";
     public static final String QR_PARSER_PROPERTY_WEB_APP_VERSION = "V";
 
@@ -163,6 +161,5 @@ public final class Constants {
     public static final String LOGGER_EXTRA_HAS_EVENING_SALIVETTE = "has_evening_salivette";
     public static final String LOGGER_EXTRA_SHARE_EMAIL_ADDRESS = "share_email_address";
     public static final String LOGGER_EXTRA_CHECK_DUPLICATES = "check_duplicates";
-    public static final String LOGGER_EXTRA_MANUAL_SCAN = "manual_scan";
     public static final String LOGGER_EXTRA_SALIVA_IDS = "saliva_ids";
 }

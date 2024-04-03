@@ -27,7 +27,6 @@ public class QrCodeParser {
     private boolean hasEveningSample;
     private String shareEmailAddress;
     private boolean isCheckDuplicatesEnabled;
-    private boolean isManualScanEnabled;
 
     public QrCodeParser(String dataString) {
         String versionizedDataString = QrLegacy.adaptToCurrentVersion(dataString);
@@ -88,10 +87,6 @@ public class QrCodeParser {
         return isCheckDuplicatesEnabled;
     }
 
-    public boolean isManualScanEnabled() {
-        return isManualScanEnabled;
-    }
-
     private void parse(String dataString) {
         String[] properties = dataString.split(Constants.QR_PARSER_SEPARATOR);
 
@@ -124,7 +119,6 @@ public class QrCodeParser {
         hasEveningSample = getIntProperty(Constants.QR_PARSER_PROPERTY_EVENING) == 1;
         shareEmailAddress = getStringProperty(Constants.QR_PARSER_PROPERTY_CONTACT);
         isCheckDuplicatesEnabled = getIntProperty(Constants.QR_PARSER_PROPERTY_DUPLICATES) == 1;
-        isManualScanEnabled = getIntProperty(Constants.QR_PARSER_PROPERTY_MANUAL_SCAN) == 1;
         participantId = getStringProperty(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID, false);
     }
 

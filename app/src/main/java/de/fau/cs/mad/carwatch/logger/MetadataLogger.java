@@ -72,7 +72,6 @@ public class MetadataLogger {
             json.put(Constants.LOGGER_EXTRA_HAS_EVENING_SALIVETTE, hasEveningSample);
             json.put(Constants.LOGGER_EXTRA_SHARE_EMAIL_ADDRESS, sp.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, ""));
             json.put(Constants.LOGGER_EXTRA_CHECK_DUPLICATES, sp.getBoolean(Constants.PREF_CHECK_DUPLICATES, false));
-            json.put(Constants.LOGGER_EXTRA_MANUAL_SCAN, sp.getBoolean(Constants.PREF_MANUAL_SCAN, false));
             LoggerUtil.log(Constants.LOGGER_ACTION_STUDY_DATA, json);
         } catch (JSONException e) {
             LoggerUtil.log(Constants.LOGGER_ACTION_STUDY_DATA, "Failed to log study data: " + e.getMessage());

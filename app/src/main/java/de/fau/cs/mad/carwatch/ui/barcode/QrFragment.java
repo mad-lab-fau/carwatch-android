@@ -146,7 +146,6 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                 .putBoolean(Constants.PREF_HAS_EVENING, parser.hasEveningSample())
                 .putString(Constants.PREF_SHARE_EMAIL_ADDRESS, parser.getShareEmailAddress())
                 .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.isCheckDuplicatesEnabled())
-                .putBoolean(Constants.PREF_MANUAL_SCAN, parser.isManualScanEnabled())
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
                 .putString(Constants.PREF_START_SAMPLE, parser.getStartSample())
                 .apply();
