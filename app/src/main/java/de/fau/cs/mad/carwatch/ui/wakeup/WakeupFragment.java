@@ -75,10 +75,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 }
 
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                DateTime date = new DateTime(sp.getLong(Constants.PREF_CURRENT_DATE, 0));
+                DateTime lastWakeUpAlarmRingTime = new DateTime(sp.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+                DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
                 int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
                 int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
-                if (!date.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
+                if (!dayCurrentSalivaAlarmsWereScheduled.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
                     showWakeupDialog();
                     break;
                 }
@@ -133,7 +134,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
 
         sp.edit()
-                .putLong(Constants.PREF_CURRENT_DATE, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
+                .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
                 .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                 .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
                 .apply();
@@ -152,6 +153,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
 
             AlarmHandler.cancelAlarm(context, alarm, view);
             alarm.setActive(false);
+            alarm.setWasSampleTaken(false);
             repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

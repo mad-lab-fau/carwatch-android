@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,12 +43,13 @@ public class AlarmFragment extends Fragment {
     private AlarmAdapter adapter;
     private CoordinatorLayout coordinatorLayout;
     private Alarm alarm;
-    private LinearLayout alarmLayout;
     private TextView timeTextView;
     private TextView salivaAlarmsHeader;
     private TextView sampleNameTextView;
     private SwitchMaterial activeSwitch;
     private ImageView checkIcon;
+    private ImageView scannerIcon;
+    private ImageView samplePendingIcon;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -65,12 +65,13 @@ public class AlarmFragment extends Fragment {
             coordinatorLayout = getActivity().findViewById(R.id.coordinator);
         }
 
-        alarmLayout = root.findViewById(R.id.alarm);
         timeTextView = root.findViewById(R.id.alarm_time_text);
         sampleNameTextView = root.findViewById(R.id.tv_sample_name);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
         checkIcon = root.findViewById(R.id.iv_check_icon);
+        scannerIcon = root.findViewById(R.id.iv_scanner_icon);
+        samplePendingIcon = root.findViewById(R.id.iv_sample_pending_icon);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -122,7 +123,8 @@ public class AlarmFragment extends Fragment {
         timeTextView.setText(alarm.getStringTime());
         activeSwitch.setChecked(alarm.isActive());
         setAlarmColor(alarm.isActive());
-        setAlarmViewIconProps();
+        setSuffixIconProps();
+        initializeScannerIconOnclick();
 
         // define behavior on activity switch change
         activeSwitch.setOnClickListener(view -> {
@@ -134,7 +136,7 @@ public class AlarmFragment extends Fragment {
         });
 
         // define behavior on time update
-        alarmLayout.setOnClickListener(view -> {
+        timeTextView.setOnClickListener(view -> {
             DateTime time;
             if (alarm.getTime() == null) {
                 time = DateTime.now();
@@ -176,11 +178,31 @@ public class AlarmFragment extends Fragment {
         timeTextView.setTextColor(getResources().getColor(colorId));
     }
 
-    private void setAlarmViewIconProps() {
+    private void setSuffixIconProps() {
+        boolean firstAlarmHasSample = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0");
+        if (firstAlarmHasSample) {
+            checkIcon.setVisibility(alarm.wasSampleTaken() ? View.VISIBLE : View.GONE);
+            DateTime lastWakeUpRing = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE));
+            boolean sampleIsPending = DateTime.now().isAfter(lastWakeUpRing) && !alarm.wasSampleTaken();
+            scannerIcon.setVisibility(sampleIsPending ? View.VISIBLE : View.GONE);
+            samplePendingIcon.setVisibility(sampleIsPending ? View.VISIBLE : View.GONE);
+        } else {
+            checkIcon.setVisibility(View.GONE);
+            scannerIcon.setVisibility(View.GONE);
+            samplePendingIcon.setVisibility(View.GONE);
+        }
+
+
         if (!sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0")) {
             checkIcon.setVisibility(View.GONE);
         } else if (alarm != null)
             checkIcon.setVisibility(alarm.wasSampleTaken() ? View.VISIBLE : View.GONE);
+    }
+
+    private void initializeScannerIconOnclick() {
+        scannerIcon.setOnClickListener(view ->
+                AlarmViewFunctionalities.openScanner(requireContext(), alarm)
+        );
     }
 
     private void updateAlarm() {

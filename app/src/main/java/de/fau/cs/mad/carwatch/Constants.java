@@ -31,7 +31,6 @@ public final class Constants {
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_PARTICIPANT_ID = "subject_id"; // String
     public static final String PREF_DAY_COUNTER = "day_counter"; // int (auto-incrementing)
-    public static final String PREF_CURRENT_DATE = "morning_taken"; // long (day)
     public static final String PREF_ID_ONGOING_ALARM = "morning_ongoing"; // int (alarmId)
     public static final String PREF_EVENING_TAKEN = "evening_taken"; // long (day)
     public static final String PREF_SCANNED_BARCODES = "scanned_barcodes"; // String Set (barcode values)
@@ -49,6 +48,7 @@ public final class Constants {
     public static final String PREF_CURRENT_ALARM_ID = "current_alarm_id"; // int
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
     public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
+    public static final String PREF_LAST_WAKE_UP_ALARM_RING_TIME = "last_wake_up_alarm_ring_time"; // long (milliseconds from epoch)
 
     public static final int INITIAL_SLIDE_SHOW_SLIDE = 0;
     public static final int SLIDESHOW_FINISHED_SLIDE_ID = -1;

@@ -76,6 +76,26 @@
                 android:src="@drawable/ic_check"
                 android:visibility="gone" />
 
+            <ImageView
+                android:id="@+id/iv_scanner_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
+                android:src="@drawable/ic_barcode_scanner_24dp"
+                android:visibility="gone"
+                app:tint="@color/barcode_field_box_stroke" />
+
+            <ImageView
+                android:id="@+id/iv_sample_pending_icon"
+                android:layout_width="@dimen/sample_suffix_icon_width"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:src="@drawable/ic_pending" />
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -89,7 +109,7 @@
 
             <View
                 android:layout_width="0dp"
-                android:layout_weight="0.6"
+                android:layout_weight="0.8"
                 android:layout_height="1dp"
                 android:background="@color/colorGrey300" />
         </LinearLayout>
