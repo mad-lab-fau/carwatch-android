@@ -131,7 +131,7 @@ public class SlideShowActivity extends AppCompatActivity {
         TutorialSlide wakeupScreenTutorial = TutorialSlide.newInstance(
                 getString(R.string.headline_wakeup_screen_tutorial),
                 getString(R.string.description_wakeup_screen),
-                R.drawable.img_screenshot_wakeup_screen_small_menu,
+                R.drawable.img_screenshot_wakeup_screen,
                 false
         );
         TutorialSlide wakeUpAlarmTutorial = TutorialSlide.newInstance(
@@ -155,13 +155,13 @@ public class SlideShowActivity extends AppCompatActivity {
         TutorialSlide bedtimeScreenTutorial = TutorialSlide.newInstance(
                 getString(R.string.headline_bedtime_screen_tutorial),
                 getString(R.string.description_bedtime_screen),
-                R.drawable.img_screenshot_bedtime_screen_small_menu,
+                R.drawable.img_screenshot_bedtime_screen,
                 true
         );
         TutorialSlide scanScreenTutorial = TutorialSlide.newInstance(
                 getString(R.string.headline_scan_screen_tutorial),
                 getString(R.string.description_scan_screen),
-                R.drawable.img_screenshot_barcode_cam_no_nav_bar,
+                R.drawable.img_screenshot_barcode_cam,
                 true
         );
 
