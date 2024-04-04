@@ -127,26 +127,53 @@ public class SlideShowActivity extends AppCompatActivity {
 
     private List<TutorialSlide> createTutorialSlides() {
         List<TutorialSlide> tutorialSlides = new ArrayList<>();
+
+        TutorialSlide wakeupScreenTutorial = TutorialSlide.newInstance(
+                getString(R.string.headline_wakeup_screen_tutorial),
+                getString(R.string.description_wakeup_screen),
+                R.drawable.img_screenshot_wakeup_screen_small_menu,
+                false
+        );
+        TutorialSlide wakeUpAlarmTutorial = TutorialSlide.newInstance(
+                getString(R.string.headline_alarm_tutorial),
+                getString(R.string.description_wakeup_alarm),
+                R.drawable.img_screenshot_alarm_screen_no_saliva_alarms,
+                true
+        );
+        TutorialSlide salivaAlarmsTutorial = TutorialSlide.newInstance(
+                getString(R.string.headline_alarm_tutorial),
+                getString(R.string.description_saliva_alarm_overview),
+                R.drawable.img_screenshot_alarm_screen_saliva_alarms_highlighted,
+                true
+        );
+        TutorialSlide alarmSymbolsTutorial = TutorialSlide.newInstance(
+                getString(R.string.headline_alarm_tutorial),
+                getString(R.string.description_alarm_symbols_tutorial),
+                R.drawable.img_screenshot_alarm_screen_symbols_highlighted,
+                true
+        );
+        TutorialSlide bedtimeScreenTutorial = TutorialSlide.newInstance(
+                getString(R.string.headline_bedtime_screen_tutorial),
+                getString(R.string.description_bedtime_screen),
+                R.drawable.img_screenshot_bedtime_screen_small_menu,
+                true
+        );
+        TutorialSlide scanScreenTutorial = TutorialSlide.newInstance(
+                getString(R.string.headline_scan_screen_tutorial),
+                getString(R.string.description_scan_screen),
+                R.drawable.img_screenshot_barcode_cam_no_nav_bar,
+                true
+        );
+
         boolean eveningSampleRequired = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
-
-        int wakeupScreenImageId = R.drawable.img_screenshot_wakeup_screen_small_menu;
-        int alarmScreenImageId = R.drawable.img_screenshot_alarm_screen_small_menu;
-        int bedtimeScreenImageId = R.drawable.img_screenshot_bedtime_screen_small_menu;
-        int scanScreenImageId = R.drawable.img_screenshot_barcode_cam_no_nav_bar;
-
-        String wakeupScreenHeadline = getString(R.string.headline_wakeup_screen_tutorial);
-        String alarmScreenHeadline = getString(R.string.headline_alarm_tutorial);
-        String bedtimeScreenHeadline = getString(R.string.headline_bedtime_screen_tutorial);
-        String scanScreenHeadline = getString(R.string.headline_scan_screen_tutorial);
-        String wakeupScreenDescription = getString(R.string.description_wakeup_screen_tutorial);
-        String alarmScreenDescription = getString(R.string.description_alarm_tutorial);
-        String bedtimeScreenDescription = eveningSampleRequired ? getString(R.string.description_bedtime_screen_tutorial) : getString(R.string.description_bedtime_screen_tutorial_short);
-        String scanScreenDescription = getString(R.string.description_scan_screen_tutorial);
-
-        tutorialSlides.add(TutorialSlide.newInstance(wakeupScreenHeadline, wakeupScreenDescription, wakeupScreenImageId, false));
-        tutorialSlides.add(TutorialSlide.newInstance(alarmScreenHeadline, alarmScreenDescription, alarmScreenImageId, true));
-        tutorialSlides.add(TutorialSlide.newInstance(bedtimeScreenHeadline, bedtimeScreenDescription, bedtimeScreenImageId, true));
-        tutorialSlides.add(TutorialSlide.newInstance(scanScreenHeadline, scanScreenDescription, scanScreenImageId, true));
+        tutorialSlides.add(wakeupScreenTutorial);
+        tutorialSlides.add(wakeUpAlarmTutorial);
+        tutorialSlides.add(salivaAlarmsTutorial);
+        tutorialSlides.add(alarmSymbolsTutorial);
+        if (eveningSampleRequired) {
+            tutorialSlides.add(bedtimeScreenTutorial);
+        }
+        tutorialSlides.add(scanScreenTutorial);
 
         return tutorialSlides;
     }
@@ -289,8 +316,9 @@ public class SlideShowActivity extends AppCompatActivity {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tab.getLayoutParams();
         params.weight = 0;
         params.width = 15;
-        params.setMarginStart(10);
-        params.setMarginEnd(10);
+        int spaceBetweenDots = 7;
+        params.setMarginStart(spaceBetweenDots);
+        params.setMarginEnd(spaceBetweenDots);
         tab.setLayoutParams(params);
         tabDots.requestLayout();
     }
