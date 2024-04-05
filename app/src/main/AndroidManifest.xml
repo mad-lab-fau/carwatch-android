@@ -96,7 +96,7 @@
         </receiver>
 
         <receiver
-            android:name=".userpresent.AppUpdateReceiver"
+            android:name=".userpresent.MyPackageReplacedReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
