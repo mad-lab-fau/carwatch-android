@@ -18,7 +18,7 @@
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:gravity="center"
         android:textSize="@dimen/sample_prefix_text_size"
-        android:fontFamily="monospace"/>
+        android:fontFamily="monospace" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/alarm_active_switch"
@@ -61,8 +61,8 @@
         android:layout_height="30dp"
         android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
         android:layout_gravity="center"
-        android:src="@drawable/ic_help_24dp"
-        android:visibility="gone"/>
+        android:src="@drawable/ic_hourglass"
+        android:visibility="gone" />
 
 
 </LinearLayout>
