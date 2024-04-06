@@ -105,6 +105,7 @@ public class AlarmFragment extends Fragment {
             return;
 
         List<Alarm> salivaAlarms = new ArrayList<>();
+        List<Alarm> sampleAlarms = new ArrayList<>();
         // initial alarm is not shown in list
         for (Alarm alarm : alarms) {
             if (alarm.getId() != Constants.EXTRA_ALARM_ID_INITIAL) {
