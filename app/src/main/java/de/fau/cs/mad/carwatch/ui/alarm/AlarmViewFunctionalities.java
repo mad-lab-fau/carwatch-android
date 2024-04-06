@@ -52,8 +52,10 @@ public class AlarmViewFunctionalities {
 
     private static void doOpenScanner(Context context, Alarm alarm) {
         Intent intent = new Intent(context, BarcodeActivity.class);
-        intent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
+        int alarmId = alarm.getId() == Constants.FIRST_SAMPLE_ALARM_ID ? Constants.EXTRA_ALARM_ID_INITIAL : alarm.getId();
+        intent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         intent.putExtra(Constants.EXTRA_SALIVA_ID, alarm.getSalivaId());
+        intent.putExtra(Constants.EXTRA_CANCEL_ALARM, alarm.getId() != Constants.FIRST_SAMPLE_ALARM_ID);
         context.startActivity(intent);
     }
 }

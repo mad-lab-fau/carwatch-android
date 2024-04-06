@@ -62,6 +62,7 @@ public final class Constants {
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
     public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
+    public static final String EXTRA_CANCEL_ALARM = "extra_cancel_alarm";
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
     public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
@@ -73,6 +74,7 @@ public final class Constants {
     public static final int EXTRA_SALIVA_ID_MANUAL = -1;
     public static final int EXTRA_ALARM_ID_EVENING = 815;
 
+    public static final int FIRST_SAMPLE_ALARM_ID = Short.MAX_VALUE - 1;
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
