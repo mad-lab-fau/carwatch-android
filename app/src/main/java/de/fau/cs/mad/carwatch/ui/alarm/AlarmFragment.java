@@ -83,15 +83,15 @@ public class AlarmFragment extends Fragment {
             setAlarmView();
         });
 
-        initializeFixedAlarmsAdapter(root);
+        initializeSalivaAlarmsAdapter(root);
 
         return root;
     }
 
-    private void initializeFixedAlarmsAdapter(View root) {
+    private void initializeSalivaAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
         adapter = new AlarmAdapter(getResources(), alarmViewModel, getSampleIdPrefix(), getStartSampleId());
-        RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
+        RecyclerView recyclerView = root.findViewById(R.id.saliva_alarms_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         setSalivaAlarmAdapterItems(alarmViewModel.getAlarms().getValue());

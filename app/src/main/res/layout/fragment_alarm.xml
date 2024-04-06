@@ -115,7 +115,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/fixed_alarms"
+            android:id="@+id/saliva_alarms"
             android:layout_below="@id/alarm_separator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
                 android:textSize="20sp"
                 android:visibility="gone" />
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fixed_alarms_list"
+                android:id="@+id/saliva_alarms_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

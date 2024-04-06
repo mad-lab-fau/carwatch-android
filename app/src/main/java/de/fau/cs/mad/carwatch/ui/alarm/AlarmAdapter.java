@@ -160,7 +160,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(view.getContext());
         AlertDialog dialog = dialogBuilder
                 .setTitle(R.string.warning_title)
-                .setMessage(R.string.cancel_fixed_alarm_message)
+                .setMessage(R.string.cancel_saliva_alarm_message)
                 .setNegativeButton(R.string.no, (dialogInterface, i) -> {
                     holder.getAlarmSwitch().setChecked(true);
                 })

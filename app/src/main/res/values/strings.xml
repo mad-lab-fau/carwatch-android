@@ -102,7 +102,7 @@
     <!-- Alarm Fragment -->
     <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>
     <string name="saliva_alarms_header">Saliva sample alarms</string>
-    <string name="cancel_fixed_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
+    <string name="cancel_saliva_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
     <string name="open_scanner_before_alarm_message">This sample is scheduled for later. Are you sure you want to scan the sample now?</string>
 
     <string name="warning_title">Warning</string>
