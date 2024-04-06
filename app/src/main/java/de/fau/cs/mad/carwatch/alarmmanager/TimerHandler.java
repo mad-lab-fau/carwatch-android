@@ -102,7 +102,7 @@ public class TimerHandler {
 
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
-            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + timerId);
+            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + alarmId);
             Log.d(TAG, "Cancelling timer " + pendingIntent);
         }
 
