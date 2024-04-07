@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ public class AlarmFragment extends Fragment {
     private CoordinatorLayout coordinatorLayout;
     private Alarm alarm;
     private TextView timeTextView;
+    private LinearLayout alarmSeparator;
     private TextView salivaAlarmsHeader;
     private SwitchMaterial activeSwitch;
 
@@ -63,6 +65,7 @@ public class AlarmFragment extends Fragment {
         timeTextView = root.findViewById(R.id.alarm_time_text);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
+        alarmSeparator = root.findViewById(R.id.alarm_separator);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -119,6 +122,7 @@ public class AlarmFragment extends Fragment {
         adapter.setAlarms(sampleAlarms);
         adapter.notifyDataSetChanged();
         salivaAlarmsHeader.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        alarmSeparator.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void setAlarmView() {
