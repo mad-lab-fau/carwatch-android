@@ -73,7 +73,7 @@ public class SlideShowActivity extends AppCompatActivity {
         slideShowFragment.setOnTouchListener(new OnSwipeTouchListener(this) {
              @Override
              public void onSwipeLeft() {
-                 if (canShowNextSlide) {
+                 if (canShowNextSlide && currentSlidePosition < slides.size() - 1) {
                      nextSlide();
                  }
              }
