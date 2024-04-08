@@ -31,9 +31,11 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.barcodedetection.camera.CameraSizePair;
@@ -185,5 +187,9 @@ public class Utils {
             output[i] = Integer.parseInt(list[i]);
         }
         return output;
+    }
+
+    public static String translateTimestamp(long timestamp) {
+        return new SimpleDateFormat("EE MMM dd yyyy HH:mm:ss ZZZZ", Locale.ENGLISH).format(timestamp);
     }
 }

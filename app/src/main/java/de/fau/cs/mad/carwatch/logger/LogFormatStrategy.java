@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.logger;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.LogStrategy;
@@ -28,6 +29,10 @@ public class LogFormatStrategy implements FormatStrategy {
 
         // machine-readable date/time
         builder.append(date);
+
+        // human-readable date/time
+        builder.append(SEPARATOR);
+        builder.append(Utils.translateTimestamp(date));
 
         // tag
         builder.append(SEPARATOR);
