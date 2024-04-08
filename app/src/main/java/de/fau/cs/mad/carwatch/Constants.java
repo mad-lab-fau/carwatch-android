@@ -115,6 +115,7 @@ public final class Constants {
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
     public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long (utc timestamp)
+    public static final String LOGGER_TRANSLATED_TIMESTAMP = "translated_timestamp"; // String (time in format "EE MMM dd yyyy HH:mm:ss ZZ")
     public static final String LOGGER_EXTRA_ALARM_SOURCE = "source"; // int
     public static final String LOGGER_EXTRA_SALIVA_ID = "saliva_id"; // int
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String

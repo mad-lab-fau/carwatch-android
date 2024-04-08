@@ -38,6 +38,7 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.BootCompletedReceiver;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 
 /**
@@ -167,6 +168,7 @@ public class AlarmHandler {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
             json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, alarmTime.getMillis());
+            json.put(Constants.LOGGER_TRANSLATED_TIMESTAMP, Utils.translateTimestamp(alarmTime.getMillis()));
             LoggerUtil.log(Constants.LOGGER_ACTION_TIMER_SET, json);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -382,6 +384,7 @@ public class AlarmHandler {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
             json.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, nextRing.getMillis());
+            json.put(Constants.LOGGER_TRANSLATED_TIMESTAMP, Utils.translateTimestamp(nextRing.getMillis()));
 
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
         } catch (JSONException e) {
