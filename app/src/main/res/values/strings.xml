@@ -50,6 +50,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Next</string>
+    <string name="btn_to_app">To the App</string>
     <string name="btn_skip_all">Skip tutorial</string>
     <string name="description_app_icon">The icon of the CARWatch app</string>
     <string name="headline_welcome">Welcome to CARWatch!</string>

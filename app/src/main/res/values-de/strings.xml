@@ -79,6 +79,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Weiter</string>
+    <string name="btn_to_app">Zur App</string>
     <string name="btn_skip_all">Tutorial überspringen</string>
     <string name="description_app_icon">Das Icon der CARWatch app</string>
     <string name="headline_welcome">Willkommen bei CARWatch!</string>
