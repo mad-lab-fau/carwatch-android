@@ -41,7 +41,6 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
     }
 
