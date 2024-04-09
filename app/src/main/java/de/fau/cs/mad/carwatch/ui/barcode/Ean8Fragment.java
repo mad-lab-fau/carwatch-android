@@ -38,6 +38,7 @@ public class Ean8Fragment extends BarcodeFragment {
 
     private int alarmId = Constants.EXTRA_ALARM_ID_MANUAL;
     private int salivaId = Constants.EXTRA_SALIVA_ID_MANUAL;
+    private boolean cancelAlarmAfterScan = true;
 
     @Override
     public void onResume() {
@@ -102,6 +103,10 @@ public class Ean8Fragment extends BarcodeFragment {
         this.salivaId = salivaId;
     }
 
+    public void setCancelAlarmAfterScan(boolean cancelAlarmAfterScan) {
+        this.cancelAlarmAfterScan = cancelAlarmAfterScan;
+    }
+
     @Override
     protected void showInvalidBarcodeDialog() {
         if (getContext() == null) {
@@ -126,9 +131,11 @@ public class Ean8Fragment extends BarcodeFragment {
         try {
             alarm = repository.getAlarmById(alarmId);
             if (alarm != null) {
-                AlarmHandler.cancelAlarm(getContext(), alarm, null);
                 alarm.setWasSampleTaken(true);
-                alarm.setActive(false);
+                if (cancelAlarmAfterScan) {
+                    AlarmHandler.cancelAlarm(getContext(), alarm, null);
+                    alarm.setActive(false);
+                }
                 repository.update(alarm);
             }
         } catch (ExecutionException | InterruptedException e) {

@@ -35,7 +35,7 @@
     <string name="lights_out">Licht aus!</string>
     <string name="lights_on">Licht an!</string>
 
-    <string name="cancel_fixed_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
+    <string name="cancel_saliva_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
     <string name="open_scanner_before_alarm_message">Diese Probe ist für später angesetzt. Sind Sie sicher, dass Sie die Probe jetzt scannen wollen?</string>
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
@@ -79,6 +79,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Weiter</string>
+    <string name="btn_to_app">Zur App</string>
     <string name="btn_skip_all">Tutorial überspringen</string>
     <string name="description_app_icon">Das Icon der CARWatch app</string>
     <string name="headline_welcome">Willkommen bei CARWatch!</string>

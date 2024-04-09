@@ -42,6 +42,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Suivant</string>
+    <string name="btn_to_app">Vers l\'application</string>
     <string name="btn_skip_all">Sauter le tutoriel</string>
     <string name="description_app_icon">L\'icône de l\'application CARWatch</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
@@ -98,7 +99,7 @@
 
     <string name="set_alarm_message">Veuillez régler l\'heure d\'alarme souhaitée pour demain.</string>
     <string name="saliva_alarms_header">Réveil pour les échantillons de salive</string>
-    <string name="cancel_fixed_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
+    <string name="cancel_saliva_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
     <string name="open_scanner_before_alarm_message">Cet échantillon est prévu pour plus tard. Êtes-vous sûr de vouloir scanner l\'échantillon maintenant?</string>
 
     <string name="warning_title">Avertissement</string>

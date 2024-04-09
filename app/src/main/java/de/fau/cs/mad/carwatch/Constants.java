@@ -62,6 +62,7 @@ public final class Constants {
     public static final String EXTRA_ALARM_ID = "extra_alarm_id";
     public static final String EXTRA_TIMER_ID = "extra_timer_id";
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
+    public static final String EXTRA_CANCEL_ALARM = "extra_cancel_alarm";
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
     public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
@@ -73,6 +74,7 @@ public final class Constants {
     public static final int EXTRA_SALIVA_ID_MANUAL = -1;
     public static final int EXTRA_ALARM_ID_EVENING = 815;
 
+    public static final int FIRST_SAMPLE_ALARM_ID = Short.MAX_VALUE - 1;
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
 
@@ -113,6 +115,7 @@ public final class Constants {
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
     public static final String LOGGER_EXTRA_ALARM_TIMESTAMP = "timestamp"; // long (utc timestamp)
+    public static final String LOGGER_TRANSLATED_TIMESTAMP = "translated_timestamp"; // String (time in format "EE MMM dd yyyy HH:mm:ss ZZ")
     public static final String LOGGER_EXTRA_ALARM_SOURCE = "source"; // int
     public static final String LOGGER_EXTRA_SALIVA_ID = "saliva_id"; // int
     public static final String LOGGER_EXTRA_BARCODE_VALUE = "barcode_value"; // String

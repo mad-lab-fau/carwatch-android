@@ -34,10 +34,11 @@ public class BarcodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode);
-
+        boolean cancelAlarm = true;
 
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            cancelAlarm = getIntent().getBooleanExtra(Constants.EXTRA_CANCEL_ALARM, true);
         }
 
         AlarmRepository repository = AlarmRepository.getInstance(this.getApplication());
@@ -97,6 +98,7 @@ public class BarcodeActivity extends AppCompatActivity {
             Ean8Fragment fragment = new Ean8Fragment();
             fragment.setAlarmId(alarmId);
             fragment.setSalivaId(salivaId);
+            fragment.setCancelAlarmAfterScan(cancelAlarm);
 
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
         }

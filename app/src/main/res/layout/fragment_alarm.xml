@@ -4,17 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
         tools:context=".ui.MainActivity">
 
         <ImageView
             android:id="@+id/iv_alarm"
             android:layout_width="@dimen/home_icon_size"
             android:layout_height="@dimen/home_icon_size"
-            android:layout_above="@+id/tv_alarm"
-            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:src="@drawable/ic_alarm_black_24dp"
             app:tint="@color/colorPrimaryLight" />
@@ -23,102 +24,66 @@
             android:id="@+id/tv_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/alarm"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:text="@string/set_alarm_message"
             android:textAlignment="center"
             android:textSize="24sp" />
 
         <LinearLayout
-            android:id="@+id/alarm"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:clickable="true"
+                android:focusable="true">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/alarm_active_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+
+                <TextView
+                    android:id="@+id/alarm_time_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:fontFamily="monospace"
+                    android:textSize="@dimen/alarm_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_separator"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:weightSum="1"
+                android:gravity="center">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="0.8"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey300" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/saliva_alarms"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_sample_name"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:gravity="center"
-                android:textSize="@dimen/sample_prefix_text_size"
-                android:fontFamily="monospace"
-                android:visibility="gone" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/alarm_active_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-
-            <TextView
-                android:id="@+id/alarm_time_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:fontFamily="monospace"
-                android:textSize="@dimen/alarm_text_size" />
-
-            <ImageView
-                android:id="@+id/iv_check_icon"
-                android:layout_width="@dimen/sample_suffix_icon_width"
-                android:layout_height="@dimen/check_icon_height"
-                android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_check"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/iv_scanner_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
-                android:src="@drawable/ic_barcode_scanner_24dp"
-                android:visibility="gone"
-                app:tint="@color/barcode_field_box_stroke" />
-
-            <ImageView
-                android:id="@+id/iv_sample_pending_icon"
-                android:layout_width="@dimen/sample_suffix_icon_width"
-                android:layout_height="30dp"
-                android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                android:src="@drawable/ic_pending" />
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/alarm_separator"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/alarm"
-            android:weightSum="1"
-            android:gravity="center">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_weight="0.8"
-                android:layout_height="1dp"
-                android:background="@color/colorGrey300" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fixed_alarms"
-            android:layout_below="@id/alarm_separator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/tv_saliva_alarms"
@@ -130,15 +95,15 @@
                 android:textSize="20sp"
                 android:visibility="gone" />
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fixed_alarms_list"
+                android:id="@+id/saliva_alarms_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                tools:listitem="@layout/item_fixed_alarm"
-                tools:itemCount="3" />
+                tools:listitem="@layout/item_alarm"
+                tools:itemCount="5" />
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <data>
 

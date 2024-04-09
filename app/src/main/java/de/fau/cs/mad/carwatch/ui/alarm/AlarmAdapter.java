@@ -85,7 +85,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_fixed_alarm, parent, false);
+                .inflate(R.layout.item_alarm, parent, false);
 
         return new ViewHolder(view);
     }
@@ -96,19 +96,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         int colorId = item.isActive() ? R.color.colorAccent : R.color.colorGrey500;
         int adjustedSampleId = item.getSalivaId() + startSampleId;
         String sampleName = sampleIdPrefix + adjustedSampleId + ":";
-        setIconProperties(holder, item);
         holder.getSampleNameTextView().setText(sampleName);
+        setSwitchProperties(holder, item);
         holder.getAlarmTextView().setText(item.getStringTime());
         holder.getAlarmTextView().setTextColor(resources.getColor(colorId));
-        holder.getAlarmSwitch().setChecked(item.isActive());
-        holder.getAlarmSwitch().setEnabled(!item.wasSampleTaken());
-        holder.getAlarmSwitch().setOnClickListener(view -> {
-            if (item.isActive()) {
-                deactivateAlarm(view, holder, item);
-            } else {
-                activateAlarm(view, holder, item);
-            }
-        });
+        setIconProperties(holder, item);
     }
 
     @Override
@@ -119,6 +111,24 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void setAlarms(List<Alarm> alarms) {
         localAlarms.clear();
         localAlarms.addAll(alarms);
+    }
+
+    private void setSwitchProperties(ViewHolder holder, Alarm item) {
+        SwitchMaterial alarmSwitch = holder.getAlarmSwitch();
+
+        alarmSwitch.setChecked(item.isActive());
+        boolean isLater = DateTime.now().isBefore(item.getTime());
+        alarmSwitch.setEnabled(isLater && !item.wasSampleTaken());
+        if (isLater) {
+            new Handler().postDelayed(() -> alarmSwitch.setEnabled(false), item.getTime().getMillis() - DateTime.now().getMillis());
+        }
+        alarmSwitch.setOnClickListener(view -> {
+            if (item.isActive()) {
+                deactivateAlarm(view, holder, item);
+            } else {
+                activateAlarm(view, holder, item);
+            }
+        });
     }
 
     private void setIconProperties(@NonNull ViewHolder holder, @NonNull Alarm alarm) {
@@ -150,7 +160,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(view.getContext());
         AlertDialog dialog = dialogBuilder
                 .setTitle(R.string.warning_title)
-                .setMessage(R.string.cancel_fixed_alarm_message)
+                .setMessage(R.string.cancel_saliva_alarm_message)
                 .setNegativeButton(R.string.no, (dialogInterface, i) -> {
                     holder.getAlarmSwitch().setChecked(true);
                 })

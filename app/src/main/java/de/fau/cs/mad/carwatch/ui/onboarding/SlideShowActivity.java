@@ -73,7 +73,7 @@ public class SlideShowActivity extends AppCompatActivity {
         slideShowFragment.setOnTouchListener(new OnSwipeTouchListener(this) {
              @Override
              public void onSwipeLeft() {
-                 if (canShowNextSlide) {
+                 if (canShowNextSlide && currentSlidePosition < slides.size() - 1) {
                      nextSlide();
                  }
              }
@@ -245,16 +245,17 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void initButtonsForSlide(WelcomeSlide slide) {
-        canShowNextSlide = slide.getCanShowNextSlide().get();
-        canShowPreviousSlide = slide.getCanShowPreviousSlide().get();
         setSkipButtonVisibility(slide.getSkipButtonIsVisible().get());
-        nextButton.setEnabled(canShowNextSlide);
         slide.getSkipButtonIsVisible().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
                 setSkipButtonVisibility(slide.getSkipButtonIsVisible().get());
             }
         });
+        canShowNextSlide = slide.getCanShowNextSlide().get();
+        boolean isLastSlide = slides.indexOf(slide) == slides.size() - 1;
+        nextButton.setEnabled(canShowNextSlide);
+        nextButton.setText(isLastSlide ? R.string.btn_to_app : R.string.btn_next);
         slide.getCanShowNextSlide().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
@@ -262,6 +263,7 @@ public class SlideShowActivity extends AppCompatActivity {
                 nextButton.setEnabled(canShowNextSlide);
             }
         });
+        canShowPreviousSlide = slide.getCanShowPreviousSlide().get();
         slide.getCanShowPreviousSlide().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,12 +44,9 @@ public class AlarmFragment extends Fragment {
     private CoordinatorLayout coordinatorLayout;
     private Alarm alarm;
     private TextView timeTextView;
+    private LinearLayout alarmSeparator;
     private TextView salivaAlarmsHeader;
-    private TextView sampleNameTextView;
     private SwitchMaterial activeSwitch;
-    private ImageView checkIcon;
-    private ImageView scannerIcon;
-    private ImageView samplePendingIcon;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -66,12 +63,9 @@ public class AlarmFragment extends Fragment {
         }
 
         timeTextView = root.findViewById(R.id.alarm_time_text);
-        sampleNameTextView = root.findViewById(R.id.tv_sample_name);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
-        checkIcon = root.findViewById(R.id.iv_check_icon);
-        scannerIcon = root.findViewById(R.id.iv_scanner_icon);
-        samplePendingIcon = root.findViewById(R.id.iv_sample_pending_icon);
+        alarmSeparator = root.findViewById(R.id.alarm_separator);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -81,17 +75,16 @@ public class AlarmFragment extends Fragment {
                 this.alarm = alarm;
             }
             setAlarmView();
+            initializeSalivaAlarmsAdapter(root);
         });
-
-        initializeFixedAlarmsAdapter(root);
 
         return root;
     }
 
-    private void initializeFixedAlarmsAdapter(View root) {
+    private void initializeSalivaAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
         adapter = new AlarmAdapter(getResources(), alarmViewModel, getSampleIdPrefix(), getStartSampleId());
-        RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
+        RecyclerView recyclerView = root.findViewById(R.id.saliva_alarms_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         setSalivaAlarmAdapterItems(alarmViewModel.getAlarms().getValue());
@@ -104,27 +97,40 @@ public class AlarmFragment extends Fragment {
         if (alarms == null)
             return;
 
-        List<Alarm> salivaAlarms = new ArrayList<>();
+        List<Alarm> sampleAlarms = new ArrayList<>();
+
+        String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        if (salivaDistances.startsWith("0") && sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+            DateTime wakeUpTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE));
+            Alarm initialSampleAlarm = new Alarm(
+                    wakeUpTime,
+                    false,
+                    false,
+                    Constants.FIRST_SAMPLE_ALARM_ID,
+                    alarm.getSalivaId(),
+                    alarm.wasSampleTaken()
+            );
+            sampleAlarms.add(initialSampleAlarm);
+        }
+
         // initial alarm is not shown in list
         for (Alarm alarm : alarms) {
             if (alarm.getId() != Constants.EXTRA_ALARM_ID_INITIAL) {
-                salivaAlarms.add(alarm);
+                sampleAlarms.add(alarm);
             }
         }
-        adapter.setAlarms(salivaAlarms);
+        adapter.setAlarms(sampleAlarms);
         adapter.notifyDataSetChanged();
-        salivaAlarmsHeader.setVisibility(salivaAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        salivaAlarmsHeader.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        alarmSeparator.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void setAlarmView() {
         final Context context = getContext();
 
-        initializeSampleIdTextView();
         timeTextView.setText(alarm.getStringTime());
         activeSwitch.setChecked(alarm.isActive());
         setAlarmColor(alarm.isActive());
-        setSuffixIconProps();
-        initializeScannerIconOnclick();
 
         // define behavior on activity switch change
         activeSwitch.setOnClickListener(view -> {
@@ -156,16 +162,6 @@ public class AlarmFragment extends Fragment {
         });
     }
 
-    private void initializeSampleIdTextView() {
-        boolean firstAlarmHasSample = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0");
-        int adjustedSalivaId = alarm.getSalivaId() + getStartSampleId();
-        String sampleName = getSampleIdPrefix() + adjustedSalivaId + ":";
-
-        sampleNameTextView.setVisibility(firstAlarmHasSample ? View.VISIBLE : View.GONE);
-        sampleNameTextView.setText(sampleName);
-
-    }
-
     private void setInitialSalivaId() {
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
         boolean requestSaliva = salivaDistances.startsWith("0");
@@ -176,33 +172,6 @@ public class AlarmFragment extends Fragment {
         // Set alarm TextView colors based on alarm's activity state
         int colorId = isActive ? R.color.colorAccent : R.color.colorGrey500;
         timeTextView.setTextColor(getResources().getColor(colorId));
-    }
-
-    private void setSuffixIconProps() {
-        boolean firstAlarmHasSample = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0");
-        if (firstAlarmHasSample) {
-            checkIcon.setVisibility(alarm.wasSampleTaken() ? View.VISIBLE : View.GONE);
-            DateTime lastWakeUpRing = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE));
-            boolean sampleIsPending = DateTime.now().isAfter(lastWakeUpRing) && !alarm.wasSampleTaken();
-            scannerIcon.setVisibility(sampleIsPending ? View.VISIBLE : View.GONE);
-            samplePendingIcon.setVisibility(sampleIsPending ? View.VISIBLE : View.GONE);
-        } else {
-            checkIcon.setVisibility(View.GONE);
-            scannerIcon.setVisibility(View.GONE);
-            samplePendingIcon.setVisibility(View.GONE);
-        }
-
-
-        if (!sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0")) {
-            checkIcon.setVisibility(View.GONE);
-        } else if (alarm != null)
-            checkIcon.setVisibility(alarm.wasSampleTaken() ? View.VISIBLE : View.GONE);
-    }
-
-    private void initializeScannerIconOnclick() {
-        scannerIcon.setOnClickListener(view ->
-                AlarmViewFunctionalities.openScanner(requireContext(), alarm)
-        );
     }
 
     private void updateAlarm() {
