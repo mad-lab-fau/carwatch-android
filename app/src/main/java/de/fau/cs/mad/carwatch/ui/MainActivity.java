@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         delegate.applyDayNight();
 
         initializeLoggingUtil(this);
-        logSleepDataIfAvailable();
 
         if (sharedPreferences.getInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE) != Constants.SLIDESHOW_FINISHED_SLIDE_ID) {
             Intent intent = new Intent(this, SlideShowActivity.class);
@@ -139,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
         }
+
+        logSleepDataIfAvailable();
     }
 
     @Override
