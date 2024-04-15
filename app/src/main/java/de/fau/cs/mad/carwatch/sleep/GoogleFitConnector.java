@@ -80,14 +80,6 @@ public class GoogleFitConnector {
                 .setTimeInterval(startTime.getMillis(), endTime.getMillis(), SESSION_TIME_UNIT)
                 .build();
 
-        SessionReadRequest request2 = new SessionReadRequest.Builder()
-                .readSessionsFromAllApps()
-                .includeSleepSessions()
-                .read(DataType.TYPE_SLEEP_SEGMENT)
-                .setTimeInterval(startTime.getMillis(), endTime.getMillis(), SESSION_TIME_UNIT)
-                .build();
-
-
         Fitness.getSessionsClient(context, getGoogleSignInAccount())
                 .readSession(request)
                 .addOnFailureListener(e -> Log.w(TAG, "There was a problem reading the sleep sessions.", e))
