@@ -134,5 +134,8 @@
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
     <string name="message_barcode_scanned_successfully">The barcode was scanned successfully!</string>
+    <string name="menu_delete_logs">Delete Logs</string>
+    <string name="message_all_log_files_deleted">All logs were deleted successfully.</string>
+    <string name="message_not_all_log_files_deleted">Error while deleting the logs. Some log files could not be deleted.</string>
 
 </resources>

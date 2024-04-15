@@ -84,6 +84,37 @@ public class DiskLogHandler extends Handler {
         throw new FileNotFoundException("No log files to zip!");
     }
 
+    /**
+     * Deletes all log files
+     * @param context the context
+     * @return true if all files were deleted, false otherwise
+     */
+    public static boolean deleteLogFiles(Context context) {
+        File directory = getDirectory(context);
+        String noLogFilesMsg = "No log files to delete!";
+
+        if (directory == null) {
+            Log.i(TAG, noLogFilesMsg);
+            return true;
+        }
+
+        File[] files = directory.listFiles();
+
+        if (files == null || files.length == 0) {
+            Log.i(TAG, noLogFilesMsg);
+            return true;
+        }
+
+        boolean deletedAll = true;
+        for (File file : files) {
+            if (!file.delete()) {
+                Log.e(TAG, "Could not delete file " + file.getName());
+                deletedAll = false;
+            }
+        }
+        return deletedAll;
+    }
+
     private static Looper getDefaultLooper() {
         HandlerThread ht = new HandlerThread("AndroidFileLogger");
         ht.start();

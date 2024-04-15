@@ -6,6 +6,10 @@
         android:title="@string/menu_share" />
 
     <item
+        android:id="@+id/menu_delete_log_files"
+        android:title="@string/menu_delete_logs" />
+
+    <item
         android:id="@+id/menu_kill"
         android:title="@string/menu_kill" />
 
