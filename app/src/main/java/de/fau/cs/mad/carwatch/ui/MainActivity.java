@@ -52,9 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
 
-    private int clickCounter = 0;
+    private int killAlarmClickCounter = 0;
+    private int deleteLogFilesClickCounter = 0;
     private static final int CLICK_THRESHOLD_TOAST = 2;
     private static final int CLICK_THRESHOLD_KILL = 5;
+    private static final int CLICK_THRESHOLD_DELETE_LOG_FILES = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        clickCounter = 0;
+        killAlarmClickCounter = 0;
+        deleteLogFilesClickCounter = 0;
 
         coordinatorLayout = findViewById(R.id.coordinator);
 
@@ -164,13 +167,26 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.menu_delete_log_files:
+                deleteLogFilesClickCounter++;
+                if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_DELETE_LOG_FILES) {
+                    showDeleteLogFilesWarningDialog();
+                    deleteLogFilesClickCounter = 0;
+                } else if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_TOAST) {
+                    Snackbar.make(
+                            coordinatorLayout,
+                            getString(R.string.hint_clicks_delete_log_files, (CLICK_THRESHOLD_DELETE_LOG_FILES - deleteLogFilesClickCounter)),
+                            Snackbar.LENGTH_SHORT
+                    ).show();
+                }
+                break;
             case R.id.menu_kill:
-                clickCounter++;
-                if (clickCounter >= CLICK_THRESHOLD_KILL) {
+                killAlarmClickCounter++;
+                if (killAlarmClickCounter >= CLICK_THRESHOLD_KILL) {
                     showKillWarningDialog();
-                    clickCounter = 0;
-                } else if (clickCounter >= CLICK_THRESHOLD_TOAST) {
-                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
+                    killAlarmClickCounter = 0;
+                } else if (killAlarmClickCounter >= CLICK_THRESHOLD_TOAST) {
+                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - killAlarmClickCounter)), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.menu_reregister:
@@ -193,9 +209,35 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showAppInfoDialog() {
-        AppInfoDialog dialog = new AppInfoDialog();
-        dialog.show(getSupportFragmentManager(), "app_info");
+    private void createFileShareDialog(File zipFile) {
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        Uri uri = GenericFileProvider.getUriForFile(this,
+                getApplicationContext().getPackageName() +
+                        ".logger.fileprovider",
+                zipFile);
+        String extra_email = sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, "");
+        sharingIntent.setType("application/octet-stream");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
+        startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
+    }
+
+    private void showDeleteLogFilesWarningDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.title_delete_log_files)
+                .setMessage(R.string.message_delete_log_files_confirm_dialog)
+                .setPositiveButton(R.string.yes, (dialog, which) -> deleteLogFiles())
+                .setNegativeButton(R.string.cancel, ((dialog, which) -> { }))
+                .show();
+    }
+
+    private void deleteLogFiles() {
+        boolean fileWereDeleted = LoggerUtil.deleteLogFiles(this);
+        String msg = fileWereDeleted ? getString(R.string.message_all_log_files_deleted) : getString(R.string.message_not_all_log_files_deleted);
+        Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_SHORT).show();
     }
 
     public void showKillWarningDialog() {
@@ -215,18 +257,8 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void createFileShareDialog(File zipFile) {
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        Uri uri = GenericFileProvider.getUriForFile(this,
-                getApplicationContext().getPackageName() +
-                        ".logger.fileprovider",
-                zipFile);
-        String extra_email = sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, "");
-        sharingIntent.setType("application/octet-stream");
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
-        startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
+    private void showAppInfoDialog() {
+        AppInfoDialog dialog = new AppInfoDialog();
+        dialog.show(getSupportFragmentManager(), "app_info");
     }
 }

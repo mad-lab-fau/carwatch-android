@@ -7,8 +7,6 @@
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
     <string name="saliva_alarms_set">Die Probenwecker wurden gestellt.</string>
     <string name="cancel">Abbrechen</string>
-    <string name="menu_kill">Kill Alarms</string>
-    <string name="menu_share">Logs teilen …</string>
     <string name="participant_id">Probanden-ID</string>
     <string name="message_participant_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
@@ -28,6 +26,20 @@
     <string name="title_bedtime">Bettzeit</string>
     <string name="user_credentials">Benutzerinformationen</string>
 
+    <!-- Menu -->
+    <string name="menu_share">Logs teilen …</string>
+    <string name="menu_delete_logs">Logs löschen</string>
+    <string name="menu_kill">Kill Alarms</string>
+    <string name="menu_reregister">Neu registrieren</string>
+    <string name="menu_show_tutorial">Tutorial zeigen</string>
+    <string name="menu_app_info">Info</string>
+
+    <!-- Delete log files -->
+    <string name="hint_clicks_delete_log_files">Noch %1$d Klicks, um alle Log Dateien zu löschen</string>
+    <string name="title_delete_log_files">Logs löschen</string>
+    <string name="message_delete_log_files_confirm_dialog">Sind Sie sicher, dass Sie alle Log Dateien löschen wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
+    <string name="message_all_log_files_deleted">Die Logs wurden gelöscht.</string>
+    <string name="message_not_all_log_files_deleted">Fehler beim Löschen der Logs. Einige Log Dateien konnten nicht gelöscht werden.</string>
 
     <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
     <string name="good_night">Vielen Dank und Gute Nacht!</string>
@@ -101,7 +113,6 @@
     <string name="text_slide_show_end">Die App ist nun bereit. Um die Studie zu starten, stellen Sie sich einen Wecker für den nächsten Tag oder melden Sie Ihr Aufwachen am Morgen. Wenn Sie die App neu konfigurieren oder das Tutorial erneut durchführen möchten, drücken Sie die entsprechenden Einträge im Menü oben rechts.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
-    <string name="app_info">Info</string>
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
     <string name="saliva_alarms_header">Wecker für Speichelproben</string>
@@ -109,11 +120,6 @@
     <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
     <string name="title_barcode_already_scanned">Doppelter Barcode!</string>
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
-    <string name="menu_reregister">Neu registrieren</string>
-    <string name="menu_show_tutorial">Tutorial zeigen</string>
-    <string name="menu_delete_logs">Logs löschen</string>
     <string name="message_barcode_scanned_successfully">Der Barcode wurde erfolgreich gescannt!</string>
-    <string name="message_all_log_files_deleted">Die Logs wurden gelöscht.</string>
-    <string name="message_not_all_log_files_deleted">Fehler beim Löschen der Logs. Einige Log Dateien konnten nicht gelöscht werden.</string>
 
 </resources>

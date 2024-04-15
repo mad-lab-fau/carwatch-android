@@ -15,10 +15,19 @@
     <string name="title_activity_scan">Scan Barcode</string>
 
     <!-- Menu -->
-    <string name="menu_reregister">Reregister</string>
     <string name="menu_share">Share Logs …</string>
+    <string name="menu_delete_logs">Delete Logs</string>
     <string name="menu_kill">Kill Alarms</string>
+    <string name="menu_reregister">Reregister</string>
     <string name="menu_show_tutorial">Show Tutorial</string>
+    <string name="menu_app_info">Info</string>
+
+    <!-- Delete log files -->
+    <string name="hint_clicks_delete_log_files">%1$d more clicks to delete all log files.</string>
+    <string name="title_delete_log_files">Delete logs</string>
+    <string name="message_delete_log_files_confirm_dialog">Are you sure to delete all existing log files? This action cannot be undone!</string>
+    <string name="message_all_log_files_deleted">All logs were deleted successfully.</string>
+    <string name="message_not_all_log_files_deleted">Error while deleting the logs. Some log files could not be deleted.</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>
@@ -129,13 +138,9 @@
     <string name="app_active">CARWatch Service is active.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
-    <string name="app_info">Info</string>
     <string name="message_qr_code_invalid">Invalid QR Code! Please scan the QR Code in your study materials.</string>
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
     <string name="message_barcode_scanned_successfully">The barcode was scanned successfully!</string>
-    <string name="menu_delete_logs">Delete Logs</string>
-    <string name="message_all_log_files_deleted">All logs were deleted successfully.</string>
-    <string name="message_not_all_log_files_deleted">Error while deleting the logs. Some log files could not be deleted.</string>
 
 </resources>
