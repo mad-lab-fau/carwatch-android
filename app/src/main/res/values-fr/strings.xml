@@ -50,6 +50,7 @@
     <string name="message_permission_request">Pour activer toutes les fonctionnalités, notre application nécessite les autorisations suivantes:</string>
     <string name="message_camera_access">Accès à la caméra pour pouvoir scanner les codes-barres des tubes à échantillons</string>
     <string name="message_notification_permission">Envoi de notifications pour vous informer des échantillons à venir</string>
+    <string name="headline_google_fit">Afin de déterminer votre heure de réveil de manière plus précise, nous aimerions utiliser les données de sommeil enregistrées dans Google Fit. Souhaitez-vous connecter votre compte Google Fit à CARWatch pour cela?</string>
     <string name="headline_wakeup_screen_tutorial">Commencer la matinée</string>
     <string name="description_wakeup_screen">Vous ne devez utiliser cette fonction que si vous n\'aviez pas réglé de réveil pour le matin ou si vous vous êtes réveillé avant que le réveil ne sonne. En appuyant sur le bouton \"Oui\", les réveils d\'échantillons sont configurés pour le jour suivant.</string>
     <string name="headline_alarm_tutorial">Suivez vos alarmes!</string>

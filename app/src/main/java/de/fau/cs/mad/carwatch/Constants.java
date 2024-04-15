@@ -48,6 +48,8 @@ public final class Constants {
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
     public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
     public static final String PREF_LAST_WAKE_UP_ALARM_RING_TIME = "last_wake_up_alarm_ring_time"; // long (milliseconds from epoch)
+    public static final String PREF_LAST_SLEEP_LOGGED_TIME = "last_sleep_logged_time"; // long (milliseconds from epoch)
+
 
     public static final int INITIAL_SLIDE_SHOW_SLIDE = 0;
     public static final int SLIDESHOW_FINISHED_SLIDE_ID = -1;
@@ -111,6 +113,12 @@ public final class Constants {
     public static final String LOGGER_ACTION_PARTICIPANT_ID_SET = "participant_id_set";
     public static final String LOGGER_APP_UPDATE_COMPLETE = "app_update_complete";
     public static final String LOGGER_ACTION_STUDY_DATA = "study_metadata";
+    public static final String LOGGER_RECORDED_SLEEP_DATA = "recorded_sleep_data";
+    public static final String LOGGER_LAST_SLEEP_PHASES = "last_sleep_phases";
+    public static final String LOGGER_STAGE = "stage";
+    public static final String LOGGER_STAGE_START = "start";
+    public static final String LOGGER_STAGE_END = "end";
+    public static final String LOGGER_STAGE_DATE = "date";
 
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int
@@ -165,4 +173,5 @@ public final class Constants {
     public static final String LOGGER_EXTRA_SHARE_EMAIL_ADDRESS = "share_email_address";
     public static final String LOGGER_EXTRA_CHECK_DUPLICATES = "check_duplicates";
     public static final String LOGGER_EXTRA_SALIVA_IDS = "saliva_ids";
+    public static final int GOOGLE_FIT_REQUEST_CODE = 76;  // arbitrary set value
 }

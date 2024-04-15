@@ -35,6 +35,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.sleep.GoogleFitConnector;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
 import de.fau.cs.mad.carwatch.util.Utils;
 
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        clickCounter = 0;
 
         // disable night mode per default
         AppCompatDelegate delegate = getDelegate();
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         delegate.applyDayNight();
 
         initializeLoggingUtil(this);
+        logSleepDataIfAvailable();
 
         if (sharedPreferences.getInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE) != Constants.SLIDESHOW_FINISHED_SLIDE_ID) {
             Intent intent = new Intent(this, SlideShowActivity.class);
@@ -77,16 +80,11 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        clickCounter = 0;
-
-        coordinatorLayout = findViewById(R.id.coordinator);
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(NAV_IDS).build();
-
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        coordinatorLayout = findViewById(R.id.coordinator);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         int currentNavElement = sharedPreferences.getInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0]);
@@ -94,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
 
         if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
             Snackbar.make(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), Snackbar.LENGTH_SHORT).show();
@@ -213,6 +210,14 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel, ((dialog, which) -> {
                 }))
                 .show();
+    }
+
+    private void logSleepDataIfAvailable() {
+        GoogleFitConnector gfc = new GoogleFitConnector(this);
+
+        if (gfc.canAccessSleepData() && !gfc.wasSleepLoggedToday()) {
+            gfc.logLastSleepData();
+        }
     }
 
     private void createFileShareDialog(File zipFile) {

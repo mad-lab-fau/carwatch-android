@@ -87,6 +87,7 @@
     <string name="message_permission_request">Damit Sie die App optimal nutzen können, benötigen wir folgende Berechtigungen:</string>
     <string name="message_camera_access">Kamerazugriff, um die Barcodes auf den Probenröhrchen zu scannen</string>
     <string name="message_notification_permission">Die Berechtigung, Benachrichtigungen zu senden, um über anstehende Proben zu informieren</string>
+    <string name="headline_google_fit">Um Ihre Aufwachzeit genauer bestimmen zu können, möchten wir die in Google Fit aufgezeichneten Schlafdaten verwenden. Möchten Sie Ihr Google Fit-Konto dafür mit CARWatch verbinden?</string>
     <string name="headline_wakeup_screen_tutorial">Den Morgen starten</string>
     <string name="description_wakeup_screen">Diese Funktion müssen Sie nur nutzen, wenn Sie keinen Wecker für den Morgen gestellt hatten oder aufgewacht sind, bevor der Wecker geklingelt hat. Durch drücken des \"Ja\" Buttons, werden die Probenwecker für den kommenden Tag eingerichtet.</string>
     <string name="headline_alarm_tutorial">Die Probenwecker</string>
