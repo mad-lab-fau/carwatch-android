@@ -214,6 +214,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logSleepDataIfAvailable() {
+        if (!Utils.isInternetAvailable(this)) {
+            return;
+        }
+
         GoogleFitConnector gfc = new GoogleFitConnector(this);
 
         if (gfc.canAccessSleepData() && !gfc.wasSleepLoggedToday()) {
