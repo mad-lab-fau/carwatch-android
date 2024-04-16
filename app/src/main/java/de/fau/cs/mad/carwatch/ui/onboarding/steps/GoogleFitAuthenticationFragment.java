@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.sleep.GoogleFitConnector;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 /**
  * A simple {@link Fragment} subclass that can be used in a {@link SlideShowActivity} to request
@@ -53,6 +54,11 @@ public class GoogleFitAuthenticationFragment extends BaseWelcomeSlide {
     }
 
     private void requestGoogleFitPermissions() {
+        if (!Utils.isInternetAvailable(requireContext())) {
+            showErrorDialog(getString(R.string.error_no_internet_connection));
+            return;
+        }
+
         GoogleFitConnector gfc = new GoogleFitConnector(requireContext());
 
         if (!gfc.canAccessSleepData()) {

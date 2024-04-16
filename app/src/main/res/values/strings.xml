@@ -2,6 +2,7 @@
     <string name="app_name">CARWatch</string>
 
     <string name="ok">OK</string>
+    <string name="error">Error</string>
 
     <string name="cancel">Cancel</string>
     <string name="alarm_notification_text">Alarm!</string>
@@ -135,5 +136,6 @@
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
     <string name="message_barcode_scanned_successfully">The barcode was scanned successfully!</string>
+    <string name="error_no_internet_connection">No internet connection available. Please make sure that the device is online.</string>
 
 </resources>
