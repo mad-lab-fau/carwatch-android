@@ -188,4 +188,12 @@ public class DiskLogHandler extends Handler {
 
         throw new FileNotFoundException("No log files to zip!");
     }
+
+    public static File getLogDirectory(Context context) {
+        if (context == null) {
+            return null;
+        }
+
+        return getDirectory(context);
+    }
 }

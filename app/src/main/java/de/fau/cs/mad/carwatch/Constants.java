@@ -114,11 +114,7 @@ public final class Constants {
     public static final String LOGGER_APP_UPDATE_COMPLETE = "app_update_complete";
     public static final String LOGGER_ACTION_STUDY_DATA = "study_metadata";
     public static final String LOGGER_RECORDED_SLEEP_DATA = "recorded_sleep_data";
-    public static final String LOGGER_LAST_SLEEP_PHASES = "last_sleep_phases";
-    public static final String LOGGER_STAGE = "stage";
-    public static final String LOGGER_STAGE_START = "start";
-    public static final String LOGGER_STAGE_END = "end";
-    public static final String LOGGER_STAGE_DATE = "date";
+    public static final String LOGGER_RECORDED_WAKE_UP_TIME = "recorded_wake_up_time";
 
     // Extras that can be added to the Logger
     public static final String LOGGER_EXTRA_ALARM_ID = "id"; // int

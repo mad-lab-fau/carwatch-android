@@ -17,13 +17,15 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionReadRequest;
+import com.google.android.gms.fitness.result.SessionReadResponse;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +33,7 @@ import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.logger.SleepDataLogger;
 
 public class GoogleFitConnector {
 
@@ -47,6 +50,8 @@ public class GoogleFitConnector {
             "Deep sleep",
             "REM sleep"
     };
+
+    private static final int SLEEP_SEGMENT_TYPE_AWAKE = 1;
 
     private final @NonNull Context context;
 
@@ -83,58 +88,7 @@ public class GoogleFitConnector {
         Fitness.getSessionsClient(context, getGoogleSignInAccount())
                 .readSession(request)
                 .addOnFailureListener(e -> Log.w(TAG, "There was a problem reading the sleep sessions.", e))
-                .addOnSuccessListener(response -> {
-                    List<Session> sessions = response.getSessions();
-
-                    if (sessions.isEmpty())
-                        LoggerUtil.log(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";No sleep sessions found.");
-                    else if (sessions.size() > 1)
-                        LoggerUtil.log(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";Multiple sleep sessions found.");
-
-                    for (Session session : sessions) {
-                        int datasetsLogged = 0;
-
-                        for (DataSet dataSet : response.getDataSet(session)) {
-                            List<DataPoint> dataPoints = dataSet.getDataPoints();
-                            if (dataPoints.isEmpty())
-                                continue;
-
-                            if (dataPoints.size() > 3)
-                                dataPoints = dataPoints.subList(dataPoints.size() - 3, dataPoints.size());
-
-                            JSONArray stageLogs = new JSONArray();
-                            for (DataPoint dataPoint : dataPoints) {
-                                DateTime start = new DateTime(dataPoint.getStartTime(SESSION_TIME_UNIT));
-                                DateTime end = new DateTime(dataPoint.getEndTime(SESSION_TIME_UNIT));
-                                String stage = SLEEP_STAGE_NAMES[dataPoint.getValue(Field.FIELD_SLEEP_SEGMENT_TYPE).asInt()];
-
-                                JSONObject stageLog = new JSONObject();
-                                try {
-                                    stageLog.put(Constants.LOGGER_STAGE_DATE, start.toString(LOGGER_DATE_PATTERN));
-                                    stageLog.put(Constants.LOGGER_STAGE, stage);
-                                    stageLog.put(Constants.LOGGER_STAGE_START, start.toString(STAGE_TIME_PATTERN));
-                                    stageLog.put(Constants.LOGGER_STAGE_END, end.toString(STAGE_TIME_PATTERN));
-                                    stageLogs.put(stageLog);
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Error while creating JSON object", e);
-                                }
-                            }
-                            JSONObject sessionLog = new JSONObject();
-                            try {
-                                sessionLog.put(Constants.LOGGER_LAST_SLEEP_PHASES, stageLogs);
-                                LoggerUtil.log(Constants.LOGGER_RECORDED_SLEEP_DATA, sessionLog);
-                                datasetsLogged++;
-                            } catch (JSONException e) {
-                                Log.e(TAG, "Error while creating JSON object", e);
-                            }
-                        }
-
-                        if (datasetsLogged > 0) {
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-                            sharedPreferences.edit().putLong(Constants.PREF_LAST_SLEEP_LOGGED_TIME, endTime.getMillis()).apply();
-                        }
-                    }
-                });
+                .addOnSuccessListener(this::logSleepData);
     }
 
     public boolean wasSleepLoggedToday() {
@@ -158,5 +112,60 @@ public class GoogleFitConnector {
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
         return resultCode == ConnectionResult.SUCCESS;
+    }
+
+    private void logSleepData(SessionReadResponse response) {
+        List<Session> sessions = response.getSessions();
+
+        if (sessions.size() > 1)
+            LoggerUtil.log(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";Multiple sleep sessions found.");
+
+        List<Long> sessionWakeUpTimes = new ArrayList<>();
+        List<SleepPhase> sleepPhases = new ArrayList<>();
+
+        for (Session session : sessions) {
+            long sessionWakeUpTime = 0;
+
+            for (DataSet dataSet : response.getDataSet(session)) {
+                for (DataPoint dataPoint : dataSet.getDataPoints()) {
+                    DateTime start = new DateTime(dataPoint.getStartTime(SESSION_TIME_UNIT));
+                    DateTime end = new DateTime(dataPoint.getEndTime(SESSION_TIME_UNIT));
+                    int sleepSegmentType = dataPoint.getValue(Field.FIELD_SLEEP_SEGMENT_TYPE).asInt();
+                    String stage = SLEEP_STAGE_NAMES[sleepSegmentType];
+
+                    SleepPhase sleepPhase = new SleepPhase(stage, start, end);
+                    sleepPhases.add(sleepPhase);
+
+                    if (SLEEP_SEGMENT_TYPE_AWAKE != sleepSegmentType) {
+                        sessionWakeUpTime = Math.max(end.getMillis(), sessionWakeUpTime);
+                    }
+                }
+            }
+
+            if (sessionWakeUpTime == 0) {
+                sessionWakeUpTime = session.getEndTime(TimeUnit.MILLISECONDS);
+            }
+            sessionWakeUpTimes.add(sessionWakeUpTime);
+        }
+
+        if (sessionWakeUpTimes.isEmpty()) {
+            Log.i(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";No sleep data found.");
+            return;
+        }
+
+        SleepDataLogger.log(context, sleepPhases);
+        DateTime wakeUpTime = new DateTime(Collections.max(sessionWakeUpTimes));
+        JSONObject wakeUpTimeLog = new JSONObject();
+        try {
+            wakeUpTimeLog.put(Constants.LOGGER_EXTRA_ALARM_TIMESTAMP, wakeUpTime.getMillis());
+            wakeUpTimeLog.put(Constants.LOGGER_TRANSLATED_TIMESTAMP,
+                    wakeUpTime.toString(LOGGER_DATE_PATTERN + " " + STAGE_TIME_PATTERN));
+            LoggerUtil.log(Constants.LOGGER_RECORDED_WAKE_UP_TIME, wakeUpTimeLog);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error while creating JSON object", e);
+        }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putLong(Constants.PREF_LAST_SLEEP_LOGGED_TIME, wakeUpTime.getMillis()).apply();
     }
 }
