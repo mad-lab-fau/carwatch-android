@@ -172,5 +172,8 @@ public final class Constants {
     public static final String LOGGER_EXTRA_SHARE_EMAIL_ADDRESS = "share_email_address";
     public static final String LOGGER_EXTRA_CHECK_DUPLICATES = "check_duplicates";
     public static final String LOGGER_EXTRA_SALIVA_IDS = "saliva_ids";
+    public static final String LOGGER_EXTRA_USE_GOOGLE_FIT = "use_google_fit";
+
+
     public static final int GOOGLE_FIT_REQUEST_CODE = 76;  // arbitrary set value
 }
