@@ -43,12 +43,6 @@ public class DiskLogHandler extends Handler {
         this.context = context;
     }
 
-    private static Looper getDefaultLooper() {
-        HandlerThread ht = new HandlerThread("AndroidFileLogger");
-        ht.start();
-        return ht.getLooper();
-    }
-
     @SuppressWarnings("checkstyle:emptyblock")
     @Override
     public void handleMessage(Message msg) {
@@ -77,35 +71,54 @@ public class DiskLogHandler extends Handler {
         }
     }
 
-    /**
-     * This is always called on a single background thread.
-     * Implementing classes must ONLY write to the fileWriter and nothing more.
-     * The abstract class takes care of everything else including close the stream and catching IOException
-     *
-     * @param fileWriter an instance of FileWriter already initialised to the correct file
-     */
-    private void writeLog(FileWriter fileWriter, String content) throws IOException {
-        fileWriter.append(content);
+    public static File zipDirectory(Context context, String studyName, String participantId) throws FileNotFoundException {
+        File directory = getDirectory(context);
+        File root = getRootDirectory(context);
+        String filename = participantId == null ? "logs.zip" : String.format("logs_%s_%s.zip", studyName, participantId);
+        File file = new File(root, filename);
+        if (directory != null && Objects.requireNonNull(directory.list()).length > 0) {
+            ZipUtil.pack(directory, file);
+            return file;
+        }
+
+        throw new FileNotFoundException("No log files to zip!");
     }
 
-    private File getLogFile() {
-        String filename;
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String studyName = sp.getString(Constants.PREF_STUDY_NAME, null);
-        String participantId = sp.getString(Constants.PREF_PARTICIPANT_ID, null);
-        if (participantId != null && studyName != null) {
-            filename = "carwatch_" + studyName.toLowerCase() + "_" + participantId.toLowerCase() + "_" + DateTime.now().toString("YYYYMMdd");
-        } else {
-            filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
-        }
-
+    /**
+     * Deletes all log files
+     * @param context the context
+     * @return true if all files were deleted, false otherwise
+     */
+    public static boolean deleteLogFiles(Context context) {
         File directory = getDirectory(context);
+        String noLogFilesMsg = "No log files to delete!";
 
-        if (directory != null) {
-            return new File(directory + "/" + String.format("%s.csv", filename));
-        } else {
-            return null;
+        if (directory == null) {
+            Log.i(TAG, noLogFilesMsg);
+            return true;
         }
+
+        File[] files = directory.listFiles();
+
+        if (files == null || files.length == 0) {
+            Log.i(TAG, noLogFilesMsg);
+            return true;
+        }
+
+        boolean deletedAll = true;
+        for (File file : files) {
+            if (!file.delete()) {
+                Log.e(TAG, "Could not delete file " + file.getName());
+                deletedAll = false;
+            }
+        }
+        return deletedAll;
+    }
+
+    private static Looper getDefaultLooper() {
+        HandlerThread ht = new HandlerThread("AndroidFileLogger");
+        ht.start();
+        return ht.getLooper();
     }
 
     private static File getRootDirectory(Context context) {
@@ -175,18 +188,35 @@ public class DiskLogHandler extends Handler {
         }
     }
 
+    /**
+     * This is always called on a single background thread.
+     * Implementing classes must ONLY write to the fileWriter and nothing more.
+     * The abstract class takes care of everything else including close the stream and catching IOException
+     *
+     * @param fileWriter an instance of FileWriter already initialised to the correct file
+     */
+    private void writeLog(FileWriter fileWriter, String content) throws IOException {
+        fileWriter.append(content);
+    }
 
-    public static File zipDirectory(Context context, String studyName, String participantId) throws FileNotFoundException {
-        File directory = getDirectory(context);
-        File root = getRootDirectory(context);
-        String filename = participantId == null ? "logs.zip" : String.format("logs_%s_%s.zip", studyName, participantId);
-        File file = new File(root, filename);
-        if (directory != null && Objects.requireNonNull(directory.list()).length > 0) {
-            ZipUtil.pack(directory, file);
-            return file;
+    private File getLogFile() {
+        String filename;
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String studyName = sp.getString(Constants.PREF_STUDY_NAME, null);
+        String participantId = sp.getString(Constants.PREF_PARTICIPANT_ID, null);
+        if (participantId != null && studyName != null) {
+            filename = "carwatch_" + studyName.toLowerCase() + "_" + participantId.toLowerCase() + "_" + DateTime.now().toString("YYYYMMdd");
+        } else {
+            filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
         }
 
-        throw new FileNotFoundException("No log files to zip!");
+        File directory = getDirectory(context);
+
+        if (directory != null) {
+            return new File(directory + "/" + String.format("%s.csv", filename));
+        } else {
+            return null;
+        }
     }
 
     public static File getLogDirectory(Context context) {

@@ -43,4 +43,7 @@ public class LoggerUtil {
         return DiskLogHandler.zipDirectory(context, studyName, participantId);
     }
 
+    public static boolean deleteLogFiles(Context context) {
+        return DiskLogHandler.deleteLogFiles(context);
+    }
 }

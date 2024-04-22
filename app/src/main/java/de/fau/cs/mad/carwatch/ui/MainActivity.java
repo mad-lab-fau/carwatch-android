@@ -53,9 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
 
-    private int clickCounter = 0;
+    private int killAlarmClickCounter = 0;
+    private int deleteLogFilesClickCounter = 0;
     private static final int CLICK_THRESHOLD_TOAST = 2;
     private static final int CLICK_THRESHOLD_KILL = 5;
+    private static final int CLICK_THRESHOLD_DELETE_LOG_FILES = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        clickCounter = 0;
 
         // disable night mode per default
         AppCompatDelegate delegate = getDelegate();
@@ -79,11 +80,17 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+        killAlarmClickCounter = 0;
+        deleteLogFilesClickCounter = 0;
+
+        coordinatorLayout = findViewById(R.id.coordinator);
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(NAV_IDS).build();
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        coordinatorLayout = findViewById(R.id.coordinator);
+
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
         int currentNavElement = sharedPreferences.getInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0]);
@@ -164,13 +171,26 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.menu_delete_log_files:
+                deleteLogFilesClickCounter++;
+                if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_DELETE_LOG_FILES) {
+                    showDeleteLogFilesWarningDialog();
+                    deleteLogFilesClickCounter = 0;
+                } else if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_TOAST) {
+                    Snackbar.make(
+                            coordinatorLayout,
+                            getString(R.string.hint_clicks_delete_log_files, (CLICK_THRESHOLD_DELETE_LOG_FILES - deleteLogFilesClickCounter)),
+                            Snackbar.LENGTH_SHORT
+                    ).show();
+                }
+                break;
             case R.id.menu_kill:
-                clickCounter++;
-                if (clickCounter >= CLICK_THRESHOLD_KILL) {
+                killAlarmClickCounter++;
+                if (killAlarmClickCounter >= CLICK_THRESHOLD_KILL) {
                     showKillWarningDialog();
-                    clickCounter = 0;
-                } else if (clickCounter >= CLICK_THRESHOLD_TOAST) {
-                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - clickCounter)), Snackbar.LENGTH_SHORT).show();
+                    killAlarmClickCounter = 0;
+                } else if (killAlarmClickCounter >= CLICK_THRESHOLD_TOAST) {
+                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - killAlarmClickCounter)), Snackbar.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.menu_reregister:
@@ -191,28 +211,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showAppInfoDialog() {
-        AppInfoDialog dialog = new AppInfoDialog();
-        dialog.show(getSupportFragmentManager(), "app_info");
-    }
-
-    public void showKillWarningDialog() {
-        new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(getString(R.string.title_kill_alarms))
-                .setMessage(getString(R.string.message_kill_alarms))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    AlarmHandler.killAll(getApplication());
-                    AlarmSoundControl.getInstance().stopAlarmSound();
-                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (notificationManager != null)
-                        notificationManager.cancelAll();
-                })
-                .setNegativeButton(R.string.cancel, ((dialog, which) -> {
-                }))
-                .show();
     }
 
     private void logSleepDataIfAvailable() {
@@ -240,5 +238,43 @@ public class MainActivity extends AppCompatActivity {
         sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
         sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
+    }
+
+    private void showDeleteLogFilesWarningDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.title_delete_log_files)
+                .setMessage(R.string.message_delete_log_files_confirm_dialog)
+                .setPositiveButton(R.string.yes, (dialog, which) -> deleteLogFiles())
+                .setNegativeButton(R.string.cancel, ((dialog, which) -> { }))
+                .show();
+    }
+
+    private void deleteLogFiles() {
+        boolean fileWereDeleted = LoggerUtil.deleteLogFiles(this);
+        String msg = fileWereDeleted ? getString(R.string.message_all_log_files_deleted) : getString(R.string.message_not_all_log_files_deleted);
+        Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void showKillWarningDialog() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(getString(R.string.title_kill_alarms))
+                .setMessage(getString(R.string.message_kill_alarms))
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    AlarmHandler.killAll(getApplication());
+                    AlarmSoundControl.getInstance().stopAlarmSound();
+                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (notificationManager != null)
+                        notificationManager.cancelAll();
+                })
+                .setNegativeButton(R.string.cancel, ((dialog, which) -> {
+                }))
+                .show();
+    }
+
+    private void showAppInfoDialog() {
+        AppInfoDialog dialog = new AppInfoDialog();
+        dialog.show(getSupportFragmentManager(), "app_info");
     }
 }
