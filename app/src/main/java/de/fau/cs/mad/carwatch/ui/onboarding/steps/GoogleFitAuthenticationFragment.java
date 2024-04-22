@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui.onboarding.steps;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.sleep.GoogleFitConnector;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
@@ -48,7 +51,7 @@ public class GoogleFitAuthenticationFragment extends BaseWelcomeSlide {
         enableGoogleFitButton.setOnClickListener(v -> requestGoogleFitPermissions());
 
         Button skipGoogleFitButton = root.findViewById(R.id.btn_no_google_fit_authentication);
-        skipGoogleFitButton.setOnClickListener(v -> canShowNextSlide.set(true));
+        skipGoogleFitButton.setOnClickListener(v -> disableGoogleFit());
 
         return root;
     }
@@ -67,6 +70,13 @@ public class GoogleFitAuthenticationFragment extends BaseWelcomeSlide {
             Log.d(TAG, "User has already authorized the Google Fit API access.");
             canShowNextSlide.set(true);
         }
+    }
+
+    private void disableGoogleFit() {
+        Log.d(TAG, "User has disabled Google Fit API access.");
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        sp.edit().putBoolean(Constants.PREF_USE_GOOGLE_FIT, false).apply();
+        canShowNextSlide.set(true);
     }
 
     @Override

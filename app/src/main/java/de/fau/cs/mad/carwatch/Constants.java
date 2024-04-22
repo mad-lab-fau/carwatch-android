@@ -49,6 +49,7 @@ public final class Constants {
     public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
     public static final String PREF_LAST_WAKE_UP_ALARM_RING_TIME = "last_wake_up_alarm_ring_time"; // long (milliseconds from epoch)
     public static final String PREF_LAST_SLEEP_LOGGED_TIME = "last_sleep_logged_time"; // long (milliseconds from epoch)
+    public static final String PREF_USE_GOOGLE_FIT = "use_google_fit"; // boolean
 
 
     public static final int INITIAL_SLIDE_SHOW_SLIDE = 0;
@@ -159,6 +160,8 @@ public final class Constants {
     public static final String QR_PARSER_PROPERTY_DUPLICATES = "FD";
     public static final String QR_PARSER_PROPERTY_PARTICIPANT_ID = "PID";
     public static final String QR_PARSER_PROPERTY_WEB_APP_VERSION = "V";
+    public static final String QR_PARSER_PROPERTY_USE_GOOGLE_FIT = "GF";
+
 
     public static final String LOGGER_EXTRA_STUDY_NAME = "study_name";
     public static final String LOGGER_EXTRA_NUM_PARTICIPANTS = "num_participants";

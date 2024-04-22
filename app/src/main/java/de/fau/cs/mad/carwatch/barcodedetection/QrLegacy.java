@@ -17,7 +17,10 @@ public class QrLegacy {
 
         if (VersionUtils.compareVersions(webAppVersion, VersionUtils.V_1_0_0) < 0) {
             return convertV0_0_1(qrData);
+        } else if (VersionUtils.compareVersions(webAppVersion, VersionUtils.V_1_1_0) < 0) {
+            return convertV1_0_0(qrData);
         }
+
 
         return qrData;
     }

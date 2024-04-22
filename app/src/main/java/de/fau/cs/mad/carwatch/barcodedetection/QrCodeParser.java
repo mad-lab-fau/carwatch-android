@@ -27,6 +27,7 @@ public class QrCodeParser {
     private boolean hasEveningSample;
     private String shareEmailAddress;
     private boolean isCheckDuplicatesEnabled;
+    private boolean isGoogleFitEnabled;
 
     public QrCodeParser(String dataString) {
         String versionizedDataString = QrLegacy.adaptToCurrentVersion(dataString);
@@ -87,6 +88,10 @@ public class QrCodeParser {
         return isCheckDuplicatesEnabled;
     }
 
+    public boolean isGoogleFitEnabled() {
+        return isGoogleFitEnabled;
+    }
+
     private void parse(String dataString) {
         String[] properties = dataString.split(Constants.QR_PARSER_SEPARATOR);
 
@@ -120,6 +125,7 @@ public class QrCodeParser {
         shareEmailAddress = getStringProperty(Constants.QR_PARSER_PROPERTY_CONTACT);
         isCheckDuplicatesEnabled = getIntProperty(Constants.QR_PARSER_PROPERTY_DUPLICATES) == 1;
         participantId = getStringProperty(Constants.QR_PARSER_PROPERTY_PARTICIPANT_ID, false);
+        isGoogleFitEnabled = getIntProperty(Constants.QR_PARSER_PROPERTY_USE_GOOGLE_FIT) == 1;
     }
 
     private void setInvalid(String error) {

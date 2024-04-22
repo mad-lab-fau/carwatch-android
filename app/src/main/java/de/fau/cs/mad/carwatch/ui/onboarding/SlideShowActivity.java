@@ -109,9 +109,9 @@ public class SlideShowActivity extends AppCompatActivity {
             case SHOW_APP_INITIALIZATION_SLIDES:
                 addSlide(new QrFragment());
                 qrScannerSlidePosition = 0;
-                addSlide(GoogleFitAuthenticationFragment.newInstance());
                 break;
             case SHOW_TUTORIAL_SLIDES:
+                qrScannerSlidePosition = -1;
                 for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
                 }
@@ -121,7 +121,6 @@ public class SlideShowActivity extends AppCompatActivity {
                 addSlide(new PermissionRequest());
                 addSlide(new QrFragment());
                 qrScannerSlidePosition = 2;
-                addSlide(GoogleFitAuthenticationFragment.newInstance());
                 for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
                 }
@@ -133,10 +132,17 @@ public class SlideShowActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == Constants.GOOGLE_FIT_REQUEST_CODE) {
-            Log.d(TAG, "Google Fit API access granted");
-            slides.get(currentSlidePosition).getCanShowNextSlide().set(true);
+
+        if (requestCode != Constants.GOOGLE_FIT_REQUEST_CODE) {
+            return;
         }
+
+        if (resultCode == RESULT_OK) {
+            Log.d(TAG, "Google Fit API access granted");
+        } else {
+            Log.e(TAG, "Error while requesting Google Fit permissions");
+        }
+        slides.get(currentSlidePosition).getCanShowNextSlide().set(true);
     }
 
     private List<TutorialSlide> createTutorialSlides() {
@@ -220,10 +226,15 @@ public class SlideShowActivity extends AppCompatActivity {
         currentSlide.onSlideFinished();
 
         if (currentSlidePosition == qrScannerSlidePosition) {
-            int tutorialSlidePos = currentSlidePosition + 2;
+            int tutorialSlidePos = currentSlidePosition + 1;
 
             if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
-                addSlide(currentSlidePosition + 1, new ParticipantIdQuery());
+                addSlide(tutorialSlidePos, new ParticipantIdQuery());
+                tutorialSlidePos++;
+            }
+
+            if (sharedPreferences.getBoolean(Constants.PREF_USE_GOOGLE_FIT, false)) {
+                addSlide(tutorialSlidePos, GoogleFitAuthenticationFragment.newInstance());
                 tutorialSlidePos++;
             }
 
@@ -293,7 +304,12 @@ public class SlideShowActivity extends AppCompatActivity {
     private void recreateTutorialSlides(int firstSlidePos) {
         List<TutorialSlide> tutorialSlides = createTutorialSlides();
         for (int i = 0; i < tutorialSlides.size(); i++) {
-            slides.set(firstSlidePos + i, tutorialSlides.get(i));
+            int pos = firstSlidePos + i;
+            if (pos >= slides.size()) {
+                addSlide(tutorialSlides.get(i));
+            } else {
+                slides.set(firstSlidePos + i, tutorialSlides.get(i));
+            }
         }
     }
 

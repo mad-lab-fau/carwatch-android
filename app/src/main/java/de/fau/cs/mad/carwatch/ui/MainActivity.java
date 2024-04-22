@@ -139,7 +139,9 @@ public class MainActivity extends AppCompatActivity {
             Utils.requestRuntimePermissions(this);
         }
 
-        logSleepDataIfAvailable();
+        if (sharedPreferences.getBoolean(Constants.PREF_USE_GOOGLE_FIT, false)) {
+            logSleepDataIfAvailable();
+        }
     }
 
     @Override
