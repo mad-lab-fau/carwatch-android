@@ -46,6 +46,7 @@ public class SlideShowActivity extends AppCompatActivity {
     private int slideShowType;
     private int currentSlidePosition = 0;
     private int qrScannerSlidePosition = -1;
+    private int numberOfTutorialSlides = 0;
     private boolean canShowNextSlide = false;
     private boolean canShowPreviousSlide = false;
     private SharedPreferences sharedPreferences;
@@ -105,24 +106,26 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void initializeSlides() {
+        numberOfTutorialSlides = 0;
+        qrScannerSlidePosition = -1;
+
         switch (slideShowType) {
             case SHOW_APP_INITIALIZATION_SLIDES:
-                addSlide(new QrFragment());
-                qrScannerSlidePosition = 0;
+                qrScannerSlidePosition = addSlide(new QrFragment());
                 break;
             case SHOW_TUTORIAL_SLIDES:
-                qrScannerSlidePosition = -1;
                 for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
+                    numberOfTutorialSlides++;
                 }
                 break;
             default:
                 addSlide(new WelcomeText());
                 addSlide(new PermissionRequest());
-                addSlide(new QrFragment());
-                qrScannerSlidePosition = 2;
+                qrScannerSlidePosition = addSlide(new QrFragment());
                 for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
+                    numberOfTutorialSlides++;
                 }
                 addSlide(new EndTutorialSlide());
                 break;
@@ -305,16 +308,20 @@ public class SlideShowActivity extends AppCompatActivity {
         List<TutorialSlide> tutorialSlides = createTutorialSlides();
         for (int i = 0; i < tutorialSlides.size(); i++) {
             int pos = firstSlidePos + i;
-            if (pos >= slides.size()) {
-                addSlide(tutorialSlides.get(i));
+            if (i < numberOfTutorialSlides) {
+                slides.set(pos, tutorialSlides.get(i));
             } else {
-                slides.set(firstSlidePos + i, tutorialSlides.get(i));
+                addSlide(pos, tutorialSlides.get(i));
             }
         }
+
+        numberOfTutorialSlides = tutorialSlides.size();
     }
 
-    private void addSlide(WelcomeSlide slide) {
-        addSlide(slides.size(), slide);
+    private int addSlide(WelcomeSlide slide) {
+        int pos = slides.size();
+        addSlide(pos, slide);
+        return pos;
     }
 
     private void addSlide(int position, WelcomeSlide slide) {
