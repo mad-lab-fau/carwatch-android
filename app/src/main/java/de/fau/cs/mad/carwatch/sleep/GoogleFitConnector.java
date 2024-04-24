@@ -87,8 +87,8 @@ public class GoogleFitConnector {
 
         Fitness.getSessionsClient(context, getGoogleSignInAccount())
                 .readSession(request)
-                .addOnFailureListener(e -> Log.w(TAG, "There was a problem reading the sleep sessions.", e))
-                .addOnSuccessListener(this::logSleepData);
+                .addOnSuccessListener(this::logSleepData)
+                .addOnFailureListener(this::handleSessionReadError);
     }
 
     public boolean wasSleepLoggedToday() {
@@ -150,6 +150,7 @@ public class GoogleFitConnector {
 
         if (sessionWakeUpTimes.isEmpty()) {
             Log.i(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";No sleep data found.");
+            LoggerUtil.log(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";No sleep data found.");
             return;
         }
 
@@ -167,5 +168,10 @@ public class GoogleFitConnector {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferences.edit().putLong(Constants.PREF_LAST_SLEEP_LOGGED_TIME, wakeUpTime.getMillis()).apply();
+    }
+
+    private void handleSessionReadError(Exception e) {
+        Log.w(TAG, "There was a problem reading the sleep sessions.", e);
+        LoggerUtil.log(TAG, "There was a problem reading the sleep sessions." + e.getMessage());
     }
 }

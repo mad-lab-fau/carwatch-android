@@ -24,6 +24,7 @@ import androidx.preference.PreferenceManager;
 import androidx.transition.TransitionInflater;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.EndTutorialSlide;
@@ -144,6 +145,7 @@ public class SlideShowActivity extends AppCompatActivity {
             Log.d(TAG, "Google Fit API access granted");
         } else {
             Log.e(TAG, "Error while requesting Google Fit permissions");
+            LoggerUtil.log(TAG, "Error while requesting Google Fit permissions");
         }
         slides.get(currentSlidePosition).getCanShowNextSlide().set(true);
     }
