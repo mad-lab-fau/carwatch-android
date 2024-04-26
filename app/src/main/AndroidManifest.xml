@@ -23,7 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity
+            android:name=".ui.onboarding.SlideShowActivity"
+            android:exported="true" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
@@ -64,18 +66,6 @@
             android:taskAffinity=""
             android:turnScreenOn="true" />
 
-        <activity
-            android:name=".ui.QrActivity"
-            android:excludeFromRecents="true"
-            android:label="@string/title_scan_qr"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:taskAffinity=""
-            android:turnScreenOn="true" />
-
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />
@@ -106,7 +96,7 @@
         </receiver>
 
         <receiver
-            android:name=".userpresent.AppUpdateReceiver"
+            android:name=".userpresent.MyPackageReplacedReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -127,6 +117,11 @@
                 <action android:name="Stop Alarm" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".alarmmanager.TimerStopReceiver"
+            android:enabled="true"
+            android:exported="false" />
 
         <receiver
             android:name=".alarmmanager.TimerReceiver"

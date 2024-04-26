@@ -11,6 +11,9 @@
     <color name="colorGrey500">#9E9E9E</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorGreen500">#4CAF50</color>
+    <color name="colorOrange500">#FF9800</color>
+    <color name="colorLime500">#CDDC39</color>
 
 
     <!-- Barcode Scanner -->

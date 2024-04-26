@@ -15,21 +15,27 @@
     <string name="title_activity_settings">Paramètres</string>
     <string name="title_activity_scan">Scannez le code-barres</string>
 
-
-    <string name="menu_reregister">Réenregistrer</string>
+    <!-- Menu -->
     <string name="menu_share">Partager les données…</string>
+    <string name="menu_delete_logs">Supprimer les fichiers journaux</string>
     <string name="menu_kill">Arrêter les alarmes</string>
+    <string name="menu_reregister">Réenregistrer</string>
+    <string name="menu_show_tutorial">Afficher le tutoriel</string>
+    <string name="menu_app_info">Informations</string>
 
+    <!-- Delete log files -->
+    <string name="hint_clicks_delete_log_files">%1$d clics supplémentaires pour supprimer tous les fichiers journaux.</string>
+    <string name="title_delete_log_files">Supprimer les fichiers journaux</string>
+    <string name="message_delete_log_files_confirm_dialog">Êtes-vous sûr de vouloir supprimer tous les fichiers journaux existants? Cette action ne peut pas être annulée!</string>
+    <string name="message_all_log_files_deleted">Tous les journaux ont été supprimés avec succès.</string>
+    <string name="message_not_all_log_files_deleted">Erreur lors de la suppression des journaux. Certains fichiers journaux n\'ont pas pu être supprimés.</string>
 
     <string name="stop">Arrêter</string>
-
+    <string name="open_scanner">Scanner ouvert</string>
 
     <string name="title_dashboard">Alarme</string>
     <string name="title_wakeup">Réveil</string>
     <string name="title_bedtime">Heure du coucher</string>
-    <string name="title_scanner">Numérisez</string>
-
-
 
     <string name="user_credentials">Identifiants de l\'utilisateur trice</string>
 
@@ -43,13 +49,31 @@
     <string name="title_battery_optimization">Optimisation de la batterie</string>
     <string name="message_battery_optimization">Veuillez désactiver l\'optimisation de la batterie pour CARWatch afin de garantir un déclenchement fiable des alarmes.</string>
 
-    <string name="title_subject_id">Entrer l\'ID de participant</string>
-    <string name="subject_id">ID de participant</string>
-    <string name="study_id">Nom de l\'étude</string>
-    <string name="message_subject_id_short">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
-    <string name="message_subject_id">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
-    <string name="title_invalid_subject_id">ID du participant invalide</string>
-    <string name="message_invalid_subject_id">ID du participant invalide! Veuillez réessayer.</string>
+    <!-- Slide Show Activity -->
+    <string name="btn_next">Suivant</string>
+    <string name="btn_to_app">Vers l\'application</string>
+    <string name="btn_skip_all">Sauter le tutoriel</string>
+    <string name="description_app_icon">L\'icône de l\'application CARWatch</string>
+    <string name="headline_welcome">Bienvenue en CARWatch!</string>
+    <string name="headline_permission_request_slide">Déverrouiller les fonctionnalités!</string>
+    <string name="message_permission_request">Pour activer toutes les fonctionnalités, notre application nécessite les autorisations suivantes:</string>
+    <string name="message_camera_access">Accès à la caméra pour pouvoir scanner les codes-barres des tubes à échantillons</string>
+    <string name="message_notification_permission">Envoi de notifications pour vous informer des échantillons à venir</string>
+    <string name="headline_wakeup_screen_tutorial">Commencer la matinée</string>
+    <string name="description_wakeup_screen">Vous ne devez utiliser cette fonction que si vous n\'aviez pas réglé de réveil pour le matin ou si vous vous êtes réveillé avant que le réveil ne sonne. En appuyant sur le bouton \"Oui\", les réveils d\'échantillons sont configurés pour le jour suivant.</string>
+    <string name="headline_alarm_tutorial">Suivez vos alarmes!</string>
+    <string name="description_wakeup_alarm">Vous pouvez programmer une alarme pour le lendemain matin directement à partir de l\'écran du réveil. Il vous suffit de toucher l\'heure affichée et de choisir l\'heure de réveil souhaitée.</string>
+    <string name="description_saliva_alarm_overview">Après le réveil, l\'écran fournit également un aperçu des alarmes salivaires passées et à venir, ainsi que de leur état actuel.</string>
+    <string name="description_alarm_symbols_tutorial">Les symboles situés à côté de l\'heure d\'alarme indiquent si un échantillon a déjà été prélevé (coche), s\'il devait l\'être (horloge) ou s\'il est prévu pour plus tard (sablier). Une pression sur l\'icône du scanner ouvre le lecteur de code-barres pour l\'échantillon concerné.</string>
+    <string name="headline_bedtime_screen_tutorial">Aller au lit</string>
+    <string name="description_bedtime_screen">Ici, vous pouvez commencer la procédure du soir avant d\'aller vous coucher. Cela n\'est nécessaire que si vous devez prendre un échantillon le soir pour l\'étude. Le bouton \"Extinction des lumières!\" active le mode sombre de l\'application.</string>
+    <string name="headline_scan_screen_tutorial">Scanner l\'échantillon</string>
+    <string name="description_scan_screen">Le lecteur de code-barres s\'ouvre automatiquement lorsque vous devez prélever un échantillon. Il suffit alors de scanner le code-barres qui se trouve sur le tube d\'échantillon.</string>
+    <string name="headline_slide_show_end">Début de l\'échantillonnage!</string>
+    <string name="text_slide_show_end">L\'application est maintenant prête à fonctionner. Pour commencer l\'étude, réglez l\'alarme pour le lendemain ou signalez votre réveil le matin. Si vous avez besoin de reconfigurer l\'application ou si vous voulez refaire le tutoriel, appuyez sur les entrées correspondantes dans le menu en haut à droite.</string>
+
+    <string name="participant_id">ID de participant</string>
+    <string name="message_participant_id">Veuillez entrer l\'ID de participant que vous avez reçu de notre part.</string>
     <string name="title_kill_alarms">Avertissement</string>
     <string name="message_kill_alarms">Êtes-vous sûre de vouloir annuler toutes les alarmes et les minuteries de prélèvements ? Cette action ne peut pas être annulée!</string>
 
@@ -84,7 +108,8 @@
 
     <string name="set_alarm_message">Veuillez régler l\'heure d\'alarme souhaitée pour demain.</string>
     <string name="saliva_alarms_header">Réveil pour les échantillons de salive</string>
-    <string name="cancel_fixed_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
+    <string name="cancel_saliva_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
+    <string name="open_scanner_before_alarm_message">Cet échantillon est prévu pour plus tard. Êtes-vous sûr de vouloir scanner l\'échantillon maintenant?</string>
 
     <string name="warning_title">Avertissement</string>
     <string name="warning_already_taken_wakeup">Vous avez déjà complété tous les échantillons de salive du matin</string>
@@ -96,9 +121,9 @@
     <string name="good_night">Merci et bonne nuit!</string>
     <string name="good_night_saliva">Veuillez d\'abord prendre votre échantillon de salive du soir! Commencez la procédure en appuyant sur le bouton \'Oui\'.</string>
     <string name="lights_out">Extinction des lumières!</string>
+    <string name="lights_on">Lumière allumée!</string>
 
     <string name="title_share_dialog">Partager les données via…</string>
-
 
     <string name="hint_clicks_kill_alarms">%1$d clics supplémentaires pour annuler toutes les alarmes.</string>
 
@@ -108,12 +133,8 @@
     <string name="app_active">Le service CARWatch est actif</string>
 
     <string name="app_version">Version d\'application:&lt;br> &lt;b>%1$s&lt;/b></string>
-    <string name="app_info">Informations</string>
-    <string name="title_scan_qr">Scanner le code QR de l\'étude</string>
-    <string name="message_scan_qr">Tout d\'abord, nous avons besoin de connaître davantage de détails sur l\'étude à laquelle vous participez. À cette fin, veuillez scanner le code QR que vous avez reçu avec vos documents d\'étude à l\'étape suivante.</string>
     <string name="message_qr_code_invalid">Code QR invalide! Veuillez scanner le code QR figurant dans vos documents d\'étude.</string>
     <string name="title_barcode_already_scanned">Code-barres en double!</string>
     <string name="message_barcode_already_scanned">Ce code-barres a déjà été scanné auparavant. Veuillez vérifier et assurez-vous d\'utiliser une nouvelle salivette.</string>
-    <string name="menu_manual_scan">Scannez le code-barres</string>
-
+    <string name="message_barcode_scanned_successfully">Le code-barres a été scanné avec succès!</string>
 </resources>

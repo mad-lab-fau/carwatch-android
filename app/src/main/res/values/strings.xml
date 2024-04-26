@@ -15,19 +15,28 @@
     <string name="title_activity_scan">Scan Barcode</string>
 
     <!-- Menu -->
-    <string name="menu_reregister">Reregister</string>
     <string name="menu_share">Share Logs …</string>
+    <string name="menu_delete_logs">Delete Logs</string>
     <string name="menu_kill">Kill Alarms</string>
+    <string name="menu_reregister">Reregister</string>
+    <string name="menu_show_tutorial">Show Tutorial</string>
+    <string name="menu_app_info">Info</string>
+
+    <!-- Delete log files -->
+    <string name="hint_clicks_delete_log_files">%1$d more clicks to delete all log files.</string>
+    <string name="title_delete_log_files">Delete logs</string>
+    <string name="message_delete_log_files_confirm_dialog">Are you sure to delete all existing log files? This action cannot be undone!</string>
+    <string name="message_all_log_files_deleted">All logs were deleted successfully.</string>
+    <string name="message_not_all_log_files_deleted">Error while deleting the logs. Some log files could not be deleted.</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>
+    <string name="open_scanner">Open scanner</string>
 
     <!-- App Bar Titles -->
     <string name="title_dashboard">Alarm</string>
     <string name="title_wakeup">Wakeup</string>
     <string name="title_bedtime">Bedtime</string>
-    <string name="title_scanner">Scan</string>
-
 
     <!-- Preferences -->
     <string name="user_credentials">User Credentials</string>
@@ -38,20 +47,39 @@
     <string name="alarm_cancelled">Alarm cancelled.</string>
     <string name="alarm_set_error">Error setting alarm.</string>
 
-    <!-- Subject ID Dialog -->
-    <string name="title_subject_id">Enter Participant ID</string>
-    <string name="subject_id">Participant ID</string>
-    <string name="study_id">Study Name</string>
-    <string name="message_subject_id_short">Please enter the Participant ID you received from us.</string>
-    <string name="message_subject_id">Please enter the Participant ID you received from us.</string>
-    <string name="title_invalid_subject_id">Invalid Participant ID</string>
-    <string name="message_invalid_subject_id">Invalid Participant ID! Please try again.</string>
+    <!-- Participant ID Dialog -->
+    <string name="participant_id">Participant ID</string>
+    <string name="message_participant_id">Please enter the Participant ID you received from us.</string>
     <string name="title_kill_alarms">Warning</string>
     <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
 
     <!-- Open battery settings dialog -->
     <string name="title_battery_optimization">Battery Optimization</string>
     <string name="message_battery_optimization">Please disable battery optimization for CARWatch to ensure that the alarms will be triggered reliably. </string>
+
+    <!-- Slide Show Activity -->
+    <string name="btn_next">Next</string>
+    <string name="btn_to_app">To the App</string>
+    <string name="btn_skip_all">Skip tutorial</string>
+    <string name="description_app_icon">The icon of the CARWatch app</string>
+    <string name="headline_welcome">Welcome to CARWatch!</string>
+    <string name="headline_permission_request_slide">Unlock Features!</string>
+    <string name="message_permission_request">To enable all of the features, our app requires following permissions:</string>
+    <string name="symbol_dot" translatable="false">\u2022</string>
+    <string name="message_camera_access">Camera access to be able to scan the sample tube barcodes</string>
+    <string name="message_notification_permission">Sending notifications to inform you about upcoming samples</string>
+    <string name="headline_wakeup_screen_tutorial">Report waking up</string>
+    <string name="description_wakeup_screen">You only need to report your awakening if you didn\'t set an alarm for the morning or woke up before the alarm went off. Clicking the \"Yes\" Button will schedule the sample alarms for the upcoming day.</string>
+    <string name="headline_alarm_tutorial">Track your alarms</string>
+    <string name="description_wakeup_alarm">You can set an alarm for the next morning directly from the alarm clock screen. Simply tap on the displayed time and choose your desired wake-up time.</string>
+    <string name="description_saliva_alarm_overview">After you woke up, the screen also provides an overview of past and upcoming saliva alarms and their current state.</string>
+    <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken (checkmark), was already due (clock) or is scheduled for later (hourglass). Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
+    <string name="headline_bedtime_screen_tutorial">Report going to bed</string>
+    <string name="description_bedtime_screen">Here, you can initiate the evening procedure before going to bed. You only need to do this if the study requires you to take an evening sample. The \"Lights out!\" Button will activate the app\'s dark mode.</string>
+    <string name="headline_scan_screen_tutorial">Scan your sample</string>
+    <string name="description_scan_screen">The barcode scanner opens automatically when you have to take a sample. After sampling, simply scan the barcode on the sample tube so that the sample can later be linked to the time of sampling.</string>
+    <string name="headline_slide_show_end">Start sampling!</string>
+    <string name="text_slide_show_end">The app is now ready to go. To start the study, set the alarm for the next day or report your awakening in the morning. If you need to re-configure the app or you want to do the tutorial again, press the respective entries in the top-right menu.</string>
 
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Please point your camera at a barcode</string>
@@ -84,7 +112,8 @@
     <!-- Alarm Fragment -->
     <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>
     <string name="saliva_alarms_header">Saliva sample alarms</string>
-    <string name="cancel_fixed_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
+    <string name="cancel_saliva_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
+    <string name="open_scanner_before_alarm_message">This sample is scheduled for later. Are you sure you want to scan the sample now?</string>
 
     <string name="warning_title">Warning</string>
     <string name="warning_already_taken_wakeup">You have already taken all morning saliva samples!</string>
@@ -96,6 +125,7 @@
     <string name="good_night">Thank you and good night!</string>
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
+    <string name="lights_on">Lights on!</string>
 
     <string name="title_share_dialog">Share Logs via…</string>
 
@@ -108,12 +138,9 @@
     <string name="app_active">CARWatch Service is active.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
-    <string name="app_info">Info</string>
-    <string name="title_scan_qr">Scan Study QR Code</string>
-    <string name="message_scan_qr">First, we need to know further details about the study you\'re participating at. For this purpose, please scan the QR Code that you received together with your study materials in the next step.</string>
     <string name="message_qr_code_invalid">Invalid QR Code! Please scan the QR Code in your study materials.</string>
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
-    <string name="menu_manual_scan">Scan Barcode</string>
+    <string name="message_barcode_scanned_successfully">The barcode was scanned successfully!</string>
 
 </resources>

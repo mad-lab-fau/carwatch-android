@@ -3,8 +3,6 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -20,38 +18,33 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
-import de.fau.cs.mad.carwatch.barcodedetection.BarcodeResultFragment;
+import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
+import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
-public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnDismissListener {
+public class Ean8Fragment extends BarcodeFragment {
 
     private static final String TAG = Ean8Fragment.class.getSimpleName();
 
     private int alarmId = Constants.EXTRA_ALARM_ID_MANUAL;
     private int salivaId = Constants.EXTRA_SALIVA_ID_MANUAL;
+    private boolean cancelAlarmAfterScan = true;
 
     @Override
     public void onResume() {
         super.onResume();
         cameraSource.setFrameProcessor(new BarcodeProcessor(graphicOverlay, workflowModel, Barcode.FORMAT_EAN_8));
         workflowModel.setWorkflowState(WorkflowState.DETECTING);
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        if (salivaId == Constants.EXTRA_SALIVA_ID_MANUAL) {
-            switchFragment();
-        } else {
-            finishActivity();
-        }
     }
 
     @Override
@@ -84,9 +77,9 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 case VALID:
                     scannedBarcodes.add(barcode.getValue());
                     sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
-
+                    cancelAlarm();
                     cancelTimer(barcode.getValue());
-                    BarcodeResultFragment.show(getChildFragmentManager(), barcode, this);
+                    finishScanningProcess();
                     break;
                 case INVALID:
                     try {
@@ -110,6 +103,10 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
         this.salivaId = salivaId;
     }
 
+    public void setCancelAlarmAfterScan(boolean cancelAlarmAfterScan) {
+        this.cancelAlarmAfterScan = cancelAlarmAfterScan;
+    }
+
     @Override
     protected void showInvalidBarcodeDialog() {
         if (getContext() == null) {
@@ -125,6 +122,25 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 .setMessage(R.string.message_barcode_invalid)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
+    }
+
+    private void cancelAlarm() {
+        AlarmRepository repository = AlarmRepository.getInstance(getContext());
+        Alarm alarm;
+
+        try {
+            alarm = repository.getAlarmById(alarmId);
+            if (alarm != null) {
+                alarm.setWasSampleTaken(true);
+                if (cancelAlarmAfterScan) {
+                    AlarmHandler.cancelAlarm(getContext(), alarm, null);
+                    alarm.setActive(false);
+                }
+                repository.update(alarm);
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database: "  + e.getMessage());
+        }
     }
 
     private void cancelTimer(String barcodeValue) {
@@ -206,17 +222,13 @@ public class Ean8Fragment extends BarcodeFragment implements DialogInterface.OnD
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
-    private void finishActivity() {
-        if (getActivity() != null) {
-            getActivity().setResult(Activity.RESULT_OK, new Intent());
-            getActivity().finish();
-        }
-    }
+    private void finishScanningProcess() {
+        if (getActivity() == null)
+            return;
 
-    private void switchFragment() {
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity) getActivity();
-            mainActivity.navigate();
-        }
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.putExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, true);
+        startActivity(intent);
+        getActivity().finish();
     }
 }

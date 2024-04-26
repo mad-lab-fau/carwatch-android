@@ -7,18 +7,15 @@
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
     <string name="saliva_alarms_set">Die Probenwecker wurden gestellt.</string>
     <string name="cancel">Abbrechen</string>
-    <string name="menu_kill">Kill Alarms</string>
-    <string name="menu_share">Logs teilen …</string>
-    <string name="study_id">Name der Studie</string>
-    <string name="subject_id">Probanden-ID</string>
-    <string name="message_subject_id_short">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
-    <string name="message_subject_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
+    <string name="participant_id">Probanden-ID</string>
+    <string name="message_participant_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
     <string name="prompt_point_at_a_barcode">Bitte richten Sie Ihre Kamera auf einen Barcode</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
     <string name="prompt_barcode_scan_successful">Barcode erfolgreich gescannt!</string>
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
     <string name="stop">Stop</string>
+    <string name="open_scanner">Scanner öffnen</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d.</string>
     <string name="timer_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe.</string>
     <string name="timer_over_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d jetzt!</string>
@@ -27,16 +24,31 @@
     <string name="title_dashboard">Alarm</string>
     <string name="title_wakeup">Aufstehen</string>
     <string name="title_bedtime">Bettzeit</string>
-    <string name="title_subject_id">Probanden-ID eingeben</string>
     <string name="user_credentials">Benutzerinformationen</string>
 
+    <!-- Menu -->
+    <string name="menu_share">Logs teilen …</string>
+    <string name="menu_delete_logs">Logs löschen</string>
+    <string name="menu_kill">Kill Alarms</string>
+    <string name="menu_reregister">Neu registrieren</string>
+    <string name="menu_show_tutorial">Tutorial zeigen</string>
+    <string name="menu_app_info">Info</string>
+
+    <!-- Delete log files -->
+    <string name="hint_clicks_delete_log_files">Noch %1$d Klicks, um alle Log Dateien zu löschen</string>
+    <string name="title_delete_log_files">Logs löschen</string>
+    <string name="message_delete_log_files_confirm_dialog">Sind Sie sicher, dass Sie alle Log Dateien löschen wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
+    <string name="message_all_log_files_deleted">Die Logs wurden gelöscht.</string>
+    <string name="message_not_all_log_files_deleted">Fehler beim Löschen der Logs. Einige Log Dateien konnten nicht gelöscht werden.</string>
 
     <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
     <string name="good_night">Vielen Dank und Gute Nacht!</string>
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
     <string name="lights_out">Licht aus!</string>
+    <string name="lights_on">Licht an!</string>
 
-    <string name="cancel_fixed_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
+    <string name="cancel_saliva_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
+    <string name="open_scanner_before_alarm_message">Diese Probe ist für später angesetzt. Sind Sie sicher, dass Sie die Probe jetzt scannen wollen?</string>
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
     <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>
@@ -66,8 +78,6 @@
     <string name="title_activity_scan">Barcode einscannen</string>
 
     <string name="app_active">CARWatch Service ist aktiv.</string>
-    <string name="title_invalid_subject_id">Ungültiger Probanden-Code</string>
-    <string name="message_invalid_subject_id">Ungültiger  Probanden-Code! Bitte versuchen Sie es erneut.</string>
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
@@ -79,19 +89,37 @@
     <string name="title_battery_optimization">Batterieoptimierung</string>
     <string name="message_battery_optimization">Bitte deaktivieren Sie die Batterieoptimierung für CARWatch, um sicherzustellen, dass die Wecker zuverlässig funktionieren.</string>
 
+    <!-- Slide Show Activity -->
+    <string name="btn_next">Weiter</string>
+    <string name="btn_to_app">Zur App</string>
+    <string name="btn_skip_all">Tutorial überspringen</string>
+    <string name="description_app_icon">Das Icon der CARWatch app</string>
+    <string name="headline_welcome">Willkommen bei CARWatch!</string>
+    <string name="headline_permission_request_slide">Funktionen freischalten!</string>
+    <string name="message_permission_request">Damit Sie die App optimal nutzen können, benötigen wir folgende Berechtigungen:</string>
+    <string name="message_camera_access">Kamerazugriff, um die Barcodes auf den Probenröhrchen zu scannen</string>
+    <string name="message_notification_permission">Die Berechtigung, Benachrichtigungen zu senden, um über anstehende Proben zu informieren</string>
+    <string name="headline_wakeup_screen_tutorial">Den Morgen starten</string>
+    <string name="description_wakeup_screen">Diese Funktion müssen Sie nur nutzen, wenn Sie keinen Wecker für den Morgen gestellt hatten oder aufgewacht sind, bevor der Wecker geklingelt hat. Durch drücken des \"Ja\" Buttons, werden die Probenwecker für den kommenden Tag eingerichtet.</string>
+    <string name="headline_alarm_tutorial">Die Probenwecker</string>
+    <string name="description_wakeup_alarm">In der Weckerübersicht können Sie einen Wecker für den nächsten Morgen stellen. Dafür müssen Sie nur auf die angezeigte Zeit tippen und die gewünschte Weckzeit auswählen.</string>
+    <string name="description_saliva_alarm_overview">Nachdem Sie aufgewacht sind, werden in der Übersicht alle Zeiten angezeigt, zu denen eine Probe genommen werden muss.</string>
+    <string name="description_alarm_symbols_tutorial">Die Symbole neben den Zeiten zeigen an, ob die Probe bereits genommen wurde (Haken), schon anstand (Uhr) oder später ansteht (Sanduhr). Wenn Sie auf das Scanner Symbol drücken, öffnet sich der Barcode Scanner für die jeweilige Probe.</string>
+    <string name="headline_bedtime_screen_tutorial">Zu Bett gehen</string>
+    <string name="description_bedtime_screen">Hier können Sie die Abendprozedur vor dem Schlafengehen starten. Das ist nur notwendig, wenn Sie für die Studie eine Abendprobe nehmen müssen. Der \"Licht aus!\" Button aktiviert den Dunkelmodus der App.</string>
+    <string name="headline_scan_screen_tutorial">Die Probe scannen</string>
+    <string name="description_scan_screen">Der Barcodescanner öffnet sich automatisch, wenn Sie eine Probe nehmen müssen. Scannen Sie dann einfach den Barcode, welcher sich auf dem Probenröhrchen befindet.</string>
+    <string name="headline_slide_show_end">Probenahme starten!</string>
+    <string name="text_slide_show_end">Die App ist nun bereit. Um die Studie zu starten, stellen Sie sich einen Wecker für den nächsten Tag oder melden Sie Ihr Aufwachen am Morgen. Wenn Sie die App neu konfigurieren oder das Tutorial erneut durchführen möchten, drücken Sie die entsprechenden Einträge im Menü oben rechts.</string>
+
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
-    <string name="app_info">Info</string>
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
     <string name="saliva_alarms_header">Wecker für Speichelproben</string>
-    <string name="title_scan_qr">QR-Code der Studie Einscannen</string>
-    <string name="message_scan_qr">Zunächst benötigen wir einige Details über die Studie an der Sie teilnehmen möchten. Scannen Sie dazu im nächsten Schritt bitte den QR-Code ein, den Sie zusammen mit den Studienmaterialien erhalten haben.</string>
     <string name="title_qr_code_invalid">Ungültiger QR-Code</string>
     <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
     <string name="title_barcode_already_scanned">Doppelter Barcode!</string>
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
-    <string name="menu_reregister">Neu registrieren</string>
-    <string name="title_scanner">Scannen</string>
-    <string name="menu_manual_scan">Barcode scannen</string>
+    <string name="message_barcode_scanned_successfully">Der Barcode wurde erfolgreich gescannt!</string>
 
 </resources>

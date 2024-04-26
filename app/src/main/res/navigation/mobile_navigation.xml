@@ -23,9 +23,4 @@
         android:label="@string/title_bedtime"
         tools:layout="@layout/fragment_bedtime" />
 
-    <fragment
-        android:id="@+id/navigation_scanner"
-        android:name="de.fau.cs.mad.carwatch.ui.barcode.Ean8Fragment"
-        android:label="@string/title_scanner"
-        tools:layout="@layout/fragment_barcode" />
 </navigation>

@@ -6,11 +6,9 @@
         android:title="@string/user_credentials">
 
         <EditTextPreference
-            android:key="subject_id"
+            android:key="participant_id"
             android:defaultValue="AB12C"
-            android:summary="@string/message_subject_id_short"
-            android:dialogMessage="@string/message_subject_id"
-            android:title="@string/title_subject_id" />
+            android:summary="@string/message_participant_id" />
 
     </PreferenceCategory>
 

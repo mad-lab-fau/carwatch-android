@@ -43,17 +43,20 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        DateTime date = new DateTime(sharedPreferences.getLong(Constants.PREF_CURRENT_DATE, 0));
+        DateTime lastWakeUpAlarmRingTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+        DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
         boolean firstAlarmProcessAlreadyFinished = false;
         int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
         boolean studyIsFinished = dayCounter > numDays;
+        boolean resetWasSampleTaken = false;
 
-        if (date.isBefore(LocalTime.MIDNIGHT.toDateTimeToday()) && alarmId == Constants.EXTRA_ALARM_ID_INITIAL && !studyIsFinished) {
+        if (dayCurrentSalivaAlarmsWereScheduled.isBefore(LocalTime.MIDNIGHT.toDateTimeToday()) && alarmId == Constants.EXTRA_ALARM_ID_INITIAL && !studyIsFinished) {
+            resetWasSampleTaken = true;
             AlarmHandler.rescheduleSalivaAlarms(context);
             sharedPreferences.edit()
-                    .putLong(Constants.PREF_CURRENT_DATE, LocalTime.MIDNIGHT.toDateTimeToday().getMillis())
+                    .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
                     .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                     .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
                     .apply();
@@ -68,7 +71,9 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         try {
             alarm = repository.getAlarmById(alarmId);
             alarm.setActive(false);
-            repository.updateActive(alarm);
+            if (resetWasSampleTaken)
+                alarm.setWasSampleTaken(false);
+            repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
             e.printStackTrace();

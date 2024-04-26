@@ -4,7 +4,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +43,8 @@ public class AlarmFragment extends Fragment {
     private AlarmAdapter adapter;
     private CoordinatorLayout coordinatorLayout;
     private Alarm alarm;
-    private LinearLayout alarmLayout;
     private TextView timeTextView;
+    private LinearLayout alarmSeparator;
     private TextView salivaAlarmsHeader;
     private SwitchMaterial activeSwitch;
 
@@ -63,10 +62,10 @@ public class AlarmFragment extends Fragment {
             coordinatorLayout = getActivity().findViewById(R.id.coordinator);
         }
 
-        alarmLayout = root.findViewById(R.id.alarm);
         timeTextView = root.findViewById(R.id.alarm_time_text);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
+        alarmSeparator = root.findViewById(R.id.alarm_separator);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -76,17 +75,16 @@ public class AlarmFragment extends Fragment {
                 this.alarm = alarm;
             }
             setAlarmView();
+            initializeSalivaAlarmsAdapter(root);
         });
-
-        initializeFixedAlarmsAdapter(root);
 
         return root;
     }
 
-    private void initializeFixedAlarmsAdapter(View root) {
+    private void initializeSalivaAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        adapter = new AlarmAdapter(getResources(), alarmViewModel);
-        RecyclerView recyclerView = root.findViewById(R.id.fixed_alarms_list);
+        adapter = new AlarmAdapter(getResources(), alarmViewModel, getSampleIdPrefix(), getStartSampleId());
+        RecyclerView recyclerView = root.findViewById(R.id.saliva_alarms_list);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         setSalivaAlarmAdapterItems(alarmViewModel.getAlarms().getValue());
@@ -99,16 +97,32 @@ public class AlarmFragment extends Fragment {
         if (alarms == null)
             return;
 
-        List<Alarm> salivaAlarms = new ArrayList<>();
+        List<Alarm> sampleAlarms = new ArrayList<>();
+
+        String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        if (salivaDistances.startsWith("0") && sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+            DateTime wakeUpTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE));
+            Alarm initialSampleAlarm = new Alarm(
+                    wakeUpTime,
+                    false,
+                    false,
+                    Constants.FIRST_SAMPLE_ALARM_ID,
+                    alarm.getSalivaId(),
+                    alarm.wasSampleTaken()
+            );
+            sampleAlarms.add(initialSampleAlarm);
+        }
+
         // initial alarm is not shown in list
         for (Alarm alarm : alarms) {
             if (alarm.getId() != Constants.EXTRA_ALARM_ID_INITIAL) {
-                salivaAlarms.add(alarm);
+                sampleAlarms.add(alarm);
             }
         }
-        adapter.setAlarms(salivaAlarms);
+        adapter.setAlarms(sampleAlarms);
         adapter.notifyDataSetChanged();
-        salivaAlarmsHeader.setVisibility(salivaAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        salivaAlarmsHeader.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        alarmSeparator.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void setAlarmView() {
@@ -128,7 +142,7 @@ public class AlarmFragment extends Fragment {
         });
 
         // define behavior on time update
-        alarmLayout.setOnClickListener(view -> {
+        timeTextView.setOnClickListener(view -> {
             DateTime time;
             if (alarm.getTime() == null) {
                 time = DateTime.now();
@@ -195,5 +209,19 @@ public class AlarmFragment extends Fragment {
                 .setMessage(R.string.message_alarm_reminder)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {}).show();
+    }
+
+    private String getSampleIdPrefix() {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        return !startSample.isEmpty() ? startSample.substring(0, 1) : Constants.DEFAULT_START_SAMPLE.substring(0, 1);
+    }
+
+    private int getStartSampleId() {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        try {
+            return Integer.parseInt(startSample.substring(1));
+        } catch (NumberFormatException e) {
+            return Integer.parseInt(Constants.DEFAULT_START_SAMPLE.substring(1));
+        }
     }
 }

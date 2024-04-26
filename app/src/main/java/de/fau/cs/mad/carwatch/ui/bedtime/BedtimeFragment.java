@@ -38,9 +38,6 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = BedtimeFragment.class.getSimpleName();
 
-    private Button lightsOutButtonOutline;
-    private Button lightsOutButton;
-
     private BedtimeViewModel bedtimeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,15 +52,12 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         yesButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
 
-        lightsOutButtonOutline = root.findViewById(R.id.button_lights_out_outline);
-        lightsOutButton = root.findViewById(R.id.button_lights_out);
-        lightsOutButton.setOnClickListener(this);
-        lightsOutButtonOutline.setOnClickListener(this);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        boolean isDarkModeActive = sp.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
 
-        bedtimeViewModel.getSalivaTaken().observe(getViewLifecycleOwner(), aBoolean -> {
-            lightsOutButtonOutline.setVisibility(aBoolean ? View.GONE : View.VISIBLE);
-            lightsOutButton.setVisibility(aBoolean ? View.VISIBLE : View.GONE);
-        });
+        Button lightsOutButton = root.findViewById(R.id.button_toggle_night_mode);
+        lightsOutButton.setOnClickListener(this);
+        lightsOutButton.setText(isDarkModeActive ? R.string.lights_on : R.string.lights_out);
 
         return root;
     }
@@ -103,24 +97,17 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 }
 
                 break;
-            case R.id.button_lights_out_outline:
-                if (getActivity() != null) {
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night_saliva), Snackbar.LENGTH_SHORT).show();
+            case R.id.button_toggle_night_mode:
+                if (getActivity() == null) {
+                    break;
                 }
-                break;
-            case R.id.button_lights_out:
-                if (getActivity() != null) {
-                    JSONObject json = new JSONObject();
-                    LoggerUtil.log(Constants.LOGGER_ACTION_LIGHTS_OUT, json);
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.good_night), Snackbar.LENGTH_SHORT).show();
-                    ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
 
-                    // enable night mode
-                    sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, true).apply();
-                    AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
-                    delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    delegate.applyDayNight();
-                }
+                boolean enableDarkMode = !sp.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
+                sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, enableDarkMode).apply();
+                AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
+                delegate.setLocalNightMode(enableDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+                delegate.applyDayNight();
+                LoggerUtil.log(enableDarkMode ? Constants.LOGGER_ACTION_LIGHTS_OUT : Constants.LOGGER_ACTION_LIGHTS_ON, new JSONObject());
                 break;
         }
     }

@@ -43,13 +43,17 @@ public class Alarm implements Parcelable {
     @ColumnInfo(name = "alarm_is_fixed")
     private boolean isFixed;
 
+    @ColumnInfo(name = "was_sample_taken")
+    private boolean wasSampleTaken;
+
     public Alarm() {
         this(
                 Constants.DEFAULT_ALARM_TIME.toDateTimeToday(),
                 false,
                 false,
                 EXTRA_ALARM_ID_INITIAL,
-                EXTRA_SALIVA_ID_INITIAL
+                EXTRA_SALIVA_ID_INITIAL,
+                false
         );
     }
 
@@ -88,15 +92,19 @@ public class Alarm implements Parcelable {
 
     public void setIsFixed(boolean isFixed) { this.isFixed = isFixed; }
 
+    public boolean wasSampleTaken() { return wasSampleTaken; }
+
+    public void setWasSampleTaken(boolean wasSampleTaken) { this.wasSampleTaken = wasSampleTaken; }
 
     // Ignored Members
     @Ignore
-    public Alarm(DateTime time, boolean active, boolean isFixed, int id, int salivaId) {
+    public Alarm(DateTime time, boolean active, boolean isFixed, int id, int salivaId, boolean wasSampleTaken) {
         this.time = time;
         this.active = active;
         this.isFixed = isFixed;
         this.id = id;
         this.salivaId = salivaId;
+        this.wasSampleTaken = wasSampleTaken;
     }
 
     /**
@@ -135,6 +143,7 @@ public class Alarm implements Parcelable {
         out.writeLong(DateConverter.toTimestamp(time));
         out.writeInt(active ? 1 : 0);
         out.writeInt(isFixed ? 1 : 0);
+        out.writeInt(wasSampleTaken ? 1 : 0);
     }
 
     @Ignore
@@ -158,6 +167,7 @@ public class Alarm implements Parcelable {
         time = DateConverter.toDate(timestamp);
         active = in.readInt() != 0;
         isFixed = in.readInt() != 0;
+        wasSampleTaken = in.readInt() != 0;
     }
 
 

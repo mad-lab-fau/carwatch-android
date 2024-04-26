@@ -4,17 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
         tools:context=".ui.MainActivity">
 
         <ImageView
             android:id="@+id/iv_alarm"
             android:layout_width="@dimen/home_icon_size"
             android:layout_height="@dimen/home_icon_size"
-            android:layout_above="@+id/tv_alarm"
-            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:src="@drawable/ic_alarm_black_24dp"
             app:tint="@color/colorPrimaryLight" />
@@ -23,63 +24,66 @@
             android:id="@+id/tv_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/alarm"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:text="@string/set_alarm_message"
             android:textAlignment="center"
             android:textSize="24sp" />
 
         <LinearLayout
-            android:id="@+id/alarm"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="horizontal">
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical">
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/alarm_active_switch"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-
-            <TextView
-                android:id="@+id/alarm_time_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:gravity="center"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:fontFamily="monospace"
-                android:textSize="@dimen/alarm_text_size" />
+                android:clickable="true"
+                android:focusable="true">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/alarm_active_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+
+                <TextView
+                    android:id="@+id/alarm_time_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:fontFamily="monospace"
+                    android:textSize="@dimen/alarm_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_separator"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:weightSum="1"
+                android:gravity="center">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="0.8"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey300" />
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/alarm_separator"
-            android:orientation="horizontal"
+            android:id="@+id/saliva_alarms"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/alarm"
-            android:weightSum="1"
-            android:gravity="center">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_weight="0.6"
-                android:layout_height="1dp"
-                android:background="@color/colorGrey300" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fixed_alarms"
-            android:layout_below="@id/alarm_separator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/tv_saliva_alarms"
@@ -91,13 +95,15 @@
                 android:textSize="20sp"
                 android:visibility="gone" />
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fixed_alarms_list"
+                android:id="@+id/saliva_alarms_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                tools:listitem="@layout/item_alarm"
+                tools:itemCount="5" />
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <data>
 

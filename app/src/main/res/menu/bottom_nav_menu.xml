@@ -16,9 +16,4 @@
         android:icon="@drawable/ic_bedtime_24dp"
         android:title="@string/title_bedtime" />
 
-    <item
-        android:id="@+id/navigation_scanner"
-        android:icon="@drawable/ic_barcode_scanner_24dp"
-        android:title="@string/title_scanner" />
-
 </menu>

@@ -46,7 +46,7 @@ public class TimerHandler {
 
     public static void scheduleSpontaneousAwakeningTimer(Context context) {
         DateTime timeToRing = DateTime.now();
-        Alarm alarm = new Alarm(timeToRing, true, false, Constants.EXTRA_ALARM_ID_INITIAL, Constants.EXTRA_SALIVA_ID_INITIAL);
+        Alarm alarm = new Alarm(timeToRing, true, false, Constants.EXTRA_ALARM_ID_INITIAL, Constants.EXTRA_SALIVA_ID_INITIAL, false);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         sp.edit().putInt(Constants.PREF_ID_ONGOING_ALARM, alarm.getId()).apply();
@@ -102,7 +102,7 @@ public class TimerHandler {
 
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
-            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + timerId);
+            Log.d(TAG, "Cancelling timer " + timerId + " for alarm " + alarmId);
             Log.d(TAG, "Cancelling timer " + pendingIntent);
         }
 
@@ -178,6 +178,9 @@ public class TimerHandler {
                         context.getString(R.string.timer_over_notification_text_evening) :
                         context.getString(R.string.timer_over_notification_text, salivaId + startSampleIdx);
 
+        Intent stopAlarmIntent = new Intent(context, TimerStopReceiver.class);
+        PendingIntent stopAlarmPendingIntent = PendingIntent.getBroadcast(context, 0, stopAlarmIntent, pendingFlags);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
@@ -188,6 +191,8 @@ public class TimerHandler {
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(contentText)
+                .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
+                .addAction(R.drawable.ic_barcode_scanner_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();

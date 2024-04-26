@@ -6,12 +6,12 @@
         android:title="@string/menu_share" />
 
     <item
-        android:id="@+id/menu_kill"
-        android:title="@string/menu_kill" />
+        android:id="@+id/menu_delete_log_files"
+        android:title="@string/menu_delete_logs" />
 
     <item
-        android:id="@+id/menu_scan"
-        android:title="@string/menu_manual_scan" />
+        android:id="@+id/menu_kill"
+        android:title="@string/menu_kill" />
 
     <!--<item
         android:id="@+id/menu_service"
@@ -22,6 +22,10 @@
         android:title="@string/menu_reregister" />
 
     <item
+        android:id="@+id/menu_show_tutorial"
+        android:title="@string/menu_show_tutorial" />
+
+    <item
         android:id="@+id/menu_app_info"
-        android:title="@string/app_info" />
+        android:title="@string/menu_app_info" />
 </menu>

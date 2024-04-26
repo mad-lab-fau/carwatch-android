@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_sample_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:textSize="@dimen/sample_prefix_text_size"
+        android:fontFamily="monospace"
+        app:layout_constraintEnd_toStartOf="@id/alarm_time_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/alarm_time_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/alarm_active_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+
+        <TextView
+            android:id="@+id/alarm_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:fontFamily="monospace"
+            android:textSize="@dimen/alarm_text_size" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_scanner_icon"
+        android:layout_width="@dimen/sample_suffix_icon_width"
+        android:layout_height="@dimen/manual_scan_icon_height"
+        android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_barcode_scanner_24dp"
+        app:tint="@color/barcode_field_box_stroke"
+        app:layout_constraintStart_toEndOf="@id/alarm_time_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_check_icon"
+        android:layout_width="@dimen/sample_suffix_icon_width"
+        android:layout_height="@dimen/check_icon_height"
+        android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_check"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/alarm_time_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_sample_status_icon"
+        android:layout_width="@dimen/sample_suffix_icon_width"
+        android:layout_height="30dp"
+        android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_hourglass"
+        app:layout_constraintStart_toEndOf="@id/iv_scanner_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

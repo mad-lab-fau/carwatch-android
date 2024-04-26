@@ -25,16 +25,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (MainActivity.sAdapter == null) {
-            MainActivity.sAdapter = new DiskLogAdapter(LoggerUtil.getFormatStrategy(context)) {
-                @Override
-                public boolean isLoggable(int priority, @Nullable String tag) {
-                    return true;
-                }
-            };
-            Logger.addLogAdapter(MainActivity.sAdapter);
-        }
-
+        MainActivity.initializeLoggingUtil(context);
         LoggerUtil.log(Constants.LOGGER_ACTION_PHONE_BOOT_INIT, new JSONObject());
 
         switch (intent.getAction()) {
