@@ -137,6 +137,9 @@ public final class Constants {
     public static final String LOGGER_EXTRA_SCREEN_BRIGHTNESS = "screen_brightness"; // float
     public static final String LOGGER_EXTRA_DISPLAY_NIGHT_MODE = "display_night_mode"; // int
 
+    public static final String LOGGER_SENSOR_LIGHT_INTENSITY = "light_intensity"; // float
+    public static final String LOGGER_SENSOR_UNIT = "unit"; // string
+
     /**
      * Constants used in QR-encoded study data
      */
