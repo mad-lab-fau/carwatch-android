@@ -218,4 +218,12 @@ public class DiskLogHandler extends Handler {
             return null;
         }
     }
+
+    public static File getLogDirectory(Context context) {
+        if (context == null) {
+            return null;
+        }
+
+        return getDirectory(context);
+    }
 }

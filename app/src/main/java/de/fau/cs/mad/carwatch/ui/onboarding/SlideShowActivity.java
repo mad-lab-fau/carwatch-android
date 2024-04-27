@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui.onboarding;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -12,6 +13,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.Observable;
 import androidx.fragment.app.Fragment;
@@ -22,9 +24,11 @@ import androidx.preference.PreferenceManager;
 import androidx.transition.TransitionInflater;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.EndTutorialSlide;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.GoogleFitAuthenticationFragment;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.ParticipantIdQuery;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.TutorialSlide;
@@ -129,6 +133,23 @@ public class SlideShowActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode != Constants.GOOGLE_FIT_REQUEST_CODE) {
+            return;
+        }
+
+        if (resultCode == RESULT_OK) {
+            Log.d(TAG, "Google Fit API access granted");
+        } else {
+            Log.e(TAG, "Error while requesting Google Fit permissions");
+            LoggerUtil.log(TAG, "Error while requesting Google Fit permissions");
+        }
+        slides.get(currentSlidePosition).getCanShowNextSlide().set(true);
+    }
+
     private List<TutorialSlide> createTutorialSlides() {
         List<TutorialSlide> tutorialSlides = new ArrayList<>();
 
@@ -213,7 +234,12 @@ public class SlideShowActivity extends AppCompatActivity {
             int tutorialSlidePos = currentSlidePosition + 1;
 
             if (!sharedPreferences.getBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)) {
-                addSlide(currentSlidePosition + 1, new ParticipantIdQuery());
+                addSlide(tutorialSlidePos, new ParticipantIdQuery());
+                tutorialSlidePos++;
+            }
+
+            if (sharedPreferences.getBoolean(Constants.PREF_USE_GOOGLE_FIT, false)) {
+                addSlide(tutorialSlidePos, GoogleFitAuthenticationFragment.newInstance());
                 tutorialSlidePos++;
             }
 

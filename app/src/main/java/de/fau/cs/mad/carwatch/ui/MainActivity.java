@@ -35,6 +35,7 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.sleep.GoogleFitConnector;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
 import de.fau.cs.mad.carwatch.util.Utils;
 
@@ -98,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-
         if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
             Snackbar.make(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), Snackbar.LENGTH_SHORT).show();
         }
@@ -144,6 +144,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
+        }
+
+        if (sharedPreferences.getBoolean(Constants.PREF_USE_GOOGLE_FIT, false)) {
+            logSleepDataIfAvailable();
         }
     }
 
@@ -207,6 +211,18 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logSleepDataIfAvailable() {
+        if (!Utils.isInternetAvailable(this)) {
+            return;
+        }
+
+        GoogleFitConnector gfc = new GoogleFitConnector(this);
+
+        if (gfc.canAccessSleepData() && !gfc.wasSleepLoggedToday()) {
+            gfc.logLastSleepData();
+        }
     }
 
     private void createFileShareDialog(File zipFile) {

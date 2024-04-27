@@ -147,6 +147,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                 .putBoolean(Constants.PREF_CHECK_DUPLICATES, parser.isCheckDuplicatesEnabled())
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
                 .putString(Constants.PREF_START_SAMPLE, parser.getStartSample())
+                .putBoolean(Constants.PREF_USE_GOOGLE_FIT, parser.isGoogleFitEnabled())
                 .apply();
 
         String participantId = parser.getParticipantId();

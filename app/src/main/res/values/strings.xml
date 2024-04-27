@@ -2,6 +2,7 @@
     <string name="app_name">CARWatch</string>
 
     <string name="ok">OK</string>
+    <string name="error">Error</string>
 
     <string name="cancel">Cancel</string>
     <string name="alarm_notification_text">Alarm!</string>
@@ -68,6 +69,7 @@
     <string name="symbol_dot" translatable="false">\u2022</string>
     <string name="message_camera_access">Camera access to be able to scan the sample tube barcodes</string>
     <string name="message_notification_permission">Sending notifications to inform you about upcoming samples</string>
+    <string name="headline_google_fit">In order to determine your wake-up time more accurately, we would like to use the sleep data recorded in Google Fit. Would you like to connect your Google Fit account to CARWatch for this?</string>
     <string name="headline_wakeup_screen_tutorial">Report waking up</string>
     <string name="description_wakeup_screen">You only need to report your awakening if you didn\'t set an alarm for the morning or woke up before the alarm went off. Clicking the \"Yes\" Button will schedule the sample alarms for the upcoming day.</string>
     <string name="headline_alarm_tutorial">Track your alarms</string>
@@ -142,5 +144,6 @@
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
     <string name="message_barcode_scanned_successfully">The barcode was scanned successfully!</string>
+    <string name="error_no_internet_connection">No internet connection available. Please make sure that the device is online.</string>
 
 </resources>

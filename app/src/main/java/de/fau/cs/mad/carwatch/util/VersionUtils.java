@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.util;
 public class VersionUtils {
     public static final String V_0_0_1 = "0.0.1";
     public static final String V_1_0_0 = "1.0.0";
+    public static final String V_1_1_0 = "1.1.0";
 
     /**
      * Compares two version strings.

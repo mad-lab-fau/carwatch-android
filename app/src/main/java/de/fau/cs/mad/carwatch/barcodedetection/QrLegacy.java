@@ -17,6 +17,8 @@ public class QrLegacy {
 
         if (VersionUtils.compareVersions(webAppVersion, VersionUtils.V_1_0_0) < 0) {
             return convertV0_0_1(qrData);
+        } else if (VersionUtils.compareVersions(webAppVersion, VersionUtils.V_1_1_0) < 0) {
+            return convertV1_0_0(qrData);
         }
 
         return qrData;
@@ -39,8 +41,12 @@ public class QrLegacy {
     private static String convertV0_0_1(String qrData) {
         String originalQrData = qrData;
 
-        if (!containsProperty(qrData, Constants.QR_PARSER_PROPERTY_SALIVA_TIMES)) {
+        if (propertyIsMissing(qrData, Constants.QR_PARSER_PROPERTY_SALIVA_TIMES)) {
             qrData += Constants.QR_PARSER_SEPARATOR + Constants.QR_PARSER_PROPERTY_SALIVA_TIMES + Constants.QR_PARSER_SPECIFIER;
+        }
+
+        if (propertyIsMissing(qrData, Constants.QR_PARSER_PROPERTY_USE_GOOGLE_FIT)) {
+            qrData += Constants.QR_PARSER_SEPARATOR + Constants.QR_PARSER_PROPERTY_USE_GOOGLE_FIT + Constants.QR_PARSER_SPECIFIER + "0";
         }
 
         String oldNumParticipantsIdentifier = "S";
@@ -49,9 +55,20 @@ public class QrLegacy {
         return qrData;
     }
 
-    private static boolean containsProperty(String qrData, String property) {
+    private static String convertV1_0_0(String qrData) {
+        String originalQrData = qrData;
+
+        if (propertyIsMissing(qrData, Constants.QR_PARSER_PROPERTY_USE_GOOGLE_FIT)) {
+            qrData += Constants.QR_PARSER_SEPARATOR + Constants.QR_PARSER_PROPERTY_USE_GOOGLE_FIT + Constants.QR_PARSER_SPECIFIER + "0";
+        }
+
+        LoggerUtil.log(TAG, "Converted QR code from version " + VersionUtils.V_1_0_0 + ": " + originalQrData + " -> " + qrData);
+        return qrData;
+    }
+
+    private static boolean propertyIsMissing(String qrData, String property) {
         String regex = regexForIdentifier(property);
-        return qrData.matches(regex);
+        return !qrData.matches(regex);
     }
 
     private static String replacePropertyIdentifier(String qrData, String oldIdentifier, String newIdentifier) {
