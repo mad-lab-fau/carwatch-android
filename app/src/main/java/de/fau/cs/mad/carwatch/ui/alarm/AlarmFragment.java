@@ -184,9 +184,19 @@ public class AlarmFragment extends Fragment {
     private void scheduleAlarm(Context context) {
         if (alarm.isActive()) {
             AlarmHandler.scheduleWakeUpAlarm(context, alarm, coordinatorLayout);
+            if (dayRecordingNotStarted(alarm.getTimeToNextRing())) {
+                AlarmHandler.scheduleLightSensorAlarm(context, alarm.getTimeToNextRing().minusMinutes(30), true); // TODO magic number
+            }
         } else {
             AlarmHandler.cancelAlarm(context, alarm, coordinatorLayout);
+            AlarmHandler.cancelLightSensorAlarm(context);
         }
+    }
+
+    private boolean dayRecordingNotStarted(DateTime timeToNextRing) {
+        DateTime lastWakeUpAlarmRingTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+        DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
+        return dayCurrentSalivaAlarmsWereScheduled.isBefore(timeToNextRing.withTime(LocalTime.MIDNIGHT));
     }
 
     private void initializeAlarm() {

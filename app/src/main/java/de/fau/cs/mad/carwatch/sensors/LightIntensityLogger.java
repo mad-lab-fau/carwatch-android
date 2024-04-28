@@ -31,7 +31,7 @@ public class LightIntensityLogger implements SensorEventListener {
     private static final String FILE_NAME = "light_intensity_data.csv";
     private static final String CSV_HEADER = "Date,Time,Light Intensity";
     private static final String UNIT = "lx";
-    private static final int PERIOD = 10; // in seconds
+    private static final int PERIOD = 60; // in seconds
     private static LightIntensityLogger instance;
     private SensorManager sensorManager;
     private boolean isRecording = false;
@@ -47,6 +47,20 @@ public class LightIntensityLogger implements SensorEventListener {
             instance = new LightIntensityLogger();
         return instance;
     }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
+            lightIntensity = sensorEvent.values[0];
+        }
+        if (System.currentTimeMillis() - lastLogTime > PERIOD * 1000) {
+            lastLogTime = System.currentTimeMillis();
+            lightIntensityData.add(new Pair<>(lastLogTime, lightIntensity));
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) { }
 
     public void startRecording(@NonNull Context context) {
         if (isRecording)
@@ -66,20 +80,6 @@ public class LightIntensityLogger implements SensorEventListener {
         isRecording = false;
         Log.d(TAG, "Light sensor unregistered");
     }
-
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
-            lightIntensity = sensorEvent.values[0];
-        }
-        if (System.currentTimeMillis() - lastLogTime > PERIOD * 1000) {
-            lastLogTime = System.currentTimeMillis();
-            lightIntensityData.add(new Pair<>(lastLogTime, lightIntensity));
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) { }
 
     public void storeLightData(Context context) {
         try {
@@ -102,15 +102,8 @@ public class LightIntensityLogger implements SensorEventListener {
         }
     }
 
-    public void logLightIntensity() {
-        try {
-            JSONObject json = new JSONObject();
-            json.put(Constants.LOGGER_SENSOR_LIGHT_INTENSITY, lightIntensity);
-            json.put(Constants.LOGGER_SENSOR_UNIT, UNIT);
-            LoggerUtil.log(TAG, json);
-        } catch (JSONException e) {
-            LoggerUtil.log(TAG, "current light intensity: " + lightIntensity);
-        }
+    public void clearData() {
+        lightIntensityData.clear();
     }
 
     private File getLightDataFile(Context context) throws FileNotFoundException {

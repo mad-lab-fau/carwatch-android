@@ -68,6 +68,7 @@ public final class Constants {
     public static final String EXTRA_CANCEL_ALARM = "extra_cancel_alarm";
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
+    public static final String EXTRA_LIGHT_SENSOR_ACTION = "extra_light_sensor_action";
     public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
     public static final String EXTRA_SALIVA_ID_EVENING = "A";
     public static final int EXTRA_ALARM_ID_INITIAL = 0;
@@ -179,4 +180,6 @@ public final class Constants {
 
 
     public static final int GOOGLE_FIT_REQUEST_CODE = 76;  // arbitrary set value
+    public static final int REQUEST_CODE_START_LIGHT_SENSOR = 80;  // arbitrary set value
+    public static final int REQUEST_CODE_STOP_LIGHT_SENSOR = 81;  // arbitrary set value
 }

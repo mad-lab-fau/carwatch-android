@@ -129,6 +129,12 @@
             android:enabled="true"
             android:exported="false" />
 
+        <receiver
+            android:name=".sensors.LightSensorAlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+        </receiver>
+
         <service
             android:name=".userpresent.BootService"
             android:exported="false"
