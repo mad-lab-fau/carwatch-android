@@ -436,18 +436,18 @@ public class AlarmHandler {
     }
 
     public static void cancelLightSensorAlarm(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) {
-            return;
-        }
-
         Intent intent = new Intent(context, LightSensorAlarmReceiver.class);
         int pendingFlags = PendingIntent.FLAG_NO_CREATE;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
         }
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 Constants.REQUEST_CODE_START_LIGHT_SENSOR, intent, pendingFlags);
-        alarmManager.cancel(pendingIntent);
+
+        if (pendingIntent != null && alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+        }
     }
 }
