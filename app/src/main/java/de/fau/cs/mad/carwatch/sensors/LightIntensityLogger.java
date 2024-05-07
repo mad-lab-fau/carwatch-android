@@ -6,13 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
-
-import org.joda.time.DateTime;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,26 +16,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.logger.DiskLogHandler;
-import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
 public class LightIntensityLogger implements SensorEventListener {
 
     private static final String TAG = LightIntensityLogger.class.getSimpleName();
     private static final String FILE_NAME = "light_intensity_data.csv";
-    private static final String CSV_HEADER = "Date,Time,Light Intensity";
-    private static final String UNIT = "lx";
+    private static final String CSV_HEADER = "unix_time,date_time,light_intensity_in_lx,is_object_near";
     private static final int PERIOD = 60; // in seconds
     private static LightIntensityLogger instance;
+    private final List<LightLoggingData> lightIntensityData = new ArrayList<>();
+    private final ProximitySensorListener proximitySensorListener;
     private SensorManager sensorManager;
     private boolean isRecording = false;
     private float lightIntensity;
     private long lastLogTime = 0; // in milliseconds
-    private List<Pair<Long, Float>> lightIntensityData = new ArrayList<>();
 
 
-    private LightIntensityLogger() { }
+    private LightIntensityLogger() {
+        proximitySensorListener = new ProximitySensorListener();
+    }
 
     public static LightIntensityLogger getInstance() {
         if (instance == null)
@@ -55,7 +50,9 @@ public class LightIntensityLogger implements SensorEventListener {
         }
         if (System.currentTimeMillis() - lastLogTime > PERIOD * 1000) {
             lastLogTime = System.currentTimeMillis();
-            lightIntensityData.add(new Pair<>(lastLogTime, lightIntensity));
+            boolean isObjectClose = proximitySensorListener.isObjectClose();
+            LightLoggingData lld = new LightLoggingData(lastLogTime, lightIntensity, isObjectClose);
+            lightIntensityData.add(lld);
         }
     }
 
@@ -69,6 +66,7 @@ public class LightIntensityLogger implements SensorEventListener {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        proximitySensorListener.startListening(context);
         isRecording = true;
         Log.d(TAG, "Light sensor registered");
     }
@@ -78,6 +76,7 @@ public class LightIntensityLogger implements SensorEventListener {
             return;
         sensorManager.unregisterListener(this);
         isRecording = false;
+        proximitySensorListener.stopListening();
         Log.d(TAG, "Light sensor unregistered");
     }
 
@@ -86,12 +85,11 @@ public class LightIntensityLogger implements SensorEventListener {
             File file = getLightDataFile(context);
             FileWriter fw = new FileWriter(file, true);
 
-            for (Pair<Long, Float> data : lightIntensityData) {
-                DateTime time = new DateTime(data.first);
-
-                fw.append(time.toString("yyyy-MM-dd")).append(",");
-                fw.append(time.toString("HH:mm:ss")).append(",");
-                fw.append(data.second.toString()).append(" ").append(UNIT);
+            for (LightLoggingData data : lightIntensityData) {
+                fw.append(Long.toString(data.getTimestamp())).append(",");
+                fw.append(data.getTranslatedTimestamp()).append(",");
+                fw.append(data.getLightIntensity().toString()).append(",");
+                fw.append(data.isObjectClose() ? "1" : "0").append(",");
                 fw.append("\n");
             }
 
