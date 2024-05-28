@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.sensors.LightIntensityLoggerService;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 
 public class UserPresentService extends Service {
@@ -33,11 +34,13 @@ public class UserPresentService extends Service {
     public static boolean receiverRegistered = false;
 
     private UserPresentReceiver userPresentReceiver;
+    private LightIntensityLoggerService lightIntensityLoggerService;
 
     @Override
     public void onCreate() {
         super.onCreate();
         userPresentReceiver = new UserPresentReceiver();
+        lightIntensityLoggerService = new LightIntensityLoggerService(this);
     }
 
     @Override
@@ -48,7 +51,14 @@ public class UserPresentService extends Service {
         startForeground(NOTIFICATION_ID, notification);
         serviceRunning = true;
         LoggerUtil.log(Constants.LOGGER_ACTION_SERVICE_STARTED, new JSONObject());
+        
+        registerUserPresentReceiver();
+        registerLightIntensityLogger();
 
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void registerUserPresentReceiver() {
         if (userPresentReceiver != null && !receiverRegistered) {
             IntentFilter screenTimeFilter = new IntentFilter();
             screenTimeFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -57,8 +67,10 @@ public class UserPresentService extends Service {
             registerReceiver(userPresentReceiver, screenTimeFilter);
             receiverRegistered = true;
         }
+    }
 
-        return super.onStartCommand(intent, flags, startId);
+    private void registerLightIntensityLogger() {
+        lightIntensityLoggerService.register();
     }
 
 

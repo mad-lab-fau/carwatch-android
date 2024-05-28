@@ -50,6 +50,7 @@ public final class Constants {
     public static final String PREF_LAST_WAKE_UP_ALARM_RING_TIME = "last_wake_up_alarm_ring_time"; // long (milliseconds from epoch)
     public static final String PREF_LAST_SLEEP_LOGGED_TIME = "last_sleep_logged_time"; // long (milliseconds from epoch)
     public static final String PREF_USE_GOOGLE_FIT = "use_google_fit"; // boolean
+    public static final String PREF_IS_OBJECT_CLOSE = "is_object_close"; // boolean
 
 
     public static final int INITIAL_SLIDE_SHOW_SLIDE = 0;

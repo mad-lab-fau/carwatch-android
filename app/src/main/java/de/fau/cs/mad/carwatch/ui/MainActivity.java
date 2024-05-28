@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +36,8 @@ import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.sensors.LightIntensityLoggerService;
+import de.fau.cs.mad.carwatch.sensors.ProximitySensorListener;
 import de.fau.cs.mad.carwatch.sleep.GoogleFitConnector;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
 import de.fau.cs.mad.carwatch.util.Utils;
@@ -73,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
         delegate.applyDayNight();
 
         initializeLoggingUtil(this);
+//        AlarmHandler.scheduleProximitySensorAlarm(this);
+        Intent proxIntent = new Intent(this, ProximitySensorListener.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(proxIntent);
+        } else {
+            startService(proxIntent);
+        }
 
         if (sharedPreferences.getInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE) != Constants.SLIDESHOW_FINISHED_SLIDE_ID) {
             Intent intent = new Intent(this, SlideShowActivity.class);
