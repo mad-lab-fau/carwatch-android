@@ -15,8 +15,12 @@ import de.fau.cs.mad.carwatch.sleep.SleepPhase;
 public class SleepDataLogger {
     private static final String TAG = SleepDataLogger.class.getSimpleName();
     private static final String FILE_NAME = "sleep_data.csv";
-    private static final String CSV_HEADER = String.join(Constants.CSV_ROW_SEPARATOR,
-            "start_unix_time", "end_unix_time", "start_date_time", "end_date_time", "stage");
+    private static final String CSV_HEADER_ROW = String.join(Constants.CSV_COL_SEPARATOR,
+            "start_unix_time",
+            "end_unix_time",
+            "start_date_time",
+            "end_date_time",
+            "sleep_phase_type");
     private static final String DATE_TIME_PATTERN = "dd.MM.yyy HH:mm";
 
     public static void log(Context context, List<SleepPhase> sleepPhases) {
@@ -58,7 +62,7 @@ public class SleepDataLogger {
 
         try {
             FileWriter fw = new FileWriter(file, true);
-            fw.append(CSV_HEADER);
+            fw.append(CSV_HEADER_ROW);
             fw.append(Constants.CSV_ROW_SEPARATOR);
             fw.flush();
             fw.close();
