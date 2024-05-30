@@ -149,7 +149,7 @@ public class GoogleFitConnector {
         }
 
         if (sessionWakeUpTimes.isEmpty()) {
-            LoggerUtil.log(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ": No sleep data found.");
+            Log.i(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ": No sleep data found.");
             return;
         }
 

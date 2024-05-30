@@ -40,7 +40,7 @@ public class SleepDataLogger {
                 fw.append(Constants.CSV_COL_SEPARATOR);
                 fw.append(phase.getEnd().toString(DATE_TIME_PATTERN));
                 fw.append(Constants.CSV_COL_SEPARATOR);
-                fw.append(phase.getName());
+                fw.append(phase.getType());
                 fw.append(Constants.CSV_ROW_SEPARATOR);
             }
 
