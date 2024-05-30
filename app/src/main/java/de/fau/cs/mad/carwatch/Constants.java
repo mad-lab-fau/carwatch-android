@@ -80,6 +80,8 @@ public final class Constants {
     public static final int FIRST_SAMPLE_ALARM_ID = Short.MAX_VALUE - 1;
     public static final int ALARM_OFFSET = Short.MAX_VALUE;
     public static final int ALARM_OFFSET_TIMER = Byte.MAX_VALUE;
+    public static final String CSV_COL_SEPARATOR = ",";
+    public static final String CSV_ROW_SEPARATOR = "\n";
 
     public static final String ACTION_STOP_ALARM = "Stop Alarm";
 
