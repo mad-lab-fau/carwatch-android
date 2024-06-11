@@ -53,7 +53,7 @@ public class LightIntensityLogger implements SensorEventListener {
     public void startLogging() {
         register();
         executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(this::logCurrentLightData, 0, DEFAULT_LOG_INTERVAL, TimeUnit.MINUTES);
+        executorService.scheduleWithFixedDelay(this::logCurrentLightData, 0, DEFAULT_LOG_INTERVAL, TimeUnit.MINUTES);
         LoggerUtil.log(Constants.LOGGER_START_LIGHT_LOGGING, new JSONObject());
     }
 
