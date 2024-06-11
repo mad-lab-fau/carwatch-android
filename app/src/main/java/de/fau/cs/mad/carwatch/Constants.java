@@ -50,7 +50,6 @@ public final class Constants {
     public static final String PREF_LAST_WAKE_UP_ALARM_RING_TIME = "last_wake_up_alarm_ring_time"; // long (milliseconds from epoch)
     public static final String PREF_LAST_SLEEP_LOGGED_TIME = "last_sleep_logged_time"; // long (milliseconds from epoch)
     public static final String PREF_USE_GOOGLE_FIT = "use_google_fit"; // boolean
-    public static final String PREF_IS_OBJECT_CLOSE = "is_object_close"; // boolean
     public static final String PREF_USER_PRESENT_STOP_DELAY = "user_present_stop_delay"; // long (minutes)
 
 
@@ -110,6 +109,8 @@ public final class Constants {
     public static final String LOGGER_ACTION_SERVICE_STOPPED = "service_stopped";
     public static final String LOGGER_ACTION_SCREEN_OFF = "screen_off";
     public static final String LOGGER_ACTION_SCREEN_ON = "screen_on";
+    public static final String LOGGER_START_LIGHT_LOGGING = "light_logging_started";
+    public static final String LOGGER_STOP_LIGHT_LOGGING = "light_logging_stopped";
     public static final String LOGGER_ACTION_USER_PRESENT = "user_present";
     public static final String LOGGER_ACTION_PHONE_BOOT_INIT = "phone_boot_init";
     public static final String LOGGER_ACTION_PHONE_BOOT_COMPLETE = "phone_boot_complete";
@@ -144,8 +145,6 @@ public final class Constants {
     public static final String LOGGER_EXTRA_SCREEN_BRIGHTNESS = "screen_brightness"; // float
     public static final String LOGGER_EXTRA_DISPLAY_NIGHT_MODE = "display_night_mode"; // int
 
-    public static final String LOGGER_SENSOR_LIGHT_INTENSITY = "light_intensity"; // float
-    public static final String LOGGER_SENSOR_UNIT = "unit"; // string
 
     /**
      * Constants used in QR-encoded study data

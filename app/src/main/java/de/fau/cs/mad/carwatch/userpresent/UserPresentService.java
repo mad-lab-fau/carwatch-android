@@ -20,7 +20,7 @@ import org.json.JSONObject;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.sensors.LightIntensitySensorListener;
+import de.fau.cs.mad.carwatch.sensors.LightIntensityLogger;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 
 public class UserPresentService extends Service {
@@ -36,13 +36,13 @@ public class UserPresentService extends Service {
     public static boolean receiverRegistered = false;
 
     private UserPresentReceiver userPresentReceiver;
-    private LightIntensitySensorListener lightIntensitySensorListener;
+    private LightIntensityLogger lightIntensityLogger;
 
     @Override
     public void onCreate() {
         super.onCreate();
         userPresentReceiver = new UserPresentReceiver();
-        lightIntensitySensorListener = new LightIntensitySensorListener(this);
+        lightIntensityLogger = new LightIntensityLogger(this);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class UserPresentService extends Service {
         LoggerUtil.log(Constants.LOGGER_ACTION_SERVICE_STARTED, new JSONObject());
         
         registerUserPresentReceiver();
-        registerLightIntensityLogger();
+        startLightIntensityLogger();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -71,8 +71,8 @@ public class UserPresentService extends Service {
         }
     }
 
-    private void registerLightIntensityLogger() {
-        lightIntensitySensorListener.register();
+    private void startLightIntensityLogger() {
+        lightIntensityLogger.startLogging();
     }
 
 
@@ -83,7 +83,7 @@ public class UserPresentService extends Service {
             unregisterReceiver(userPresentReceiver);
             receiverRegistered = false;
         }
-        lightIntensitySensorListener.unregister();
+        lightIntensityLogger.stopLogging();
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH);
         serviceRunning = false;
         LoggerUtil.log(Constants.LOGGER_ACTION_SERVICE_STOPPED, new JSONObject());

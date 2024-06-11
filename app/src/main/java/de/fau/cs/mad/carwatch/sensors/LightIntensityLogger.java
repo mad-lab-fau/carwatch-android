@@ -1,14 +1,13 @@
 package de.fau.cs.mad.carwatch.sensors;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import org.joda.time.DateTime;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,72 +15,79 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.logger.DiskLogHandler;
+import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 
-public class LightIntensitySensorListener implements SensorEventListener {
+public class LightIntensityLogger implements SensorEventListener {
 
-    private static final String TAG = LightIntensitySensorListener.class.getSimpleName();
+    private static final String TAG = LightIntensityLogger.class.getSimpleName();
     private static final String FILE_NAME = "light_intensity_data.csv";
     private static final String CSV_HEADER = "unix_time,date_time,light_intensity_in_lx,is_object_near";
+    private static final int DEFAULT_LOG_INTERVAL = 5;  // in minutes
     private final Context context;
     private final ProximitySensorListener proximitySensorListener;
+    private ScheduledExecutorService executorService;
     private SensorManager sensorManager;
-    private int logIntervalMinutes = 5;
-    private DateTime lastLogTime;
+    private Float lightIntensity;
 
 
-    public LightIntensitySensorListener(Context context) {
+    public LightIntensityLogger(Context context) {
         this.context = context;
         proximitySensorListener = new ProximitySensorListener(context);
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT && isLogIntervalElapsed()) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            float lightIntensity = sensorEvent.values[0];
-            long lastLogTime = System.currentTimeMillis();
-            boolean isObjectClose = sp.getBoolean(Constants.PREF_IS_OBJECT_CLOSE, false);
-            LightLoggingData lld = new LightLoggingData(lastLogTime, lightIntensity, isObjectClose);
-            new SensorEventLoggerTask().execute(lld);
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
+            lightIntensity = sensorEvent.values[0];
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) { }
 
-    public void setLogIntervalMinutes(int logIntervalMinutes) {
-        this.logIntervalMinutes = logIntervalMinutes;
+    public void startLogging() {
+        register();
+        executorService = Executors.newScheduledThreadPool(1);
+        executorService.scheduleAtFixedRate(this::logCurrentLightData, 0, DEFAULT_LOG_INTERVAL, TimeUnit.MINUTES);
+        LoggerUtil.log(Constants.LOGGER_START_LIGHT_LOGGING, new JSONObject());
     }
 
-    public void register() {
+    public void stopLogging() {
+        unregister();
+
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+
+        LoggerUtil.log(Constants.LOGGER_STOP_LIGHT_LOGGING, new JSONObject());
+    }
+
+    private void logCurrentLightData() {
+        if (lightIntensity == null) {
+            return;
+        }
+
+        boolean isObjectClose = proximitySensorListener.isObjectClose();
+        LightLoggingData lld = new LightLoggingData(System.currentTimeMillis(), lightIntensity, isObjectClose);
+        new SensorEventLoggerTask().execute(lld);
+    }
+
+    private void register() {
+        lightIntensity = null;  // Reset light intensity
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         proximitySensorListener.register();
     }
 
-    public void unregister() {
+    private void unregister() {
         sensorManager.unregisterListener(this);
         proximitySensorListener.unregister();
-    }
-
-    private boolean isLogIntervalElapsed() {
-        if (lastLogTime == null) {
-            lastLogTime = DateTime.now();
-            return true;
-        }
-
-        DateTime now = DateTime.now();
-        if (now.isAfter(lastLogTime.plusMinutes(logIntervalMinutes))) {
-            lastLogTime = now;
-            return true;
-        }
-
-        return false;
     }
 
     private void logLightData(LightLoggingData lightLoggingData) {
@@ -92,7 +98,7 @@ public class LightIntensitySensorListener implements SensorEventListener {
             fw.append(Long.toString(lightLoggingData.getTimestamp())).append(",");
             fw.append(lightLoggingData.getTranslatedTimestamp()).append(",");
             fw.append(lightLoggingData.getLightIntensity().toString()).append(",");
-            fw.append(lightLoggingData.isObjectClose() ? "1" : "0").append(",");
+            fw.append(lightLoggingData.isObjectClose() ? "1" : "0");
             fw.append("\n");
 
             fw.flush();
