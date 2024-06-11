@@ -134,6 +134,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
         int numFixedSamples = salivaTimes.isEmpty() ? 0 : salivaTimes.split(",").length;
         int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
         int eveningSampleId = parser.hasEveningSample() ? numSamples - 1 : -1;
+        long userPresentStopDelay = getSum(salivaDistances);
         sharedPreferences.edit()
                 .putString(Constants.PREF_STUDY_NAME, parser.getStudyName())
                 .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.getNumParticipants())
@@ -148,6 +149,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, false)
                 .putString(Constants.PREF_START_SAMPLE, parser.getStartSample())
                 .putBoolean(Constants.PREF_USE_GOOGLE_FIT, parser.isGoogleFitEnabled())
+                .putLong(Constants.PREF_USER_PRESENT_STOP_DELAY, userPresentStopDelay)
                 .apply();
 
         String participantId = parser.getParticipantId();
@@ -164,5 +166,17 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
             MetadataLogger.logStudyData(requireContext());
             MetadataLogger.logParticipantId(requireContext());
         }
+    }
+
+    private long getSum(String salivaDistances) {
+        if (salivaDistances.isEmpty()) {
+            return 0;
+        }
+
+        long sum = 0;
+        for (String distance : salivaDistances.split(",")) {
+            sum += Long.parseLong(distance);
+        }
+        return sum;
     }
 }

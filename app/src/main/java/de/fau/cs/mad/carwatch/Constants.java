@@ -51,6 +51,7 @@ public final class Constants {
     public static final String PREF_LAST_SLEEP_LOGGED_TIME = "last_sleep_logged_time"; // long (milliseconds from epoch)
     public static final String PREF_USE_GOOGLE_FIT = "use_google_fit"; // boolean
     public static final String PREF_IS_OBJECT_CLOSE = "is_object_close"; // boolean
+    public static final String PREF_USER_PRESENT_STOP_DELAY = "user_present_stop_delay"; // long (minutes)
 
 
     public static final int INITIAL_SLIDE_SHOW_SLIDE = 0;
@@ -69,7 +70,6 @@ public final class Constants {
     public static final String EXTRA_CANCEL_ALARM = "extra_cancel_alarm";
     public static final String EXTRA_SOURCE = "extra_source";
     public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
-    public static final String EXTRA_LIGHT_SENSOR_ACTION = "extra_light_sensor_action";
     public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
     public static final String EXTRA_SALIVA_ID_EVENING = "A";
     public static final int EXTRA_ALARM_ID_INITIAL = 0;
@@ -179,8 +179,5 @@ public final class Constants {
     public static final String LOGGER_EXTRA_SALIVA_IDS = "saliva_ids";
     public static final String LOGGER_EXTRA_USE_GOOGLE_FIT = "use_google_fit";
 
-
     public static final int GOOGLE_FIT_REQUEST_CODE = 76;  // arbitrary set value
-    public static final int REQUEST_CODE_START_LIGHT_SENSOR = 80;  // arbitrary set value
-    public static final int REQUEST_CODE_STOP_LIGHT_SENSOR = 81;  // arbitrary set value
 }

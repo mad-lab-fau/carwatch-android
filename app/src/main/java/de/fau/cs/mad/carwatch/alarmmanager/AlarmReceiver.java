@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ExecutionException;
 
+import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
@@ -48,7 +50,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // stop user present service if running
         if (UserPresentService.serviceRunning) {
-            UserPresentService.stopService(context);
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            long delayMinutes = sp.getLong(Constants.PREF_USER_PRESENT_STOP_DELAY, 0);
+            UserPresentService.stopDelayed(context, delayMinutes);
         }
 
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);

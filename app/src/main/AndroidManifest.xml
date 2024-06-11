@@ -88,6 +88,12 @@
             android:exported="false" />
 
         <receiver
+            android:name=".userpresent.UserPresentStopReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+
+        <receiver
             android:name=".userpresent.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true">
@@ -129,12 +135,6 @@
             android:name=".alarmmanager.TimerReceiver"
             android:enabled="true"
             android:exported="false" />
-
-        <receiver
-            android:name=".sensors.LightSensorAlarmReceiver"
-            android:enabled="true"
-            android:exported="false">
-        </receiver>
 
         <service
             android:name=".userpresent.BootService"

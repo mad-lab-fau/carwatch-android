@@ -12,8 +12,6 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -108,7 +106,9 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 .setMessage(getString(R.string.wakeup_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                     if (UserPresentService.serviceRunning) {
-                        UserPresentService.stopService(getContext());
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                        long delayMinutes = sp.getLong(Constants.PREF_USER_PRESENT_STOP_DELAY, 0);
+                        UserPresentService.stopDelayed(getContext(), delayMinutes);
                     }
 
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());

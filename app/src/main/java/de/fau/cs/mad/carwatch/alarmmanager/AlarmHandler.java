@@ -35,7 +35,6 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.sensors.LightSensorAlarmReceiver;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.BootCompletedReceiver;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
@@ -407,47 +406,6 @@ public class AlarmHandler {
             TimerHandler.cancelTimer(application, alarm.getId());
             alarm.setActive(false);
             repo.update(alarm);
-        }
-    }
-
-    public static void scheduleLightSensorAlarm(Context context, DateTime dateTime, boolean startRecording) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        if (alarmManager == null) {
-            return;
-        }
-
-        long time = dateTime.getMillis();
-        Intent intent = new Intent(context, LightSensorAlarmReceiver.class);
-        String action = startRecording ? LightSensorAlarmReceiver.ACTION_START_RECORDING : LightSensorAlarmReceiver.ACTION_STOP_RECORDING;
-        intent.putExtra(Constants.EXTRA_LIGHT_SENSOR_ACTION, action);
-
-        int requestCode = startRecording ? Constants.REQUEST_CODE_START_LIGHT_SENSOR : Constants.REQUEST_CODE_STOP_LIGHT_SENSOR;
-        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, pendingFlags);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-        } else {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-        }
-    }
-
-    public static void cancelLightSensorAlarm(Context context) {
-        Intent intent = new Intent(context, LightSensorAlarmReceiver.class);
-        int pendingFlags = PendingIntent.FLAG_NO_CREATE;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                Constants.REQUEST_CODE_START_LIGHT_SENSOR, intent, pendingFlags);
-
-        if (pendingIntent != null && alarmManager != null) {
-            alarmManager.cancel(pendingIntent);
         }
     }
 }

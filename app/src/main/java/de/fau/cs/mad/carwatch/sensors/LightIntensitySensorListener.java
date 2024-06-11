@@ -21,9 +21,9 @@ import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.logger.DiskLogHandler;
 
-public class LightIntensityLoggerService implements SensorEventListener {
+public class LightIntensitySensorListener implements SensorEventListener {
 
-    private static final String TAG = LightIntensityLoggerService.class.getSimpleName();
+    private static final String TAG = LightIntensitySensorListener.class.getSimpleName();
     private static final String FILE_NAME = "light_intensity_data.csv";
     private static final String CSV_HEADER = "unix_time,date_time,light_intensity_in_lx,is_object_near";
     private final Context context;
@@ -33,7 +33,7 @@ public class LightIntensityLoggerService implements SensorEventListener {
     private DateTime lastLogTime;
 
 
-    public LightIntensityLoggerService(Context context) {
+    public LightIntensitySensorListener(Context context) {
         this.context = context;
         proximitySensorListener = new ProximitySensorListener(context);
     }

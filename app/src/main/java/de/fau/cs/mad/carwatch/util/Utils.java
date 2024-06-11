@@ -82,6 +82,7 @@ public class Utils {
                     case Manifest.permission.FOREGROUND_SERVICE:
                     case Manifest.permission.SCHEDULE_EXACT_ALARM:
                     case Manifest.permission.POST_NOTIFICATIONS:
+                    case Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE:
                         continue;
                 }
                 return false;

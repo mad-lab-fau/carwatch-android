@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.userpresent;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -19,7 +20,7 @@ import org.json.JSONObject;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
-import de.fau.cs.mad.carwatch.sensors.LightIntensityLoggerService;
+import de.fau.cs.mad.carwatch.sensors.LightIntensitySensorListener;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 
 public class UserPresentService extends Service {
@@ -28,19 +29,20 @@ public class UserPresentService extends Service {
 
 
     private static final int NOTIFICATION_ID = 1994;
+    private static final int broadcastRequestCode = TAG.hashCode();
     private static final String CHANNEL_ID = TAG + "Channel";
 
     public static boolean serviceRunning = false;
     public static boolean receiverRegistered = false;
 
     private UserPresentReceiver userPresentReceiver;
-    private LightIntensityLoggerService lightIntensityLoggerService;
+    private LightIntensitySensorListener lightIntensitySensorListener;
 
     @Override
     public void onCreate() {
         super.onCreate();
         userPresentReceiver = new UserPresentReceiver();
-        lightIntensityLoggerService = new LightIntensityLoggerService(this);
+        lightIntensitySensorListener = new LightIntensitySensorListener(this);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class UserPresentService extends Service {
     }
 
     private void registerLightIntensityLogger() {
-        lightIntensityLoggerService.register();
+        lightIntensitySensorListener.register();
     }
 
 
@@ -81,6 +83,7 @@ public class UserPresentService extends Service {
             unregisterReceiver(userPresentReceiver);
             receiverRegistered = false;
         }
+        lightIntensitySensorListener.unregister();
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH);
         serviceRunning = false;
         LoggerUtil.log(Constants.LOGGER_ACTION_SERVICE_STOPPED, new JSONObject());
@@ -99,6 +102,20 @@ public class UserPresentService extends Service {
     public static void stopService(Context context) {
         Intent serviceIntent = new Intent(context, UserPresentService.class);
         context.stopService(serviceIntent);
+    }
+
+    public static void stopDelayed(Context context, long delayMinutes) {
+        Intent intent = new Intent(context, UserPresentStopReceiver.class);
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, broadcastRequestCode, intent, pendingFlags);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null && pendingIntent != null) {
+            long triggerTime = System.currentTimeMillis() + delayMinutes * 60 * 1000;
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+        }
     }
 
     private Notification createNotification() {
