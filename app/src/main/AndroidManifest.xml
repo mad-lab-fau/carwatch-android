@@ -136,6 +136,11 @@
             android:enabled="true"
             android:exported="false" />
 
+        <receiver
+            android:name=".sensors.LightIntensityAlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
         <service
             android:name=".userpresent.BootService"
             android:exported="false"

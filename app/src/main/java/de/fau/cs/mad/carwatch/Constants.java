@@ -179,4 +179,5 @@ public final class Constants {
     public static final String LOGGER_EXTRA_USE_GOOGLE_FIT = "use_google_fit";
 
     public static final int GOOGLE_FIT_REQUEST_CODE = 76;  // arbitrary set value
+    public static final int LIGHT_INTENSITY_LOGGER_REQUEST_CODE = 34; // arbitrary set value
 }

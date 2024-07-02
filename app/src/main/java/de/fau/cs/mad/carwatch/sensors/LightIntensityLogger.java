@@ -28,16 +28,20 @@ public class LightIntensityLogger implements SensorEventListener {
     private static final String FILE_NAME = "light_intensity_data.csv";
     private static final String CSV_HEADER = "unix_time,date_time,light_intensity_in_lx,is_object_near";
     private static final int DEFAULT_LOG_INTERVAL = 5;  // in minutes
-    private final Context context;
+    private static LightIntensityLogger instance;
     private final ProximitySensorListener proximitySensorListener;
-    private ScheduledExecutorService executorService;
     private SensorManager sensorManager;
     private Float lightIntensity;
 
 
-    public LightIntensityLogger(Context context) {
-        this.context = context;
+    private LightIntensityLogger(Context context) {
         proximitySensorListener = new ProximitySensorListener(context);
+    }
+
+    public static LightIntensityLogger getInstance(Context context) {
+        if (instance == null)
+            instance = new LightIntensityLogger(context);
+        return instance;
     }
 
     @Override
@@ -50,34 +54,31 @@ public class LightIntensityLogger implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) { }
 
-    public void startLogging() {
-        register();
-        executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleWithFixedDelay(this::logCurrentLightData, 0, DEFAULT_LOG_INTERVAL, TimeUnit.MINUTES);
+    public void startLogging(Context context) {
+        register(context);
         LoggerUtil.log(Constants.LOGGER_START_LIGHT_LOGGING, new JSONObject());
+    }
+
+    public void log(Context context) {
+        logCurrentLightData(context);
     }
 
     public void stopLogging() {
         unregister();
-
-        if (executorService != null) {
-            executorService.shutdown();
-        }
-
         LoggerUtil.log(Constants.LOGGER_STOP_LIGHT_LOGGING, new JSONObject());
     }
 
-    private void logCurrentLightData() {
+    private void logCurrentLightData(Context context) {
         if (lightIntensity == null) {
             return;
         }
 
         boolean isObjectClose = proximitySensorListener.isObjectClose();
         LightLoggingData lld = new LightLoggingData(System.currentTimeMillis(), lightIntensity, isObjectClose);
-        new SensorEventLoggerTask().execute(lld);
+        new SensorEventLoggerTask().execute(lld, context);
     }
 
-    private void register() {
+    private void register(Context context) {
         lightIntensity = null;  // Reset light intensity
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
@@ -90,7 +91,7 @@ public class LightIntensityLogger implements SensorEventListener {
         proximitySensorListener.unregister();
     }
 
-    private void logLightData(LightLoggingData lightLoggingData) {
+    private void logLightData(LightLoggingData lightLoggingData, Context context) {
         try {
             File file = getLightDataFile(context);
             FileWriter fw = new FileWriter(file, true);
@@ -131,11 +132,11 @@ public class LightIntensityLogger implements SensorEventListener {
     }
 
     private class SensorEventLoggerTask {
-        void execute(LightLoggingData loggingData) {
+        void execute(LightLoggingData loggingData, Context context) {
             ExecutorService executorService = Executors.newSingleThreadExecutor();
             executorService.submit(() -> {
                 Log.d("SensorEventLoggerTask", "Logging sensor event: " + loggingData.getLightIntensity() + " lx");
-                logLightData(loggingData);
+                logLightData(loggingData, context);
                 return null;
             });
             executorService.shutdown(); // Remember to shut down the executor

@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.sensors.LightIntensityAlarmReceiver;
 import de.fau.cs.mad.carwatch.sensors.LightIntensityLogger;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 
@@ -37,12 +38,13 @@ public class UserPresentService extends Service {
 
     private UserPresentReceiver userPresentReceiver;
     private LightIntensityLogger lightIntensityLogger;
+    private PendingIntent lightLoggerIntent;
 
     @Override
     public void onCreate() {
         super.onCreate();
         userPresentReceiver = new UserPresentReceiver();
-        lightIntensityLogger = new LightIntensityLogger(this);
+        lightIntensityLogger = LightIntensityLogger.getInstance(this);
     }
 
     @Override
@@ -72,7 +74,26 @@ public class UserPresentService extends Service {
     }
 
     private void startLightIntensityLogger() {
-        lightIntensityLogger.startLogging();
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, LightIntensityAlarmReceiver.class);
+        int pendingFlags = getCreatePendingIntentFlags();
+        lightLoggerIntent = PendingIntent.getBroadcast(
+                this,
+                Constants.LIGHT_INTENSITY_LOGGER_REQUEST_CODE,
+                intent,
+                pendingFlags);
+
+        // Schedule the alarm to repeat every 5 minutes
+        int intervalMin = 5;
+        long interval = intervalMin * 60 * 1000;
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, lightLoggerIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), lightLoggerIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), lightLoggerIntent);
+        }
+
+        lightIntensityLogger.startLogging(this);
     }
 
 
@@ -83,6 +104,8 @@ public class UserPresentService extends Service {
             unregisterReceiver(userPresentReceiver);
             receiverRegistered = false;
         }
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(lightLoggerIntent);
         lightIntensityLogger.stopLogging();
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_DETACH);
         serviceRunning = false;
@@ -106,9 +129,7 @@ public class UserPresentService extends Service {
 
     public static void stopDelayed(Context context, long delayMinutes) {
         Intent intent = new Intent(context, UserPresentStopReceiver.class);
-        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
+        int pendingFlags = getCreatePendingIntentFlags();
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, broadcastRequestCode, intent, pendingFlags);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -122,12 +143,7 @@ public class UserPresentService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = getCreatePendingIntentFlags();
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, pendingFlags);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -154,5 +170,11 @@ public class UserPresentService extends Service {
         }
     }
 
+    private static int getCreatePendingIntentFlags() {
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
 
+        return pendingFlags;
+    }
 }
