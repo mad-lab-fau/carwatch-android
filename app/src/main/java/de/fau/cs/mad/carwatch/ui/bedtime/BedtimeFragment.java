@@ -71,7 +71,6 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
             case R.id.button_no:
                 if (getActivity() != null) {
                     Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
-                    ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
                 }
                 break;
             case R.id.button_yes:

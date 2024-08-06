@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     public void navigate(int navId) {
         for (int id : NAV_IDS) {
             if (id == navId) {
+                navController.popBackStack();
                 navController.navigate(navId);
                 return;
             }
