@@ -3,22 +3,22 @@ package de.fau.cs.mad.carwatch.sleep;
 import org.joda.time.DateTime;
 
 public class SleepPhase {
-    private String name;
+    private String type;
     private DateTime start;
     private DateTime end;
 
-    public SleepPhase(String name, DateTime start, DateTime end) {
-        this.name = name;
+    public SleepPhase(String type, DateTime start, DateTime end) {
+        this.type = type;
         this.start = start;
         this.end = end;
     }
 
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public DateTime getStart() {

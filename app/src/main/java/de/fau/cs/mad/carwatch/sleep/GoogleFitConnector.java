@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +52,7 @@ public class GoogleFitConnector {
             "REM sleep"
     };
 
-    private static final int SLEEP_SEGMENT_TYPE_AWAKE = 1;
+    private static final List<String> SLEEP_TYPES = Arrays.asList("Sleep", "Light sleep", "Deep sleep", "REM sleep");
 
     private final @NonNull Context context;
 
@@ -136,7 +137,7 @@ public class GoogleFitConnector {
                     SleepPhase sleepPhase = new SleepPhase(stage, start, end);
                     sleepPhases.add(sleepPhase);
 
-                    if (SLEEP_SEGMENT_TYPE_AWAKE != sleepSegmentType) {
+                    if (SLEEP_TYPES.contains(stage)) {
                         sessionWakeUpTime = Math.max(end.getMillis(), sessionWakeUpTime);
                     }
                 }
@@ -149,8 +150,7 @@ public class GoogleFitConnector {
         }
 
         if (sessionWakeUpTimes.isEmpty()) {
-            Log.i(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";No sleep data found.");
-            LoggerUtil.log(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ";No sleep data found.");
+            Log.i(TAG, Constants.LOGGER_RECORDED_SLEEP_DATA + ": No sleep data found.");
             return;
         }
 

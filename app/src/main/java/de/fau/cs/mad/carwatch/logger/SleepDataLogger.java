@@ -9,13 +9,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.sleep.SleepPhase;
 
 public class SleepDataLogger {
     private static final String TAG = SleepDataLogger.class.getSimpleName();
     private static final String FILE_NAME = "sleep_data.csv";
-    private static final String CSV_HEADER = "Start Date,Stage,Start Time,End Time";
-    private static final String TIME_PATTERN = "HH:mm";
+    private static final String CSV_HEADER_ROW = String.join(Constants.CSV_COL_SEPARATOR,
+            "start_unix_time",
+            "end_unix_time",
+            "start_date_time",
+            "end_date_time",
+            "sleep_phase_type");
+    private static final String DATE_TIME_PATTERN = "dd.MM.yyy HH:mm";
 
     public static void log(Context context, List<SleepPhase> sleepPhases) {
         if (context == null || sleepPhases == null || sleepPhases.isEmpty())
@@ -26,14 +32,16 @@ public class SleepDataLogger {
             FileWriter fw = new FileWriter(file, true);
 
             for (SleepPhase phase : sleepPhases) {
-                fw.append(phase.getStart().toString("yyyy-MM-dd"));
-                fw.append(",");
-                fw.append(phase.getName());
-                fw.append(",");
-                fw.append(phase.getStart().toString(TIME_PATTERN));
-                fw.append(",");
-                fw.append(phase.getEnd().toString(TIME_PATTERN));
-                fw.append("\n");
+                fw.append(String.valueOf(phase.getStart().getMillis()));
+                fw.append(Constants.CSV_COL_SEPARATOR);
+                fw.append(String.valueOf(phase.getEnd().getMillis()));
+                fw.append(Constants.CSV_COL_SEPARATOR);
+                fw.append(phase.getStart().toString(DATE_TIME_PATTERN));
+                fw.append(Constants.CSV_COL_SEPARATOR);
+                fw.append(phase.getEnd().toString(DATE_TIME_PATTERN));
+                fw.append(Constants.CSV_COL_SEPARATOR);
+                fw.append(phase.getType());
+                fw.append(Constants.CSV_ROW_SEPARATOR);
             }
 
             fw.flush();
@@ -54,8 +62,8 @@ public class SleepDataLogger {
 
         try {
             FileWriter fw = new FileWriter(file, true);
-            fw.append(CSV_HEADER);
-            fw.append("\n");
+            fw.append(CSV_HEADER_ROW);
+            fw.append(Constants.CSV_ROW_SEPARATOR);
             fw.flush();
             fw.close();
         } catch (IOException e) {
