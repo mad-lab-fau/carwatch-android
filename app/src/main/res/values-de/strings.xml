@@ -34,9 +34,23 @@
     <string name="menu_kill">Kill Alarms</string>
     <string name="menu_reregister">Neu registrieren</string>
     <string name="menu_show_tutorial">Tutorial zeigen</string>
-    <string name="menu_app_info">Info</string>
+    <string name="menu_study_information">Studieninformationen</string>
+    <string name="menu_finish_study_day">Studientag beenden</string>
+    <string name="menu_app_info">App-Info</string>
     <string name="title_reregister_ongoing_study">Studie läuft noch</string>
     <string name="message_reregister_ongoing_study">Ihre Studie läuft noch. Sind Sie sicher, dass Sie sich mit einem neuen QR-Code neu registrieren möchten?</string>
+    <string name="title_study_information">Studieninformationen</string>
+    <string name="label_study_section">Studie</string>
+    <string name="label_contact_email">Kontakt-E-Mail</string>
+    <string name="label_sampling_plan">Probenplan</string>
+    <string name="label_interval_samples">Intervallproben</string>
+    <string name="label_fixed_sample_times">Feste Probenzeiten</string>
+    <string name="message_no_fixed_sample_times">Keine festen Probenzeiten konfiguriert.</string>
+    <string name="title_finish_study_day">Studientag beenden?</string>
+    <string name="message_finish_study_day">Alle verbleibenden Proben für heute werden abgebrochen und der Studientag wird als abgeschlossen markiert.</string>
+    <string name="button_keep_samples">Proben behalten</string>
+    <string name="button_finish_day">Tag beenden</string>
+    <string name="message_study_day_finished">Der Studientag wurde als abgeschlossen markiert.</string>
 
     <!-- Delete log files -->
     <string name="hint_clicks_delete_log_files">Noch %1$d Klicks, um alle Log Dateien zu löschen</string>

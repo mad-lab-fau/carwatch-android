@@ -4,16 +4,23 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -27,6 +34,11 @@ import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -173,21 +185,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int titleId;
-        int messageId;
-        switch (alertType) {
-            case Constants.END_OF_DAY_ALERT_EVENING_REQUIRED:
+        int messageId = switch (alertType) {
+            case Constants.END_OF_DAY_ALERT_EVENING_REQUIRED -> {
                 titleId = R.string.title_samples_recorded;
-                messageId = R.string.message_samples_recorded_evening_required;
-                break;
-            case Constants.END_OF_DAY_ALERT_STUDY_FINISHED:
+                yield R.string.message_samples_recorded_evening_required;
+            }
+            case Constants.END_OF_DAY_ALERT_STUDY_FINISHED -> {
                 titleId = R.string.title_study_finished;
-                messageId = R.string.message_study_finished;
-                break;
-            default:
+                yield R.string.message_study_finished;
+            }
+            default -> {
                 titleId = R.string.title_samples_recorded;
-                messageId = R.string.message_samples_recorded_day_finished;
-                break;
-        }
+                yield R.string.message_samples_recorded_day_finished;
+            }
+        };
 
         new AlertDialog.Builder(this)
                 .setTitle(titleId)
@@ -221,6 +232,23 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem finishStudyDayItem = menu.findItem(R.id.menu_finish_study_day);
+        if (finishStudyDayItem != null) {
+            boolean canFinishStudyDay = AlarmHandler.canFinishCurrentStudyDay(this);
+            finishStudyDayItem.setEnabled(canFinishStudyDay);
+            finishStudyDayItem.setTitle(createFinishStudyDayMenuTitle(canFinishStudyDay));
+
+            Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_check_circle_24dp);
+            if (icon != null) {
+                icon.mutate().setTint(ContextCompat.getColor(this, canFinishStudyDay ? R.color.md_theme_error : R.color.colorGrey500));
+                finishStudyDayItem.setIcon(icon);
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -263,10 +291,27 @@ public class MainActivity extends AppCompatActivity {
             Intent tutorialIntent = new Intent(this, SlideShowActivity.class);
             tutorialIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_TUTORIAL_SLIDES);
             startActivity(tutorialIntent);
+        } else if (itemId == R.id.menu_study_information) {
+            showStudyInformationDialog();
+        } else if (itemId == R.id.menu_finish_study_day) {
+            requestFinishStudyDay();
         } else if (itemId == R.id.menu_app_info) {
             showAppInfoDialog();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private CharSequence createFinishStudyDayMenuTitle(boolean isEnabled) {
+        SpannableString title = new SpannableString(getString(R.string.menu_finish_study_day));
+        if (isEnabled) {
+            title.setSpan(
+                    new ForegroundColorSpan(getColor(R.color.md_theme_error)),
+                    0,
+                    title.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        return title;
     }
 
     private void requestReregistration() {
@@ -322,6 +367,124 @@ public class MainActivity extends AppCompatActivity {
         boolean fileWereDeleted = LoggerUtil.deleteLogFiles(this);
         String msg = fileWereDeleted ? getString(R.string.message_all_log_files_deleted) : getString(R.string.message_not_all_log_files_deleted);
         Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void requestFinishStudyDay() {
+        if (!AlarmHandler.canFinishCurrentStudyDay(this)) {
+            invalidateOptionsMenu();
+            return;
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.title_finish_study_day)
+                .setMessage(R.string.message_finish_study_day)
+                .setNegativeButton(R.string.button_keep_samples, null)
+                .setPositiveButton(R.string.button_finish_day, (dialogInterface, which) -> finishStudyDay())
+                .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.md_theme_error));
+    }
+
+    private void finishStudyDay() {
+        if (AlarmHandler.finishCurrentStudyDay(this)) {
+            Snackbar.make(coordinatorLayout, R.string.message_study_day_finished, Snackbar.LENGTH_SHORT).show();
+            navigate(R.id.navigation_alarm);
+        }
+        invalidateOptionsMenu();
+    }
+
+    private void showStudyInformationDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.widget_study_information_dialog, null);
+
+        setDetailRow(dialogView, R.id.row_study_name, R.string.label_study_name, getPreferenceString(Constants.PREF_STUDY_NAME));
+        setDetailRow(dialogView, R.id.row_participant_id, R.string.label_participant_id, getPreferenceString(Constants.PREF_PARTICIPANT_ID));
+        setDetailRow(dialogView, R.id.row_study_days, R.string.label_study_days, String.valueOf(sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0)));
+        setDetailRow(dialogView, R.id.row_contact_email, R.string.label_contact_email, getPreferenceString(Constants.PREF_SHARE_EMAIL_ADDRESS));
+        setDetailRow(dialogView, R.id.row_interval_samples, R.string.label_interval_samples, formatIntervalSamples(sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "")));
+        setDetailRow(dialogView, R.id.row_fixed_sample_times, R.string.label_fixed_sample_times, formatFixedSampleTimes(sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")));
+        setDetailRow(dialogView, R.id.row_evening_sample, R.string.label_evening_sample, getString(sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false) ? R.string.yes : R.string.no));
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.title_study_information)
+                .setView(dialogView)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    private void setDetailRow(View root, int rowId, int labelId, String value) {
+        View row = root.findViewById(rowId);
+        TextView labelView = row.findViewById(R.id.tv_detail_label);
+        TextView valueView = row.findViewById(R.id.tv_detail_value);
+        labelView.setText(labelId);
+        valueView.setText(value);
+    }
+
+    private String getPreferenceString(String key) {
+        String value = sharedPreferences.getString(key, "");
+        if (value == null || value.trim().isEmpty()) {
+            return "-";
+        }
+        return value.trim();
+    }
+
+    private String formatIntervalSamples(String intervalSamples) {
+        List<String> values = splitPreferenceList(intervalSamples);
+        if (values.isEmpty()) {
+            return "-";
+        }
+
+        List<String> formattedValues = new ArrayList<>();
+        for (String value : values) {
+            formattedValues.add(value + " min");
+        }
+        return String.join(", ", formattedValues);
+    }
+
+    private String formatFixedSampleTimes(String fixedSampleTimes) {
+        List<String> values = splitPreferenceList(fixedSampleTimes);
+        if (values.isEmpty()) {
+            return getString(R.string.message_no_fixed_sample_times);
+        }
+
+        List<String> formattedTimes = new ArrayList<>();
+        for (String value : values) {
+            formattedTimes.add(formatFixedSampleTime(value));
+        }
+        return String.join(", ", formattedTimes);
+    }
+
+    private List<String> splitPreferenceList(String value) {
+        List<String> values = new ArrayList<>();
+        if (value == null || value.trim().isEmpty()) {
+            return values;
+        }
+
+        String[] parts = value.split(Constants.QR_PARSER_LIST_SEPARATOR);
+        for (String part : parts) {
+            String trimmedValue = part.trim();
+            if (!trimmedValue.isEmpty()) {
+                values.add(trimmedValue);
+            }
+        }
+        return values;
+    }
+
+    private String formatFixedSampleTime(String value) {
+        if (value.length() != 4) {
+            return value;
+        }
+
+        try {
+            int hour = Integer.parseInt(value.substring(0, 2));
+            int minute = Integer.parseInt(value.substring(2, 4));
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            return new SimpleDateFormat("h:mm a", Locale.getDefault()).format(calendar.getTime());
+        } catch (NumberFormatException e) {
+            return value;
+        }
     }
 
     public void showKillWarningDialog() {

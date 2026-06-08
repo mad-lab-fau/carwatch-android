@@ -47,7 +47,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
         boolean firstAlarmProcessAlreadyFinished = false;
-        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+        boolean dayWasManuallyAdvanced = sharedPreferences.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
+        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + (dayWasManuallyAdvanced ? 0 : 1);
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
         boolean studyIsFinished = dayCounter > numDays;
         boolean resetWasSampleTaken = false;
@@ -59,6 +60,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
                     .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
                     .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                     .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                    .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
                     .apply();
 
         } else {

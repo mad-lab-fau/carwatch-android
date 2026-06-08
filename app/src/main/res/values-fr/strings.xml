@@ -21,9 +21,23 @@
     <string name="menu_kill">Arrêter les alarmes</string>
     <string name="menu_reregister">Réenregistrer</string>
     <string name="menu_show_tutorial">Afficher le tutoriel</string>
-    <string name="menu_app_info">Informations</string>
+    <string name="menu_study_information">Informations sur l\'étude</string>
+    <string name="menu_finish_study_day">Terminer la journée d\'étude</string>
+    <string name="menu_app_info">Infos appli</string>
     <string name="title_reregister_ongoing_study">Étude toujours en cours</string>
     <string name="message_reregister_ongoing_study">Votre étude est toujours en cours. Voulez-vous vraiment vous réenregistrer avec un nouveau code QR?</string>
+    <string name="title_study_information">Informations sur l\'étude</string>
+    <string name="label_study_section">Étude</string>
+    <string name="label_contact_email">E-mail de contact</string>
+    <string name="label_sampling_plan">Plan d\'échantillonnage</string>
+    <string name="label_interval_samples">Échantillons à intervalle</string>
+    <string name="label_fixed_sample_times">Heures fixes d\'échantillonnage</string>
+    <string name="message_no_fixed_sample_times">Aucune heure fixe d\'échantillonnage configurée.</string>
+    <string name="title_finish_study_day">Terminer la journée d\'étude?</string>
+    <string name="message_finish_study_day">Tous les échantillons restants pour aujourd\'hui seront annulés et la journée d\'étude sera marquée comme terminée.</string>
+    <string name="button_keep_samples">Garder les échantillons</string>
+    <string name="button_finish_day">Terminer la journée</string>
+    <string name="message_study_day_finished">La journée d\'étude a été marquée comme terminée.</string>
 
     <!-- Delete log files -->
     <string name="hint_clicks_delete_log_files">%1$d clics supplémentaires pour supprimer tous les fichiers journaux.</string>

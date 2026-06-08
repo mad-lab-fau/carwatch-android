@@ -20,9 +20,23 @@
     <string name="menu_kill">Kill Alarms</string>
     <string name="menu_reregister">Reregister</string>
     <string name="menu_show_tutorial">Show Tutorial</string>
-    <string name="menu_app_info">Info</string>
+    <string name="menu_study_information">Study Information</string>
+    <string name="menu_finish_study_day">Finish Study Day</string>
+    <string name="menu_app_info">App Info</string>
     <string name="title_reregister_ongoing_study">Study still ongoing</string>
     <string name="message_reregister_ongoing_study">Your study is still ongoing. Are you sure you want to reregister with a new QR code?</string>
+    <string name="title_study_information">Study Information</string>
+    <string name="label_study_section">Study</string>
+    <string name="label_contact_email">Contact Email</string>
+    <string name="label_sampling_plan">Sampling Plan</string>
+    <string name="label_interval_samples">Interval Samples</string>
+    <string name="label_fixed_sample_times">Fixed Samples Time</string>
+    <string name="message_no_fixed_sample_times">No fixed sample times configured.</string>
+    <string name="title_finish_study_day">Finish study day?</string>
+    <string name="message_finish_study_day">All remaining samples for today will be canceled and the study day will be marked as finished.</string>
+    <string name="button_keep_samples">Keep Samples</string>
+    <string name="button_finish_day">Finish Day</string>
+    <string name="message_study_day_finished">The study day was marked as finished.</string>
 
     <!-- Delete log files -->
     <string name="hint_clicks_delete_log_files">%1$d more clicks to delete all log files.</string>

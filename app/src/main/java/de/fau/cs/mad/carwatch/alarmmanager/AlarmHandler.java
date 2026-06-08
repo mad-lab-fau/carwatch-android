@@ -192,9 +192,90 @@ public class AlarmHandler {
                 .remove(Constants.PREF_CURRENT_NAV_ELEMENT)
                 .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
                 .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .remove(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED)
                 .apply();
 
         setBootCompletedReceiverEnabledSetting(context, false);
+    }
+
+    public static boolean canFinishCurrentStudyDay(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        return dayCounter > 0
+                && !sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                && hasRemainingSamplesForDay(sp, dayCounter);
+    }
+
+    public static boolean finishCurrentStudyDay(Context context) {
+        if (!canFinishCurrentStudyDay(context)) {
+            return false;
+        }
+
+        AlarmRepository repository = AlarmRepository.getInstance(context);
+        try {
+            List<Alarm> alarms = repository.getAll();
+            if (alarms != null) {
+                for (Alarm alarm : alarms) {
+                    TimerHandler.cancelTimer(context, alarm.getId());
+                    if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+                        continue;
+                    }
+
+                    cancelAlarmAtTime(context, alarm.getId());
+                    alarm.setActive(false);
+                    repository.delete(alarm);
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.d(TAG, "Could not finish current study day: failed to get alarms from database");
+            e.printStackTrace();
+            return false;
+        }
+
+        cancelAlarmAtTime(context, Constants.EXTRA_ALARM_ID_EVENING);
+        TimerHandler.cancelTimer(context, Constants.EXTRA_ALARM_ID_EVENING);
+        TimerHandler.finishDay(context);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        int numDays = sp.getInt(Constants.PREF_NUM_DAYS, 0);
+        boolean hasNextDay = dayCounter < numDays;
+        sp.edit()
+                .putInt(Constants.PREF_DAY_COUNTER, dayCounter + 1)
+                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, hasNextDay)
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
+                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .apply();
+
+        return true;
+    }
+
+    private static boolean hasRemainingSamplesForDay(SharedPreferences sp, int dayCounter) {
+        int totalNumSamples = sp.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (totalNumSamples <= 0) {
+            return false;
+        }
+
+        Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        int scannedSamplesForDay = 0;
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            try {
+                int scannedDay = Integer.parseInt(barcode.substring(3, 5));
+                if (scannedDay == dayCounter) {
+                    scannedSamplesForDay++;
+                }
+            } catch (NumberFormatException e) {
+                Log.d(TAG, "Could not parse scanned barcode day from " + barcode);
+            }
+        }
+
+        return scannedSamplesForDay < totalNumSamples;
     }
 
     public static boolean isStudyOngoing(Context context) {
@@ -516,14 +597,11 @@ public class AlarmHandler {
         Period timeDiff = new Period(DateTime.now(), nextRingTime);
         String timeDiffString = formatter.print(timeDiff);
 
-        switch (Locale.getDefault().getLanguage()) {
-            case "de":
-                return (timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString);
-            case "fr":
-                return timeDiffString.isEmpty() ? "" : "pour " + timeDiffString;
-            default:
-                return timeDiffString.isEmpty() ? "" : timeDiffString + " from ";
-        }
+        return switch (Locale.getDefault().getLanguage()) {
+            case "de" -> (timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString);
+            case "fr" -> timeDiffString.isEmpty() ? "" : "pour " + timeDiffString;
+            default -> timeDiffString.isEmpty() ? "" : timeDiffString + " from ";
+        };
     }
 
     private static void logAlarmSet(Alarm alarm, DateTime nextRing) {

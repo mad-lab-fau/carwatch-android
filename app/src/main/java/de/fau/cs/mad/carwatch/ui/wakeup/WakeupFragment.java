@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -76,9 +77,20 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
             DateTime lastWakeUpAlarmRingTime = new DateTime(sp.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
             DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
-            int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+            boolean dayWasManuallyAdvanced = sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
+            int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + (dayWasManuallyAdvanced ? 0 : 1);
             int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
             if (!dayCurrentSalivaAlarmsWereScheduled.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
+                WakeupAlert wakeupAlert = createWakeupAlert(sp);
+                String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+                boolean delayedOnlyWakeupSample = wakeupAlert != null
+                        && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
+                        && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
+                if (delayedOnlyWakeupSample) {
+                    startWakeupSampling(wakeupAlert);
+                    return;
+                }
+
                 showWakeupDialog();
                 return;
             }
@@ -97,8 +109,10 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         if (getContext() == null) {
             return;
         }
-        Drawable icon = getResources().getDrawable(R.drawable.ic_wakeup_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_wakeup_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.wakeup_title))
@@ -106,29 +120,38 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 .setIcon(icon)
                 .setMessage(getString(R.string.wakeup_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                    if (UserPresentService.serviceRunning) {
-                        UserPresentService.stopService(getContext());
-                    }
-
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
                     WakeupAlert wakeupAlert = createWakeupAlert(sp);
-                    initializeDay();
-
-                    String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-                    if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances)) {
-                        saveWakeupAlert(sp, wakeupAlert);
-                        TimerHandler.scheduleSpontaneousAwakeningTimer(getContext());
-                        Intent intent = new Intent(getContext(), BarcodeActivity.class);
-                        intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-                        intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
-                        startActivity(intent);
-                    } else if (wakeupAlert != null) {
-                        showWakeupAlert(wakeupAlert);
-                    } else {
-                        AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
-                    }
+                    startWakeupSampling(wakeupAlert);
                 })
                 .show();
+    }
+
+    private void startWakeupSampling(WakeupAlert wakeupAlert) {
+        if (getContext() == null || getActivity() == null) {
+            return;
+        }
+
+        if (UserPresentService.serviceRunning) {
+            UserPresentService.stopService(getContext());
+        }
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        initializeDay();
+
+        String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances)) {
+            saveWakeupAlert(sp, wakeupAlert);
+            TimerHandler.scheduleSpontaneousAwakeningTimer(getContext());
+            Intent intent = new Intent(getContext(), BarcodeActivity.class);
+            intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
+            startActivity(intent);
+        } else if (wakeupAlert != null) {
+            showWakeupAlert(wakeupAlert);
+        } else {
+            AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
+        }
     }
 
     private WakeupAlert createWakeupAlert(SharedPreferences sp) {
@@ -215,12 +238,14 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         Context context = requireContext();
         AlarmHandler.rescheduleSalivaAlarms(context);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+        boolean dayWasManuallyAdvanced = sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + (dayWasManuallyAdvanced ? 0 : 1);
 
         sp.edit()
                 .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
                 .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                 .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
                 .apply();
 
 

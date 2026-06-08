@@ -51,6 +51,7 @@ public final class Constants {
     public static final String PREF_REREGISTRATION_MODE = "reregistration_mode"; // boolean
     public static final String PREF_WAKEUP_ALERT_TYPE = "wakeup_alert_type"; // String
     public static final String PREF_WAKEUP_DELAYED_SAMPLE_MINUTES = "wakeup_delayed_sample_minutes"; // int
+    public static final String PREF_STUDY_DAY_MANUALLY_ADVANCED = "study_day_manually_advanced"; // boolean
 
     public static final String WAKEUP_ALERT_OVERDUE_SAMPLE = "overdue_sample";
     public static final String WAKEUP_ALERT_DELAYED_SAMPLE = "delayed_sample";

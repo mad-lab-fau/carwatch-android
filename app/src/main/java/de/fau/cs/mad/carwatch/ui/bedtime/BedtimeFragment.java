@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
@@ -132,8 +133,10 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_bedtime_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_bedtime_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
         int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
@@ -165,8 +168,10 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         if (getContext() == null) {
             return;
         }
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.warning_title))

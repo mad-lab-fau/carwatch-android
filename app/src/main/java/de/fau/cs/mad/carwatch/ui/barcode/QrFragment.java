@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -143,8 +144,10 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_qr_code_invalid)

@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.collection.ArraySet;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.mlkit.vision.barcode.common.Barcode;
@@ -117,8 +118,10 @@ public class Ean8Fragment extends BarcodeFragment {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_barcode_invalid)
@@ -293,8 +296,10 @@ public class Ean8Fragment extends BarcodeFragment {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
         new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_barcode_already_scanned)

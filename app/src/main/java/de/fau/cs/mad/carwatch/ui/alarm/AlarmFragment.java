@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -171,7 +172,7 @@ public class AlarmFragment extends Fragment {
     private void setAlarmColor(boolean isActive) {
         // Set alarm TextView colors based on alarm's activity state
         int colorId = isActive ? R.color.colorAccent : R.color.colorGrey500;
-        timeTextView.setTextColor(getResources().getColor(colorId));
+        timeTextView.setTextColor(ContextCompat.getColor(requireContext(), colorId));
     }
 
     private void updateAlarm() {
