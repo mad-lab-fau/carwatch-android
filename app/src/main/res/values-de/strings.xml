@@ -16,6 +16,8 @@
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
     <string name="stop">Stop</string>
     <string name="open_scanner">Scanner öffnen</string>
+    <string name="content_description_sample_taken">Probe genommen</string>
+    <string name="content_description_sample_status">Probenstatus</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d.</string>
     <string name="timer_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe.</string>
     <string name="timer_over_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d jetzt!</string>
@@ -33,6 +35,8 @@
     <string name="menu_reregister">Neu registrieren</string>
     <string name="menu_show_tutorial">Tutorial zeigen</string>
     <string name="menu_app_info">Info</string>
+    <string name="title_reregister_ongoing_study">Studie läuft noch</string>
+    <string name="message_reregister_ongoing_study">Ihre Studie läuft noch. Sind Sie sicher, dass Sie sich mit einem neuen QR-Code neu registrieren möchten?</string>
 
     <!-- Delete log files -->
     <string name="hint_clicks_delete_log_files">Noch %1$d Klicks, um alle Log Dateien zu löschen</string>
@@ -56,6 +60,10 @@
 
     <string name="wakeup_title">Den Morgen beginnen</string>
     <string name="wakeup_text">Wir beginnen nun mit dem Morgenprozedere</string>
+    <string name="title_overdue_sample_pending">Überfällige Probe ausstehend</string>
+    <string name="message_overdue_sample_pending">Es gibt noch mindestens eine überfällige Probe von früher am heutigen Tag. Als Nächstes gelangen Sie zum Zeitplan, wo Sie auswählen können, welche Probe Sie jetzt nehmen möchten.</string>
+    <string name="title_delayed_sample_planned">Verzögerte Probe geplant</string>
+    <string name="message_delayed_sample_planned">Für Ihre Studie ist eine verzögerte Probe geplant. Sie erhalten in %1$d Minuten eine Erinnerung, diese Probe zu nehmen.</string>
     <string name="wakeup_message">Guten Morgen!\nSind Sie gerade aufgewacht?</string>
 
     <string name="bedtime_title">Die Nacht beginnen</string>
@@ -80,6 +88,11 @@
     <string name="app_active">CARWatch Service ist aktiv.</string>
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
+    <string name="title_samples_recorded">Proben erfasst</string>
+    <string name="title_study_finished">Studie abgeschlossen</string>
+    <string name="message_samples_recorded_evening_required">Sie haben alle Proben für heute erfasst, müssen aber heute Abend direkt vor dem Schlafengehen noch eine Abendprobe erfassen.\nBitte stellen Sie unten eine Erinnerung ein.\nBis später!</string>
+    <string name="message_study_finished">Dies war Ihre letzte Probe. Vielen Dank für Ihre Teilnahme an der Studie! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
+    <string name="message_samples_recorded_day_finished">Sie haben die letzte Probe für heute erfasst.\nBis morgen, und vergessen Sie nicht, einen Weckalarm für morgen einzustellen.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
     <string name="hint_clicks_kill_alarms">Noch %1$d Klicks, um alle Alarme zu beenden.</string>
     <string name="title_kill_alarms">Achtung</string>
@@ -93,6 +106,16 @@
     <string name="btn_next">Weiter</string>
     <string name="btn_to_app">Zur App</string>
     <string name="btn_skip_all">Tutorial überspringen</string>
+    <string name="btn_reregister">Neu registrieren</string>
+    <string name="btn_confirm_continue_tutorial">Bestätigen und weiter zum Tutorial</string>
+    <string name="message_study_details_confirmation">Bitte bestätigen Sie, dass diese Studienkonfiguration mit den Informationen übereinstimmt, die Sie erhalten haben, bevor Sie mit dem Tutorial fortfahren.</string>
+    <string name="title_study_configuration">Studienkonfiguration</string>
+    <string name="label_study_name">Studienname</string>
+    <string name="label_participant_id">Teilnehmer-ID</string>
+    <string name="label_study_days">Studientage</string>
+    <string name="label_samples_per_day">Proben pro Tag</string>
+    <string name="label_evening_sample">Abendprobe</string>
+    <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">Das Icon der CARWatch app</string>
     <string name="headline_welcome">Willkommen bei CARWatch!</string>
     <string name="headline_permission_request_slide">Funktionen freischalten!</string>

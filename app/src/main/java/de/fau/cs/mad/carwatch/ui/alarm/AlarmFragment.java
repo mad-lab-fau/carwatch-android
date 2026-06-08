@@ -100,7 +100,7 @@ public class AlarmFragment extends Fragment {
         List<Alarm> sampleAlarms = new ArrayList<>();
 
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        if (salivaDistances.startsWith("0") && sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+        if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances) && sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
             DateTime wakeUpTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE));
             Alarm initialSampleAlarm = new Alarm(
                     wakeUpTime,
@@ -164,7 +164,7 @@ public class AlarmFragment extends Fragment {
 
     private void setInitialSalivaId() {
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        boolean requestSaliva = salivaDistances.startsWith("0");
+        boolean requestSaliva = AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
         alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
     }
 

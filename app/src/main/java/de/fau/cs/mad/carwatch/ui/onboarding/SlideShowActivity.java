@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui.onboarding;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.Observable;
 import androidx.fragment.app.Fragment;
@@ -22,17 +24,19 @@ import androidx.preference.PreferenceManager;
 import androidx.transition.TransitionInflater;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.EndTutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.ParticipantIdQuery;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.StudyDetailsSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.TutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
 import de.fau.cs.mad.carwatch.util.OnSwipeTouchListener;
 
-public class SlideShowActivity extends AppCompatActivity {
+public class SlideShowActivity extends AppCompatActivity implements QrFragment.ScanSuccessListener, StudyDetailsSlide.StudyDetailsActions {
 
     public static final String TAG = SlideShowActivity.class.getSimpleName();
     public static final int SHOW_ALL_SLIDES = 0;
@@ -43,18 +47,22 @@ public class SlideShowActivity extends AppCompatActivity {
     private int slideShowType;
     private int currentSlidePosition = 0;
     private int qrScannerSlidePosition = -1;
+    private int tutorialStartPosition = -1;
+    private int tutorialEndPosition = -1;
     private int numberOfTutorialSlides = 0;
     private boolean canShowNextSlide = false;
     private boolean canShowPreviousSlide = false;
     private SharedPreferences sharedPreferences;
     private Button skipButton;
     private Button nextButton;
+    private View slideNavigation;
     private TabLayout tabDots;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_show);
+        slideNavigation = findViewById(R.id.slide_navigation);
         tabDots = findViewById(R.id.tab_dots);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -69,6 +77,7 @@ public class SlideShowActivity extends AppCompatActivity {
         showSlide(currentSlidePosition);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void addSwipeListener() {
         FragmentContainerView slideShowFragment = findViewById(R.id.slide_show_fragment);
         slideShowFragment.setOnTouchListener(new OnSwipeTouchListener(this) {
@@ -105,26 +114,33 @@ public class SlideShowActivity extends AppCompatActivity {
     private void initializeSlides() {
         numberOfTutorialSlides = 0;
         qrScannerSlidePosition = -1;
+        tutorialStartPosition = -1;
+        tutorialEndPosition = -1;
 
         switch (slideShowType) {
             case SHOW_APP_INITIALIZATION_SLIDES:
                 qrScannerSlidePosition = addSlide(new QrFragment());
                 break;
             case SHOW_TUTORIAL_SLIDES:
-                for (TutorialSlide slide : createTutorialSlides()) {
-                    addSlide(slide);
-                    numberOfTutorialSlides++;
-                }
-                break;
-            default:
-                addSlide(new WelcomeText());
-                addSlide(new PermissionRequest());
-                qrScannerSlidePosition = addSlide(new QrFragment());
+                tutorialStartPosition = slides.size();
                 for (TutorialSlide slide : createTutorialSlides()) {
                     addSlide(slide);
                     numberOfTutorialSlides++;
                 }
                 addSlide(new EndTutorialSlide());
+                tutorialEndPosition = slides.size() - 1;
+                break;
+            default:
+                addSlide(new WelcomeText());
+                addSlide(new PermissionRequest());
+                qrScannerSlidePosition = addSlide(new QrFragment());
+                tutorialStartPosition = slides.size();
+                for (TutorialSlide slide : createTutorialSlides()) {
+                    addSlide(slide);
+                    numberOfTutorialSlides++;
+                }
+                addSlide(new EndTutorialSlide());
+                tutorialEndPosition = slides.size() - 1;
                 break;
         }
     }
@@ -190,8 +206,10 @@ public class SlideShowActivity extends AppCompatActivity {
 
     private void showSlide(int position) {
         WelcomeSlide slide = slides.get(position);
+        setTitle(slide instanceof StudyDetailsSlide ? R.string.title_study_configuration : R.string.app_name);
         initButtonsForSlide(slide);
         replaceFragment(slide.getFragment());
+        updateVisibleDots(position);
         highlightDot(position);
     }
 
@@ -217,9 +235,14 @@ public class SlideShowActivity extends AppCompatActivity {
                 tutorialSlidePos++;
             }
 
+            addSlide(tutorialSlidePos, new StudyDetailsSlide());
+            tutorialSlidePos++;
+
             if (slideShowType == SHOW_ALL_SLIDES) {
                 // recreate tutorial slides after study configuration was loaded
                 recreateTutorialSlides(tutorialSlidePos);
+                tutorialStartPosition = tutorialSlidePos;
+                tutorialEndPosition = slides.size() - 1;
             }
         }
 
@@ -232,6 +255,53 @@ public class SlideShowActivity extends AppCompatActivity {
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, currentSlidePosition).apply();
         setSlideTransition(currentSlidePosition, currentSlidePosition - 1);
         showSlide(currentSlidePosition);
+    }
+
+    @Override
+    public void onQrCodeScanSuccessful() {
+        if (currentSlidePosition == qrScannerSlidePosition && canShowNextSlide) {
+            nextSlide();
+        }
+    }
+
+    @Override
+    public void onReregisterRequested() {
+        if (AlarmHandler.isStudyOngoing(this)) {
+            showReregistrationConfirmationDialog();
+            return;
+        }
+
+        performReregistration();
+    }
+
+    private void showReregistrationConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.title_reregister_ongoing_study)
+                .setMessage(R.string.message_reregister_ongoing_study)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.menu_reregister, (dialog, which) -> performReregistration())
+                .show()
+                .getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(getColor(R.color.md_theme_error));
+    }
+
+    private void performReregistration() {
+        AlarmHandler.resetStudyConfiguration(this);
+        sharedPreferences.edit()
+                .putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE)
+                .putBoolean(Constants.PREF_FIRST_RUN_QR, true)
+                .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)
+                .apply();
+
+        Intent restartIntent = new Intent(this, SlideShowActivity.class);
+        restartIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SHOW_ALL_SLIDES);
+        startActivity(restartIntent);
+        finish();
+    }
+
+    @Override
+    public void onStudyDetailsConfirmed() {
+        nextSlide();
     }
 
     private void setSlideTransition(int positionNextSlide, int positionPrevSlide) {
@@ -249,6 +319,7 @@ public class SlideShowActivity extends AppCompatActivity {
     }
 
     private void initButtonsForSlide(WelcomeSlide slide) {
+        slideNavigation.setVisibility(slide instanceof StudyDetailsSlide ? View.GONE : View.VISIBLE);
         setSkipButtonVisibility(slide.getSkipButtonIsVisible().get());
         slide.getSkipButtonIsVisible().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
@@ -320,6 +391,48 @@ public class SlideShowActivity extends AppCompatActivity {
         }
     }
 
+    private void updateVisibleDots(int position) {
+        if (isInTutorialRange(position)) {
+            for (int i = 0; i < ((LinearLayout) tabDots.getChildAt(0)).getChildCount(); i++) {
+                setDotVisibility(i, tutorialStartPosition <= i && i <= tutorialEndPosition);
+            }
+            return;
+        }
+
+        int firstAccessiblePosition = getFirstAccessibleSlidePosition(position);
+        LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
+        for (int i = 0; i < tabStrip.getChildCount(); i++) {
+            setDotVisibility(i, i >= firstAccessiblePosition);
+        }
+    }
+
+    private boolean isInTutorialRange(int position) {
+        return tutorialStartPosition >= 0
+                && tutorialEndPosition >= tutorialStartPosition
+                && tutorialStartPosition <= position
+                && position <= tutorialEndPosition;
+    }
+
+    private int getFirstAccessibleSlidePosition(int position) {
+        int firstAccessiblePosition = position;
+        while (firstAccessiblePosition > 0
+                && slides.get(firstAccessiblePosition).getCanShowPreviousSlide().get()) {
+            firstAccessiblePosition--;
+        }
+
+        return firstAccessiblePosition;
+    }
+
+    private void setDotVisibility(int position, boolean isVisible) {
+        LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
+        if (position >= tabStrip.getChildCount()) {
+            return;
+        }
+        View tab = tabStrip.getChildAt(position);
+        tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private void prepareTabDot(int position) {
         LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
         View tab = tabStrip.getChildAt(position);

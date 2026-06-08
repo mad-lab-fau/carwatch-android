@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/app_version" />
+        android:text="@string/app_version"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        android:textColor="?attr/colorOnSurface" />
 
     <RelativeLayout
         android:id="@+id/footer"
@@ -18,7 +20,7 @@
         android:layout_margin="16dp"
         android:layout_height="wrap_content">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_ok"
             android:layout_width="100dp"
             android:layout_height="wrap_content"

@@ -22,6 +22,8 @@
     <string name="menu_reregister">Réenregistrer</string>
     <string name="menu_show_tutorial">Afficher le tutoriel</string>
     <string name="menu_app_info">Informations</string>
+    <string name="title_reregister_ongoing_study">Étude toujours en cours</string>
+    <string name="message_reregister_ongoing_study">Votre étude est toujours en cours. Voulez-vous vraiment vous réenregistrer avec un nouveau code QR?</string>
 
     <!-- Delete log files -->
     <string name="hint_clicks_delete_log_files">%1$d clics supplémentaires pour supprimer tous les fichiers journaux.</string>
@@ -32,6 +34,8 @@
 
     <string name="stop">Arrêter</string>
     <string name="open_scanner">Scanner ouvert</string>
+    <string name="content_description_sample_taken">Échantillon prélevé</string>
+    <string name="content_description_sample_status">Statut de l\'échantillon</string>
 
     <string name="title_dashboard">Alarme</string>
     <string name="title_wakeup">Réveil</string>
@@ -53,6 +57,16 @@
     <string name="btn_next">Suivant</string>
     <string name="btn_to_app">Vers l\'application</string>
     <string name="btn_skip_all">Sauter le tutoriel</string>
+    <string name="btn_reregister">Réenregistrer</string>
+    <string name="btn_confirm_continue_tutorial">Confirmer et continuer le tutoriel</string>
+    <string name="message_study_details_confirmation">Veuillez confirmer que cette configuration d\'étude correspond aux informations que vous avez reçues avant de continuer le tutoriel.</string>
+    <string name="title_study_configuration">Configuration de l\'étude</string>
+    <string name="label_study_name">Nom de l\'étude</string>
+    <string name="label_participant_id">ID de participant</string>
+    <string name="label_study_days">Jours d\'étude</string>
+    <string name="label_samples_per_day">Échantillons par jour</string>
+    <string name="label_evening_sample">Échantillon du soir</string>
+    <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">L\'icône de l\'application CARWatch</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
     <string name="headline_permission_request_slide">Déverrouiller les fonctionnalités!</string>
@@ -85,6 +99,11 @@
     <string name="title_barcode_invalid">Code-barres invalide</string>
     <string name="title_qr_code_invalid">Code-QR invalide</string>
     <string name="message_barcode_invalid">Code-barres invalide! Veuillez scanner l\'étiquette de code-barres correcte sur le tube à salive.</string>
+    <string name="title_samples_recorded">Échantillons enregistrés</string>
+    <string name="title_study_finished">Étude terminée</string>
+    <string name="message_samples_recorded_evening_required">Vous avez enregistré tous les échantillons de la journée, mais vous devez encore enregistrer un échantillon du soir ce soir juste avant d\'aller vous coucher.\nVeuillez définir un rappel ci-dessous.\nÀ plus tard!</string>
+    <string name="message_study_finished">C\'était votre dernier échantillon. Merci d\'avoir participé à l\'étude! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
+    <string name="message_samples_recorded_day_finished">Vous avez enregistré le dernier échantillon d\'aujourd\'hui.\nÀ demain, et n\'oubliez pas de régler un réveil pour demain.</string>
 
 
     <string name="title_alarm_reminder">Alarme réglée</string>
@@ -98,6 +117,10 @@
 
     <string name="wakeup_title">Commencer l\'échantillonnage du matin</string>
     <string name="wakeup_text">Nous allons maintenant procéder aux prélèvements des échantillons de salive du matin</string>
+    <string name="title_overdue_sample_pending">Échantillon en retard en attente</string>
+    <string name="message_overdue_sample_pending">Vous avez encore au moins un échantillon en retard plus tôt aujourd\'hui. Vous allez ensuite être redirigé vers l\'écran du programme, où vous pourrez choisir quel échantillon prendre maintenant.</string>
+    <string name="title_delayed_sample_planned">Échantillon différé prévu</string>
+    <string name="message_delayed_sample_planned">Un échantillon différé est prévu pour votre étude. Vous recevrez un rappel pour prendre cet échantillon dans %1$d minutes.</string>
     <string name="wakeup_message">Bonjour! Venez-vous de vous réveiller ?</string>
 
 

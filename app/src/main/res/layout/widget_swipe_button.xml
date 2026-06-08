@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/swipe_widget_padding"
         android:background="@drawable/shape_button"
+        android:contentDescription="@string/stop"
         android:padding="@dimen/swipe_button_padding"
         android:src="@drawable/ic_ring_black_24dp" />
 

@@ -18,7 +18,7 @@ import static androidx.room.OnConflictStrategy.REPLACE;
  */
 @Dao
 public interface AlarmDao {
-    @Query("SELECT * FROM alarm ORDER BY alarm_is_fixed, alarm_time")
+    @Query("SELECT * FROM alarm ORDER BY alarm_time")
     LiveData<List<Alarm>> getAlarms();
 
     @Query("select * from alarm")

@@ -27,8 +27,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -124,6 +126,149 @@ public class AlarmHandler {
     public static void rescheduleSalivaAlarms(Context context) {
         deleteSalivaAlarms(context);
         scheduleSalivaAlarms(context);
+    }
+
+    public static void resetStudyConfiguration(Context context) {
+        AlarmRepository repository = AlarmRepository.getInstance(context);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
+        AlarmSoundControl.getInstance().stopAlarmSound();
+
+        try {
+            List<Alarm> alarms = repository.getAll();
+
+            if (alarms != null) {
+                for (Alarm alarm : alarms) {
+                    cancelAlarmAtTime(context, alarm.getId());
+                    TimerHandler.cancelTimer(context, alarm.getId());
+
+                    if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+                        alarm.setActive(false);
+                        alarm.setSalivaId(Constants.EXTRA_SALIVA_ID_MANUAL);
+                        alarm.setWasSampleTaken(false);
+                        repository.update(alarm);
+                    } else {
+                        repository.delete(alarm);
+                    }
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.d(TAG, "Could not reset study configuration: failed to get alarms from database");
+            e.printStackTrace();
+        }
+
+        cancelAlarmAtTime(context, Constants.EXTRA_ALARM_ID_INITIAL);
+        cancelAlarmAtTime(context, Constants.EXTRA_ALARM_ID_EVENING);
+        TimerHandler.cancelTimer(context, Constants.EXTRA_ALARM_ID_INITIAL);
+        TimerHandler.cancelTimer(context, Constants.EXTRA_ALARM_ID_EVENING);
+
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE)
+                .putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1)
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putInt(Constants.PREF_DAY_COUNTER, 0)
+                .putBoolean(Constants.PREF_FIRST_RUN_QR, true)
+                .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)
+                .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
+                .putBoolean(Constants.PREF_REREGISTRATION_MODE, true)
+                .remove(Constants.PREF_STUDY_NAME)
+                .remove(Constants.PREF_PARTICIPANT_ID)
+                .remove(Constants.PREF_NUM_PARTICIPANTS)
+                .remove(Constants.PREF_TOTAL_NUM_SAMPLES)
+                .remove(Constants.PREF_SALIVA_DISTANCES)
+                .remove(Constants.PREF_SALIVA_TIMES)
+                .remove(Constants.PREF_NUM_DAYS)
+                .remove(Constants.PREF_HAS_EVENING)
+                .remove(Constants.PREF_SHARE_EMAIL_ADDRESS)
+                .remove(Constants.PREF_CHECK_DUPLICATES)
+                .remove(Constants.PREF_START_SAMPLE)
+                .remove(Constants.PREF_EVENING_SALIVA_ID)
+                .remove(Constants.PREF_EVENING_TAKEN)
+                .remove(Constants.PREF_SCANNED_BARCODES)
+                .remove(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)
+                .remove(Constants.PREF_CURRENT_NAV_ELEMENT)
+                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .apply();
+
+        setBootCompletedReceiverEnabledSetting(context, false);
+    }
+
+    public static boolean isStudyOngoing(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!sp.contains(Constants.PREF_NUM_DAYS)) {
+            return false;
+        }
+
+        int numDays = sp.getInt(Constants.PREF_NUM_DAYS, 0);
+        if (numDays <= 0) {
+            return false;
+        }
+
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        if (dayCounter < numDays) {
+            return true;
+        }
+        if (dayCounter > numDays) {
+            return false;
+        }
+
+        int totalNumSamples = sp.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (totalNumSamples <= 0) {
+            return false;
+        }
+
+        Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        return scannedBarcodes.size() < totalNumSamples * numDays;
+    }
+
+    public static boolean requiresImmediateWakeupSample(String timeDistancesString) {
+        String[] timeDistances = timeDistancesString.split(",");
+        boolean firstDistanceWasZero = false;
+
+        for (String distanceString : timeDistances) {
+            if (distanceString.isEmpty()) {
+                continue;
+            }
+
+            int distance = Integer.parseInt(distanceString);
+            if (!firstDistanceWasZero) {
+                if (distance != 0) {
+                    return false;
+                }
+                firstDistanceWasZero = true;
+                continue;
+            }
+
+            if (distance > 0) {
+                return false;
+            }
+        }
+
+        return firstDistanceWasZero;
+    }
+
+    public static int countMorningSamples(String timeDistancesString) {
+        if (timeDistancesString.isEmpty()) {
+            return 0;
+        }
+
+        if (requiresImmediateWakeupSample(timeDistancesString)) {
+            return 1;
+        }
+
+        int count = 0;
+        for (String distanceString : timeDistancesString.split(",")) {
+            if (distanceString.isEmpty() || distanceString.equals("0")) {
+                continue;
+            }
+            count++;
+        }
+
+        return count;
     }
 
     public static void showMessageSalivaAlarmsScheduled(Context context, View anchor) {
@@ -291,12 +436,15 @@ public class AlarmHandler {
 
         int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
         int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
-        if (timeDistancesString.startsWith("0"))
+        if (requiresImmediateWakeupSample(timeDistancesString))
             // if first sample request has no offset, it was already scheduled with the first alarm
             salivaId++;
 
+        DateTime now = DateTime.now();
         for (int i = 0; i < alarmTimes.size(); i++) {
-            Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++, false);
+            DateTime alarmTime = alarmTimes.get(i);
+            boolean fixedAlarmAlreadyDue = isFixed.get(i) && alarmTime.isBefore(now);
+            Alarm alarm = new Alarm(alarmTime, !fixedAlarmAlreadyDue, isFixed.get(i), id++, salivaId++, false);
             repo.insert(alarm);
             AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
         }

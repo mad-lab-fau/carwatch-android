@@ -67,48 +67,45 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
         boolean hasEveningSalivette = sp.getBoolean(Constants.PREF_HAS_EVENING, false);
 
-        switch (v.getId()) {
-            case R.id.button_no:
-                if (getActivity() != null) {
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
-                    ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
-                }
-                break;
-            case R.id.button_yes:
-                // create Json object and log information
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
-                    LoggerUtil.log(Constants.LOGGER_ACTION_EVENING_SALIVETTE, json);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        int viewId = v.getId();
+        if (viewId == R.id.button_no) {
+            if (getActivity() != null) {
+                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
+                ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
+            }
+        } else if (viewId == R.id.button_yes) {
+            // create Json object and log information
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
+                LoggerUtil.log(Constants.LOGGER_ACTION_EVENING_SALIVETTE, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
-                DateTime date = new DateTime(sp.getLong(Constants.PREF_EVENING_TAKEN, 0));
-                if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-                    showBedtimeWarningDialog();
-                } else {
-                    bedtimeViewModel.setSalivaTaken(true);
-                    if (!UserPresentService.serviceRunning) {
-                        UserPresentService.startService(getContext());
-                    }
-                    showBedtimeDialog(hasEveningSalivette);
+            DateTime date = new DateTime(sp.getLong(Constants.PREF_EVENING_TAKEN, 0));
+            if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
+                showBedtimeWarningDialog();
+            } else {
+                bedtimeViewModel.setSalivaTaken(true);
+                if (!UserPresentService.serviceRunning) {
+                    UserPresentService.startService(getContext());
                 }
+                showBedtimeDialog(hasEveningSalivette);
+            }
 
-                break;
-            case R.id.button_toggle_night_mode:
-                if (getActivity() == null) {
-                    break;
-                }
+        } else if (viewId == R.id.button_toggle_night_mode) {
+            if (getActivity() == null) {
+                return;
+            }
 
-                boolean enableDarkMode = !sp.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
-                sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, enableDarkMode).apply();
-                AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
-                delegate.setLocalNightMode(enableDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
-                delegate.applyDayNight();
-                LoggerUtil.log(enableDarkMode ? Constants.LOGGER_ACTION_LIGHTS_OUT : Constants.LOGGER_ACTION_LIGHTS_ON, new JSONObject());
-                break;
+            boolean enableDarkMode = !sp.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
+            sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, enableDarkMode).apply();
+            AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
+            delegate.setLocalNightMode(enableDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+            delegate.applyDayNight();
+            LoggerUtil.log(enableDarkMode ? Constants.LOGGER_ACTION_LIGHTS_OUT : Constants.LOGGER_ACTION_LIGHTS_ON, new JSONObject());
         }
     }
 

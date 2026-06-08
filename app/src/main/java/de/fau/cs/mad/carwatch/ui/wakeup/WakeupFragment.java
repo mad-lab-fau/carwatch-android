@@ -57,40 +57,39 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button_no:
-                if (getActivity() != null) {
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
-                    ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
-                }
-                break;
-            case R.id.button_yes:
-                // create Json object and log information
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-                    LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        int viewId = v.getId();
+        if (viewId == R.id.button_no) {
+            if (getActivity() != null) {
+                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
+                ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
+            }
+        } else if (viewId == R.id.button_yes) {
+            // create Json object and log information
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+                LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                DateTime lastWakeUpAlarmRingTime = new DateTime(sp.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
-                DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
-                int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
-                int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
-                if (!dayCurrentSalivaAlarmsWereScheduled.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
-                    showWakeupDialog();
-                    break;
-                }
-                if (getActivity() == null)
-                    break;
-                if (dayCounter > numDays) {
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), Snackbar.LENGTH_SHORT).show();
-                } else {
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
-                }
-                break;
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            DateTime lastWakeUpAlarmRingTime = new DateTime(sp.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+            DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
+            int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+            int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
+            if (!dayCurrentSalivaAlarmsWereScheduled.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
+                showWakeupDialog();
+                return;
+            }
+            if (getActivity() == null) {
+                return;
+            }
+            if (dayCounter > numDays) {
+                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), Snackbar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -112,18 +111,103 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     }
 
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    WakeupAlert wakeupAlert = createWakeupAlert(sp);
                     initializeDay();
 
-                    if (sp.getString(Constants.PREF_SALIVA_DISTANCES, "").startsWith("0")) {
+                    String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+                    if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances)) {
+                        saveWakeupAlert(sp, wakeupAlert);
                         TimerHandler.scheduleSpontaneousAwakeningTimer(getContext());
                         Intent intent = new Intent(getContext(), BarcodeActivity.class);
                         intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
                         intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
                         startActivity(intent);
+                    } else if (wakeupAlert != null) {
+                        showWakeupAlert(wakeupAlert);
                     } else {
                         AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
                     }
                 })
+                .show();
+    }
+
+    private WakeupAlert createWakeupAlert(SharedPreferences sp) {
+        if (hasOverdueFixedSample(sp)) {
+            return new WakeupAlert(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE, 0);
+        }
+
+        int delayedSampleMinutes = getNextDelayedSampleMinutes(sp);
+        if (delayedSampleMinutes > 0) {
+            return new WakeupAlert(Constants.WAKEUP_ALERT_DELAYED_SAMPLE, delayedSampleMinutes);
+        }
+
+        return null;
+    }
+
+    private boolean hasOverdueFixedSample(SharedPreferences sp) {
+        String fixedTimesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        DateTime now = DateTime.now();
+
+        for (String timeRaw : fixedTimesString.split(",")) {
+            if (timeRaw.isEmpty()) {
+                continue;
+            }
+
+            String time = timeRaw.substring(0, 2) + ":" + timeRaw.substring(2);
+            DateTime sampleTime = now.withTime(LocalTime.parse(time));
+            if (sampleTime.isBefore(now)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int getNextDelayedSampleMinutes(SharedPreferences sp) {
+        String timeDistancesString = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+
+        for (String distanceString : timeDistancesString.split(",")) {
+            if (distanceString.isEmpty() || distanceString.equals("0")) {
+                continue;
+            }
+
+            return Integer.parseInt(distanceString);
+        }
+
+        return 0;
+    }
+
+    private void saveWakeupAlert(SharedPreferences sp, WakeupAlert wakeupAlert) {
+        if (wakeupAlert == null) {
+            sp.edit()
+                    .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                    .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                    .apply();
+            return;
+        }
+
+        sp.edit()
+                .putString(Constants.PREF_WAKEUP_ALERT_TYPE, wakeupAlert.type)
+                .putInt(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES, wakeupAlert.minutes)
+                .apply();
+    }
+
+    private void showWakeupAlert(WakeupAlert wakeupAlert) {
+        if (getContext() == null || getActivity() == null) {
+            return;
+        }
+
+        int titleId = wakeupAlert.type.equals(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE)
+                ? R.string.title_overdue_sample_pending
+                : R.string.title_delayed_sample_planned;
+        String message = wakeupAlert.type.equals(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE)
+                ? getString(R.string.message_overdue_sample_pending)
+                : getString(R.string.message_delayed_sample_planned, wakeupAlert.minutes);
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(titleId)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, (dialog, which) -> ((MainActivity) getActivity()).navigate(R.id.navigation_alarm))
                 .show();
     }
 
@@ -157,6 +241,16 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static class WakeupAlert {
+        private final String type;
+        private final int minutes;
+
+        private WakeupAlert(String type, int minutes) {
+            this.type = type;
+            this.minutes = minutes;
         }
     }
 }

@@ -10,8 +10,6 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
-
 import java.io.IOException;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -41,7 +39,6 @@ public class AlarmSoundControl {
     /**
      * Play Alarm Sound
      */
-    @RequiresApi(api = Build.VERSION_CODES.P)
     public void playAlarmSound(Context context) {
         Log.d(TAG, "Playing alarm sound");
 

@@ -2,13 +2,38 @@
 <resources>
     <color name="transparent">#00000000</color>
 
-    <color name="colorPrimary">#2196F3</color>
-    <color name="colorPrimaryLight">#81D4FA</color>
-    <color name="colorPrimaryDark">#01579B</color>
-    <color name="colorAccent">#FF9800</color>
+    <color name="md_theme_primary">#006A6A</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#6FF7F6</color>
+    <color name="md_theme_onPrimaryContainer">#002020</color>
+    <color name="md_theme_secondary">#4A6363</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_secondaryContainer">#CCE8E7</color>
+    <color name="md_theme_onSecondaryContainer">#051F1F</color>
+    <color name="md_theme_tertiary">#536178</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#DAE2FF</color>
+    <color name="md_theme_onTertiaryContainer">#101C31</color>
+    <color name="md_theme_error">#BA1A1A</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_background">#FAFDFC</color>
+    <color name="md_theme_onBackground">#191C1C</color>
+    <color name="md_theme_surface">#FAFDFC</color>
+    <color name="md_theme_onSurface">#191C1C</color>
+    <color name="md_theme_surfaceVariant">#DAE5E4</color>
+    <color name="md_theme_onSurfaceVariant">#3F4948</color>
+    <color name="md_theme_outline">#6F7978</color>
+    <color name="md_theme_outlineVariant">#BEC9C8</color>
+    <color name="md_theme_surfaceContainer">#EEF2F1</color>
+    <color name="md_theme_surfaceContainerHigh">#E8ECEB</color>
 
-    <color name="colorGrey300">#E0E0E0</color>
-    <color name="colorGrey500">#9E9E9E</color>
+    <color name="colorPrimary">@color/md_theme_primary</color>
+    <color name="colorPrimaryLight">@color/md_theme_primaryContainer</color>
+    <color name="colorPrimaryDark">#004F4F</color>
+    <color name="colorAccent">@color/md_theme_tertiary</color>
+
+    <color name="colorGrey300">@color/md_theme_outlineVariant</color>
+    <color name="colorGrey500">@color/md_theme_outline</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="colorGreen500">#4CAF50</color>
@@ -20,8 +45,8 @@
     <color name="reticle_ripple">#9AFFFFFF</color>
     <color name="barcode_reticle_background">#99000000</color>
     <color name="barcode_reticle_stroke">#40000000</color>
-    <color name="barcode_field_value">#797979</color>
-    <color name="barcode_field_box_stroke">#757575</color>
+    <color name="barcode_field_value">@color/md_theme_onSurfaceVariant</color>
+    <color name="barcode_field_box_stroke">@color/md_theme_outline</color>
     <color name="dark">#9A000000</color>
 
 </resources>

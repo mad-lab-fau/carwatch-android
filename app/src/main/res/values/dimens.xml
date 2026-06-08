@@ -9,6 +9,7 @@
 
 
     <dimen name="home_icon_size">56dp</dimen>
+    <dimen name="tutorial_text_block_height">150dp</dimen>
 
     <!-- Margins. -->
     <!-- Margin around Alarm item -->
