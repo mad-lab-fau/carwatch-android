@@ -3,13 +3,13 @@
     android:ordering="together">
   <objectAnimator
       android:duration="150"
-      android:interpolator="@interpolator/mtrl_linear_out_slow_in"
+      android:interpolator="@interpolator/carwatch_linear_out_slow_in"
       android:propertyName="scaleX"
       android:valueFrom="0.8"
       android:valueTo="1"/>
   <objectAnimator
       android:duration="150"
-      android:interpolator="@interpolator/mtrl_linear_out_slow_in"
+      android:interpolator="@interpolator/carwatch_linear_out_slow_in"
       android:propertyName="scaleY"
       android:valueFrom="0.8"
       android:valueTo="1"/>
