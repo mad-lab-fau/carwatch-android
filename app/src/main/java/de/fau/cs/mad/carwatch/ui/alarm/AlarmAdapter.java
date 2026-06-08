@@ -17,6 +17,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.R;
@@ -111,6 +112,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void setAlarms(List<Alarm> alarms) {
         localAlarms.clear();
         localAlarms.addAll(alarms);
+        Collections.sort(localAlarms, (left, right) -> {
+            int leftMinuteOfDay = getMinuteOfDay(left);
+            int rightMinuteOfDay = getMinuteOfDay(right);
+            if (leftMinuteOfDay != rightMinuteOfDay) {
+                return Integer.compare(leftMinuteOfDay, rightMinuteOfDay);
+            }
+
+            return Integer.compare(left.getId(), right.getId());
+        });
+    }
+
+    private static int getMinuteOfDay(Alarm alarm) {
+        DateTime time = alarm.getTime();
+        return time.getHourOfDay() * 60 + time.getMinuteOfHour();
     }
 
     private void setSwitchProperties(ViewHolder holder, Alarm item) {

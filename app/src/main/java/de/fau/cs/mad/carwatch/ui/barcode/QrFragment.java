@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
@@ -36,12 +38,31 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
     private SharedPreferences sharedPreferences;
     private final ObservableBoolean isSkipButtonVisible = new ObservableBoolean(false);
     private final ObservableBoolean canShowNextSlide = new ObservableBoolean(false);
+    private ScanSuccessListener scanSuccessListener;
+    private boolean validQrCodeHandled = false;
 
+    public interface ScanSuccessListener {
+        void onQrCodeScanSuccessful();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof ScanSuccessListener) {
+            scanSuccessListener = (ScanSuccessListener) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        scanSuccessListener = null;
     }
 
     @Override
@@ -90,9 +111,17 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
 
             switch (check) {
                 case VALID:
+                    if (validQrCodeHandled) {
+                        return;
+                    }
+                    validQrCodeHandled = true;
+                    workflowModel.setWorkflowState(WorkflowState.SEARCHED);
                     setStudyData(parser);
                     canShowNextSlide.set(true);
                     canShowNextSlide.notifyChange();
+                    if (scanSuccessListener != null) {
+                        scanSuccessListener.onQrCodeScanSuccessful();
+                    }
                     break;
                 case INVALID:
                     try {
@@ -130,7 +159,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
         String salivaTimes = parser.getSalivaTimes();
 
         int numEveningSamples = parser.hasEveningSample() ? 1 : 0;
-        int numMorningSamples = salivaDistances.isEmpty() ? 0 : salivaDistances.split(",").length;
+        int numMorningSamples = AlarmHandler.countMorningSamples(salivaDistances);
         int numFixedSamples = salivaTimes.isEmpty() ? 0 : salivaTimes.split(",").length;
         int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
         int eveningSampleId = parser.hasEveningSample() ? numSamples - 1 : -1;

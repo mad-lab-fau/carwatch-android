@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +14,6 @@ import java.util.concurrent.ExecutionException;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.collection.ArraySet;
 
 import androidx.preference.PreferenceManager;
 import de.fau.cs.mad.carwatch.Constants;
@@ -50,8 +48,7 @@ public class BarcodeActivity extends AppCompatActivity {
             if (alarm != null)
                 salivaId = alarm.getSalivaId();
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
-            e.printStackTrace();
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
         }
 
 
@@ -82,26 +79,12 @@ public class BarcodeActivity extends AppCompatActivity {
             );
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
-        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
-        int numDailySamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
-        int numScannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>()).size();
-        boolean dayFinished = numScannedBarcodes >= numDailySamples * dayCounter;
+        Ean8Fragment fragment = new Ean8Fragment();
+        fragment.setAlarmId(alarmId);
+        fragment.setSalivaId(salivaId);
+        fragment.setCancelAlarmAfterScan(cancelAlarm);
 
-        if (dayFinished) {
-            Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-            icon.setTint(getResources().getColor(R.color.colorPrimary));
-
-            Intent intent = new Intent(BarcodeActivity.this, AlertActivity.class);
-            startActivity(intent);
-        } else {
-            Ean8Fragment fragment = new Ean8Fragment();
-            fragment.setAlarmId(alarmId);
-            fragment.setSalivaId(salivaId);
-            fragment.setCancelAlarmAfterScan(cancelAlarm);
-
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
-        }
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commitAllowingStateLoss();
 
     }
 

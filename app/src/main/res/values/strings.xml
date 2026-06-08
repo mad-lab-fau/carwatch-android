@@ -21,6 +21,8 @@
     <string name="menu_reregister">Reregister</string>
     <string name="menu_show_tutorial">Show Tutorial</string>
     <string name="menu_app_info">Info</string>
+    <string name="title_reregister_ongoing_study">Study still ongoing</string>
+    <string name="message_reregister_ongoing_study">Your study is still ongoing. Are you sure you want to reregister with a new QR code?</string>
 
     <!-- Delete log files -->
     <string name="hint_clicks_delete_log_files">%1$d more clicks to delete all log files.</string>
@@ -32,6 +34,8 @@
     <!-- Notification -->
     <string name="stop">Stop</string>
     <string name="open_scanner">Open scanner</string>
+    <string name="content_description_sample_taken">Sample taken</string>
+    <string name="content_description_sample_status">Sample status</string>
 
     <!-- App Bar Titles -->
     <string name="title_dashboard">Alarm</string>
@@ -61,6 +65,16 @@
     <string name="btn_next">Next</string>
     <string name="btn_to_app">To the App</string>
     <string name="btn_skip_all">Skip tutorial</string>
+    <string name="btn_reregister">Reregister</string>
+    <string name="btn_confirm_continue_tutorial">Confirm &amp; Continue to Tutorial</string>
+    <string name="message_study_details_confirmation">Please confirm that this study configuration matches the information you received before continuing to the tutorial.</string>
+    <string name="title_study_configuration">Study Configuration</string>
+    <string name="label_study_name">Study Name</string>
+    <string name="label_participant_id">Participant ID</string>
+    <string name="label_study_days">Study Days</string>
+    <string name="label_samples_per_day">Samples Per Day</string>
+    <string name="label_evening_sample">Evening Sample</string>
+    <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">The icon of the CARWatch app</string>
     <string name="headline_welcome">Welcome to CARWatch!</string>
     <string name="headline_permission_request_slide">Unlock Features!</string>
@@ -89,6 +103,11 @@
     <string name="title_barcode_invalid">Invalid Barcode</string>
     <string name="title_qr_code_invalid">Invalid QR Code</string>
     <string name="message_barcode_invalid">Invalid Barcode! Please scan the correct barcode label on the saliva tube.</string>
+    <string name="title_samples_recorded">Samples Recorded</string>
+    <string name="title_study_finished">Study Finished</string>
+    <string name="message_samples_recorded_evening_required">You\'ve recorded all samples for the day, but you are still required to record an evening sample tonight right before you go to bed.\nPlease set a reminder below.\nSee you later!</string>
+    <string name="message_study_finished">This was your last sample. Thank you for participating in the study! Please export your logs and send them to your study contact email.</string>
+    <string name="message_samples_recorded_day_finished">You\'ve recorded the last sample for today.\nSee you tomorrow, and don\'t forget to set a wakeup alarm for tomorrow.</string>
 
     <!-- Reminder Dialogs -->
     <string name="title_alarm_reminder">Alarm Set</string>
@@ -102,6 +121,10 @@
     <!-- Wakeup Fragment -->
     <string name="wakeup_title">Start Morning Sampling</string>
     <string name="wakeup_text">We will now begin with collecting the morning saliva samples.</string>
+    <string name="title_overdue_sample_pending">Overdue sample pending</string>
+    <string name="message_overdue_sample_pending">You still have at least one overdue sample from earlier today. Next, you will be taken to the Schedule screen, where you can choose which sample you want to take now.</string>
+    <string name="title_delayed_sample_planned">Delayed sample planned</string>
+    <string name="message_delayed_sample_planned">A delayed sample is planned for your study. You will receive a reminder to take that sample in %1$d minutes.</string>
     <string name="wakeup_message">Good Morning!\nDid you just wake up?</string>
 
     <!-- Bedtime Fragment -->

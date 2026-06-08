@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
@@ -90,9 +90,17 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(NAV_IDS).build();
 
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment == null) {
+            throw new IllegalStateException("Missing navigation host fragment");
+        }
+        navController = navHostFragment.getNavController();
 
-        int currentNavElement = sharedPreferences.getInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0]);
+        int currentNavElement = getIntent().getIntExtra(
+                Constants.EXTRA_TARGET_NAV_ELEMENT,
+                sharedPreferences.getInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0])
+        );
         navigate(currentNavElement);
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -102,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
             Snackbar.make(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), Snackbar.LENGTH_SHORT).show();
         }
+        showPendingWakeupAlert();
+        showEndOfDayAlert();
     }
 
     @Override
@@ -124,6 +134,66 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    private void showPendingWakeupAlert() {
+        String wakeupAlertType = sharedPreferences.getString(Constants.PREF_WAKEUP_ALERT_TYPE, null);
+        if (wakeupAlertType == null) {
+            return;
+        }
+
+        int delayedSampleMinutes = sharedPreferences.getInt(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES, 0);
+        sharedPreferences.edit()
+                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .apply();
+
+        int titleId = wakeupAlertType.equals(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE)
+                ? R.string.title_overdue_sample_pending
+                : R.string.title_delayed_sample_planned;
+        String message = wakeupAlertType.equals(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE)
+                ? getString(R.string.message_overdue_sample_pending)
+                : getString(R.string.message_delayed_sample_planned, delayedSampleMinutes);
+
+        new AlertDialog.Builder(this)
+                .setTitle(titleId)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, (dialog, which) -> navigate(R.id.navigation_alarm))
+                .show();
+    }
+
+    private void showEndOfDayAlert() {
+        if (getIntent() == null) {
+            return;
+        }
+
+        String alertType = getIntent().getStringExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE);
+        if (alertType == null) {
+            return;
+        }
+
+        int titleId;
+        int messageId;
+        switch (alertType) {
+            case Constants.END_OF_DAY_ALERT_EVENING_REQUIRED:
+                titleId = R.string.title_samples_recorded;
+                messageId = R.string.message_samples_recorded_evening_required;
+                break;
+            case Constants.END_OF_DAY_ALERT_STUDY_FINISHED:
+                titleId = R.string.title_study_finished;
+                messageId = R.string.message_study_finished;
+                break;
+            default:
+                titleId = R.string.title_samples_recorded;
+                messageId = R.string.message_samples_recorded_day_finished;
+                break;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(titleId)
+                .setMessage(messageId)
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     public static void initializeLoggingUtil(Context context) {
@@ -155,58 +225,72 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_share:
-                String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
-                String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, null);
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_share) {
+            String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
+            String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, null);
 
-                try {
-                    File zipFile = LoggerUtil.zipDirectory(this, studyName, participantId);
-                    createFileShareDialog(zipFile);
-                } catch (FileNotFoundException e) {
-                    Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.menu_delete_log_files:
-                deleteLogFilesClickCounter++;
-                if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_DELETE_LOG_FILES) {
-                    showDeleteLogFilesWarningDialog();
-                    deleteLogFilesClickCounter = 0;
-                } else if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_TOAST) {
-                    Snackbar.make(
-                            coordinatorLayout,
-                            getString(R.string.hint_clicks_delete_log_files, (CLICK_THRESHOLD_DELETE_LOG_FILES - deleteLogFilesClickCounter)),
-                            Snackbar.LENGTH_SHORT
-                    ).show();
-                }
-                break;
-            case R.id.menu_kill:
-                killAlarmClickCounter++;
-                if (killAlarmClickCounter >= CLICK_THRESHOLD_KILL) {
-                    showKillWarningDialog();
-                    killAlarmClickCounter = 0;
-                } else if (killAlarmClickCounter >= CLICK_THRESHOLD_TOAST) {
-                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - killAlarmClickCounter)), Snackbar.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.menu_reregister:
-                sharedPreferences.edit().clear().apply();
-                Intent intent = new Intent(this, SlideShowActivity.class);
-                intent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_APP_INITIALIZATION_SLIDES);
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.menu_show_tutorial:
-                sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE).apply();
-                Intent tutorialIntent = new Intent(this, SlideShowActivity.class);
-                tutorialIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_TUTORIAL_SLIDES);
-                startActivity(tutorialIntent);
-                break;
-            case R.id.menu_app_info:
-                showAppInfoDialog();
-                break;
+            try {
+                File zipFile = LoggerUtil.zipDirectory(this, studyName, participantId);
+                createFileShareDialog(zipFile);
+            } catch (FileNotFoundException e) {
+                Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
+            }
+        } else if (itemId == R.id.menu_delete_log_files) {
+            deleteLogFilesClickCounter++;
+            if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_DELETE_LOG_FILES) {
+                showDeleteLogFilesWarningDialog();
+                deleteLogFilesClickCounter = 0;
+            } else if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_TOAST) {
+                Snackbar.make(
+                        coordinatorLayout,
+                        getString(R.string.hint_clicks_delete_log_files, (CLICK_THRESHOLD_DELETE_LOG_FILES - deleteLogFilesClickCounter)),
+                        Snackbar.LENGTH_SHORT
+                ).show();
+            }
+        } else if (itemId == R.id.menu_kill) {
+            killAlarmClickCounter++;
+            if (killAlarmClickCounter >= CLICK_THRESHOLD_KILL) {
+                showKillWarningDialog();
+                killAlarmClickCounter = 0;
+            } else if (killAlarmClickCounter >= CLICK_THRESHOLD_TOAST) {
+                Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - killAlarmClickCounter)), Snackbar.LENGTH_SHORT).show();
+            }
+        } else if (itemId == R.id.menu_reregister) {
+            requestReregistration();
+        } else if (itemId == R.id.menu_show_tutorial) {
+            sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE).apply();
+            Intent tutorialIntent = new Intent(this, SlideShowActivity.class);
+            tutorialIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_TUTORIAL_SLIDES);
+            startActivity(tutorialIntent);
+        } else if (itemId == R.id.menu_app_info) {
+            showAppInfoDialog();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void requestReregistration() {
+        if (!AlarmHandler.isStudyOngoing(this)) {
+            performReregistration();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.title_reregister_ongoing_study)
+                .setMessage(R.string.message_reregister_ongoing_study)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.menu_reregister, (dialog, which) -> performReregistration())
+                .show()
+                .getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(getColor(R.color.md_theme_error));
+    }
+
+    private void performReregistration() {
+        AlarmHandler.resetStudyConfiguration(this);
+        Intent intent = new Intent(this, SlideShowActivity.class);
+        intent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_ALL_SLIDES);
+        startActivity(intent);
+        finish();
     }
 
     private void createFileShareDialog(File zipFile) {

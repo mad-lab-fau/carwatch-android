@@ -2,6 +2,8 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,6 +37,7 @@ import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.Workf
 public abstract class BarcodeFragment extends Fragment implements View.OnClickListener, Observer<Barcode> {
 
     private static final String TAG = BarcodeFragment.class.getSimpleName();
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
 
     protected CameraSource cameraSource;
     protected CameraSourcePreview preview;
@@ -93,6 +97,11 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
 
     private void startCameraPreview() {
         if (!workflowModel.isCameraLive() && cameraSource != null) {
+            if (!hasCameraPermission()) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                return;
+            }
+
             try {
                 workflowModel.markCameraLive();
                 preview.start(cameraSource);
@@ -104,7 +113,29 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
                 Log.e(TAG, "Failed to start camera preview!", e);
                 cameraSource.release();
                 cameraSource = null;
+            } catch (RuntimeException e) {
+                Log.e(TAG, "Failed to open camera preview!", e);
+                workflowModel.markCameraFrozen();
             }
+        }
+    }
+
+    private boolean hasCameraPermission() {
+        return getContext() != null
+                && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQUEST_CAMERA_PERMISSION) {
+            return;
+        }
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            currentWorkflowState = WorkflowState.NOT_STARTED;
+            workflowModel.workflowState.setValue(WorkflowState.DETECTING);
         }
     }
 

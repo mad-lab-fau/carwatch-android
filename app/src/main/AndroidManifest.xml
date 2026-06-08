@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="de.fau.cs.mad.carwatch">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -10,6 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" android:minSdkVersion="33" />
@@ -17,6 +17,8 @@
 
     <application
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -45,13 +47,13 @@
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
             android:taskAffinity=""
-            android:turnScreenOn="true" />
+            android:turnScreenOn="true"
+            tools:targetApi="o_mr1" />
 
         <activity
             android:name=".ui.AlertActivity"
             android:launchMode="singleInstance"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Translucent" />
 
         <activity
@@ -64,11 +66,8 @@
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
             android:taskAffinity=""
-            android:turnScreenOn="true" />
-
-        <meta-data
-            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
-            android:value="barcode" />
+            android:turnScreenOn="true"
+            tools:targetApi="o_mr1" />
 
         <provider
             android:name=".logger.GenericFileProvider"
@@ -76,7 +75,7 @@
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:name="androidx.core.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
 
@@ -136,7 +135,12 @@
         <service
             android:name=".userpresent.UserPresentService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Monitor screen lock and user-present events during the active study night" />
+        </service>
 
     </application>
 
