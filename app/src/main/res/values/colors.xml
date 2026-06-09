@@ -33,6 +33,7 @@
     <color name="colorAccent">@color/md_theme_tertiary</color>
     <color name="fab_menu_item_background">#D9E5F3</color>
     <color name="fab_menu_item_content">#38576C</color>
+    <color name="fab_menu_scrim">#66000000</color>
 
     <color name="colorGrey300">@color/md_theme_outlineVariant</color>
     <color name="colorGrey500">@color/md_theme_outline</color>

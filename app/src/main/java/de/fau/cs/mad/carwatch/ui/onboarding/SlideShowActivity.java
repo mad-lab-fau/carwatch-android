@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -323,7 +324,8 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void showReregistrationConfirmationDialog() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.title_reregister_ongoing_study)
                 .setMessage(R.string.message_reregister_ongoing_study)
                 .setNegativeButton(R.string.cancel, null)

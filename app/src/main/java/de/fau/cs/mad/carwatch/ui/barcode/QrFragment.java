@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.collection.ArraySet;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -150,7 +151,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
             icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
 
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.title_qr_code_invalid)
                 .setIcon(icon)
                 .setMessage(R.string.message_qr_code_invalid)

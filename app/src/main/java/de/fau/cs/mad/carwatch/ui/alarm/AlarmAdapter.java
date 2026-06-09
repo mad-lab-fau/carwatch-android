@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.joda.time.DateTime;
 
@@ -172,8 +173,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     private void deactivateAlarm(View view, ViewHolder holder, Alarm alarm) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(view.getContext());
+        AlertDialog.Builder dialogBuilder = new MaterialAlertDialogBuilder(view.getContext());
         AlertDialog dialog = dialogBuilder
+                .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.warning_title)
                 .setMessage(R.string.cancel_saliva_alarm_message)
                 .setNegativeButton(R.string.no, (dialogInterface, i) -> {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Window;
 
 import androidx.annotation.Nullable;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -26,7 +27,7 @@ public class AlertActivity extends AppCompatActivity {
             icon.setTint(ContextCompat.getColor(this, R.color.colorPrimary));
         }
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.warning_title))
                 .setCancelable(false)
                 .setIcon(icon)

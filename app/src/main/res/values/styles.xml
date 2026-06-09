@@ -25,7 +25,7 @@
         <item name="android:navigationBarColor">@color/md_theme_surface</item>
         <item name="android:statusBarColor">@color/md_theme_surface</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Carwatch.MaterialAlertDialog</item>
         <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
         <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
         <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
@@ -55,6 +55,20 @@
         <item name="backgroundTint">@color/button_accent_selector</item>
         <item name="rippleColor">@color/button_accent_ripple_color</item>
         <item name="android:textColor">@color/md_theme_onTertiary</item>
+    </style>
+
+    <style name="ThemeOverlay.Carwatch.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog.Centered">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.Carwatch.AlertDialog</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.Carwatch.AlertDialog.Title</item>
+    </style>
+
+    <style name="ShapeAppearance.Carwatch.AlertDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="TextAppearance.Carwatch.AlertDialog.Title" parent="MaterialAlertDialog.Material3.Title.Text.CenterStacked">
+        <item name="android:textColor">@color/md_theme_onSurface</item>
     </style>
 
     <style name="TextAppearance.Carwatch.Headline" parent="TextAppearance.Material3.TitleLarge" />

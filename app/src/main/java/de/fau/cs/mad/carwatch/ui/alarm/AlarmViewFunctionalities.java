@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.joda.time.DateTime;
 
@@ -40,8 +41,9 @@ public class AlarmViewFunctionalities {
     }
 
     private static void showOpenScannerDialog(Context context, Alarm alarm) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
         AlertDialog dialog = builder
+                .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.warning_title)
                 .setMessage(R.string.open_scanner_before_alarm_message)
                 .setNegativeButton(R.string.no, (dialogInterface, i) -> {})

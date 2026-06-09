@@ -20,6 +20,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -168,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
                 ? getString(R.string.message_overdue_sample_pending)
                 : getString(R.string.message_delayed_sample_planned, delayedSampleMinutes);
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_info_24dp)
                 .setTitle(titleId)
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, (dialog, which) -> navigate(R.id.navigation_alarm))
@@ -201,7 +203,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_check_circle_24dp)
                 .setTitle(titleId)
                 .setMessage(messageId)
                 .setPositiveButton(R.string.ok, null)
@@ -345,7 +348,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.title_reregister_ongoing_study)
                 .setMessage(R.string.message_reregister_ongoing_study)
                 .setNegativeButton(R.string.cancel, null)
@@ -380,8 +384,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDeleteLogFilesWarningDialog() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setCancelable(false)
+                .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.title_delete_log_files)
                 .setMessage(R.string.message_delete_log_files_confirm_dialog)
                 .setPositiveButton(R.string.yes, (dialog, which) -> deleteLogFiles())
@@ -401,7 +406,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_check_circle_24dp)
                 .setTitle(R.string.title_finish_study_day)
                 .setMessage(R.string.message_finish_study_day)
                 .setNegativeButton(R.string.button_keep_samples, null)
@@ -429,7 +435,8 @@ public class MainActivity extends AppCompatActivity {
         setDetailRow(dialogView, R.id.row_fixed_sample_times, R.string.label_fixed_sample_times, formatFixedSampleTimes(sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")));
         setDetailRow(dialogView, R.id.row_evening_sample, R.string.label_evening_sample, getString(sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false) ? R.string.yes : R.string.no));
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_school_24dp)
                 .setTitle(R.string.title_study_information)
                 .setView(dialogView)
                 .setPositiveButton(R.string.ok, null)
@@ -514,8 +521,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showKillWarningDialog() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setCancelable(false)
+                .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(getString(R.string.title_kill_alarms))
                 .setMessage(getString(R.string.message_kill_alarms))
                 .setPositiveButton(R.string.yes, (dialog, which) -> {

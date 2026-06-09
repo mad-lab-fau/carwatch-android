@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -106,7 +107,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
 
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(getString(R.string.wakeup_title))
                 .setCancelable(false)
                 .setIcon(icon)
@@ -224,7 +225,8 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 ? getString(R.string.message_overdue_sample_pending)
                 : getString(R.string.message_delayed_sample_planned, wakeupAlert.minutes);
 
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
+                .setIcon(R.drawable.ic_info_24dp)
                 .setTitle(titleId)
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, (dialog, which) -> ((MainActivity) getActivity()).navigate(R.id.navigation_alarm))

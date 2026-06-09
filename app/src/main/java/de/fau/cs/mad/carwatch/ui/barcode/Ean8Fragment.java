@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.collection.ArraySet;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -123,7 +124,7 @@ public class Ean8Fragment extends BarcodeFragment {
             icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
 
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.title_barcode_invalid)
                 .setIcon(icon)
                 .setMessage(R.string.message_barcode_invalid)
@@ -301,7 +302,7 @@ public class Ean8Fragment extends BarcodeFragment {
             icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
 
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.title_barcode_already_scanned)
                 .setIcon(icon)
                 .setMessage(R.string.message_barcode_already_scanned)
