@@ -75,33 +75,26 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             }
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            DateTime lastWakeUpAlarmRingTime = new DateTime(sp.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
-            DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
-            boolean dayWasManuallyAdvanced = sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
-            int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + (dayWasManuallyAdvanced ? 0 : 1);
+            int dayCounter = getWakeupStudyDay(sp);
             int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
-            if (!dayCurrentSalivaAlarmsWereScheduled.equals(LocalTime.MIDNIGHT.toDateTimeToday()) && dayCounter <= numDays) {
-                WakeupAlert wakeupAlert = createWakeupAlert(sp);
-                String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-                boolean delayedOnlyWakeupSample = wakeupAlert != null
-                        && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
-                        && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
-                if (delayedOnlyWakeupSample) {
-                    startWakeupSampling(wakeupAlert);
-                    return;
-                }
-
-                showWakeupDialog();
-                return;
-            }
-            if (getActivity() == null) {
-                return;
-            }
             if (dayCounter > numDays) {
-                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), Snackbar.LENGTH_SHORT).show();
-            } else {
-                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_already_report_wakeup), Snackbar.LENGTH_SHORT).show();
+                if (getActivity() != null) {
+                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), Snackbar.LENGTH_SHORT).show();
+                }
+                return;
             }
+
+            WakeupAlert wakeupAlert = createWakeupAlert(sp);
+            String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+            boolean delayedOnlyWakeupSample = wakeupAlert != null
+                    && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
+                    && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
+            if (delayedOnlyWakeupSample) {
+                startWakeupSampling(wakeupAlert);
+                return;
+            }
+
+            showWakeupDialog();
         }
     }
 
@@ -157,6 +150,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
     private WakeupAlert createWakeupAlert(SharedPreferences sp) {
         if (hasOverdueFixedSample(sp)) {
             return new WakeupAlert(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE, 0);
+        }
+
+        String timeDistancesString = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        if (AlarmHandler.requiresImmediateWakeupSample(timeDistancesString)) {
+            return null;
         }
 
         int delayedSampleMinutes = getNextDelayedSampleMinutes(sp);
@@ -238,8 +236,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         Context context = requireContext();
         AlarmHandler.rescheduleSalivaAlarms(context);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean dayWasManuallyAdvanced = sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
-        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0) + (dayWasManuallyAdvanced ? 0 : 1);
+        int dayCounter = getWakeupStudyDay(sp);
 
         sp.edit()
                 .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
@@ -267,6 +264,25 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private int getWakeupStudyDay(SharedPreferences sp) {
+        int currentDayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        if (sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false) || isWakeupInitializedToday(sp)) {
+            return Math.max(currentDayCounter, 1);
+        }
+
+        return currentDayCounter + 1;
+    }
+
+    private boolean isWakeupInitializedToday(SharedPreferences sp) {
+        if (!sp.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+            return false;
+        }
+
+        DateTime lastWakeUpAlarmRingTime = new DateTime(sp.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+        DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
+        return dayCurrentSalivaAlarmsWereScheduled.equals(LocalTime.MIDNIGHT.toDateTimeToday());
     }
 
     private static class WakeupAlert {

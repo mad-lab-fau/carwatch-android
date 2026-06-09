@@ -9,10 +9,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.util.concurrent.ExecutionException;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.preference.PreferenceManager;
@@ -34,6 +34,11 @@ public class BarcodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_barcode);
         boolean cancelAlarm = true;
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        HeaderUiHelper.configureTransparentStatusBar(this, sharedPreferences);
+        TextView headerTitle = findViewById(R.id.tv_header_title);
+        headerTitle.setText(R.string.title_activity_scan);
+
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
             cancelAlarm = getIntent().getBooleanExtra(Constants.EXTRA_CANCEL_ALARM, true);
@@ -51,13 +56,6 @@ public class BarcodeActivity extends AppCompatActivity {
             Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
         }
 
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -66,13 +64,11 @@ public class BarcodeActivity extends AppCompatActivity {
                 keyguardManager.requestDismissKeyguard(this, null);
             }
             getWindow().addFlags(
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
             );
         } else {
             getWindow().addFlags(
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN |
                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD

@@ -4,14 +4,8 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,14 +14,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
@@ -61,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
 
     private CoordinatorLayout coordinatorLayout;
+    private FloatingActionButton fabMenuToggle;
+    private View fabMenuScrim;
+    private View fabMenuContainer;
+    private MaterialButton finishStudyDayButton;
+    private TextView headerTitle;
 
     private NavController navController;
 
@@ -82,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate delegate = getDelegate();
         AppCompatDelegate.setDefaultNightMode(sharedPreferences.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
         delegate.applyDayNight();
+        HeaderUiHelper.configureTransparentStatusBar(this, sharedPreferences);
 
         initializeLoggingUtil(this);
 
@@ -95,12 +95,10 @@ public class MainActivity extends AppCompatActivity {
         deleteLogFilesClickCounter = 0;
 
         coordinatorLayout = findViewById(R.id.coordinator);
+        headerTitle = findViewById(R.id.tv_header_title);
+        setupFabMenu();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(NAV_IDS).build();
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
@@ -115,7 +113,10 @@ public class MainActivity extends AppCompatActivity {
         );
         navigate(currentNavElement);
 
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            CharSequence label = destination.getLabel();
+            headerTitle.setText(label == null ? getString(R.string.app_name) : label);
+        });
         NavigationUI.setupWithNavController(navView, navController);
 
 
@@ -228,32 +229,70 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void setupFabMenu() {
+        fabMenuToggle = findViewById(R.id.fab_menu_toggle);
+        fabMenuScrim = findViewById(R.id.fab_menu_scrim);
+        fabMenuContainer = findViewById(R.id.fab_menu_container);
+        finishStudyDayButton = findViewById(R.id.fab_menu_finish_study_day);
+
+        fabMenuToggle.setOnClickListener(view -> openFabMenu());
+        findViewById(R.id.fab_menu_close).setOnClickListener(view -> closeFabMenu());
+        fabMenuScrim.setOnClickListener(view -> closeFabMenu());
+        fabMenuContainer.setOnClickListener(view -> {
+            // Keep taps on menu controls from bubbling to the outside scrim.
+        });
+
+        setFabMenuAction(R.id.fab_menu_share, R.id.menu_share);
+        setFabMenuAction(R.id.fab_menu_delete_logs, R.id.menu_delete_log_files);
+        setFabMenuAction(R.id.fab_menu_kill, R.id.menu_kill);
+        setFabMenuAction(R.id.fab_menu_reregister, R.id.menu_reregister);
+        setFabMenuAction(R.id.fab_menu_show_tutorial, R.id.menu_show_tutorial);
+        setFabMenuAction(R.id.fab_menu_study_information, R.id.menu_study_information);
+        setFabMenuAction(R.id.fab_menu_finish_study_day, R.id.menu_finish_study_day);
+        setFabMenuAction(R.id.fab_menu_app_info, R.id.menu_app_info);
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem finishStudyDayItem = menu.findItem(R.id.menu_finish_study_day);
-        if (finishStudyDayItem != null) {
-            boolean canFinishStudyDay = AlarmHandler.canFinishCurrentStudyDay(this);
-            finishStudyDayItem.setEnabled(canFinishStudyDay);
-            finishStudyDayItem.setTitle(createFinishStudyDayMenuTitle(canFinishStudyDay));
+    private void setFabMenuAction(int buttonId, int menuItemId) {
+        findViewById(buttonId).setOnClickListener(view -> {
+            closeFabMenu();
+            handleMenuAction(menuItemId);
+        });
+    }
 
-            Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_check_circle_24dp);
-            if (icon != null) {
-                icon.mutate().setTint(ContextCompat.getColor(this, canFinishStudyDay ? R.color.md_theme_error : R.color.colorGrey500));
-                finishStudyDayItem.setIcon(icon);
-            }
+    private void openFabMenu() {
+        updateFinishStudyDayFabState();
+        fabMenuToggle.setVisibility(View.GONE);
+        fabMenuScrim.setAlpha(0f);
+        fabMenuContainer.setAlpha(0f);
+        fabMenuContainer.setTranslationY(-12f);
+        fabMenuScrim.setVisibility(View.VISIBLE);
+        fabMenuScrim.animate().alpha(1f).setDuration(120).start();
+        fabMenuContainer.animate().alpha(1f).translationY(0f).setDuration(160).start();
+    }
+
+    private void closeFabMenu() {
+        if (fabMenuScrim.getVisibility() != View.VISIBLE) {
+            return;
         }
-        return super.onPrepareOptionsMenu(menu);
+
+        fabMenuContainer.animate().alpha(0f).translationY(-12f).setDuration(100).start();
+        fabMenuScrim.animate()
+                .alpha(0f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    fabMenuScrim.setVisibility(View.GONE);
+                    fabMenuToggle.setVisibility(View.VISIBLE);
+                })
+                .start();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
+    private void updateFinishStudyDayFabState() {
+        boolean canFinishStudyDay = AlarmHandler.canFinishCurrentStudyDay(this);
+        finishStudyDayButton.setEnabled(canFinishStudyDay);
+        finishStudyDayButton.setAlpha(canFinishStudyDay ? 1f : 0.56f);
+    }
+
+    private void handleMenuAction(int itemId) {
         if (itemId == R.id.menu_share) {
             String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
             String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, null);
@@ -298,20 +337,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.menu_app_info) {
             showAppInfoDialog();
         }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private CharSequence createFinishStudyDayMenuTitle(boolean isEnabled) {
-        SpannableString title = new SpannableString(getString(R.string.menu_finish_study_day));
-        if (isEnabled) {
-            title.setSpan(
-                    new ForegroundColorSpan(getColor(R.color.md_theme_error)),
-                    0,
-                    title.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
-        }
-        return title;
     }
 
     private void requestReregistration() {
@@ -332,6 +357,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void performReregistration() {
         AlarmHandler.resetStudyConfiguration(this);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intent = new Intent(this, SlideShowActivity.class);
         intent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_ALL_SLIDES);
         startActivity(intent);
@@ -389,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(coordinatorLayout, R.string.message_study_day_finished, Snackbar.LENGTH_SHORT).show();
             navigate(R.id.navigation_alarm);
         }
-        invalidateOptionsMenu();
+        updateFinishStudyDayFabState();
     }
 
     private void showStudyInformationDialog() {

@@ -140,18 +140,26 @@ public class AlarmHandler {
             List<Alarm> alarms = repository.getAll();
 
             if (alarms != null) {
+                boolean initialAlarmExists = false;
                 for (Alarm alarm : alarms) {
                     cancelAlarmAtTime(context, alarm.getId());
                     TimerHandler.cancelTimer(context, alarm.getId());
 
                     if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+                        initialAlarmExists = true;
+                        alarm.setTime(Constants.DEFAULT_ALARM_TIME.toDateTimeToday());
                         alarm.setActive(false);
-                        alarm.setSalivaId(Constants.EXTRA_SALIVA_ID_MANUAL);
+                        alarm.setIsFixed(false);
+                        alarm.setSalivaId(Constants.EXTRA_SALIVA_ID_INITIAL);
                         alarm.setWasSampleTaken(false);
                         repository.update(alarm);
                     } else {
                         repository.delete(alarm);
                     }
+                }
+
+                if (!initialAlarmExists) {
+                    repository.insert(new Alarm());
                 }
             }
         } catch (ExecutionException | InterruptedException e) {
@@ -174,6 +182,8 @@ public class AlarmHandler {
                 .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)
                 .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
                 .putBoolean(Constants.PREF_REREGISTRATION_MODE, true)
+                .remove(Constants.PREF_NIGHT_MODE_ENABLED)
+                .remove(Constants.PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS)
                 .remove(Constants.PREF_STUDY_NAME)
                 .remove(Constants.PREF_PARTICIPANT_ID)
                 .remove(Constants.PREF_NUM_PARTICIPANTS)
@@ -308,28 +318,15 @@ public class AlarmHandler {
 
     public static boolean requiresImmediateWakeupSample(String timeDistancesString) {
         String[] timeDistances = timeDistancesString.split(",");
-        boolean firstDistanceWasZero = false;
-
         for (String distanceString : timeDistances) {
             if (distanceString.isEmpty()) {
                 continue;
             }
 
-            int distance = Integer.parseInt(distanceString);
-            if (!firstDistanceWasZero) {
-                if (distance != 0) {
-                    return false;
-                }
-                firstDistanceWasZero = true;
-                continue;
-            }
-
-            if (distance > 0) {
-                return false;
-            }
+            return Integer.parseInt(distanceString) == 0;
         }
 
-        return firstDistanceWasZero;
+        return false;
     }
 
     public static int countMorningSamples(String timeDistancesString) {
@@ -337,11 +334,7 @@ public class AlarmHandler {
             return 0;
         }
 
-        if (requiresImmediateWakeupSample(timeDistancesString)) {
-            return 1;
-        }
-
-        int count = 0;
+        int count = requiresImmediateWakeupSample(timeDistancesString) ? 1 : 0;
         for (String distanceString : timeDistancesString.split(",")) {
             if (distanceString.isEmpty() || distanceString.equals("0")) {
                 continue;

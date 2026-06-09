@@ -57,7 +57,9 @@ public class Utils {
     public static final float ASPECT_RATIO_TOLERANCE = 0.01f;
 
 
-    public static void requestRuntimePermissions(Activity activity) {
+    public static final int REQUEST_CODE_RUNTIME_PERMISSIONS = 0;
+
+    public static boolean requestRuntimePermissions(Activity activity) {
         List<String> allNeededPermissions = new ArrayList<>();
         for (String permission : getRequiredPermissions(activity)) {
             if (checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -67,8 +69,10 @@ public class Utils {
 
         if (!allNeededPermissions.isEmpty()) {
             ActivityCompat.requestPermissions(
-                    activity, allNeededPermissions.toArray(new String[0]), /* requestCode= */ 0);
+                    activity, allNeededPermissions.toArray(new String[0]), REQUEST_CODE_RUNTIME_PERMISSIONS);
+            return true;
         }
+        return false;
     }
 
     public static boolean allPermissionsGranted(Context context) {

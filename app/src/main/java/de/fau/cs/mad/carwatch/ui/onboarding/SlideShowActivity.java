@@ -7,14 +7,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.databinding.Observable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
@@ -25,6 +28,7 @@ import androidx.transition.TransitionInflater;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
+import de.fau.cs.mad.carwatch.ui.HeaderUiHelper;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.EndTutorialSlide;
@@ -35,6 +39,7 @@ import de.fau.cs.mad.carwatch.ui.onboarding.steps.TutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
 import de.fau.cs.mad.carwatch.util.OnSwipeTouchListener;
+import de.fau.cs.mad.carwatch.util.Utils;
 
 public class SlideShowActivity extends AppCompatActivity implements QrFragment.ScanSuccessListener, StudyDetailsSlide.StudyDetailsActions {
 
@@ -57,6 +62,8 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     private Button nextButton;
     private View slideNavigation;
     private TabLayout tabDots;
+    private TextView headerTitle;
+    private boolean waitingForPermissionResult = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +71,10 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         setContentView(R.layout.activity_slide_show);
         slideNavigation = findViewById(R.id.slide_navigation);
         tabDots = findViewById(R.id.tab_dots);
+        headerTitle = findViewById(R.id.tv_header_title);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        HeaderUiHelper.configureTransparentStatusBar(this, sharedPreferences);
         currentSlidePosition = sharedPreferences.getInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE);
 
         slideShowType = getIntent().getIntExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SHOW_ALL_SLIDES);
@@ -206,7 +215,13 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     private void showSlide(int position) {
         WelcomeSlide slide = slides.get(position);
-        setTitle(slide instanceof StudyDetailsSlide ? R.string.title_study_configuration : R.string.app_name);
+        if (slide instanceof StudyDetailsSlide) {
+            headerTitle.setText(R.string.title_study_configuration);
+        } else if (slide instanceof TutorialSlide || slide instanceof EndTutorialSlide) {
+            headerTitle.setText(R.string.title_tutorial);
+        } else {
+            headerTitle.setText(R.string.app_name);
+        }
         initButtonsForSlide(slide);
         replaceFragment(slide.getFragment());
         updateVisibleDots(position);
@@ -224,6 +239,20 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void nextSlide() {
+        WelcomeSlide currentSlide = slides.get(currentSlidePosition);
+        if (currentSlide instanceof PermissionRequest) {
+            boolean permissionDialogShown = Utils.requestRuntimePermissions(this);
+            if (permissionDialogShown) {
+                waitingForPermissionResult = true;
+                nextButton.setEnabled(false);
+                return;
+            }
+        }
+
+        advanceFromCurrentSlide();
+    }
+
+    private void advanceFromCurrentSlide() {
         WelcomeSlide currentSlide = slides.get(currentSlidePosition);
         currentSlide.onSlideFinished();
 
@@ -258,6 +287,25 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != Utils.REQUEST_CODE_RUNTIME_PERMISSIONS || !waitingForPermissionResult) {
+            return;
+        }
+
+        waitingForPermissionResult = false;
+        if (Utils.allPermissionsGranted(this)) {
+            advanceFromCurrentSlide();
+        } else {
+            nextButton.setEnabled(canShowNextSlide);
+        }
+    }
+
+    @Override
     public void onQrCodeScanSuccessful() {
         if (currentSlidePosition == qrScannerSlidePosition && canShowNextSlide) {
             nextSlide();
@@ -287,6 +335,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     private void performReregistration() {
         AlarmHandler.resetStudyConfiguration(this);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         sharedPreferences.edit()
                 .putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE)
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, true)

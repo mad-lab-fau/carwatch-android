@@ -1,6 +1,8 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.Material3.DayNight">
+        <item name="fontFamily">sans</item>
+        <item name="android:fontFamily">sans</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
@@ -23,6 +25,11 @@
         <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
         <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
         <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.Translucent" parent="AppTheme">
@@ -56,6 +63,11 @@
     <style name="ShapeAppearance.Carwatch.Card" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Carwatch.FabMenuItem" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
     </style>
 
 </resources>

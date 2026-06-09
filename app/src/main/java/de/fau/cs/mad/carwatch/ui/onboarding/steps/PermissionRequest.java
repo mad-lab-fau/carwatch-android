@@ -10,8 +10,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import de.fau.cs.mad.carwatch.R;
-import de.fau.cs.mad.carwatch.util.Utils;
-
 /**
  * create an instance of this fragment.
  */
@@ -38,11 +36,6 @@ public class PermissionRequest extends BaseWelcomeSlide {
         }
 
         return root;
-    }
-
-    @Override
-    public void onSlideFinished() {
-        Utils.requestRuntimePermissions(getActivity());
     }
 
     @Override

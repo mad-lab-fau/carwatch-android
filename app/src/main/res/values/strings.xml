@@ -23,6 +23,8 @@
     <string name="menu_study_information">Study Information</string>
     <string name="menu_finish_study_day">Finish Study Day</string>
     <string name="menu_app_info">App Info</string>
+    <string name="content_description_open_fab_menu">Open menu</string>
+    <string name="content_description_close_fab_menu">Close menu</string>
     <string name="title_reregister_ongoing_study">Study still ongoing</string>
     <string name="message_reregister_ongoing_study">Your study is still ongoing. Are you sure you want to reregister with a new QR code?</string>
     <string name="title_study_information">Study Information</string>
@@ -83,6 +85,7 @@
     <string name="btn_confirm_continue_tutorial">Confirm &amp; Continue to Tutorial</string>
     <string name="message_study_details_confirmation">Please confirm that this study configuration matches the information you received before continuing to the tutorial.</string>
     <string name="title_study_configuration">Study Configuration</string>
+    <string name="title_tutorial">Tutorial</string>
     <string name="label_study_name">Study Name</string>
     <string name="label_participant_id">Participant ID</string>
     <string name="label_study_days">Study Days</string>

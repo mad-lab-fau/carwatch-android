@@ -24,6 +24,8 @@
     <string name="menu_study_information">Informations sur l\'étude</string>
     <string name="menu_finish_study_day">Terminer la journée d\'étude</string>
     <string name="menu_app_info">Infos appli</string>
+    <string name="content_description_open_fab_menu">Ouvrir le menu</string>
+    <string name="content_description_close_fab_menu">Fermer le menu</string>
     <string name="title_reregister_ongoing_study">Étude toujours en cours</string>
     <string name="message_reregister_ongoing_study">Votre étude est toujours en cours. Voulez-vous vraiment vous réenregistrer avec un nouveau code QR?</string>
     <string name="title_study_information">Informations sur l\'étude</string>
@@ -75,6 +77,7 @@
     <string name="btn_confirm_continue_tutorial">Confirmer et continuer le tutoriel</string>
     <string name="message_study_details_confirmation">Veuillez confirmer que cette configuration d\'étude correspond aux informations que vous avez reçues avant de continuer le tutoriel.</string>
     <string name="title_study_configuration">Configuration de l\'étude</string>
+    <string name="title_tutorial">Tutoriel</string>
     <string name="label_study_name">Nom de l\'étude</string>
     <string name="label_participant_id">ID de participant</string>
     <string name="label_study_days">Jours d\'étude</string>

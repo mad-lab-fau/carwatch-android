@@ -14,6 +14,7 @@ import com.google.mlkit.vision.barcode.common.Barcode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.collection.ArraySet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -167,6 +168,16 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
         int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
         int eveningSampleId = parser.hasEveningSample() ? numSamples - 1 : -1;
         sharedPreferences.edit()
+                .putInt(Constants.PREF_DAY_COUNTER, 0)
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1)
+                .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
+                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                .putStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>())
+                .remove(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)
+                .remove(Constants.PREF_EVENING_TAKEN)
+                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
                 .putString(Constants.PREF_STUDY_NAME, parser.getStudyName())
                 .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.getNumParticipants())
                 .putString(Constants.PREF_SALIVA_DISTANCES, salivaDistances)
