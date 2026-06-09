@@ -3,23 +3,27 @@
     <style name="AppTheme" parent="Theme.Material3.DayNight">
         <item name="fontFamily">sans</item>
         <item name="android:fontFamily">sans</item>
-        <item name="colorPrimary">#4CDADA</item>
-        <item name="colorOnPrimary">#003737</item>
-        <item name="colorPrimaryVariant">#004F4F</item>
-        <item name="colorPrimaryDark">#4CDADA</item>
-        <item name="colorAccent">#BBC7E5</item>
-        <item name="colorSecondary">#B0CCCB</item>
-        <item name="colorOnSecondary">#1B3535</item>
-        <item name="colorTertiary">#BBC7E5</item>
-        <item name="colorOnTertiary">#253148</item>
-        <item name="colorSurface">#101414</item>
-        <item name="colorOnSurface">#E0E3E2</item>
-        <item name="colorSurfaceVariant">#3F4948</item>
-        <item name="colorOnSurfaceVariant">#BEC9C8</item>
-        <item name="colorOutline">#899392</item>
-        <item name="android:windowBackground">#101414</item>
-        <item name="android:navigationBarColor">#101414</item>
-        <item name="android:statusBarColor">#101414</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorSecondary">@color/md_theme_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer</item>
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_outline</item>
+        <item name="android:windowBackground">@color/md_theme_background</item>
+        <item name="android:navigationBarColor">@color/md_theme_surface</item>
+        <item name="android:statusBarColor">@color/md_theme_surface</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
         <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
@@ -63,6 +67,10 @@
     <style name="ShapeAppearance.Carwatch.Card" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="Widget.Carwatch.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/md_theme_secondaryContainer</item>
     </style>
 
 </resources>

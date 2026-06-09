@@ -62,7 +62,6 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         if (viewId == R.id.button_no) {
             if (getActivity() != null) {
                 Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
-                ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
             }
         } else if (viewId == R.id.button_yes) {
             // create Json object and log information

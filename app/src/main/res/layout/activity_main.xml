@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="?attr/colorSurface"
-            app:itemActiveIndicatorStyle="@style/Widget.Material3.BottomNavigationView.ActiveIndicator"
+            app:itemActiveIndicatorStyle="@style/Widget.Carwatch.BottomNavigationView.ActiveIndicator"
             app:itemIconTint="@color/bottom_nav_item_color"
             app:itemTextColor="@color/bottom_nav_item_color"
             app:menu="@menu/bottom_nav_menu"
@@ -65,14 +65,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_marginTop="76dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="26dp"
         android:contentDescription="@string/content_description_open_fab_menu"
-        app:backgroundTint="?attr/colorSecondaryContainer"
+        app:backgroundTint="@color/fab_menu_item_background"
         app:fabCustomSize="40dp"
         app:maxImageSize="22dp"
         app:srcCompat="@drawable/ic_more_vert_24dp"
-        app:tint="?attr/colorOnSecondaryContainer" />
+        app:tint="@color/fab_menu_item_content" />
 
     <FrameLayout
         android:id="@+id/fab_menu_scrim"
@@ -88,8 +88,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:layout_marginTop="76dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="26dp"
             android:gravity="end"
             android:orientation="vertical">
 
@@ -98,26 +98,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/content_description_close_fab_menu"
-                app:backgroundTint="?attr/colorSecondary"
+                app:backgroundTint="@color/fab_menu_item_background"
                 app:fabCustomSize="48dp"
                 app:maxImageSize="24dp"
                 app:srcCompat="@drawable/ic_close_24dp"
-                app:tint="?attr/colorOnSecondary" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/fab_menu_share"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/menu_share"
-                android:textColor="?attr/colorOnSecondaryContainer"
-                app:backgroundTint="?attr/colorSecondaryContainer"
-                app:icon="@drawable/ic_share_24dp"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconTint="?attr/colorOnSecondaryContainer"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
+                app:tint="@color/fab_menu_item_content" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fab_menu_study_information"
@@ -126,12 +111,12 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/menu_study_information"
-                android:textColor="?attr/colorOnSecondaryContainer"
-                app:backgroundTint="?attr/colorSecondaryContainer"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
                 app:icon="@drawable/ic_school_24dp"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
-                app:iconTint="?attr/colorOnSecondaryContainer"
+                app:iconTint="@color/fab_menu_item_content"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
 
             <com.google.android.material.button.MaterialButton
@@ -141,57 +126,27 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/menu_show_tutorial"
-                android:textColor="?attr/colorOnSecondaryContainer"
-                app:backgroundTint="?attr/colorSecondaryContainer"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
                 app:icon="@drawable/ic_help_24dp"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
-                app:iconTint="?attr/colorOnSecondaryContainer"
+                app:iconTint="@color/fab_menu_item_content"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/fab_menu_reregister"
+                android:id="@+id/fab_menu_share"
                 style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
-                android:text="@string/menu_reregister"
-                android:textColor="?attr/colorOnSecondaryContainer"
-                app:backgroundTint="?attr/colorSecondaryContainer"
-                app:icon="@drawable/ic_restart_24dp"
+                android:text="@string/menu_share"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
+                app:icon="@drawable/ic_share_24dp"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
-                app:iconTint="?attr/colorOnSecondaryContainer"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/fab_menu_app_info"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/menu_app_info"
-                android:textColor="?attr/colorOnSecondaryContainer"
-                app:backgroundTint="?attr/colorSecondaryContainer"
-                app:icon="@drawable/ic_help_24dp"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconTint="?attr/colorOnSecondaryContainer"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/fab_menu_delete_logs"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/menu_delete_logs"
-                android:textColor="?attr/colorOnSecondaryContainer"
-                app:backgroundTint="?attr/colorSecondaryContainer"
-                app:icon="@drawable/ic_delete_24dp"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconTint="?attr/colorOnSecondaryContainer"
+                app:iconTint="@color/fab_menu_item_content"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
 
             <com.google.android.material.button.MaterialButton
@@ -201,12 +156,42 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/menu_kill"
-                android:textColor="?attr/colorOnSecondaryContainer"
-                app:backgroundTint="?attr/colorSecondaryContainer"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
                 app:icon="@drawable/ic_warning_24dp"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
-                app:iconTint="?attr/colorOnSecondaryContainer"
+                app:iconTint="@color/fab_menu_item_content"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fab_menu_reregister"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/menu_reregister"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
+                app:icon="@drawable/ic_restart_24dp"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/fab_menu_item_content"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fab_menu_delete_logs"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/menu_delete_logs"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
+                app:icon="@drawable/ic_delete_24dp"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/fab_menu_item_content"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
 
             <com.google.android.material.button.MaterialButton
@@ -217,11 +202,26 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/menu_finish_study_day"
                 android:textColor="@color/md_theme_error"
-                app:backgroundTint="?attr/colorSecondaryContainer"
+                app:backgroundTint="@color/fab_menu_item_background"
                 app:icon="@drawable/ic_check_circle_24dp"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"
                 app:iconTint="@color/md_theme_error"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fab_menu_app_info"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/menu_app_info"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
+                app:icon="@drawable/ic_info_24dp"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/fab_menu_item_content"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
 
         </LinearLayout>
