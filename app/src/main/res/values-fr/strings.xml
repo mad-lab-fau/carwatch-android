@@ -42,7 +42,6 @@
     <string name="message_study_day_finished">La journée d\'étude a été marquée comme terminée.</string>
 
     <!-- Delete log files -->
-    <string name="hint_clicks_delete_log_files">%1$d clics supplémentaires pour supprimer tous les fichiers journaux.</string>
     <string name="title_delete_log_files">Supprimer les fichiers journaux</string>
     <string name="message_delete_log_files_confirm_dialog">Êtes-vous sûr de vouloir supprimer tous les fichiers journaux existants? Cette action ne peut pas être annulée!</string>
     <string name="message_all_log_files_deleted">Tous les journaux ont été supprimés avec succès.</string>
@@ -167,7 +166,6 @@
 
     <string name="title_share_dialog">Partager les données via…</string>
 
-    <string name="hint_clicks_kill_alarms">%1$d clics supplémentaires pour annuler toutes les alarmes.</string>
 
     <string name="yes">Oui</string>
     <string name="no">Non</string>

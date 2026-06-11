@@ -55,7 +55,6 @@
     <string name="message_study_day_finished">Der Studientag wurde als abgeschlossen markiert.</string>
 
     <!-- Delete log files -->
-    <string name="hint_clicks_delete_log_files">Noch %1$d Klicks, um alle Log Dateien zu löschen</string>
     <string name="title_delete_log_files">Logs löschen</string>
     <string name="message_delete_log_files_confirm_dialog">Sind Sie sicher, dass Sie alle Log Dateien löschen wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
     <string name="message_all_log_files_deleted">Die Logs wurden gelöscht.</string>
@@ -111,7 +110,6 @@
     <string name="message_study_finished">Dies war Ihre letzte Probe. Vielen Dank für Ihre Teilnahme an der Studie! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
     <string name="message_samples_recorded_day_finished">Sie haben die letzte Probe für heute erfasst.\nBis morgen, und vergessen Sie nicht, einen Weckalarm für morgen einzustellen.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
-    <string name="hint_clicks_kill_alarms">Noch %1$d Klicks, um alle Alarme zu beenden.</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
 

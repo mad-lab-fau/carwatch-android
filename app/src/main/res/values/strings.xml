@@ -41,7 +41,6 @@
     <string name="message_study_day_finished">The study day was marked as finished.</string>
 
     <!-- Delete log files -->
-    <string name="hint_clicks_delete_log_files">%1$d more clicks to delete all log files.</string>
     <string name="title_delete_log_files">Delete logs</string>
     <string name="message_delete_log_files_confirm_dialog">Are you sure to delete all existing log files? This action cannot be undone!</string>
     <string name="message_all_log_files_deleted">All logs were deleted successfully.</string>
@@ -172,7 +171,6 @@
     <string name="title_share_dialog">Share Logs via…</string>
 
 
-    <string name="hint_clicks_kill_alarms">%1$d more clicks to kill all alarms.</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>

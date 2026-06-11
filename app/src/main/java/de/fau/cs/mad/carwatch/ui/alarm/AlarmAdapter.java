@@ -15,7 +15,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -216,7 +216,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     private void deactivateAlarm(View view, ViewHolder holder, Alarm alarm) {
-        AlertDialog.Builder dialogBuilder = new MaterialAlertDialogBuilder(view.getContext());
+        AlertDialog.Builder dialogBuilder = new CarwatchDialogBuilder(view.getContext());
         AlertDialog dialog = dialogBuilder
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.warning_title)

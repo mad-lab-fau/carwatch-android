@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -315,7 +315,7 @@ public class AlarmFragment extends Fragment {
         if (getContext() == null) {
             return;
         }
-        new MaterialAlertDialogBuilder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setIcon(R.drawable.ic_info_24dp)
                 .setTitle(R.string.title_alarm_reminder)
                 .setMessage(R.string.message_alarm_reminder)

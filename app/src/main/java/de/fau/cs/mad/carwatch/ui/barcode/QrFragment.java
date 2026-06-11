@@ -15,7 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.collection.ArraySet;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -151,7 +151,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
             icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
 
-        new MaterialAlertDialogBuilder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(R.string.title_qr_code_invalid)
                 .setIcon(icon)
                 .setMessage(R.string.message_qr_code_invalid)

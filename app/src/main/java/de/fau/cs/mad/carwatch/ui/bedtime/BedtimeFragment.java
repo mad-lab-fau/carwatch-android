@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -142,7 +142,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
         int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
 
-        new MaterialAlertDialogBuilder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(getString(R.string.bedtime_title))
                 .setCancelable(false)
                 .setIcon(icon)
@@ -174,7 +174,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
             icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
         }
 
-        new MaterialAlertDialogBuilder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(getString(R.string.warning_title))
                 .setCancelable(false)
                 .setIcon(icon)

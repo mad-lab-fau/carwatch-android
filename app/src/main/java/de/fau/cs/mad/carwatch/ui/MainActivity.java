@@ -26,7 +26,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -73,12 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
 
-    private int killAlarmClickCounter = 0;
-    private int deleteLogFilesClickCounter = 0;
-    private static final int CLICK_THRESHOLD_TOAST = 2;
-    private static final int CLICK_THRESHOLD_KILL = 5;
-    private static final int CLICK_THRESHOLD_DELETE_LOG_FILES = 5;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,9 +94,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
-        killAlarmClickCounter = 0;
-        deleteLogFilesClickCounter = 0;
 
         coordinatorLayout = findViewById(R.id.coordinator);
         headerTitle = findViewById(R.id.tv_header_title);
@@ -178,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 ? getString(R.string.message_overdue_sample_pending)
                 : getString(R.string.message_delayed_sample_planned, delayedSampleMinutes);
 
-        new MaterialAlertDialogBuilder(this)
+        new CarwatchDialogBuilder(this)
                 .setIcon(R.drawable.ic_info_24dp)
                 .setTitle(titleId)
                 .setMessage(message)
@@ -217,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             icon.setTint(ContextCompat.getColor(this, R.color.colorGreen500));
         }
 
-        new MaterialAlertDialogBuilder(this)
+        new CarwatchDialogBuilder(this)
                 .setIcon(icon)
                 .setTitle(titleId)
                 .setMessage(messageId)
@@ -324,25 +315,9 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(coordinatorLayout, R.string.message_share_logs_failed, Snackbar.LENGTH_SHORT).show();
             }
         } else if (itemId == R.id.menu_delete_log_files) {
-            deleteLogFilesClickCounter++;
-            if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_DELETE_LOG_FILES) {
-                showDeleteLogFilesWarningDialog();
-                deleteLogFilesClickCounter = 0;
-            } else if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_TOAST) {
-                Snackbar.make(
-                        coordinatorLayout,
-                        getString(R.string.hint_clicks_delete_log_files, (CLICK_THRESHOLD_DELETE_LOG_FILES - deleteLogFilesClickCounter)),
-                        Snackbar.LENGTH_SHORT
-                ).show();
-            }
+            showDeleteLogFilesWarningDialog();
         } else if (itemId == R.id.menu_kill) {
-            killAlarmClickCounter++;
-            if (killAlarmClickCounter >= CLICK_THRESHOLD_KILL) {
-                showKillWarningDialog();
-                killAlarmClickCounter = 0;
-            } else if (killAlarmClickCounter >= CLICK_THRESHOLD_TOAST) {
-                Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - killAlarmClickCounter)), Snackbar.LENGTH_SHORT).show();
-            }
+            showKillWarningDialog();
         } else if (itemId == R.id.menu_reregister) {
             requestReregistration();
         } else if (itemId == R.id.menu_show_tutorial) {
@@ -365,15 +340,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        new MaterialAlertDialogBuilder(this)
+        new CarwatchDialogBuilder(this)
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.title_reregister_ongoing_study)
                 .setMessage(R.string.message_reregister_ongoing_study)
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.menu_reregister, (dialog, which) -> performReregistration())
-                .show()
-                .getButton(AlertDialog.BUTTON_POSITIVE)
-                .setTextColor(getColor(R.color.md_theme_error));
+                .show();
     }
 
     private void performReregistration() {
@@ -424,14 +397,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDeleteLogFilesWarningDialog() {
-        new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setCancelable(false)
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.title_delete_log_files)
                 .setMessage(R.string.message_delete_log_files_confirm_dialog)
-                .setPositiveButton(R.string.yes, (dialog, which) -> deleteLogFiles())
-                .setNegativeButton(R.string.cancel, ((dialog, which) -> { }))
+                .setPositiveButton(R.string.menu_delete_logs, (dialogInterface, which) -> deleteLogFiles())
+                .setNegativeButton(R.string.cancel, ((dialogInterface, which) -> { }))
                 .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.md_theme_error));
     }
 
     private void deleteLogFiles() {
@@ -446,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setIcon(R.drawable.ic_check_circle_24dp)
                 .setTitle(R.string.title_finish_study_day)
                 .setMessage(R.string.message_finish_study_day)
@@ -477,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
         setDetailRow(dialogView, R.id.row_fixed_sample_times, R.string.label_fixed_sample_times, formatFixedSampleTimes(sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")));
         setDetailRow(dialogView, R.id.row_evening_sample, R.string.label_evening_sample, getString(sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false) ? R.string.yes : R.string.no));
 
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setIcon(icon)
                 .setTitle(R.string.title_study_information)
                 .setView(dialogView)
@@ -567,21 +541,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showKillWarningDialog() {
-        new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setCancelable(false)
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(getString(R.string.title_kill_alarms))
                 .setMessage(getString(R.string.message_kill_alarms))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                .setPositiveButton(R.string.menu_kill, (dialogInterface, which) -> {
                     AlarmHandler.killAll(getApplication());
                     AlarmSoundControl.getInstance().stopAlarmSound();
                     NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                     if (notificationManager != null)
                         notificationManager.cancelAll();
                 })
-                .setNegativeButton(R.string.cancel, ((dialog, which) -> {
+                .setNegativeButton(R.string.cancel, ((dialogInterface, which) -> {
                 }))
                 .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.md_theme_error));
     }
 
     private void showAppInfoDialog() {

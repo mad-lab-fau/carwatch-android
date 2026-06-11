@@ -59,7 +59,7 @@ public class Utils {
 
     public static boolean requestRuntimePermissions(Activity activity) {
         List<String> allNeededPermissions = new ArrayList<>();
-        for (String permission : getRuntimePermissions()) {
+        for (String permission : getRuntimePermissionsToRequest()) {
             if (checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
                 allNeededPermissions.add(permission);
             }
@@ -74,7 +74,7 @@ public class Utils {
     }
 
     public static boolean allPermissionsGranted(Context context) {
-        for (String permission : getRuntimePermissions()) {
+        for (String permission : getRequiredRuntimePermissions()) {
             if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
@@ -104,7 +104,14 @@ public class Utils {
         return true;
     }
 
-    private static String[] getRuntimePermissions() {
+    private static String[] getRequiredRuntimePermissions() {
+        List<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.CAMERA);
+
+        return permissions.toArray(new String[0]);
+    }
+
+    private static String[] getRuntimePermissionsToRequest() {
         List<String> permissions = new ArrayList<>();
         permissions.add(Manifest.permission.CAMERA);
 

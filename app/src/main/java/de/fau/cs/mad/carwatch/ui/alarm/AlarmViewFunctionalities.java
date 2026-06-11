@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
 
@@ -41,7 +41,7 @@ public class AlarmViewFunctionalities {
     }
 
     private static void showOpenScannerDialog(Context context, Alarm alarm) {
-        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
+        AlertDialog.Builder builder = new CarwatchDialogBuilder(context);
         AlertDialog dialog = builder
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.warning_title)

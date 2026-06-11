@@ -2,7 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="alarm_content_list_offset">64dp</dimen>
+    <dimen name="alarm_content_list_offset">150dp</dimen>
     <dimen name="home_vertical_center_offset">60dp</dimen>
 
     <dimen name="swipe_button_height">72dp</dimen>
