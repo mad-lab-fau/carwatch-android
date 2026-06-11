@@ -39,6 +39,7 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.BootCompletedReceiver;
+import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 import de.fau.cs.mad.carwatch.util.Utils;
 
@@ -135,6 +136,7 @@ public class AlarmHandler {
             notificationManager.cancelAll();
         }
         AlarmSoundControl.getInstance().stopAlarmSound();
+        UserPresentService.stopService(context);
 
         try {
             List<Alarm> alarms = repository.getAll();
@@ -174,6 +176,7 @@ public class AlarmHandler {
 
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
+                .clear()
                 .putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE)
                 .putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1)
                 .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
@@ -182,27 +185,6 @@ public class AlarmHandler {
                 .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)
                 .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
                 .putBoolean(Constants.PREF_REREGISTRATION_MODE, true)
-                .remove(Constants.PREF_NIGHT_MODE_ENABLED)
-                .remove(Constants.PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS)
-                .remove(Constants.PREF_STUDY_NAME)
-                .remove(Constants.PREF_PARTICIPANT_ID)
-                .remove(Constants.PREF_NUM_PARTICIPANTS)
-                .remove(Constants.PREF_TOTAL_NUM_SAMPLES)
-                .remove(Constants.PREF_SALIVA_DISTANCES)
-                .remove(Constants.PREF_SALIVA_TIMES)
-                .remove(Constants.PREF_NUM_DAYS)
-                .remove(Constants.PREF_HAS_EVENING)
-                .remove(Constants.PREF_SHARE_EMAIL_ADDRESS)
-                .remove(Constants.PREF_CHECK_DUPLICATES)
-                .remove(Constants.PREF_START_SAMPLE)
-                .remove(Constants.PREF_EVENING_SALIVA_ID)
-                .remove(Constants.PREF_EVENING_TAKEN)
-                .remove(Constants.PREF_SCANNED_BARCODES)
-                .remove(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)
-                .remove(Constants.PREF_CURRENT_NAV_ELEMENT)
-                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
-                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
-                .remove(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED)
                 .apply();
 
         setBootCompletedReceiverEnabledSetting(context, false);

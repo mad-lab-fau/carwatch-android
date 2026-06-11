@@ -1,6 +1,5 @@
 package de.fau.cs.mad.carwatch.ui.onboarding.steps;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,33 +9,14 @@ import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.button.MaterialButton;
-
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 
 public class StudyDetailsSlide extends BaseWelcomeSlide {
 
-    private StudyDetailsActions studyDetailsActions;
-
-    public interface StudyDetailsActions {
-        void onReregisterRequested();
-
-        void onStudyDetailsConfirmed();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof StudyDetailsActions) {
-            studyDetailsActions = (StudyDetailsActions) context;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        studyDetailsActions = null;
+    public StudyDetailsSlide() {
+        super();
+        canShowNextSlide.set(true);
     }
 
     @Override
@@ -58,20 +38,6 @@ public class StudyDetailsSlide extends BaseWelcomeSlide {
         setDetailRow(root, R.id.row_study_days, R.string.label_study_days, String.valueOf(studyDays));
         setDetailRow(root, R.id.row_samples_per_day, R.string.label_samples_per_day, String.valueOf(samplesPerDay));
         setDetailRow(root, R.id.row_evening_sample, R.string.label_evening_sample, getString(hasEveningSample ? R.string.yes : R.string.no));
-
-        MaterialButton reregisterButton = root.findViewById(R.id.btn_reregister);
-        MaterialButton confirmButton = root.findViewById(R.id.btn_confirm_study_details);
-
-        reregisterButton.setOnClickListener(view -> {
-            if (studyDetailsActions != null) {
-                studyDetailsActions.onReregisterRequested();
-            }
-        });
-        confirmButton.setOnClickListener(view -> {
-            if (studyDetailsActions != null) {
-                studyDetailsActions.onStudyDetailsConfirmed();
-            }
-        });
 
         return root;
     }

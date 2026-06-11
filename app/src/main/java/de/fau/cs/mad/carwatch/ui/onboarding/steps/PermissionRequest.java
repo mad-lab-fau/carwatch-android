@@ -7,18 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.annotation.Nullable;
-
 import de.fau.cs.mad.carwatch.R;
 /**
  * create an instance of this fragment.
  */
 public class PermissionRequest extends BaseWelcomeSlide {
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public PermissionRequest() {
+        super();
         canShowNextSlide.set(true);
+        canShowPreviousSlide.set(true);
     }
 
     @Override

@@ -9,10 +9,12 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,11 +111,21 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setVibrate(Constants.VIBRATION_PATTERN)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(context.getString(R.string.alarm_notification_text))
+                .setContentText(getNotificationText(context, alarm))
                 .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();
+    }
+
+    private String getNotificationText(Context context, Alarm alarm) {
+        if (alarm.getSalivaId() < 0) {
+            return context.getString(R.string.alarm_notification_text);
+        }
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
+        return context.getString(R.string.timer_notification_text, alarm.getSalivaId() + startSampleIdx);
     }
 
 

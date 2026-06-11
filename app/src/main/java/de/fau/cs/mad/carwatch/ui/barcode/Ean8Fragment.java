@@ -84,6 +84,7 @@ public class Ean8Fragment extends BarcodeFragment {
                     sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
                     cancelAlarm();
                     cancelTimer(barcode.getValue());
+                    markWakeupRecordedIfNeeded(sharedPreferences);
                     endOfDayAlertType = getEndOfDayAlertType(sharedPreferences);
                     finishScanningProcess();
                     break;
@@ -226,6 +227,25 @@ public class Ean8Fragment extends BarcodeFragment {
         }
 
         sharedPreferences.edit().putLong(Constants.PREF_EVENING_TAKEN, time.getMillis()).apply();
+    }
+
+    private void markWakeupRecordedIfNeeded(SharedPreferences sharedPreferences) {
+        if (alarmId != Constants.EXTRA_ALARM_ID_INITIAL || salivaId != Constants.EXTRA_SALIVA_ID_INITIAL) {
+            return;
+        }
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        sharedPreferences.edit()
+                .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
+                .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                .apply();
     }
 
     private String getEndOfDayAlertType(SharedPreferences sharedPreferences) {

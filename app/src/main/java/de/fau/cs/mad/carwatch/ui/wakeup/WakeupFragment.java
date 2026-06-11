@@ -65,16 +65,12 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
             }
         } else if (viewId == R.id.button_yes) {
-            // create Json object and log information
-            try {
-                JSONObject json = new JSONObject();
-                json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-                LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            if (isWakeupInitializedToday(sp)) {
+                showWakeupAlreadyRecordedMessage();
+                return;
             }
 
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
             int dayCounter = getWakeupStudyDay(sp);
             int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
             if (dayCounter > numDays) {
@@ -95,6 +91,16 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             }
 
             showWakeupDialog();
+        }
+    }
+
+    private void showWakeupAlreadyRecordedMessage() {
+        if (getActivity() != null) {
+            Snackbar.make(
+                    getActivity().findViewById(R.id.coordinator),
+                    getString(R.string.warning_already_report_wakeup),
+                    Snackbar.LENGTH_SHORT
+            ).show();
         }
     }
 
@@ -130,10 +136,10 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         }
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-        initializeDay();
 
         String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
         if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances)) {
+            initializeDay(false);
             saveWakeupAlert(sp, wakeupAlert);
             TimerHandler.scheduleSpontaneousAwakeningTimer(getContext());
             Intent intent = new Intent(getContext(), BarcodeActivity.class);
@@ -141,8 +147,10 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             intent.putExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
             startActivity(intent);
         } else if (wakeupAlert != null) {
+            initializeDay(true);
             showWakeupAlert(wakeupAlert);
         } else {
+            initializeDay(true);
             AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
         }
     }
@@ -233,19 +241,25 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 .show();
     }
 
-    private void initializeDay() {
+    private void initializeDay(boolean wakeupRecorded) {
         Context context = requireContext();
         AlarmHandler.rescheduleSalivaAlarms(context);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         int dayCounter = getWakeupStudyDay(sp);
 
-        sp.edit()
-                .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
+        SharedPreferences.Editor editor = sp.edit()
                 .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                 .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
-                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
-                .apply();
+                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
 
+        if (wakeupRecorded) {
+            logWakeup();
+            editor.putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
+                    .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false);
+        } else {
+            editor.putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, true);
+        }
+        editor.apply();
 
         if (getActivity() == null)
             return;
@@ -269,7 +283,9 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
 
     private int getWakeupStudyDay(SharedPreferences sp) {
         int currentDayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
-        if (sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false) || isWakeupInitializedToday(sp)) {
+        if (sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                || sp.getBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                || isWakeupInitializedToday(sp)) {
             return Math.max(currentDayCounter, 1);
         }
 
@@ -284,6 +300,16 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         DateTime lastWakeUpAlarmRingTime = new DateTime(sp.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
         DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
         return dayCurrentSalivaAlarmsWereScheduled.equals(LocalTime.MIDNIGHT.toDateTimeToday());
+    }
+
+    private void logWakeup() {
+        try {
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private static class WakeupAlert {

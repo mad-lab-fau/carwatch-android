@@ -46,6 +46,7 @@
     <string name="message_delete_log_files_confirm_dialog">Are you sure to delete all existing log files? This action cannot be undone!</string>
     <string name="message_all_log_files_deleted">All logs were deleted successfully.</string>
     <string name="message_not_all_log_files_deleted">Error while deleting the logs. Some log files could not be deleted.</string>
+    <string name="message_share_logs_failed">The log files could not be shared.</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>
@@ -82,7 +83,7 @@
     <string name="btn_to_app">To the App</string>
     <string name="btn_skip_all">Skip tutorial</string>
     <string name="btn_reregister">Reregister</string>
-    <string name="btn_confirm_continue_tutorial">Confirm &amp; Continue to Tutorial</string>
+    <string name="btn_confirm_continue_tutorial">Confirm</string>
     <string name="message_study_details_confirmation">Please confirm that this study configuration matches the information you received before continuing to the tutorial.</string>
     <string name="title_study_configuration">Study Configuration</string>
     <string name="title_tutorial">Tutorial</string>
@@ -152,6 +153,7 @@
     <!-- Alarm Fragment -->
     <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>
     <string name="saliva_alarms_header">Saliva sample alarms</string>
+    <string name="evening_sample_alarm_header">Evening sample alarm</string>
     <string name="cancel_saliva_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
     <string name="open_scanner_before_alarm_message">This sample is scheduled for later. Are you sure you want to scan the sample now?</string>
 

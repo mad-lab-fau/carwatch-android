@@ -132,11 +132,8 @@ public class TimerHandler {
                 contentIntent, pendingFlags);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
         int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
-        String contentText = salivaId == eveningSalivaId ?
-                        context.getString(R.string.timer_notification_text_evening) :
-                        context.getString(R.string.timer_notification_text, salivaId + startSampleIdx);
+        String contentText = context.getString(R.string.timer_notification_text, salivaId + startSampleIdx);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -170,13 +167,9 @@ public class TimerHandler {
                 fullScreenIntent, pendingFlags);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
         int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
 
-        String contentText =
-                salivaId == eveningSalivaId ?
-                        context.getString(R.string.timer_over_notification_text_evening) :
-                        context.getString(R.string.timer_over_notification_text, salivaId + startSampleIdx);
+        String contentText = context.getString(R.string.timer_over_notification_text, salivaId + startSampleIdx);
 
         Intent stopAlarmIntent = new Intent(context, TimerStopReceiver.class);
         PendingIntent stopAlarmPendingIntent = PendingIntent.getBroadcast(context, 0, stopAlarmIntent, pendingFlags);

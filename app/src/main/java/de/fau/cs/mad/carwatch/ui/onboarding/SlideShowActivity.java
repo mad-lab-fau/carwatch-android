@@ -5,18 +5,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.databinding.Observable;
@@ -42,7 +40,7 @@ import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText;
 import de.fau.cs.mad.carwatch.util.OnSwipeTouchListener;
 import de.fau.cs.mad.carwatch.util.Utils;
 
-public class SlideShowActivity extends AppCompatActivity implements QrFragment.ScanSuccessListener, StudyDetailsSlide.StudyDetailsActions {
+public class SlideShowActivity extends AppCompatActivity implements QrFragment.ScanSuccessListener {
 
     public static final String TAG = SlideShowActivity.class.getSimpleName();
     public static final int SHOW_ALL_SLIDES = 0;
@@ -62,7 +60,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     private Button skipButton;
     private Button nextButton;
     private View slideNavigation;
-    private TabLayout tabDots;
+    private LinearLayout tabDots;
     private TextView headerTitle;
     private boolean waitingForPermissionResult = false;
 
@@ -118,7 +116,13 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     private void initializeSkipButton() {
         skipButton = findViewById(R.id.btn_skip_slides);
-        skipButton.setOnClickListener(v -> finishSlideShow());
+        skipButton.setOnClickListener(v -> {
+            if (slides.get(currentSlidePosition) instanceof StudyDetailsSlide) {
+                performReregistrationFromStudyDetails();
+                return;
+            }
+            finishSlideShow();
+        });
     }
 
     private void initializeSlides() {
@@ -162,7 +166,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 getString(R.string.headline_wakeup_screen_tutorial),
                 getString(R.string.description_wakeup_screen),
                 R.drawable.img_screenshot_wakeup_screen,
-                false
+                slideShowType == SHOW_ALL_SLIDES
         );
         TutorialSlide wakeUpAlarmTutorial = TutorialSlide.newInstance(
                 getString(R.string.headline_alarm_tutorial),
@@ -265,13 +269,14 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 tutorialSlidePos++;
             }
 
-            addSlide(tutorialSlidePos, new StudyDetailsSlide());
+            int studyDetailsSlidePos = tutorialSlidePos;
+            addSlide(studyDetailsSlidePos, new StudyDetailsSlide());
             tutorialSlidePos++;
 
             if (slideShowType == SHOW_ALL_SLIDES) {
                 // recreate tutorial slides after study configuration was loaded
                 recreateTutorialSlides(tutorialSlidePos);
-                tutorialStartPosition = tutorialSlidePos;
+                tutorialStartPosition = studyDetailsSlidePos;
                 tutorialEndPosition = slides.size() - 1;
             }
         }
@@ -313,33 +318,14 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         }
     }
 
-    @Override
-    public void onReregisterRequested() {
-        if (AlarmHandler.isStudyOngoing(this)) {
-            showReregistrationConfirmationDialog();
-            return;
-        }
-
-        performReregistration();
-    }
-
-    private void showReregistrationConfirmationDialog() {
-        new MaterialAlertDialogBuilder(this)
-                .setIcon(R.drawable.ic_warning_24dp)
-                .setTitle(R.string.title_reregister_ongoing_study)
-                .setMessage(R.string.message_reregister_ongoing_study)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.menu_reregister, (dialog, which) -> performReregistration())
-                .show()
-                .getButton(AlertDialog.BUTTON_POSITIVE)
-                .setTextColor(getColor(R.color.md_theme_error));
-    }
-
-    private void performReregistration() {
+    private void performReregistrationFromStudyDetails() {
         AlarmHandler.resetStudyConfiguration(this);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        int targetSlidePosition = qrScannerSlidePosition >= 0
+                ? qrScannerSlidePosition
+                : Constants.INITIAL_SLIDE_SHOW_SLIDE;
         sharedPreferences.edit()
-                .putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE)
+                .putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, targetSlidePosition)
                 .putBoolean(Constants.PREF_FIRST_RUN_QR, true)
                 .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)
                 .apply();
@@ -348,11 +334,6 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         restartIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SHOW_ALL_SLIDES);
         startActivity(restartIntent);
         finish();
-    }
-
-    @Override
-    public void onStudyDetailsConfirmed() {
-        nextSlide();
     }
 
     private void setSlideTransition(int positionNextSlide, int positionPrevSlide) {
@@ -370,18 +351,23 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void initButtonsForSlide(WelcomeSlide slide) {
-        slideNavigation.setVisibility(slide instanceof StudyDetailsSlide ? View.GONE : View.VISIBLE);
-        setSkipButtonVisibility(slide.getSkipButtonIsVisible().get());
+        slideNavigation.setVisibility(View.VISIBLE);
+        boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
+        skipButton.setText(isStudyDetailsSlide ? R.string.btn_reregister : R.string.btn_skip_all);
+        setNavigationButtonWidths(isStudyDetailsSlide);
+        setSkipButtonVisibility(isStudyDetailsSlide || slide.getSkipButtonIsVisible().get());
         slide.getSkipButtonIsVisible().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
-                setSkipButtonVisibility(slide.getSkipButtonIsVisible().get());
+                setSkipButtonVisibility(slide instanceof StudyDetailsSlide || slide.getSkipButtonIsVisible().get());
             }
         });
         canShowNextSlide = slide.getCanShowNextSlide().get();
         boolean isLastSlide = slides.indexOf(slide) == slides.size() - 1;
         nextButton.setEnabled(canShowNextSlide);
-        nextButton.setText(isLastSlide ? R.string.btn_to_app : R.string.btn_next);
+        nextButton.setText(isStudyDetailsSlide
+                ? R.string.btn_confirm_continue_tutorial
+                : isLastSlide ? R.string.btn_to_app : R.string.btn_next);
         slide.getCanShowNextSlide().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
@@ -396,6 +382,23 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 canShowPreviousSlide = slide.getCanShowPreviousSlide().get();
             }
         });
+    }
+
+    private void setNavigationButtonWidths(boolean isStudyDetailsSlide) {
+        setButtonWidth(skipButton, isStudyDetailsSlide ? ViewGroup.LayoutParams.WRAP_CONTENT : dpToPx(130));
+        setButtonWidth(nextButton, isStudyDetailsSlide ? ViewGroup.LayoutParams.WRAP_CONTENT : dpToPx(130));
+        skipButton.setMinWidth(dpToPx(isStudyDetailsSlide ? 96 : 130));
+        nextButton.setMinWidth(dpToPx(isStudyDetailsSlide ? 96 : 130));
+    }
+
+    private void setButtonWidth(Button button, int width) {
+        ViewGroup.LayoutParams params = button.getLayoutParams();
+        params.width = width;
+        button.setLayoutParams(params);
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
     /**
@@ -424,8 +427,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     private void addSlide(int position, WelcomeSlide slide) {
         slides.add(position, slide);
-        tabDots.addTab(tabDots.newTab(), position);
-        prepareTabDot(position);
+        addDot(position);
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -436,23 +438,21 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void highlightDot(int position) {
-        TabLayout.Tab tab = tabDots.getTabAt(position);
-        if (tab != null) {
-            tab.select();
+        for (int i = 0; i < tabDots.getChildCount(); i++) {
+            tabDots.getChildAt(i).setSelected(i == position);
         }
     }
 
     private void updateVisibleDots(int position) {
         if (isInTutorialRange(position)) {
-            for (int i = 0; i < ((LinearLayout) tabDots.getChildAt(0)).getChildCount(); i++) {
+            for (int i = 0; i < tabDots.getChildCount(); i++) {
                 setDotVisibility(i, tutorialStartPosition <= i && i <= tutorialEndPosition);
             }
             return;
         }
 
         int firstAccessiblePosition = getFirstAccessibleSlidePosition(position);
-        LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
-        for (int i = 0; i < tabStrip.getChildCount(); i++) {
+        for (int i = 0; i < tabDots.getChildCount(); i++) {
             setDotVisibility(i, i >= firstAccessiblePosition);
         }
     }
@@ -475,31 +475,25 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void setDotVisibility(int position, boolean isVisible) {
-        LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
-        if (position >= tabStrip.getChildCount()) {
+        if (position >= tabDots.getChildCount()) {
             return;
         }
-        View tab = tabStrip.getChildAt(position);
+        View tab = tabDots.getChildAt(position);
         tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void prepareTabDot(int position) {
-        LinearLayout tabStrip = ((LinearLayout) tabDots.getChildAt(0));
-        View tab = tabStrip.getChildAt(position);
+    private void addDot(int position) {
+        FrameLayout dot = new FrameLayout(this);
+        dot.setBackgroundResource(R.drawable.slide_tab_selector);
+        dot.setOnTouchListener((v, event) -> true);
 
-        // disable onclick
-        tab.setOnTouchListener((v, event) -> true);
-
-        // decrease space between dots
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tab.getLayoutParams();
-        params.weight = 0;
-        params.width = 15;
-        int spaceBetweenDots = 7;
-        params.setMarginStart(spaceBetweenDots);
-        params.setMarginEnd(spaceBetweenDots);
-        tab.setLayoutParams(params);
-        tabDots.requestLayout();
+        int dotCellSize = getResources().getDimensionPixelSize(R.dimen.slide_dot_cell_size);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dotCellSize, dotCellSize);
+        int marginHorizontal = getResources().getDimensionPixelSize(R.dimen.slide_dot_margin_horizontal);
+        params.setMarginStart(marginHorizontal);
+        params.setMarginEnd(marginHorizontal);
+        tabDots.addView(dot, position, params);
     }
 
     private void finishSlideShow() {

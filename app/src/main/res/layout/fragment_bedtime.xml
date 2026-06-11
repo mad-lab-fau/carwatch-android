@@ -20,6 +20,7 @@
             android:contentDescription="@null"
             app:tint="?attr/colorPrimary"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:translationY="@dimen/home_vertical_center_offset"
             android:src="@drawable/ic_bedtime_24dp" />
 
         <TextView
@@ -32,7 +33,8 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.Carwatch.Headline"
             android:textColor="?attr/colorOnSurface"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin" />
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:translationY="@dimen/home_vertical_center_offset" />
 
         <LinearLayout
             android:id="@+id/button_container"
@@ -40,7 +42,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true">
+            android:layout_centerVertical="true"
+            android:translationY="@dimen/home_vertical_center_offset">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_yes"
@@ -67,6 +70,7 @@
             android:textSize="18sp"
             style="@style/Widget.MaterialComponents.Button.Accent"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:translationY="@dimen/home_vertical_center_offset"
             android:text="@string/lights_out" />
 
     </RelativeLayout>

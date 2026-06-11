@@ -1,5 +1,6 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
+import android.app.TimePickerDialog;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -10,17 +11,20 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.db.Alarm;
@@ -102,6 +106,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         setSwitchProperties(holder, item);
         holder.getAlarmTextView().setText(item.getStringTime());
         holder.getAlarmTextView().setTextColor(resources.getColor(colorId));
+        setTimePickerProperties(holder, item);
         setIconProperties(holder, item);
     }
 
@@ -134,8 +139,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         alarmSwitch.setChecked(item.isActive());
         boolean isLater = DateTime.now().isBefore(item.getTime());
-        alarmSwitch.setEnabled(isLater && !item.wasSampleTaken());
-        if (isLater) {
+        boolean isEveningReminder = item.getId() == Constants.EXTRA_ALARM_ID_EVENING;
+        alarmSwitch.setEnabled((isEveningReminder || isLater) && !item.wasSampleTaken());
+        if (isLater && !isEveningReminder) {
             new Handler().postDelayed(() -> alarmSwitch.setEnabled(false), item.getTime().getMillis() - DateTime.now().getMillis());
         }
         alarmSwitch.setOnClickListener(view -> {
@@ -144,6 +150,43 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             } else {
                 activateAlarm(view, holder, item);
             }
+        });
+    }
+
+    private void setTimePickerProperties(ViewHolder holder, Alarm item) {
+        if (item.getId() != Constants.EXTRA_ALARM_ID_EVENING || item.wasSampleTaken()) {
+            holder.getAlarmTextView().setOnClickListener(null);
+            holder.getAlarmTextView().setClickable(false);
+            return;
+        }
+
+        holder.getAlarmTextView().setClickable(true);
+        holder.getAlarmTextView().setOnClickListener(view -> {
+            DateTime time = item.getTime() == null ? DateTime.now() : item.getTime();
+            TimePickerDialog timePicker = new TimePickerDialog(
+                    view.getContext(),
+                    (timePickerView, selectedHour, selectedMinute) -> {
+                        LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
+                        item.setTime(selectedTime.toDateTimeToday());
+                        item.setActive(true);
+                        holder.getAlarmSwitch().setChecked(true);
+                        holder.getAlarmTextView().setText(item.getStringTime());
+                        holder.getAlarmTextView().setTextColor(resources.getColor(R.color.colorAccent));
+                        PreferenceManager.getDefaultSharedPreferences(view.getContext())
+                                .edit()
+                                .putInt(
+                                        Constants.PREF_EVENING_REMINDER_TIME_MINUTES,
+                                        selectedTime.getHourOfDay() * 60 + selectedTime.getMinuteOfHour()
+                                )
+                                .apply();
+                        AlarmHandler.scheduleSalivaAlarm(view.getContext(), item, view);
+                        alarmViewModel.update(item);
+                    },
+                    time.getHourOfDay(),
+                    time.getMinuteOfHour(),
+                    true
+            );
+            timePicker.show();
         });
     }
 

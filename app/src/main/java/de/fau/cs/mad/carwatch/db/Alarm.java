@@ -15,6 +15,8 @@ import androidx.room.TypeConverters;
 
 import org.joda.time.DateTime;
 
+import java.util.Locale;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.converter.BooleanArrayConverter;
 import de.fau.cs.mad.carwatch.db.converter.DateConverter;
@@ -108,11 +110,15 @@ public class Alarm implements Parcelable {
     }
 
     /**
-     * Get String of alarm ring time in 12 hour format
+     * Get localized string of alarm ring time.
      */
     @Ignore
     public String getStringTime() {
-        return this.time.toString("HH:mm");
+        String language = Locale.getDefault().getLanguage();
+        String format = language.equals(Locale.GERMAN.getLanguage()) || language.equals(Locale.FRENCH.getLanguage())
+                ? "HH:mm"
+                : "h:mm a";
+        return this.time.toString(format, Locale.getDefault());
     }
 
     /**

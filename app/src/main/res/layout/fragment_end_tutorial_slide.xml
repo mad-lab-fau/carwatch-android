@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical"
+    android:paddingBottom="72dp"
     tools:context=".ui.onboarding.SlideShowActivity">
 
     <TextView

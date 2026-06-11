@@ -1,12 +1,17 @@
 package de.fau.cs.mad.carwatch.ui;
 
 import android.app.NotificationManager;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -14,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -29,6 +35,9 @@ import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -203,8 +212,13 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_check_circle_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(this, R.color.colorGreen500));
+        }
+
         new MaterialAlertDialogBuilder(this)
-                .setIcon(R.drawable.ic_check_circle_24dp)
+                .setIcon(icon)
                 .setTitle(titleId)
                 .setMessage(messageId)
                 .setPositiveButton(R.string.ok, null)
@@ -305,6 +319,9 @@ public class MainActivity extends AppCompatActivity {
                 createFileShareDialog(zipFile);
             } catch (FileNotFoundException e) {
                 Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
+            } catch (ActivityNotFoundException | IllegalArgumentException | IOException e) {
+                Log.e(TAG, "Unable to share log files", e);
+                Snackbar.make(coordinatorLayout, R.string.message_share_logs_failed, Snackbar.LENGTH_SHORT).show();
             }
         } else if (itemId == R.id.menu_delete_log_files) {
             deleteLogFilesClickCounter++;
@@ -368,19 +385,42 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void createFileShareDialog(File zipFile) {
+    private void createFileShareDialog(File zipFile) throws IOException {
+        File shareFile = copyToShareCache(zipFile);
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         Uri uri = GenericFileProvider.getUriForFile(this,
                 getApplicationContext().getPackageName() +
                         ".logger.fileprovider",
-                zipFile);
+                shareFile);
         String extra_email = sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, "");
-        sharingIntent.setType("application/octet-stream");
+        sharingIntent.setType("application/zip");
+        sharingIntent.setClipData(ClipData.newUri(getContentResolver(), shareFile.getName(), uri));
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
         sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
-        startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, shareFile.getName());
+        Intent chooser = Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog));
+        chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        chooser.setClipData(ClipData.newUri(getContentResolver(), shareFile.getName(), uri));
+        startActivity(chooser);
+    }
+
+    private File copyToShareCache(File source) throws IOException {
+        File shareDirectory = new File(getCacheDir(), "shared_logs");
+        if (!shareDirectory.exists() && !shareDirectory.mkdirs()) {
+            throw new IOException("Could not create share cache directory.");
+        }
+
+        File target = new File(shareDirectory, source.getName());
+        try (FileInputStream input = new FileInputStream(source);
+             FileOutputStream output = new FileOutputStream(target, false)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+        }
+        return target;
     }
 
     private void showDeleteLogFilesWarningDialog() {
@@ -426,6 +466,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void showStudyInformationDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.widget_study_information_dialog, null);
+        Drawable icon = Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.ic_school_24dp));
+        icon.setTint(ContextCompat.getColor(this, R.color.colorPrimary));
 
         setDetailRow(dialogView, R.id.row_study_name, R.string.label_study_name, getPreferenceString(Constants.PREF_STUDY_NAME));
         setDetailRow(dialogView, R.id.row_participant_id, R.string.label_participant_id, getPreferenceString(Constants.PREF_PARTICIPANT_ID));
@@ -435,12 +477,16 @@ public class MainActivity extends AppCompatActivity {
         setDetailRow(dialogView, R.id.row_fixed_sample_times, R.string.label_fixed_sample_times, formatFixedSampleTimes(sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")));
         setDetailRow(dialogView, R.id.row_evening_sample, R.string.label_evening_sample, getString(sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false) ? R.string.yes : R.string.no));
 
-        new MaterialAlertDialogBuilder(this)
-                .setIcon(R.drawable.ic_school_24dp)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setIcon(icon)
                 .setTitle(R.string.title_study_information)
                 .setView(dialogView)
                 .setPositiveButton(R.string.ok, null)
                 .show();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.bg_study_information_dialog));
+        }
     }
 
     private void setDetailRow(View root, int rowId, int labelId, String value) {

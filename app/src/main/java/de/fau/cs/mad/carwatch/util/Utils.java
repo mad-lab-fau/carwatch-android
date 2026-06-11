@@ -20,7 +20,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
@@ -33,7 +32,6 @@ import androidx.core.app.ActivityCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,7 +59,7 @@ public class Utils {
 
     public static boolean requestRuntimePermissions(Activity activity) {
         List<String> allNeededPermissions = new ArrayList<>();
-        for (String permission : getRequiredPermissions(activity)) {
+        for (String permission : getRuntimePermissions()) {
             if (checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
                 allNeededPermissions.add(permission);
             }
@@ -76,15 +74,8 @@ public class Utils {
     }
 
     public static boolean allPermissionsGranted(Context context) {
-        for (String permission : getRequiredPermissions(context)) {
+        for (String permission : getRuntimePermissions()) {
             if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                switch (permission) {
-                    case Manifest.permission.USE_FULL_SCREEN_INTENT:
-                    case Manifest.permission.FOREGROUND_SERVICE:
-                    case Manifest.permission.SCHEDULE_EXACT_ALARM:
-                    case Manifest.permission.POST_NOTIFICATIONS:
-                        continue;
-                }
                 return false;
             }
         }
@@ -113,21 +104,15 @@ public class Utils {
         return true;
     }
 
-    private static String[] getRequiredPermissions(Context context) {
-        try {
-            PackageInfo info = context
-                    .getPackageManager()
-                    .getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
-            String[] ps = info.requestedPermissions;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                List<String> list = new ArrayList<>(Arrays.asList(ps));
-                list.remove("android.permission.USE_EXACT_ALARM");
-                ps = list.toArray(new String[0]);
-            }
-            return (ps != null && ps.length > 0) ? ps : new String[0];
-        } catch (Exception e) {
-            return new String[0];
+    private static String[] getRuntimePermissions() {
+        List<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.CAMERA);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS);
         }
+
+        return permissions.toArray(new String[0]);
     }
 
     public static boolean isPortraitMode(Context context) {

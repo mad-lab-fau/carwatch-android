@@ -60,6 +60,7 @@
     <string name="message_delete_log_files_confirm_dialog">Sind Sie sicher, dass Sie alle Log Dateien löschen wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
     <string name="message_all_log_files_deleted">Die Logs wurden gelöscht.</string>
     <string name="message_not_all_log_files_deleted">Fehler beim Löschen der Logs. Einige Log Dateien konnten nicht gelöscht werden.</string>
+    <string name="message_share_logs_failed">Die Logs konnten nicht geteilt werden.</string>
 
     <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
     <string name="good_night">Vielen Dank und Gute Nacht!</string>
@@ -123,7 +124,7 @@
     <string name="btn_to_app">Zur App</string>
     <string name="btn_skip_all">Tutorial überspringen</string>
     <string name="btn_reregister">Neu registrieren</string>
-    <string name="btn_confirm_continue_tutorial">Bestätigen und weiter zum Tutorial</string>
+    <string name="btn_confirm_continue_tutorial">Bestätigen</string>
     <string name="message_study_details_confirmation">Bitte bestätigen Sie, dass diese Studienkonfiguration mit den Informationen übereinstimmt, die Sie erhalten haben, bevor Sie mit dem Tutorial fortfahren.</string>
     <string name="title_study_configuration">Studienkonfiguration</string>
     <string name="title_tutorial">Tutorial</string>
@@ -156,6 +157,7 @@
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
     <string name="saliva_alarms_header">Wecker für Speichelproben</string>
+    <string name="evening_sample_alarm_header">Wecker für Abendprobe</string>
     <string name="title_qr_code_invalid">Ungültiger QR-Code</string>
     <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
     <string name="title_barcode_already_scanned">Doppelter Barcode!</string>

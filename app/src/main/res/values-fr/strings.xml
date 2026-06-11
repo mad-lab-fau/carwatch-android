@@ -47,6 +47,7 @@
     <string name="message_delete_log_files_confirm_dialog">Êtes-vous sûr de vouloir supprimer tous les fichiers journaux existants? Cette action ne peut pas être annulée!</string>
     <string name="message_all_log_files_deleted">Tous les journaux ont été supprimés avec succès.</string>
     <string name="message_not_all_log_files_deleted">Erreur lors de la suppression des journaux. Certains fichiers journaux n\'ont pas pu être supprimés.</string>
+    <string name="message_share_logs_failed">Les journaux n\'ont pas pu être partagés.</string>
 
     <string name="stop">Arrêter</string>
     <string name="open_scanner">Scanner ouvert</string>
@@ -74,7 +75,7 @@
     <string name="btn_to_app">Vers l\'application</string>
     <string name="btn_skip_all">Sauter le tutoriel</string>
     <string name="btn_reregister">Réenregistrer</string>
-    <string name="btn_confirm_continue_tutorial">Confirmer et continuer le tutoriel</string>
+    <string name="btn_confirm_continue_tutorial">Confirmer</string>
     <string name="message_study_details_confirmation">Veuillez confirmer que cette configuration d\'étude correspond aux informations que vous avez reçues avant de continuer le tutoriel.</string>
     <string name="title_study_configuration">Configuration de l\'étude</string>
     <string name="title_tutorial">Tutoriel</string>
@@ -148,6 +149,7 @@
 
     <string name="set_alarm_message">Veuillez régler l\'heure d\'alarme souhaitée pour demain.</string>
     <string name="saliva_alarms_header">Réveil pour les échantillons de salive</string>
+    <string name="evening_sample_alarm_header">Alarme pour l\'échantillon du soir</string>
     <string name="cancel_saliva_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
     <string name="open_scanner_before_alarm_message">Cet échantillon est prévu pour plus tard. Êtes-vous sûr de vouloir scanner l\'échantillon maintenant?</string>
 

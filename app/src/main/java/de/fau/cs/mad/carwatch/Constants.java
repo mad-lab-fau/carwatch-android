@@ -52,6 +52,8 @@ public final class Constants {
     public static final String PREF_WAKEUP_ALERT_TYPE = "wakeup_alert_type"; // String
     public static final String PREF_WAKEUP_DELAYED_SAMPLE_MINUTES = "wakeup_delayed_sample_minutes"; // int
     public static final String PREF_STUDY_DAY_MANUALLY_ADVANCED = "study_day_manually_advanced"; // boolean
+    public static final String PREF_WAKEUP_SCAN_PENDING = "wakeup_scan_pending"; // boolean
+    public static final String PREF_EVENING_REMINDER_TIME_MINUTES = "evening_reminder_time_minutes"; // int (minutes after midnight)
 
     public static final String WAKEUP_ALERT_OVERDUE_SAMPLE = "overdue_sample";
     public static final String WAKEUP_ALERT_DELAYED_SAMPLE = "delayed_sample";
@@ -63,6 +65,7 @@ public final class Constants {
     public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
+    public static final LocalTime DEFAULT_EVENING_REMINDER_TIME = new LocalTime(21, 0);
     public static final String DEFAULT_START_SAMPLE = "S0";
 
     public static final String EXTRA_SLIDE_SHOW_TYPE = "extra_slide_show_type";
