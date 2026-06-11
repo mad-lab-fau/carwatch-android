@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.Window;
 
 import androidx.annotation.Nullable;
-import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 

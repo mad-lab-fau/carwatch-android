@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
@@ -41,6 +41,10 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = BedtimeFragment.class.getSimpleName();
 
     private BedtimeViewModel bedtimeViewModel;
+    private final ActivityResultLauncher<Intent> barcodeScannerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> handleBarcodeScannerResult(result.getResultCode())
+    );
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -111,19 +115,15 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void handleBarcodeScannerResult(int resultCode) {
         if (getActivity() == null) {
             return;
         }
 
-        if (requestCode == Constants.REQUEST_CODE_SCAN) {
-            if (resultCode == Activity.RESULT_OK) {
-                bedtimeViewModel.setSalivaTaken(true);
-                if (!UserPresentService.serviceRunning) {
-                    UserPresentService.startService(getContext());
-                }
+        if (resultCode == Activity.RESULT_OK) {
+            bedtimeViewModel.setSalivaTaken(true);
+            if (!UserPresentService.serviceRunning) {
+                UserPresentService.startService(getContext());
             }
         }
     }
@@ -154,7 +154,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                         Intent intent = new Intent(getContext(), BarcodeActivity.class);
                         intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
                         intent.putExtra(Constants.EXTRA_SALIVA_ID, eveningSalivaId);
-                        startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
+                        barcodeScannerLauncher.launch(intent);
                     } else {
                         bedtimeViewModel.setSalivaTaken(true);
                         if (!UserPresentService.serviceRunning) {

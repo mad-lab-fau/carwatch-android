@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
 import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 import androidx.collection.ArraySet;
 import androidx.core.content.ContextCompat;
