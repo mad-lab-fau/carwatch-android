@@ -1,8 +1,8 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
 import android.app.TimePickerDialog;
-import android.content.res.Resources;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,7 +32,6 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
     private final List<Alarm> localAlarms = new ArrayList<>();
-    private final Resources resources;
     private final AlarmViewModel alarmViewModel;
     private final String sampleIdPrefix;
     private final int startSampleId;
@@ -80,8 +80,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
     }
 
-    public AlarmAdapter(Resources resources, AlarmViewModel alarmViewModel, String sampleIdPrefix, int startSampleid) {
-        this.resources = resources;
+    public AlarmAdapter(AlarmViewModel alarmViewModel, String sampleIdPrefix, int startSampleid) {
         this.alarmViewModel = alarmViewModel;
         this.sampleIdPrefix = sampleIdPrefix;
         this.startSampleId = startSampleid;
@@ -105,7 +104,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         holder.getSampleNameTextView().setText(sampleName);
         setSwitchProperties(holder, item);
         holder.getAlarmTextView().setText(item.getStringTime());
-        holder.getAlarmTextView().setTextColor(resources.getColor(colorId));
+        holder.getAlarmTextView().setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorId));
         setTimePickerProperties(holder, item);
         setIconProperties(holder, item);
     }
@@ -142,7 +141,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         boolean isEveningReminder = item.getId() == Constants.EXTRA_ALARM_ID_EVENING;
         alarmSwitch.setEnabled((isEveningReminder || isLater) && !item.wasSampleTaken());
         if (isLater && !isEveningReminder) {
-            new Handler().postDelayed(() -> alarmSwitch.setEnabled(false), item.getTime().getMillis() - DateTime.now().getMillis());
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    () -> alarmSwitch.setEnabled(false),
+                    item.getTime().getMillis() - DateTime.now().getMillis()
+            );
         }
         alarmSwitch.setOnClickListener(view -> {
             if (item.isActive()) {
@@ -171,7 +173,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                         item.setActive(true);
                         holder.getAlarmSwitch().setChecked(true);
                         holder.getAlarmTextView().setText(item.getStringTime());
-                        holder.getAlarmTextView().setTextColor(resources.getColor(R.color.colorAccent));
+                        holder.getAlarmTextView().setTextColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
                         PreferenceManager.getDefaultSharedPreferences(view.getContext())
                                 .edit()
                                 .putInt(
@@ -209,7 +211,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     private void switchIconAfterAlarm(ImageView sampleStatusIcon, DateTime timeToNextRing) {
         long delay = timeToNextRing.getMillis() - DateTime.now().getMillis();
-        new Handler().postDelayed(() -> {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (sampleStatusIcon != null)
                 sampleStatusIcon.setImageResource(R.drawable.ic_pending);
         }, delay);
@@ -221,13 +223,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.warning_title)
                 .setMessage(R.string.cancel_saliva_alarm_message)
-                .setNegativeButton(R.string.no, (dialogInterface, i) -> {
-                    holder.getAlarmSwitch().setChecked(true);
-                })
+                .setNegativeButton(R.string.no, (dialogInterface, i) -> holder.getAlarmSwitch().setChecked(true))
                 .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                     alarm.setActive(false);
                     AlarmHandler.cancelAlarm(view.getContext(), alarm, view);
-                    holder.getAlarmTextView().setTextColor(resources.getColor(R.color.colorGrey500));
+                    holder.getAlarmTextView().setTextColor(ContextCompat.getColor(view.getContext(), R.color.colorGrey500));
                     alarmViewModel.update(alarm);
                 })
                 .create();
@@ -237,7 +237,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private void activateAlarm(View view, ViewHolder holder, Alarm alarm) {
         alarm.setActive(true);
         AlarmHandler.scheduleSalivaAlarm(view.getContext(), alarm, view);
-        holder.getAlarmTextView().setTextColor(resources.getColor(R.color.colorAccent));
+        holder.getAlarmTextView().setTextColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
         alarmViewModel.update(alarm);
     }
 }

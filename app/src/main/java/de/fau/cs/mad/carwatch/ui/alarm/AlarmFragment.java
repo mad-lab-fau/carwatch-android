@@ -99,8 +99,8 @@ public class AlarmFragment extends Fragment {
     private void initializeSalivaAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
         GridLayoutManager eveningLayoutManager = new GridLayoutManager(getContext(), 1);
-        adapter = new AlarmAdapter(getResources(), alarmViewModel, getSampleIdPrefix(), getStartSampleId());
-        eveningAdapter = new AlarmAdapter(getResources(), alarmViewModel, getSampleIdPrefix(), getStartSampleId());
+        adapter = new AlarmAdapter(alarmViewModel, getSampleIdPrefix(), getStartSampleId());
+        eveningAdapter = new AlarmAdapter(alarmViewModel, getSampleIdPrefix(), getStartSampleId());
         RecyclerView recyclerView = root.findViewById(R.id.saliva_alarms_list);
         RecyclerView eveningRecyclerView = root.findViewById(R.id.evening_sample_alarm_list);
         recyclerView.setLayoutManager(layoutManager);
