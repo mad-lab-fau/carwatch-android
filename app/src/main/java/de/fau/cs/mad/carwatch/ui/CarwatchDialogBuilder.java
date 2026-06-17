@@ -25,6 +25,14 @@ public class CarwatchDialogBuilder extends MaterialAlertDialogBuilder {
 
     @NonNull
     @Override
+    public AlertDialog create() {
+        AlertDialog dialog = super.create();
+        dialog.setOnShowListener(shownDialog -> applyCarwatchWindowBackground(dialog, context));
+        return dialog;
+    }
+
+    @NonNull
+    @Override
     public AlertDialog show() {
         AlertDialog dialog = super.show();
         applyCarwatchWindowBackground(dialog, context);

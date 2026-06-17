@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="md_theme_primary">#38576C</color>
-    <color name="md_theme_onPrimary">#00315F</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_primaryContainer">#14499E</color>
     <color name="md_theme_onPrimaryContainer">#EAF6FF</color>
     <color name="md_theme_secondary">#5589C5</color>
-    <color name="md_theme_onSecondary">#102027</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
     <color name="md_theme_secondaryContainer">#4D5589C5</color>
     <color name="md_theme_onSecondaryContainer">#FFFFFF</color>
     <color name="md_theme_tertiary">#5589C5</color>
-    <color name="md_theme_onTertiary">#003352</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
     <color name="md_theme_tertiaryContainer">#5589C5</color>
     <color name="md_theme_onTertiaryContainer">#EAF6FF</color>
     <color name="md_theme_error">#FFB4AB</color>
@@ -34,4 +34,5 @@
 
     <color name="colorGrey300">@color/md_theme_outlineVariant</color>
     <color name="colorGrey500">@color/md_theme_outline</color>
+    <color name="colorSamplePlannedNotDue">#C4D054</color>
 </resources>

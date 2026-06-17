@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
@@ -28,7 +29,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
-            Snackbar.make(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), Snackbar.LENGTH_SHORT).show();
+            CarwatchSnackbar.show(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), CarwatchSnackbar.LENGTH_SHORT);
         }
         showPendingWakeupAlert();
         showEndOfDayAlert();
@@ -143,7 +144,15 @@ public class MainActivity extends AppCompatActivity {
     public void navigate(int navId) {
         for (int id : NAV_IDS) {
             if (id == navId) {
-                navController.navigate(navId);
+                if (navController.getCurrentDestination() != null
+                        && navController.getCurrentDestination().getId() == navId) {
+                    return;
+                }
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(navController.getGraph().getStartDestinationId(), false)
+                        .build();
+                navController.navigate(navId, null, navOptions);
                 return;
             }
         }
@@ -308,10 +317,10 @@ public class MainActivity extends AppCompatActivity {
                 File zipFile = LoggerUtil.zipDirectory(this, studyName, participantId);
                 createFileShareDialog(zipFile);
             } catch (FileNotFoundException e) {
-                Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
+                CarwatchSnackbar.show(coordinatorLayout, Objects.requireNonNull(e.getMessage()), CarwatchSnackbar.LENGTH_SHORT);
             } catch (ActivityNotFoundException | IllegalArgumentException | IOException e) {
                 Log.e(TAG, "Unable to share log files", e);
-                Snackbar.make(coordinatorLayout, R.string.message_share_logs_failed, Snackbar.LENGTH_SHORT).show();
+                CarwatchSnackbar.show(coordinatorLayout, R.string.message_share_logs_failed, CarwatchSnackbar.LENGTH_SHORT);
             }
         } else if (itemId == R.id.menu_delete_log_files) {
             showDeleteLogFilesWarningDialog();
@@ -410,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteLogFiles() {
         boolean fileWereDeleted = LoggerUtil.deleteLogFiles(this);
         String msg = fileWereDeleted ? getString(R.string.message_all_log_files_deleted) : getString(R.string.message_not_all_log_files_deleted);
-        Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_SHORT).show();
+        CarwatchSnackbar.show(coordinatorLayout, msg, CarwatchSnackbar.LENGTH_SHORT);
     }
 
     private void requestFinishStudyDay() {
@@ -431,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void finishStudyDay() {
         if (AlarmHandler.finishCurrentStudyDay(this)) {
-            Snackbar.make(coordinatorLayout, R.string.message_study_day_finished, Snackbar.LENGTH_SHORT).show();
+            CarwatchSnackbar.show(coordinatorLayout, R.string.message_study_day_finished, CarwatchSnackbar.LENGTH_SHORT);
             navigate(R.id.navigation_alarm);
         }
         updateFinishStudyDayFabState();

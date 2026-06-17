@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
+import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
 import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
@@ -33,7 +33,6 @@ import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
-import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
@@ -76,8 +75,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         int viewId = v.getId();
         if (viewId == R.id.button_no) {
             if (getActivity() != null) {
-                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
-                ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
+                CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), R.string.feedback_bedtime_no, CarwatchSnackbar.LENGTH_SHORT);
             }
         } else if (viewId == R.id.button_yes) {
             // create Json object and log information

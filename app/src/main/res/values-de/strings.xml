@@ -62,6 +62,8 @@
     <string name="message_share_logs_failed">Die Logs konnten nicht geteilt werden.</string>
 
     <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
+    <string name="feedback_wakeup_no">Melden Sie sich, wenn Sie aufgewacht sind.</string>
+    <string name="feedback_bedtime_no">Melden Sie sich, wenn Sie ins Bett gehen.</string>
     <string name="good_night">Vielen Dank und Gute Nacht!</string>
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
     <string name="lights_out">Licht aus!</string>

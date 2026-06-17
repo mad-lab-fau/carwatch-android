@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
+import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
 import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
@@ -59,7 +59,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         int viewId = v.getId();
         if (viewId == R.id.button_no) {
             if (getActivity() != null) {
-                Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
+                CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), R.string.feedback_wakeup_no, CarwatchSnackbar.LENGTH_SHORT);
             }
         } else if (viewId == R.id.button_yes) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
@@ -72,7 +72,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
             if (dayCounter > numDays) {
                 if (getActivity() != null) {
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), Snackbar.LENGTH_SHORT).show();
+                    CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), CarwatchSnackbar.LENGTH_SHORT);
                 }
                 return;
             }
@@ -93,11 +93,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
 
     private void showWakeupAlreadyRecordedMessage() {
         if (getActivity() != null) {
-            Snackbar.make(
+            CarwatchSnackbar.show(
                     getActivity().findViewById(R.id.coordinator),
                     getString(R.string.warning_already_report_wakeup),
-                    Snackbar.LENGTH_SHORT
-            ).show();
+                    CarwatchSnackbar.LENGTH_SHORT
+            );
         }
     }
 

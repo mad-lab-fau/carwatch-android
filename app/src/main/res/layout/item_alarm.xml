@@ -68,7 +68,7 @@
             android:id="@+id/iv_scanner_icon"
             android:layout_width="@dimen/sample_suffix_icon_width"
             android:layout_height="@dimen/manual_scan_icon_height"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
             android:contentDescription="@string/open_scanner"
             android:src="@drawable/ic_barcode_scanner_24dp"
             android:visibility="visible"
@@ -81,7 +81,7 @@
             android:id="@+id/iv_check_icon"
             android:layout_width="@dimen/sample_suffix_icon_width"
             android:layout_height="@dimen/check_icon_height"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
             android:contentDescription="@string/content_description_sample_taken"
             android:src="@drawable/ic_check"
             android:visibility="gone"
@@ -99,8 +99,7 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_scanner_icon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorTertiary" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

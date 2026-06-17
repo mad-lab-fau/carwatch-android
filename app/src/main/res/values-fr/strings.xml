@@ -159,6 +159,8 @@
     <string name="warning_study_finished">Vous avez déjà terminé l\'étude.</string>
 
     <string name="feedback_thanks">Merci pour vos commentaires!</string>
+    <string name="feedback_wakeup_no">Dites-nous quand vous vous réveillez.</string>
+    <string name="feedback_bedtime_no">Dites-nous quand vous allez vous coucher.</string>
     <string name="good_night">Merci et bonne nuit!</string>
     <string name="good_night_saliva">Veuillez d\'abord prendre votre échantillon de salive du soir! Commencez la procédure en appuyant sur le bouton \'Oui\'.</string>
     <string name="lights_out">Extinction des lumières!</string>

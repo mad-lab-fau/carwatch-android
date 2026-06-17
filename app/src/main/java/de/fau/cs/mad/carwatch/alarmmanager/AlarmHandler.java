@@ -16,7 +16,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
+import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -102,7 +102,7 @@ public class AlarmHandler {
         if (alarmManager == null) {
             alarm.setActive(false);
             if (snackBarAnchor != null) {
-                Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set_error), Snackbar.LENGTH_SHORT).show();
+                CarwatchSnackbar.show(snackBarAnchor, context.getString(R.string.alarm_set_error), CarwatchSnackbar.LENGTH_SHORT);
             }
             return;
         }
@@ -332,7 +332,7 @@ public class AlarmHandler {
             return;
 
         String message = context.getString(R.string.saliva_alarms_set);
-        Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show();
+        CarwatchSnackbar.show(anchor, message, CarwatchSnackbar.LENGTH_LONG);
     }
 
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
@@ -340,7 +340,7 @@ public class AlarmHandler {
             return;
 
         String timeDiffString = createTimeDiffString(time);
-        Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
+        CarwatchSnackbar.show(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), CarwatchSnackbar.LENGTH_SHORT);
     }
 
     public static void scheduleSalivaAlarm(Context context, Alarm alarm, View snackbarAnchor) {
@@ -431,7 +431,7 @@ public class AlarmHandler {
 
         if (snackBarAnchor != null) {
             // Show snackbar to notify user
-            Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_cancelled), Snackbar.LENGTH_SHORT).show();
+            CarwatchSnackbar.show(snackBarAnchor, context.getString(R.string.alarm_cancelled), CarwatchSnackbar.LENGTH_SHORT);
         }
     }
 

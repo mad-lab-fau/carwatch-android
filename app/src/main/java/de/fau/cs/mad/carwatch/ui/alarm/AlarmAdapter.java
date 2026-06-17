@@ -107,6 +107,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         holder.getAlarmTextView().setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorId));
         setTimePickerProperties(holder, item);
         setIconProperties(holder, item);
+        setIconAlignment(holder, item.getStringTime());
     }
 
     @Override
@@ -131,6 +132,25 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private static int getMinuteOfDay(Alarm alarm) {
         DateTime time = alarm.getTime();
         return time.getHourOfDay() * 60 + time.getMinuteOfHour();
+    }
+
+    private void setIconAlignment(@NonNull ViewHolder holder, @NonNull String alarmTime) {
+        boolean isSingleDigitTime = alarmTime.length() > 1
+                && Character.isDigit(alarmTime.charAt(0))
+                && alarmTime.charAt(1) == ':';
+        int margin = holder.itemView.getResources().getDimensionPixelSize(
+                isSingleDigitTime
+                        ? R.dimen.sample_suffix_icon_margin_start_single_digit_time
+                        : R.dimen.sample_suffix_icon_margin_start
+        );
+        setStartMargin(holder.getScannerIcon(), margin);
+        setStartMargin(holder.getCheckIcon(), margin);
+    }
+
+    private void setStartMargin(@NonNull View view, int margin) {
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        layoutParams.setMarginStart(margin);
+        view.setLayoutParams(layoutParams);
     }
 
     private void setSwitchProperties(ViewHolder holder, Alarm item) {
@@ -174,6 +194,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                         holder.getAlarmSwitch().setChecked(true);
                         holder.getAlarmTextView().setText(item.getStringTime());
                         holder.getAlarmTextView().setTextColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
+                        setIconAlignment(holder, item.getStringTime());
                         PreferenceManager.getDefaultSharedPreferences(view.getContext())
                                 .edit()
                                 .putInt(

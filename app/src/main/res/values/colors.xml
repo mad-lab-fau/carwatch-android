@@ -41,7 +41,8 @@
     <color name="colorBlack">#000000</color>
     <color name="colorGreen500">#4CAF50</color>
     <color name="colorOrange500">#FF9800</color>
-    <color name="colorLime500">#CDDC39</color>
+    <color name="colorLime500">#BFCD36</color>
+    <color name="colorSamplePlannedNotDue">#C4D054</color>
 
 
     <!-- Barcode Scanner -->
