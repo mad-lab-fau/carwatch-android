@@ -35,4 +35,5 @@
     <color name="colorGrey300">@color/md_theme_outlineVariant</color>
     <color name="colorGrey500">@color/md_theme_outline</color>
     <color name="colorSamplePlannedNotDue">#C4D054</color>
+    <color name="dialog_warning_icon_background">#33FFB4AB</color>
 </resources>

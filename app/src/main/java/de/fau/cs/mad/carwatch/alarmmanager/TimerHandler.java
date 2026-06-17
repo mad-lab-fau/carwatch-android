@@ -13,6 +13,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import org.joda.time.DateTime;
@@ -144,8 +145,11 @@ public class TimerHandler {
                 .setOngoing(true)
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
+                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .setColorized(false)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(contentText);
+                .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
 
         return builder.build();
     }
@@ -182,10 +186,13 @@ public class TimerHandler {
                 .setOngoing(true)
                 .setVibrate(Constants.VIBRATION_PATTERN)
                 .setSmallIcon(R.drawable.ic_alarm_white_24dp)
+                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .setColorized(false)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(contentText)
-                .addAction(R.drawable.ic_stop_white_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
-                .addAction(R.drawable.ic_barcode_scanner_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
+                .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
+                .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 
         return builder.build();

@@ -59,7 +59,7 @@
 
     <style name="ThemeOverlay.Carwatch.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog.Centered">
         <item name="android:windowBackground">@drawable/bg_study_information_dialog</item>
-        <item name="backgroundTint">@color/fab_menu_item_background</item>
+        <item name="backgroundTint">@color/md_theme_surfaceContainerHigh</item>
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.Carwatch.AlertDialog</item>
         <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.Carwatch.AlertDialog.Title</item>
         <item name="buttonBarPositiveButtonStyle">@style/Widget.Carwatch.AlertDialog.PositiveButton</item>
@@ -76,9 +76,8 @@
         <item name="android:maxLines">2</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:background">@drawable/bg_dialog_button</item>
-        <item name="backgroundTint">@null</item>
-        <item name="android:textColor">@color/md_theme_onSurface</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="cornerRadius">20dp</item>
     </style>
 
@@ -91,9 +90,8 @@
         <item name="android:maxLines">2</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:background">@drawable/bg_dialog_button</item>
-        <item name="backgroundTint">@null</item>
-        <item name="android:textColor">@color/md_theme_onSurface</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="cornerRadius">20dp</item>
     </style>
 
@@ -106,9 +104,8 @@
         <item name="android:maxLines">2</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:background">@drawable/bg_dialog_button</item>
-        <item name="backgroundTint">@null</item>
-        <item name="android:textColor">@color/md_theme_onSurface</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="cornerRadius">20dp</item>
     </style>
 

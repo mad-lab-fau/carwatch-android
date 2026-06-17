@@ -43,6 +43,7 @@
     <color name="colorOrange500">#FF9800</color>
     <color name="colorLime500">#BFCD36</color>
     <color name="colorSamplePlannedNotDue">#C4D054</color>
+    <color name="dialog_warning_icon_background">#1FBA1A1A</color>
 
 
     <!-- Barcode Scanner -->

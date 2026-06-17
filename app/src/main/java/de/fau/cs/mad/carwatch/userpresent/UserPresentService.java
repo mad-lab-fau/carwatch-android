@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.app.ServiceCompat;
 
 import org.json.JSONObject;
@@ -105,6 +106,9 @@ public class UserPresentService extends Service {
                 .setSmallIcon(R.drawable.ic_bedtime_24dp)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.app_active))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.app_active)))
+                .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setColorized(false)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setShowWhen(false)
                 .setContentIntent(pendingIntent);

@@ -25,6 +25,7 @@
     <string name="menu_app_info">App Info</string>
     <string name="content_description_open_fab_menu">Open menu</string>
     <string name="content_description_close_fab_menu">Close menu</string>
+    <string name="content_description_close">Close</string>
     <string name="title_reregister_ongoing_study">Study still ongoing</string>
     <string name="message_reregister_ongoing_study">Your study is still ongoing. Are you sure you want to reregister with a new QR code?</string>
     <string name="title_study_information">Study Information</string>
@@ -70,8 +71,8 @@
     <!-- Participant ID Dialog -->
     <string name="participant_id">Participant ID</string>
     <string name="message_participant_id">Please enter the Participant ID you received from us.</string>
-    <string name="title_kill_alarms">Warning</string>
-    <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
+    <string name="title_kill_alarms">Stop all alarms?</string>
+    <string name="message_kill_alarms">This will stop all active alarms and saliva timers. This action cannot be undone.</string>
 
     <!-- Open battery settings dialog -->
     <string name="title_battery_optimization">Battery Optimization</string>

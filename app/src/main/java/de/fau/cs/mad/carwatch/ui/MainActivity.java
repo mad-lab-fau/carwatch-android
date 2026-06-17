@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -20,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
@@ -27,6 +27,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
@@ -46,6 +47,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import de.fau.cs.mad.carwatch.Constants;
+import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
@@ -348,13 +350,29 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        new CarwatchDialogBuilder(this)
-                .setIcon(R.drawable.ic_warning_24dp)
-                .setTitle(R.string.title_reregister_ongoing_study)
-                .setMessage(R.string.message_reregister_ongoing_study)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.menu_reregister, (dialog, which) -> performReregistration())
-                .show();
+        showReregisterConfirmationDialog();
+    }
+
+    private void showReregisterConfirmationDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.widget_confirmation_dialog, null);
+        TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
+        TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
+        MaterialButton confirmButton = dialogView.findViewById(R.id.btn_confirmation_confirm);
+
+        titleView.setText(R.string.title_reregister_ongoing_study);
+        messageView.setText(R.string.message_reregister_ongoing_study);
+        confirmButton.setText(R.string.menu_reregister);
+
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
+                .setView(dialogView)
+                .create();
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+        confirmButton.setOnClickListener(view -> {
+            dialog.dismiss();
+            performReregistration();
+        });
+        dialog.show();
     }
 
     private void performReregistration() {
@@ -405,15 +423,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDeleteLogFilesWarningDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.widget_confirmation_dialog, null);
+        TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
+        TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
+        MaterialButton confirmButton = dialogView.findViewById(R.id.btn_confirmation_confirm);
+
+        titleView.setText(R.string.title_delete_log_files);
+        messageView.setText(R.string.message_delete_log_files_confirm_dialog);
+        confirmButton.setText(R.string.menu_delete_logs);
+
         AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_warning_24dp)
-                .setTitle(R.string.title_delete_log_files)
-                .setMessage(R.string.message_delete_log_files_confirm_dialog)
-                .setPositiveButton(R.string.menu_delete_logs, (dialogInterface, which) -> deleteLogFiles())
-                .setNegativeButton(R.string.cancel, ((dialogInterface, which) -> { }))
-                .show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.md_theme_error));
+                .setView(dialogView)
+                .create();
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+        confirmButton.setOnClickListener(view -> {
+            deleteLogFiles();
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     private void deleteLogFiles() {
@@ -448,8 +477,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void showStudyInformationDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.widget_study_information_dialog, null);
-        Drawable icon = Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.ic_school_24dp));
-        icon.setTint(ContextCompat.getColor(this, R.color.colorPrimary));
 
         setDetailRow(dialogView, R.id.row_study_name, R.string.label_study_name, getPreferenceString(Constants.PREF_STUDY_NAME));
         setDetailRow(dialogView, R.id.row_participant_id, R.string.label_participant_id, getPreferenceString(Constants.PREF_PARTICIPANT_ID));
@@ -459,16 +486,7 @@ public class MainActivity extends AppCompatActivity {
         setDetailRow(dialogView, R.id.row_fixed_sample_times, R.string.label_fixed_sample_times, formatFixedSampleTimes(sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")));
         setDetailRow(dialogView, R.id.row_evening_sample, R.string.label_evening_sample, getString(sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false) ? R.string.yes : R.string.no));
 
-        AlertDialog dialog = new CarwatchDialogBuilder(this)
-                .setIcon(icon)
-                .setTitle(R.string.title_study_information)
-                .setView(dialogView)
-                .setPositiveButton(R.string.ok, null)
-                .show();
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.bg_study_information_dialog));
-        }
+        showInfoBottomSheet(dialogView);
     }
 
     private void setDetailRow(View root, int rowId, int labelId, String value) {
@@ -549,26 +567,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showKillWarningDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.widget_confirmation_dialog, null);
+        TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
+        TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
+        MaterialButton confirmButton = dialogView.findViewById(R.id.btn_confirmation_confirm);
+
+        titleView.setText(R.string.title_kill_alarms);
+        messageView.setText(R.string.message_kill_alarms);
+        confirmButton.setText(R.string.menu_kill);
+
         AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_warning_24dp)
-                .setTitle(getString(R.string.title_kill_alarms))
-                .setMessage(getString(R.string.message_kill_alarms))
-                .setPositiveButton(R.string.menu_kill, (dialogInterface, which) -> {
-                    AlarmHandler.killAll(getApplication());
-                    AlarmSoundControl.getInstance().stopAlarmSound();
-                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (notificationManager != null)
-                        notificationManager.cancelAll();
-                })
-                .setNegativeButton(R.string.cancel, ((dialogInterface, which) -> {
-                }))
-                .show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.md_theme_error));
+                .setView(dialogView)
+                .create();
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+        confirmButton.setOnClickListener(view -> {
+            AlarmHandler.killAll(getApplication());
+            AlarmSoundControl.getInstance().stopAlarmSound();
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.cancelAll();
+            }
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     private void showAppInfoDialog() {
-        AppInfoDialog dialog = new AppInfoDialog();
-        dialog.show(getSupportFragmentManager(), "app_info");
+        View dialogView = getLayoutInflater().inflate(R.layout.widget_app_info_dialog, null);
+        TextView appVersionTextView = dialogView.findViewById(R.id.tv_app_version);
+        appVersionTextView.setText(HtmlCompat.fromHtml(
+                getString(R.string.app_version, BuildConfig.VERSION_NAME),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+        ));
+        showInfoBottomSheet(dialogView);
+    }
+
+    private void showInfoBottomSheet(View contentView) {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(contentView);
+        View closeButton = contentView.findViewById(R.id.btn_sheet_close);
+        if (closeButton != null) {
+            closeButton.setOnClickListener(view -> dialog.dismiss());
+        }
+        dialog.show();
     }
 }

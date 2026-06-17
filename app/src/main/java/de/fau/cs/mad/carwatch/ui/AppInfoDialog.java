@@ -32,11 +32,6 @@ public class AppInfoDialog extends DialogFragment {
                 .setPositiveButton(R.string.ok, null)
                 .create();
 
-        dialog.setOnShowListener(shownDialog -> CarwatchDialogBuilder.applyCarwatchWindowBackground(
-                dialog,
-                requireContext()
-        ));
-
         return dialog;
     }
 }
