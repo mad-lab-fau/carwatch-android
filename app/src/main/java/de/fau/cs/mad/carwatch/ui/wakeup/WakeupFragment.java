@@ -78,6 +78,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             }
 
             WakeupAlert wakeupAlert = createWakeupAlert(sp);
+            if (isOverdueSampleAlert(wakeupAlert)) {
+                startWakeupSampling(wakeupAlert);
+                return;
+            }
+
             String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
             boolean delayedOnlyWakeupSample = wakeupAlert != null
                     && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
@@ -135,6 +140,13 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        if (isOverdueSampleAlert(wakeupAlert)) {
+            initializeDay(true);
+            saveWakeupAlert(sp, null);
+            showWakeupAlert(wakeupAlert);
+            return;
+        }
+
         if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances)) {
             initializeDay(false);
             saveWakeupAlert(sp, wakeupAlert);
@@ -150,6 +162,10 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             initializeDay(true);
             AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
         }
+    }
+
+    private boolean isOverdueSampleAlert(WakeupAlert wakeupAlert) {
+        return wakeupAlert != null && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE);
     }
 
     private WakeupAlert createWakeupAlert(SharedPreferences sp) {

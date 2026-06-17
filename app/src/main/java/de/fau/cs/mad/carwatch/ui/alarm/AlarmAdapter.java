@@ -1,6 +1,5 @@
 package de.fau.cs.mad.carwatch.ui.alarm;
 
-import android.app.TimePickerDialog;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -12,14 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,7 +102,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         setSwitchProperties(holder, item);
         holder.getAlarmTextView().setText(item.getStringTime());
         holder.getAlarmTextView().setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorId));
-        setTimePickerProperties(holder, item);
+        setScanClickProperties(holder, item);
         setIconProperties(holder, item);
         setIconAlignment(holder, item.getStringTime());
     }
@@ -175,42 +172,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         });
     }
 
-    private void setTimePickerProperties(ViewHolder holder, Alarm item) {
-        if (item.getId() != Constants.EXTRA_ALARM_ID_EVENING || item.wasSampleTaken()) {
-            holder.getAlarmTextView().setOnClickListener(null);
-            holder.getAlarmTextView().setClickable(false);
-            return;
-        }
-
-        holder.getAlarmTextView().setClickable(true);
-        holder.getAlarmTextView().setOnClickListener(view -> {
-            DateTime time = item.getTime() == null ? DateTime.now() : item.getTime();
-            TimePickerDialog timePicker = new TimePickerDialog(
-                    view.getContext(),
-                    (timePickerView, selectedHour, selectedMinute) -> {
-                        LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
-                        item.setTime(selectedTime.toDateTimeToday());
-                        item.setActive(true);
-                        holder.getAlarmSwitch().setChecked(true);
-                        holder.getAlarmTextView().setText(item.getStringTime());
-                        holder.getAlarmTextView().setTextColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
-                        setIconAlignment(holder, item.getStringTime());
-                        PreferenceManager.getDefaultSharedPreferences(view.getContext())
-                                .edit()
-                                .putInt(
-                                        Constants.PREF_EVENING_REMINDER_TIME_MINUTES,
-                                        selectedTime.getHourOfDay() * 60 + selectedTime.getMinuteOfHour()
-                                )
-                                .apply();
-                        AlarmHandler.scheduleSalivaAlarm(view.getContext(), item, view);
-                        alarmViewModel.update(item);
-                    },
-                    time.getHourOfDay(),
-                    time.getMinuteOfHour(),
-                    true
-            );
-            timePicker.show();
-        });
+    private void setScanClickProperties(ViewHolder holder, Alarm item) {
+        holder.itemView.setClickable(!item.wasSampleTaken());
+        holder.itemView.setOnClickListener(item.wasSampleTaken()
+                ? null
+                : view -> AlarmViewFunctionalities.requestOpenBarcodeScanner(view.getContext(), item));
     }
 
     private void setIconProperties(@NonNull ViewHolder holder, @NonNull Alarm alarm) {
@@ -219,7 +185,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         int statusIconVisibility = alarm.wasSampleTaken() ? View.GONE : View.VISIBLE;
         holder.getCheckIcon().setVisibility(checkVisibility);
         holder.getScannerIcon().setVisibility(scannerVisibility);
-        holder.getScannerIcon().setOnClickListener(view -> AlarmViewFunctionalities.requestOpenBarcodeScanner(view.getContext(), alarm));
+        holder.getScannerIcon().setOnClickListener(null);
+        holder.getScannerIcon().setClickable(false);
         holder.getSampleStatusIcon().setVisibility(statusIconVisibility);
         boolean isBeforeSampleTime = DateTime.now().isBefore(alarm.getTime());
         int src = isBeforeSampleTime ? R.drawable.ic_hourglass : R.drawable.ic_pending;
