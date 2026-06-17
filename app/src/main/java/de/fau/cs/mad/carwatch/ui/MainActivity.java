@@ -124,7 +124,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
-            CarwatchSnackbar.show(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), CarwatchSnackbar.LENGTH_SHORT);
+            coordinatorLayout.post(() -> CarwatchSnackbar.show(
+                    coordinatorLayout,
+                    getString(R.string.message_barcode_scanned_successfully),
+                    CarwatchSnackbar.LENGTH_SHORT
+            ));
         }
         showPendingWakeupAlert();
         showEndOfDayAlert();

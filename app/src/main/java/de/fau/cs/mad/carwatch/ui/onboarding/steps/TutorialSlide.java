@@ -1,6 +1,10 @@
 package de.fau.cs.mad.carwatch.ui.onboarding.steps;
 
 import android.os.Bundle;
+import android.graphics.drawable.Drawable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -10,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import de.fau.cs.mad.carwatch.R;
 
 public class TutorialSlide extends BaseWelcomeSlide {
@@ -59,7 +64,7 @@ public class TutorialSlide extends BaseWelcomeSlide {
         ImageView screenView = root.findViewById(R.id.iv_screen_view);
 
         titleText.setText(headline);
-        descriptionText.setText(description);
+        descriptionText.setText(createDescriptionWithInlineIcons(description));
         screenView.setImageResource(imageId);
 
         DisplayMetrics displayMetrics = requireContext().getResources().getDisplayMetrics();
@@ -71,6 +76,40 @@ public class TutorialSlide extends BaseWelcomeSlide {
             screenView.getLayoutParams().height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, displayMetrics);
         }
         return root;
+    }
+
+    private CharSequence createDescriptionWithInlineIcons(String text) {
+        SpannableStringBuilder builder = new SpannableStringBuilder(text);
+        replaceIconPlaceholder(builder, "{sample_taken_icon}", R.drawable.ic_check);
+        replaceIconPlaceholder(builder, "{sample_due_icon}", R.drawable.ic_pending);
+        replaceIconPlaceholder(builder, "{sample_later_icon}", R.drawable.ic_hourglass);
+        return builder;
+    }
+
+    private void replaceIconPlaceholder(SpannableStringBuilder builder, String placeholder, int drawableId) {
+        int start = builder.toString().indexOf(placeholder);
+        while (start >= 0) {
+            int end = start + placeholder.length();
+            builder.replace(start, end, " ");
+
+            Drawable drawable = ContextCompat.getDrawable(requireContext(), drawableId);
+            if (drawable != null) {
+                int iconSize = Math.round(TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_SP,
+                        18,
+                        getResources().getDisplayMetrics()
+                ));
+                drawable.setBounds(0, 0, iconSize, iconSize);
+                builder.setSpan(
+                        new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM),
+                        start,
+                        start + 1,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+            }
+
+            start = builder.toString().indexOf(placeholder, start + 1);
+        }
     }
 
     @Override

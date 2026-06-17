@@ -88,6 +88,7 @@
     <string name="bedtime_title">Die Nacht beginnen</string>
     <string name="bedtime_text">Wir beginnen nun mit dem Abendprozedere.</string>
     <string name="bedtime_message">Guten Abend!\nSind Sie dabei, ins Bett zu gehen?</string>
+    <string name="message_no_evening_sample_required">Keine Abendprobe erforderlich. Vielen Dank und gute Nacht!</string>
 
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
@@ -162,7 +163,7 @@
     <string name="headline_alarm_tutorial">Die Probenwecker</string>
     <string name="description_wakeup_alarm">In der Weckerübersicht können Sie einen Wecker für den nächsten Morgen stellen. Dafür müssen Sie nur auf die angezeigte Zeit tippen und die gewünschte Weckzeit auswählen.</string>
     <string name="description_saliva_alarm_overview">Nachdem Sie aufgewacht sind, werden in der Übersicht alle Zeiten angezeigt, zu denen eine Probe genommen werden muss.</string>
-    <string name="description_alarm_symbols_tutorial">Die Symbole neben den Zeiten zeigen an, ob die Probe bereits genommen wurde (Haken), schon anstand (Uhr) oder später ansteht (Sanduhr). Wenn Sie auf das Scanner Symbol drücken, öffnet sich der Barcode Scanner für die jeweilige Probe.</string>
+    <string name="description_alarm_symbols_tutorial">Die Symbole neben den Zeiten zeigen an, ob die Probe bereits genommen wurde {sample_taken_icon}, schon anstand {sample_due_icon} oder später ansteht {sample_later_icon}. Wenn Sie auf das Scanner Symbol drücken, öffnet sich der Barcode Scanner für die jeweilige Probe.</string>
     <string name="headline_bedtime_screen_tutorial">Zu Bett gehen</string>
     <string name="description_bedtime_screen">Hier können Sie die Abendprozedur vor dem Schlafengehen starten. Das ist nur notwendig, wenn Sie für die Studie eine Abendprobe nehmen müssen. Der \"Licht aus!\" Button aktiviert den Dunkelmodus der App.</string>
     <string name="headline_scan_screen_tutorial">Die Probe scannen</string>

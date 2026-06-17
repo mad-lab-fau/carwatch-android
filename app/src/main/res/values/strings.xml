@@ -120,7 +120,7 @@
     <string name="headline_alarm_tutorial">Track your alarms</string>
     <string name="description_wakeup_alarm">You can set an alarm for the next morning directly from the alarm clock screen. Simply tap on the displayed time and choose your desired wake-up time.</string>
     <string name="description_saliva_alarm_overview">After you woke up, the screen also provides an overview of past and upcoming saliva alarms and their current state.</string>
-    <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken (checkmark), was already due (clock) or is scheduled for later (hourglass). Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
+    <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken {sample_taken_icon}, was already due {sample_due_icon} or is scheduled for later {sample_later_icon}. Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
     <string name="headline_bedtime_screen_tutorial">Report going to bed</string>
     <string name="description_bedtime_screen">Here, you can initiate the evening procedure before going to bed. You only need to do this if the study requires you to take an evening sample. The \"Lights out!\" Button will activate the app\'s dark mode.</string>
     <string name="headline_scan_screen_tutorial">Scan your sample</string>
@@ -164,6 +164,7 @@
     <string name="bedtime_title">Start Night</string>
     <string name="bedtime_text">We will now begin with the evening procedure.</string>
     <string name="bedtime_message">Good Evening!\nAre you going to bed?</string>
+    <string name="message_no_evening_sample_required">No evening sample is required. Thank you and good night!</string>
 
     <!-- Alarm Fragment -->
     <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>

@@ -18,6 +18,7 @@ public final class CarwatchSnackbar {
     public static final int LENGTH_LONG = Snackbar.LENGTH_LONG;
 
     private static final int BOTTOM_NAV_GAP_DP = 12;
+    private static final int DEFAULT_BOTTOM_NAV_HEIGHT_DP = 80;
 
     private CarwatchSnackbar() {
     }
@@ -57,7 +58,14 @@ public final class CarwatchSnackbar {
         if (view.getHeight() > 0) {
             return view.getHeight();
         }
-        return view.getMeasuredHeight();
+        if (view.getMeasuredHeight() > 0) {
+            return view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams != null && layoutParams.height > 0) {
+            return layoutParams.height;
+        }
+        return dp(view, DEFAULT_BOTTOM_NAV_HEIGHT_DP);
     }
 
     private static int dp(@NonNull View view, int value) {
