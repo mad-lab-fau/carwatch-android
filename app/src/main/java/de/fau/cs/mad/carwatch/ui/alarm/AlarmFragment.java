@@ -131,7 +131,7 @@ public class AlarmFragment extends Fragment {
                     false,
                     false,
                     Constants.FIRST_SAMPLE_ALARM_ID,
-                    initialAlarm.getSalivaId(),
+                    Constants.EXTRA_SALIVA_ID_INITIAL,
                     initialAlarm.wasSampleTaken()
             );
             sampleAlarms.add(initialSampleAlarm);

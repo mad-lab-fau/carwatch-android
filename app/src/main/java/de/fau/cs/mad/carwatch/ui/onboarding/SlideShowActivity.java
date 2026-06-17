@@ -128,6 +128,10 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 performReregistrationFromStudyDetails();
                 return;
             }
+            if (isBackButtonSlide(slides.get(currentSlidePosition))) {
+                previousSlide();
+                return;
+            }
             finishSlideShow();
         });
     }
@@ -230,6 +234,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
         header.setVisibility(isStudyDetailsSlide ? View.GONE : View.VISIBLE);
         setSlideContentTopMargin(isStudyDetailsSlide ? 0 : dpToPx(112));
+        setSlideContentBottomMargin(0);
         if (isStudyDetailsSlide) {
             headerTitle.setText(R.string.title_study_configuration);
         } else if (slide instanceof PermissionRequest) {
@@ -242,6 +247,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         initButtonsForSlide(slide);
         replaceFragment(slide.getFragment());
         updateVisibleDots(position);
+        setDotsVisibleForSlide(slide);
         highlightDot(position);
     }
 
@@ -251,6 +257,15 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
             return;
         }
         layoutParams.topMargin = marginTop;
+        slideShowFragment.setLayoutParams(layoutParams);
+    }
+
+    private void setSlideContentBottomMargin(int marginBottom) {
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) slideShowFragment.getLayoutParams();
+        if (layoutParams.bottomMargin == marginBottom) {
+            return;
+        }
+        layoutParams.bottomMargin = marginBottom;
         slideShowFragment.setLayoutParams(layoutParams);
     }
 
@@ -372,15 +387,20 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void initButtonsForSlide(WelcomeSlide slide) {
-        slideNavigation.setVisibility(View.VISIBLE);
+        slideNavigation.setVisibility(slide instanceof QrFragment ? View.GONE : View.VISIBLE);
         boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
-        skipButton.setText(isStudyDetailsSlide ? R.string.btn_reregister : R.string.btn_skip_all);
+        boolean showBackButton = isBackButtonSlide(slide);
+        skipButton.setText(isStudyDetailsSlide
+                ? R.string.btn_reregister
+                : showBackButton ? R.string.btn_back : R.string.btn_skip_all);
         setNavigationButtonWidths(isStudyDetailsSlide);
-        setSkipButtonVisibility(isStudyDetailsSlide || slide.getSkipButtonIsVisible().get());
+        setSkipButtonVisibility(isStudyDetailsSlide || showBackButton || slide.getSkipButtonIsVisible().get());
         slide.getSkipButtonIsVisible().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
-                setSkipButtonVisibility(slide instanceof StudyDetailsSlide || slide.getSkipButtonIsVisible().get());
+                setSkipButtonVisibility(slide instanceof StudyDetailsSlide
+                        || isBackButtonSlide(slide)
+                        || slide.getSkipButtonIsVisible().get());
             }
         });
         canShowNextSlide = slide.getCanShowNextSlide().get();
@@ -403,6 +423,12 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 canShowPreviousSlide = slide.getCanShowPreviousSlide().get();
             }
         });
+    }
+
+    private boolean isBackButtonSlide(WelcomeSlide slide) {
+        return !(slide instanceof StudyDetailsSlide)
+                && !slide.getSkipButtonIsVisible().get()
+                && slide.getCanShowPreviousSlide().get();
     }
 
     private void setNavigationButtonWidths(boolean isStudyDetailsSlide) {
@@ -507,6 +533,11 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         }
         View tab = tabDots.getChildAt(position);
         tab.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void setDotsVisibleForSlide(WelcomeSlide slide) {
+        boolean hideDots = slide instanceof WelcomeText || slide instanceof PermissionRequest;
+        tabDots.setVisibility(hideDots ? View.GONE : View.VISIBLE);
     }
 
     @SuppressLint("ClickableViewAccessibility")

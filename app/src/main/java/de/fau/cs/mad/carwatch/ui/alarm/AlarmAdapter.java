@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.ui.alarm;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -21,6 +23,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -96,14 +99,15 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Alarm item = localAlarms.get(position);
         int colorId = item.isActive() ? R.color.colorAccent : R.color.colorGrey500;
+        boolean sampleTaken = isSampleTaken(holder.itemView, item);
         int adjustedSampleId = item.getSalivaId() + startSampleId;
         String sampleName = sampleIdPrefix + adjustedSampleId + ":";
         holder.getSampleNameTextView().setText(sampleName);
-        setSwitchProperties(holder, item);
+        setSwitchProperties(holder, item, sampleTaken);
         holder.getAlarmTextView().setText(item.getStringTime());
         holder.getAlarmTextView().setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorId));
-        setScanClickProperties(holder, item);
-        setIconProperties(holder, item);
+        setScanClickProperties(holder, item, sampleTaken);
+        setIconProperties(holder, item, sampleTaken);
         setIconAlignment(holder, item.getStringTime());
     }
 
@@ -150,13 +154,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         view.setLayoutParams(layoutParams);
     }
 
-    private void setSwitchProperties(ViewHolder holder, Alarm item) {
+    private void setSwitchProperties(ViewHolder holder, Alarm item, boolean sampleTaken) {
         SwitchMaterial alarmSwitch = holder.getAlarmSwitch();
 
         alarmSwitch.setChecked(item.isActive());
         boolean isLater = DateTime.now().isBefore(item.getTime());
         boolean isEveningReminder = item.getId() == Constants.EXTRA_ALARM_ID_EVENING;
-        alarmSwitch.setEnabled((isEveningReminder || isLater) && !item.wasSampleTaken());
+        alarmSwitch.setEnabled((isEveningReminder || isLater) && !sampleTaken);
         if (isLater && !isEveningReminder) {
             new Handler(Looper.getMainLooper()).postDelayed(
                     () -> alarmSwitch.setEnabled(false),
@@ -172,17 +176,17 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         });
     }
 
-    private void setScanClickProperties(ViewHolder holder, Alarm item) {
-        holder.itemView.setClickable(!item.wasSampleTaken());
-        holder.itemView.setOnClickListener(item.wasSampleTaken()
+    private void setScanClickProperties(ViewHolder holder, Alarm item, boolean sampleTaken) {
+        holder.itemView.setClickable(!sampleTaken);
+        holder.itemView.setOnClickListener(sampleTaken
                 ? null
                 : view -> AlarmViewFunctionalities.requestOpenBarcodeScanner(view.getContext(), item));
     }
 
-    private void setIconProperties(@NonNull ViewHolder holder, @NonNull Alarm alarm) {
-        int checkVisibility = alarm.wasSampleTaken() ? View.VISIBLE : View.GONE;
-        int scannerVisibility = alarm.wasSampleTaken() ? View.GONE : View.VISIBLE;
-        int statusIconVisibility = alarm.wasSampleTaken() ? View.GONE : View.VISIBLE;
+    private void setIconProperties(@NonNull ViewHolder holder, @NonNull Alarm alarm, boolean sampleTaken) {
+        int checkVisibility = sampleTaken ? View.VISIBLE : View.GONE;
+        int scannerVisibility = sampleTaken ? View.GONE : View.VISIBLE;
+        int statusIconVisibility = sampleTaken ? View.GONE : View.VISIBLE;
         holder.getCheckIcon().setVisibility(checkVisibility);
         holder.getScannerIcon().setVisibility(scannerVisibility);
         holder.getScannerIcon().setOnClickListener(null);
@@ -194,6 +198,44 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         if (isBeforeSampleTime) {
             switchIconAfterAlarm(holder.getSampleStatusIcon(), alarm.getTimeToNextRing());
+        }
+    }
+
+    private boolean isSampleTaken(@NonNull View view, @NonNull Alarm alarm) {
+        if (alarm.wasSampleTaken()) {
+            return true;
+        }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
+        int startIndex = getStartSampleIndex(sharedPreferences);
+        Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            try {
+                int scannedDay = Integer.parseInt(barcode.substring(3, 5));
+                int scannedSampleId = Integer.parseInt(barcode.substring(5, 7)) - startIndex;
+                if (scannedDay == dayId && scannedSampleId == alarm.getSalivaId()) {
+                    return true;
+                }
+            } catch (NumberFormatException e) {
+                // Ignore malformed legacy barcode entries.
+            }
+        }
+
+        return false;
+    }
+
+    private int getStartSampleIndex(SharedPreferences sharedPreferences) {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        try {
+            return Integer.parseInt(startSample.substring(1));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return Integer.parseInt(Constants.DEFAULT_START_SAMPLE.substring(1));
         }
     }
 

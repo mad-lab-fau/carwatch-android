@@ -11,9 +11,10 @@
         android:id="@+id/slide_show_fragment"
         android:name="de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="112dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,12 +27,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/slide_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_width="0dp"
+        android:layout_height="@dimen/slide_navigation_height"
+        android:layout_marginStart="@dimen/slide_navigation_margin_horizontal"
+        android:layout_marginEnd="@dimen/slide_navigation_margin_horizontal"
+        android:layout_marginBottom="@dimen/slide_navigation_margin_bottom"
+        app:cardBackgroundColor="@color/md_theme_surfaceContainerHigh"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FloatingNavigation"
+        app:strokeColor="@color/md_theme_outlineVariant"
+        app:strokeWidth="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -39,16 +49,16 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_skip_slides"
-                android:layout_width="130dp"
-                android:layout_height="58dp"
-                android:layout_margin="5dp"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="@dimen/slide_navigation_button_width"
+                android:layout_height="@dimen/slide_navigation_button_height"
+                android:layout_margin="@dimen/slide_navigation_content_margin"
                 android:paddingHorizontal="12dp"
                 android:text="@string/btn_skip_all"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
                 android:id="@+id/tab_dots"
@@ -63,14 +73,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_next_slide"
-                android:layout_width="130dp"
-                android:layout_height="58dp"
-                android:layout_margin="5dp"
+                android:layout_width="@dimen/slide_navigation_button_width"
+                android:layout_height="@dimen/slide_navigation_button_height"
+                android:layout_margin="@dimen/slide_navigation_content_margin"
                 android:maxLines="2"
                 android:text="@string/btn_next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

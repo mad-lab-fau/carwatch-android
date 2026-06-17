@@ -139,4 +139,9 @@
         <item name="cornerSize">28dp</item>
     </style>
 
+    <style name="ShapeAppearance.Carwatch.FloatingNavigation" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
 </resources>

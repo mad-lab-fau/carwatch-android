@@ -122,6 +122,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Weiter</string>
+    <string name="btn_back">Zurück</string>
     <string name="btn_to_app">Zur App</string>
     <string name="btn_skip_all">Tutorial überspringen</string>
     <string name="btn_reregister">Neu registrieren</string>

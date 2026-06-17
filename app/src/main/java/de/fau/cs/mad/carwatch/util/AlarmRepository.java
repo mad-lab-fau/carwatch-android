@@ -81,6 +81,10 @@ public class AlarmRepository {
         new UpdateAsyncTask(alarmModel).execute(alarm);
     }
 
+    public void updateAndWait(Alarm alarm) throws ExecutionException, InterruptedException {
+        new UpdateAsyncTask(alarmModel).execute(alarm).get();
+    }
+
     public void updateActive(Alarm alarm) {
         new UpdateActiveAsyncTask(alarmModel).execute(alarm);
     }

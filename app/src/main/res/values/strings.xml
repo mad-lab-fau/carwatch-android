@@ -80,6 +80,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Next</string>
+    <string name="btn_back">Back</string>
     <string name="btn_to_app">To the App</string>
     <string name="btn_skip_all">Skip tutorial</string>
     <string name="btn_reregister">Reregister</string>

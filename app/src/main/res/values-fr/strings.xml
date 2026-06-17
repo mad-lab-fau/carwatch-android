@@ -72,6 +72,7 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Suivant</string>
+    <string name="btn_back">Retour</string>
     <string name="btn_to_app">Vers l\'application</string>
     <string name="btn_skip_all">Sauter le tutoriel</string>
     <string name="btn_reregister">Réenregistrer</string>

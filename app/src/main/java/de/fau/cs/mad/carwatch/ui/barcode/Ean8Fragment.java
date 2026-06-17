@@ -144,7 +144,7 @@ public class Ean8Fragment extends BarcodeFragment {
                     AlarmHandler.cancelAlarm(getContext(), alarm, null);
                     alarm.setActive(false);
                 }
-                repository.update(alarm);
+                repository.updateAndWait(alarm);
             }
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database: "  + e.getMessage());
