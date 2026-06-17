@@ -26,6 +26,7 @@
     <string name="menu_app_info">Infos appli</string>
     <string name="content_description_open_fab_menu">Ouvrir le menu</string>
     <string name="content_description_close_fab_menu">Fermer le menu</string>
+    <string name="content_description_close">Fermer</string>
     <string name="title_reregister_ongoing_study">Étude toujours en cours</string>
     <string name="message_reregister_ongoing_study">Votre étude est toujours en cours. Voulez-vous vraiment vous réenregistrer avec un nouveau code QR?</string>
     <string name="title_study_information">Informations sur l\'étude</string>
@@ -76,7 +77,10 @@
     <string name="btn_reregister">Réenregistrer</string>
     <string name="btn_confirm_continue_tutorial">Confirmer</string>
     <string name="message_study_details_confirmation">Veuillez confirmer que cette configuration d\'étude correspond aux informations que vous avez reçues avant de continuer le tutoriel.</string>
+    <string name="headline_review_study_setup">Vérifiez la configuration de votre étude</string>
+    <string name="message_study_details_continue_if_correct">Continuez uniquement si ces informations sont correctes. Sinon, recommencez la configuration et scannez le bon code QR de l\'étude.</string>
     <string name="title_study_configuration">Configuration de l\'étude</string>
+    <string name="title_setup">Configuration</string>
     <string name="title_tutorial">Tutoriel</string>
     <string name="label_study_name">Nom de l\'étude</string>
     <string name="label_participant_id">ID de participant</string>
@@ -86,10 +90,22 @@
     <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">L\'icône de l\'application CARWatch</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
+    <string name="message_welcome_participant_intro">CARWatch est destinée aux participants à une étude. Elle vous aide à suivre le calendrier de votre étude en envoyant des rappels et en confirmant les échantillons par scan de code-barres.</string>
+    <string name="message_welcome_invited_only">Utilisez cette application uniquement si vous avez été invité à participer à une étude.</string>
+    <string name="message_welcome_sample_reminders">Vous recevrez des rappels pour les échantillons de salive programmés.</string>
+    <string name="message_welcome_qr_required">Vous avez besoin d\'un code QR d\'étude pour configurer l\'application.</string>
     <string name="headline_permission_request_slide">Déverrouiller les fonctionnalités!</string>
     <string name="message_permission_request">Pour activer toutes les fonctionnalités, notre application nécessite les autorisations suivantes:</string>
+    <string name="symbol_dot" translatable="false">\u2022</string>
     <string name="message_camera_access">Accès à la caméra pour pouvoir scanner les codes-barres des tubes à échantillons</string>
     <string name="message_notification_permission">Envoi de notifications pour vous informer des échantillons à venir</string>
+    <string name="headline_prepare_carwatch">Préparer CARWatch</string>
+    <string name="message_prepare_carwatch_permissions">CARWatch a besoin de quelques autorisations afin de vous rappeler les prélèvements à temps et de confirmer les échantillons en toute sécurité.</string>
+    <string name="label_permission_notifications">Notifications</string>
+    <string name="message_permission_notifications_card">Envoyer des rappels lorsque des échantillons de salive sont programmés.</string>
+    <string name="label_permission_camera">Caméra</string>
+    <string name="message_permission_camera_card">Scanner les codes QR de l\'étude et les codes-barres des tubes d\'échantillons.</string>
+    <string name="label_permission_required">Obligatoire</string>
     <string name="headline_wakeup_screen_tutorial">Commencer la matinée</string>
     <string name="description_wakeup_screen">Vous ne devez utiliser cette fonction que si vous n\'aviez pas réglé de réveil pour le matin ou si vous vous êtes réveillé avant que le réveil ne sonne. En appuyant sur le bouton \"Oui\", les réveils d\'échantillons sont configurés pour le jour suivant.</string>
     <string name="headline_alarm_tutorial">Suivez vos alarmes!</string>

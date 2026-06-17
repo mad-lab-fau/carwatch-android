@@ -39,6 +39,7 @@
     <string name="menu_app_info">App-Info</string>
     <string name="content_description_open_fab_menu">Menü öffnen</string>
     <string name="content_description_close_fab_menu">Menü schließen</string>
+    <string name="content_description_close">Schließen</string>
     <string name="title_reregister_ongoing_study">Studie läuft noch</string>
     <string name="message_reregister_ongoing_study">Ihre Studie läuft noch. Sind Sie sicher, dass Sie sich mit einem neuen QR-Code neu registrieren möchten?</string>
     <string name="title_study_information">Studieninformationen</string>
@@ -126,7 +127,10 @@
     <string name="btn_reregister">Neu registrieren</string>
     <string name="btn_confirm_continue_tutorial">Bestätigen</string>
     <string name="message_study_details_confirmation">Bitte bestätigen Sie, dass diese Studienkonfiguration mit den Informationen übereinstimmt, die Sie erhalten haben, bevor Sie mit dem Tutorial fortfahren.</string>
+    <string name="headline_review_study_setup">Überprüfen Sie Ihre Studienkonfiguration</string>
+    <string name="message_study_details_continue_if_correct">Fahren Sie nur fort, wenn diese Angaben korrekt sind. Falls nicht, starten Sie die Einrichtung neu und scannen Sie den richtigen Studien-QR-Code.</string>
     <string name="title_study_configuration">Studienkonfiguration</string>
+    <string name="title_setup">Einrichtung</string>
     <string name="title_tutorial">Tutorial</string>
     <string name="label_study_name">Studienname</string>
     <string name="label_participant_id">Teilnehmer-ID</string>
@@ -136,10 +140,22 @@
     <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">Das Icon der CARWatch app</string>
     <string name="headline_welcome">Willkommen bei CARWatch!</string>
+    <string name="message_welcome_participant_intro">CARWatch ist für Studienteilnehmende gedacht. Die App hilft Ihnen, Ihren Studienplan einzuhalten, indem sie Erinnerungen sendet und Proben per Barcode-Scan bestätigt.</string>
+    <string name="message_welcome_invited_only">Verwenden Sie diese App nur, wenn Sie zur Teilnahme an einer Studie eingeladen wurden.</string>
+    <string name="message_welcome_sample_reminders">Sie erhalten Erinnerungen für geplante Speichelproben.</string>
+    <string name="message_welcome_qr_required">Sie benötigen einen Studien-QR-Code, um die App einzurichten.</string>
     <string name="headline_permission_request_slide">Funktionen freischalten!</string>
     <string name="message_permission_request">Damit Sie die App optimal nutzen können, benötigen wir folgende Berechtigungen:</string>
+    <string name="symbol_dot" translatable="false">\u2022</string>
     <string name="message_camera_access">Kamerazugriff, um die Barcodes auf den Probenröhrchen zu scannen</string>
     <string name="message_notification_permission">Die Berechtigung, Benachrichtigungen zu senden, um über anstehende Proben zu informieren</string>
+    <string name="headline_prepare_carwatch">CARWatch vorbereiten</string>
+    <string name="message_prepare_carwatch_permissions">CARWatch benötigt einige Berechtigungen, damit die App Sie pünktlich erinnern und Proben sicher bestätigen kann.</string>
+    <string name="label_permission_notifications">Benachrichtigungen</string>
+    <string name="message_permission_notifications_card">Erinnerungen senden, wenn Speichelproben geplant sind.</string>
+    <string name="label_permission_camera">Kamera</string>
+    <string name="message_permission_camera_card">Studien-QR-Codes und Barcodes von Probenröhrchen scannen.</string>
+    <string name="label_permission_required">Erforderlich</string>
     <string name="headline_wakeup_screen_tutorial">Den Morgen starten</string>
     <string name="description_wakeup_screen">Diese Funktion müssen Sie nur nutzen, wenn Sie keinen Wecker für den Morgen gestellt hatten oder aufgewacht sind, bevor der Wecker geklingelt hat. Durch drücken des \"Ja\" Buttons, werden die Probenwecker für den kommenden Tag eingerichtet.</string>
     <string name="headline_alarm_tutorial">Die Probenwecker</string>
