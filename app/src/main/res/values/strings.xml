@@ -84,6 +84,8 @@
     <string name="btn_reregister">Reregister</string>
     <string name="btn_confirm_continue_tutorial">Confirm</string>
     <string name="message_study_details_confirmation">Please confirm that this study configuration matches the information you received before continuing to the tutorial.</string>
+    <string name="headline_review_study_setup">Review your study setup</string>
+    <string name="message_study_details_continue_if_correct">Only continue if these details are correct. If not, restart setup and scan the correct study QR code.</string>
     <string name="title_study_configuration">Study Configuration</string>
     <string name="title_setup">Setup</string>
     <string name="title_tutorial">Tutorial</string>

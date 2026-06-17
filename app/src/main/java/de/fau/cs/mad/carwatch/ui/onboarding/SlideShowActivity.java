@@ -60,6 +60,8 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     private Button skipButton;
     private Button nextButton;
     private View slideNavigation;
+    private View header;
+    private View slideShowFragment;
     private LinearLayout tabDots;
     private TextView headerTitle;
     private boolean waitingForPermissionResult = false;
@@ -68,6 +70,8 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_show);
+        slideShowFragment = findViewById(R.id.slide_show_fragment);
+        header = findViewById(R.id.header);
         slideNavigation = findViewById(R.id.slide_navigation);
         tabDots = findViewById(R.id.tab_dots);
         headerTitle = findViewById(R.id.tv_header_title);
@@ -87,14 +91,17 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     @SuppressLint("ClickableViewAccessibility")
     private void addSwipeListener() {
-        FragmentContainerView slideShowFragment = findViewById(R.id.slide_show_fragment);
-        slideShowFragment.setOnTouchListener(new OnSwipeTouchListener(this) {
-             @Override
-             public void onSwipeLeft() {
-                 if (canShowNextSlide && currentSlidePosition < slides.size() - 1) {
-                     nextSlide();
-                 }
-             }
+        slideShowFragment.setOnTouchListener(createSwipeTouchListener(true));
+    }
+
+    private OnSwipeTouchListener createSwipeTouchListener(boolean consumeTouchEvents) {
+        return new OnSwipeTouchListener(this, consumeTouchEvents) {
+            @Override
+            public void onSwipeLeft() {
+                if (canShowNextSlide && currentSlidePosition < slides.size() - 1) {
+                    nextSlide();
+                }
+            }
 
             @Override
             public void onSwipeRight() {
@@ -102,7 +109,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                     previousSlide();
                 }
             }
-        });
+        };
     }
 
     @Override
@@ -220,7 +227,10 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     private void showSlide(int position) {
         WelcomeSlide slide = slides.get(position);
-        if (slide instanceof StudyDetailsSlide) {
+        boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
+        header.setVisibility(isStudyDetailsSlide ? View.GONE : View.VISIBLE);
+        setSlideContentTopMargin(isStudyDetailsSlide ? 0 : dpToPx(112));
+        if (isStudyDetailsSlide) {
             headerTitle.setText(R.string.title_study_configuration);
         } else if (slide instanceof PermissionRequest) {
             headerTitle.setText(R.string.title_setup);
@@ -233,6 +243,15 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         replaceFragment(slide.getFragment());
         updateVisibleDots(position);
         highlightDot(position);
+    }
+
+    private void setSlideContentTopMargin(int marginTop) {
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) slideShowFragment.getLayoutParams();
+        if (layoutParams.topMargin == marginTop) {
+            return;
+        }
+        layoutParams.topMargin = marginTop;
+        slideShowFragment.setLayoutParams(layoutParams);
     }
 
     private void previousSlide() {
@@ -436,6 +455,12 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.slide_show_fragment, fragment);
+        transaction.runOnCommit(() -> {
+            View root = fragment.getView();
+            if (root != null) {
+                root.setOnTouchListener(createSwipeTouchListener(false));
+            }
+        });
         transaction.commit();
     }
 

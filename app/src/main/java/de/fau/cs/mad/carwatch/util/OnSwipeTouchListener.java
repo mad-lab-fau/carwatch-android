@@ -11,9 +11,15 @@ import android.view.View;
  */
 public class OnSwipeTouchListener implements View.OnTouchListener {
     private final GestureDetector gestureDetector;
+    private final boolean consumeTouchEvents;
 
     public OnSwipeTouchListener(Context context) {
+        this(context, true);
+    }
+
+    public OnSwipeTouchListener(Context context, boolean consumeTouchEvents) {
         gestureDetector = new GestureDetector(context, new GestureListener());
+        this.consumeTouchEvents = consumeTouchEvents;
     }
 
     public void onSwipeLeft() {
@@ -24,7 +30,8 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
 
     public boolean onTouch(View v, MotionEvent event) {
         v.performClick();
-        return gestureDetector.onTouchEvent(event);
+        boolean handled = gestureDetector.onTouchEvent(event);
+        return consumeTouchEvents && handled;
     }
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
