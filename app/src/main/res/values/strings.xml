@@ -85,6 +85,7 @@
     <string name="btn_confirm_continue_tutorial">Confirm</string>
     <string name="message_study_details_confirmation">Please confirm that this study configuration matches the information you received before continuing to the tutorial.</string>
     <string name="title_study_configuration">Study Configuration</string>
+    <string name="title_setup">Setup</string>
     <string name="title_tutorial">Tutorial</string>
     <string name="label_study_name">Study Name</string>
     <string name="label_participant_id">Participant ID</string>
@@ -103,6 +104,13 @@
     <string name="symbol_dot" translatable="false">\u2022</string>
     <string name="message_camera_access">Camera access to be able to scan the sample tube barcodes</string>
     <string name="message_notification_permission">Sending notifications to inform you about upcoming samples</string>
+    <string name="headline_prepare_carwatch">Prepare CARWatch</string>
+    <string name="message_prepare_carwatch_permissions">CARWatch needs a few permissions so it can remind you on time and confirm samples securely.</string>
+    <string name="label_permission_notifications">Notifications</string>
+    <string name="message_permission_notifications_card">Send reminders when saliva samples are scheduled.</string>
+    <string name="label_permission_camera">Camera</string>
+    <string name="message_permission_camera_card">Scan study QR codes and sample tube barcodes.</string>
+    <string name="label_permission_required">Required</string>
     <string name="headline_wakeup_screen_tutorial">Report waking up</string>
     <string name="description_wakeup_screen">You only need to report your awakening if you didn\'t set an alarm for the morning or woke up before the alarm went off. Clicking the \"Yes\" Button will schedule the sample alarms for the upcoming day.</string>
     <string name="headline_alarm_tutorial">Track your alarms</string>

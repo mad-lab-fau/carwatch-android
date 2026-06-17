@@ -222,6 +222,8 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         WelcomeSlide slide = slides.get(position);
         if (slide instanceof StudyDetailsSlide) {
             headerTitle.setText(R.string.title_study_configuration);
+        } else if (slide instanceof PermissionRequest) {
+            headerTitle.setText(R.string.title_setup);
         } else if (slide instanceof TutorialSlide || slide instanceof EndTutorialSlide) {
             headerTitle.setText(R.string.title_tutorial);
         } else {
