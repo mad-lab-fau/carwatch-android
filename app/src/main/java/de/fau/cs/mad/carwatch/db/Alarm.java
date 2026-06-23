@@ -115,10 +115,10 @@ public class Alarm implements Parcelable {
     @Ignore
     public String getStringTime() {
         String language = Locale.getDefault().getLanguage();
-        String format = language.equals(Locale.GERMAN.getLanguage()) || language.equals(Locale.FRENCH.getLanguage())
-                ? "HH:mm"
-                : "h:mm a";
-        return this.time.toString(format, Locale.getDefault());
+        if (language.equals(Locale.GERMAN.getLanguage()) || language.equals(Locale.FRENCH.getLanguage())) {
+            return this.time.toString("HH:mm", Locale.getDefault());
+        }
+        return this.time.toString("hh:mm a", Locale.US);
     }
 
     /**

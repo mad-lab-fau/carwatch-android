@@ -140,6 +140,7 @@
     <string name="title_study_finished">Study Finished</string>
     <string name="message_samples_recorded_evening_required">You\'ve recorded all samples for the day, but you are still required to record an evening sample tonight right before you go to bed.\nPlease set a reminder below.\nSee you later!</string>
     <string name="message_study_finished">This was your last sample. Thank you for participating in the study! Please export your logs and send them to your study contact email.</string>
+    <string name="message_study_finished_after_lights_out">The study is finished. Thank you for participating! Please export your logs and send them to your study contact email.</string>
     <string name="message_samples_recorded_day_finished">You\'ve recorded the last sample for today.\nSee you tomorrow, and don\'t forget to set a wakeup alarm for tomorrow.</string>
 
     <!-- Reminder Dialogs -->
@@ -186,6 +187,8 @@
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
     <string name="lights_on">Lights on!</string>
+    <string name="title_lights_out_tracking_explanation">Attention tracking is on</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch uses phone attention events, like screen unlocks, to help estimate real bedtime and wakeup times.</string>
 
     <string name="title_share_dialog">Share Logs via…</string>
 

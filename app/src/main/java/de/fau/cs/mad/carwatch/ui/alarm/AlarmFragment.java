@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,17 +38,20 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 
 public class AlarmFragment extends Fragment {
 
-    private static final String TAG = AlarmFragment.class.getSimpleName();
-
     private SharedPreferences sharedPreferences;
     private AlarmViewModel alarmViewModel;
     private AlarmAdapter adapter;
     private AlarmAdapter eveningAdapter;
     private CoordinatorLayout coordinatorLayout;
+    private View rootView;
     private LinearLayout alarmContent;
+    private View alarmPrimaryCard;
+    private boolean contentRevealed;
     private Alarm alarm;
     private TextView timeTextView;
     private LinearLayout alarmSeparator;
+    private LinearLayout salivaAlarmsContainer;
+    private LinearLayout eveningSampleAlarmContainer;
     private TextView salivaAlarmsHeader;
     private TextView eveningSampleAlarmHeader;
     private SwitchMaterial activeSwitch;
@@ -61,6 +65,8 @@ public class AlarmFragment extends Fragment {
 
         FragmentAlarmBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
         View root = dataBinding.getRoot();
+        rootView = root;
+        rootView.setAlpha(0f);
         dataBinding.setViewmodel(alarmViewModel);
 
         if (getActivity() != null) {
@@ -68,11 +74,15 @@ public class AlarmFragment extends Fragment {
         }
 
         alarmContent = root.findViewById(R.id.alarm_content);
+        alarmPrimaryCard = root.findViewById(R.id.alarm_primary_card);
         timeTextView = root.findViewById(R.id.alarm_time_text);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
+        salivaAlarmsContainer = root.findViewById(R.id.saliva_alarms);
+        eveningSampleAlarmContainer = root.findViewById(R.id.evening_sample_alarm);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
         eveningSampleAlarmHeader = root.findViewById(R.id.tv_evening_sample_alarm);
         alarmSeparator = root.findViewById(R.id.alarm_separator);
+        setAlarmContentOffset(false);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -153,10 +163,13 @@ public class AlarmFragment extends Fragment {
         eveningAdapter.setAlarms(eveningAlarms);
         adapter.notifyDataSetChanged();
         eveningAdapter.notifyDataSetChanged();
+        salivaAlarmsContainer.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        eveningSampleAlarmContainer.setVisibility(eveningAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         salivaAlarmsHeader.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         eveningSampleAlarmHeader.setVisibility(eveningAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         alarmSeparator.setVisibility(sampleAlarms.isEmpty() && eveningAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         setAlarmContentOffset(!sampleAlarms.isEmpty() || !eveningAlarms.isEmpty());
+        revealContent();
     }
 
     private void setAlarmContentOffset(boolean hasDisplayedAlarms) {
@@ -164,10 +177,37 @@ public class AlarmFragment extends Fragment {
             return;
         }
 
-        float offset = hasDisplayedAlarms
-                ? -getResources().getDimension(R.dimen.alarm_content_list_offset)
-                : 0f;
-        alarmContent.setTranslationY(offset);
+        alarmContent.setTranslationY(0f);
+        alarmContent.setGravity(hasDisplayedAlarms
+                ? Gravity.TOP | Gravity.CENTER_HORIZONTAL
+                : Gravity.CENTER);
+        alarmContent.setPadding(
+                alarmContent.getPaddingLeft(),
+                alarmContent.getPaddingTop(),
+                alarmContent.getPaddingRight(),
+                getResources().getDimensionPixelSize(hasDisplayedAlarms
+                        ? R.dimen.alarm_content_list_bottom_padding
+                        : R.dimen.primary_screen_bottom_padding));
+
+        if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) alarmPrimaryCard.getLayoutParams();
+            params.bottomMargin = getResources().getDimensionPixelSize(hasDisplayedAlarms
+                    ? R.dimen.alarm_primary_card_list_margin_bottom
+                    : R.dimen.alarm_primary_card_margin_bottom);
+            alarmPrimaryCard.setLayoutParams(params);
+        }
+    }
+
+    private void revealContent() {
+        if (contentRevealed || rootView == null) {
+            return;
+        }
+
+        contentRevealed = true;
+        rootView.animate()
+                .alpha(1f)
+                .setDuration(120L)
+                .start();
     }
 
     private Alarm getInitialAlarm(List<Alarm> alarms) {

@@ -104,11 +104,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         String sampleName = sampleIdPrefix + adjustedSampleId + ":";
         holder.getSampleNameTextView().setText(sampleName);
         setSwitchProperties(holder, item, sampleTaken);
-        holder.getAlarmTextView().setText(item.getStringTime());
+        holder.getAlarmTextView().setText(formatListTime(item));
         holder.getAlarmTextView().setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorId));
         setScanClickProperties(holder, item, sampleTaken);
         setIconProperties(holder, item, sampleTaken);
-        setIconAlignment(holder, item.getStringTime());
     }
 
     @Override
@@ -135,23 +134,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return time.getHourOfDay() * 60 + time.getMinuteOfHour();
     }
 
-    private void setIconAlignment(@NonNull ViewHolder holder, @NonNull String alarmTime) {
-        boolean isSingleDigitTime = alarmTime.length() > 1
-                && Character.isDigit(alarmTime.charAt(0))
-                && alarmTime.charAt(1) == ':';
-        int margin = holder.itemView.getResources().getDimensionPixelSize(
-                isSingleDigitTime
-                        ? R.dimen.sample_suffix_icon_margin_start_single_digit_time
-                        : R.dimen.sample_suffix_icon_margin_start
-        );
-        setStartMargin(holder.getScannerIcon(), margin);
-        setStartMargin(holder.getCheckIcon(), margin);
-    }
-
-    private void setStartMargin(@NonNull View view, int margin) {
-        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        layoutParams.setMarginStart(margin);
-        view.setLayoutParams(layoutParams);
+    private String formatListTime(@NonNull Alarm alarm) {
+        return alarm.getStringTime();
     }
 
     private void setSwitchProperties(ViewHolder holder, Alarm item, boolean sampleTaken) {
@@ -189,6 +173,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         int statusIconVisibility = sampleTaken ? View.GONE : View.VISIBLE;
         holder.getCheckIcon().setVisibility(checkVisibility);
         holder.getScannerIcon().setVisibility(scannerVisibility);
+        if (holder.getScannerIcon().getParent() instanceof View scannerContainer) {
+            scannerContainer.setVisibility(scannerVisibility);
+        }
         holder.getScannerIcon().setOnClickListener(null);
         holder.getScannerIcon().setClickable(false);
         holder.getSampleStatusIcon().setVisibility(statusIconVisibility);

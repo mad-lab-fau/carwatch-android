@@ -23,7 +23,6 @@ import androidx.core.text.HtmlCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -42,9 +41,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.BuildConfig;
@@ -55,6 +56,9 @@ import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
 import de.fau.cs.mad.carwatch.util.Utils;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -110,20 +114,25 @@ public class MainActivity extends AppCompatActivity {
         }
         navController = navHostFragment.getNavController();
 
-        int currentNavElement = getIntent().getIntExtra(
-                Constants.EXTRA_TARGET_NAV_ELEMENT,
-                sharedPreferences.getInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0])
-        );
-        navigate(currentNavElement);
-
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             CharSequence label = destination.getLabel();
             headerTitle.setText(label == null ? getString(R.string.app_name) : label);
+            updateBottomNavSelection(navView, destination.getId());
         });
-        NavigationUI.setupWithNavController(navView, navController);
+        navView.setOnItemSelectedListener(item -> {
+            navigate(item.getItemId());
+            return true;
+        });
+
+        int currentNavElement = getInitialNavElement();
+        navigate(currentNavElement);
+        syncBottomNavSelection();
+        navView.post(this::syncBottomNavSelection);
 
 
-        if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
+        Intent currentIntent = getIntent();
+        if (currentIntent != null && currentIntent.getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
+            currentIntent.removeExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG);
             coordinatorLayout.post(() -> CarwatchSnackbar.show(
                     coordinatorLayout,
                     getString(R.string.message_barcode_scanned_successfully),
@@ -131,20 +140,20 @@ public class MainActivity extends AppCompatActivity {
             ));
         }
         showPendingWakeupAlert();
+        if (!showLightsOutTrackingExplanation()) {
+            showStudyFinishedAfterLightsOutAlert();
+        }
         showEndOfDayAlert();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (navController != null && navController.getCurrentDestination() != null)
-            sharedPreferences.edit().putInt(Constants.PREF_CURRENT_NAV_ELEMENT, navController.getCurrentDestination().getId()).apply();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0]).apply();
     }
 
     public void navigate(int navId) {
@@ -152,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
             if (id == navId) {
                 if (navController.getCurrentDestination() != null
                         && navController.getCurrentDestination().getId() == navId) {
+                    syncBottomNavSelection();
                     return;
                 }
                 NavOptions navOptions = new NavOptions.Builder()
@@ -162,6 +172,107 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    private void updateBottomNavSelection(BottomNavigationView navView, int destinationId) {
+        for (int id : NAV_IDS) {
+            if (destinationId == id) {
+                navView.getMenu().findItem(id).setChecked(true);
+                break;
+            }
+        }
+    }
+
+    private void syncBottomNavSelection() {
+        if (navController == null || navController.getCurrentDestination() == null) {
+            return;
+        }
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        if (navView != null) {
+            updateBottomNavSelection(navView, navController.getCurrentDestination().getId());
+        }
+    }
+
+    private int getInitialNavElement() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(Constants.EXTRA_TARGET_NAV_ELEMENT)) {
+            return intent.getIntExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_wakeup);
+        }
+
+        int studyDay = getStartupStudyDay();
+        int regularSamplesPerDay = getRegularSamplesPerDay();
+        int scannedRegularSamplesToday = countScannedRegularSamplesForDay(studyDay);
+        boolean wakeupStartedToday = isWakeupRecordedToday() || sharedPreferences.getBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false);
+
+        if (regularSamplesPerDay > 0 && scannedRegularSamplesToday >= regularSamplesPerDay) {
+            return R.id.navigation_bedtime;
+        }
+
+        if (regularSamplesPerDay == 0 && wakeupStartedToday) {
+            return R.id.navigation_bedtime;
+        }
+
+        if (!wakeupStartedToday && scannedRegularSamplesToday == 0) {
+            return R.id.navigation_wakeup;
+        }
+
+        return R.id.navigation_alarm;
+    }
+
+    private int getStartupStudyDay() {
+        int currentDayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
+        if (sharedPreferences.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                || sharedPreferences.getBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                || isWakeupRecordedToday()) {
+            return Math.max(currentDayCounter, 1);
+        }
+
+        return Math.max(currentDayCounter + 1, 1);
+    }
+
+    private boolean isWakeupRecordedToday() {
+        if (!sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+            return false;
+        }
+
+        DateTime lastWakeup = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+        return lastWakeup.withTime(LocalTime.MIDNIGHT).equals(LocalTime.MIDNIGHT.toDateTimeToday());
+    }
+
+    private int getRegularSamplesPerDay() {
+        int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (totalNumSamples <= 0) {
+            return 0;
+        }
+        return sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false)
+                ? Math.max(totalNumSamples - 1, 0)
+                : totalNumSamples;
+    }
+
+    private int countScannedRegularSamplesForDay(int dayId) {
+        boolean hasEveningSample = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+        int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        int count = 0;
+
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            try {
+                int scannedDay = Integer.parseInt(barcode.substring(3, 5));
+                int scannedSampleId = Integer.parseInt(barcode.substring(5, 7));
+                if (scannedDay == dayId && (!hasEveningSample || scannedSampleId != eveningSampleId)) {
+                    count++;
+                }
+            } catch (NumberFormatException e) {
+                Log.d(TAG, "Could not parse scanned barcode for startup destination: " + barcode);
+            }
+        }
+
+        return count;
     }
 
     private void showPendingWakeupAlert() {
@@ -200,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
         if (alertType == null) {
             return;
         }
+        getIntent().removeExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE);
 
         int titleId;
         int messageId = switch (alertType) {
@@ -230,6 +342,51 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void showStudyFinishedAfterLightsOutAlert() {
+        if (!sharedPreferences.getBoolean(Constants.PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT, false)) {
+            return;
+        }
+
+        sharedPreferences.edit()
+                .remove(Constants.PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT)
+                .apply();
+
+        Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_check_circle_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(this, R.color.colorGreen500));
+        }
+
+        new CarwatchDialogBuilder(this)
+                .setIcon(icon)
+                .setTitle(R.string.title_study_finished)
+                .setMessage(R.string.message_study_finished_after_lights_out)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    private boolean showLightsOutTrackingExplanation() {
+        if (!sharedPreferences.getBoolean(Constants.PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION, false)) {
+            return false;
+        }
+
+        sharedPreferences.edit()
+                .remove(Constants.PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION)
+                .apply();
+
+        Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_info_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(this, R.color.md_theme_primary));
+        }
+
+        new CarwatchDialogBuilder(this)
+                .setIcon(icon)
+                .setTitle(R.string.title_lights_out_tracking_explanation)
+                .setMessage(R.string.message_lights_out_tracking_explanation)
+                .setPositiveButton(R.string.ok, (dialogInterface, which) -> showStudyFinishedAfterLightsOutAlert())
+                .show();
+        return true;
+    }
+
     public static void initializeLoggingUtil(Context context) {
         if (sAdapter != null)
             return;
@@ -248,6 +405,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
+        }
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        if (navView != null) {
+            navView.post(this::syncBottomNavSelection);
         }
     }
 

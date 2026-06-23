@@ -54,6 +54,8 @@ public final class Constants {
     public static final String PREF_STUDY_DAY_MANUALLY_ADVANCED = "study_day_manually_advanced"; // boolean
     public static final String PREF_WAKEUP_SCAN_PENDING = "wakeup_scan_pending"; // boolean
     public static final String PREF_EVENING_REMINDER_TIME_MINUTES = "evening_reminder_time_minutes"; // int (minutes after midnight)
+    public static final String PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT = "show_study_finished_after_lights_out"; // boolean
+    public static final String PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION = "show_lights_out_tracking_explanation"; // boolean
 
     public static final String WAKEUP_ALERT_OVERDUE_SAMPLE = "overdue_sample";
     public static final String WAKEUP_ALERT_DELAYED_SAMPLE = "delayed_sample";

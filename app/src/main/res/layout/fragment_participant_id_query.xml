@@ -1,26 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
+    android:background="@drawable/bg_app_surface"
+    android:fillViewport="true"
     tools:context=".ui.onboarding.SlideShowActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="@string/message_participant_id"
-        android:textSize="20sp"/>
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="64dp"
+        android:paddingBottom="128dp">
 
-    <EditText
-        android:id="@+id/et_participant_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/participant_id"
-        android:importantForAutofill="no"
-        android:inputType="text" />
+        <FrameLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_icon_badge">
 
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_person_check_24dp"
+                app:tint="?attr/colorOnPrimaryContainer" />
+        </FrameLayout>
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="@string/message_participant_id"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:textColor="?attr/colorOnSurface" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:hint="@string/participant_id"
+            app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="18dp"
+            app:boxCornerRadiusBottomStart="18dp"
+            app:boxCornerRadiusTopEnd="18dp"
+            app:boxCornerRadiusTopStart="18dp"
+            app:startIconDrawable="@drawable/ic_person_check_24dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_participant_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

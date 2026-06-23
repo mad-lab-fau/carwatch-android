@@ -5,7 +5,7 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="@drawable/bg_app_surface">
 
     <RelativeLayout
         android:id="@+id/container"
@@ -17,7 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="?attr/colorSurface"
+            android:background="?attr/colorSurfaceContainerHigh"
+            android:elevation="10dp"
+            android:paddingTop="4dp"
             app:itemActiveIndicatorStyle="@style/Widget.Carwatch.BottomNavigationView.ActiveIndicator"
             app:itemIconTint="@color/bottom_nav_item_color"
             app:itemTextColor="@color/bottom_nav_item_color"
@@ -30,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/nav_view"
-            android:layout_marginTop="112dp"
+            android:layout_marginTop="104dp"
             app:defaultNavHost="true"
             app:navGraph="@navigation/mobile_navigation" />
 
@@ -39,7 +41,7 @@
     <LinearLayout
         android:id="@+id/main_header"
         android:layout_width="match_parent"
-        android:layout_height="112dp"
+        android:layout_height="104dp"
         android:layout_gravity="top"
         android:background="@color/transparent"
         android:gravity="bottom"
@@ -53,10 +55,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:fontFamily="sans"
+            android:fontFamily="sans-serif-medium"
             android:includeFontPadding="false"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="32sp" />
+            android:textSize="30sp" />
 
     </LinearLayout>
 
@@ -65,14 +67,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="52dp"
         android:layout_marginEnd="26dp"
         android:contentDescription="@string/content_description_open_fab_menu"
-        app:backgroundTint="@color/fab_menu_item_background"
-        app:fabCustomSize="40dp"
-        app:maxImageSize="22dp"
+        app:backgroundTint="?attr/colorSurfaceContainerHigh"
+        app:borderWidth="1dp"
+        app:elevation="0dp"
+        app:fabCustomSize="48dp"
+        app:maxImageSize="24dp"
+        app:pressedTranslationZ="0dp"
+        app:rippleColor="?attr/colorPrimaryContainer"
         app:srcCompat="@drawable/ic_more_vert_24dp"
-        app:tint="@color/fab_menu_item_content" />
+        app:tint="?attr/colorOnSurfaceVariant" />
 
     <FrameLayout
         android:id="@+id/fab_menu_scrim"
@@ -88,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="52dp"
             android:layout_marginEnd="26dp"
             android:gravity="end"
             android:orientation="vertical">
@@ -98,11 +104,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/content_description_close_fab_menu"
-                app:backgroundTint="@color/fab_menu_item_background"
+                app:backgroundTint="?attr/colorSurfaceContainerHigh"
+                app:borderWidth="1dp"
+                app:elevation="0dp"
                 app:fabCustomSize="48dp"
+                app:pressedTranslationZ="0dp"
                 app:maxImageSize="24dp"
                 app:srcCompat="@drawable/ic_close_24dp"
-                app:tint="@color/fab_menu_item_content" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fab_menu_study_information"

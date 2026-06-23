@@ -69,6 +69,8 @@
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
     <string name="lights_out">Licht aus!</string>
     <string name="lights_on">Licht an!</string>
+    <string name="title_lights_out_tracking_explanation">Aufmerksamkeitserfassung ist aktiv</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch nutzt Aufmerksamkeitsereignisse des Smartphones, z. B. Entsperren des Bildschirms, um tatsächliche Schlafens- und Aufwachzeiten besser zu erkennen.</string>
 
     <string name="cancel_saliva_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
     <string name="open_scanner_before_alarm_message">Diese Probe ist für später angesetzt. Sind Sie sicher, dass Sie die Probe jetzt scannen wollen?</string>
@@ -112,6 +114,7 @@
     <string name="title_study_finished">Studie abgeschlossen</string>
     <string name="message_samples_recorded_evening_required">Sie haben alle Proben für heute erfasst, müssen aber heute Abend direkt vor dem Schlafengehen noch eine Abendprobe erfassen.\nBitte stellen Sie unten eine Erinnerung ein.\nBis später!</string>
     <string name="message_study_finished">Dies war Ihre letzte Probe. Vielen Dank für Ihre Teilnahme an der Studie! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
+    <string name="message_study_finished_after_lights_out">Die Studie ist abgeschlossen. Vielen Dank für Ihre Teilnahme! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
     <string name="message_samples_recorded_day_finished">Sie haben die letzte Probe für heute erfasst.\nBis morgen, und vergessen Sie nicht, einen Weckalarm für morgen einzustellen.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
     <string name="title_kill_alarms">Achtung</string>

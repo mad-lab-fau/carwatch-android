@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
+    android:background="@drawable/bg_app_surface"
     tools:context=".ui.onboarding.SlideShowActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -12,7 +12,7 @@
         android:name="de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeText"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="104dp"
         android:layout_marginBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,66 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app_surface"
+    android:fillViewport="true">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp">
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="@dimen/primary_screen_bottom_padding">
 
-        <ImageView
-            android:id="@+id/iv_morning"
-            android:layout_width="@dimen/home_icon_size"
-            android:layout_height="@dimen/home_icon_size"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/tv_evening"
-            android:contentDescription="@null"
-            app:tint="?attr/colorPrimary"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:translationY="@dimen/home_vertical_center_offset"
-            android:src="@drawable/ic_wakeup_24dp" />
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/primary_card_height"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+            app:cardElevation="0dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.Card"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/tv_evening"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/wakeup_message"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/button_container"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.Carwatch.Headline"
-            android:textColor="?attr/colorOnSurface"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:translationY="@dimen/home_vertical_center_offset" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/home_card_padding">
 
-        <LinearLayout
-            android:id="@+id/button_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:translationY="@dimen/home_vertical_center_offset">
+                <FrameLayout
+                    android:layout_width="104dp"
+                    android:layout_height="104dp"
+                    android:background="@drawable/bg_icon_badge">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_yes"
-                android:layout_width="wrap_content"
-                android:text="@string/yes"
-                android:layout_margin="8dp"
-                android:layout_height="wrap_content" />
+                    <ImageView
+                        android:id="@+id/iv_morning"
+                        android:layout_width="@dimen/home_icon_size"
+                        android:layout_height="@dimen/home_icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_wakeup_24dp"
+                        app:tint="?attr/colorOnPrimaryContainer" />
+                </FrameLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_no"
-                android:layout_width="wrap_content"
-                android:text="@string/no"
-                android:layout_margin="8dp"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_evening"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/wakeup_message"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.Carwatch.Headline"
+                    android:textColor="?attr/colorOnSurface" />
 
-    </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/button_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_yes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:text="@string/yes" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_no"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:text="@string/no" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+</androidx.core.widget.NestedScrollView>

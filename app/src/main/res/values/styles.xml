@@ -1,10 +1,12 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.Material3.DayNight">
-        <item name="fontFamily">sans</item>
-        <item name="android:fontFamily">sans</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -20,15 +22,28 @@
         <item name="colorOnSurface">@color/md_theme_onSurface</item>
         <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
         <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+        <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
         <item name="colorOutline">@color/md_theme_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_outlineVariant</item>
+        <item name="colorError">@color/md_theme_error</item>
+        <item name="colorOnError">@color/md_theme_onError</item>
         <item name="android:windowBackground">@color/md_theme_background</item>
-        <item name="android:navigationBarColor">@color/md_theme_surface</item>
-        <item name="android:statusBarColor">@color/md_theme_surface</item>
+        <item name="android:navigationBarColor">@color/md_theme_surfaceContainerHigh</item>
+        <item name="android:statusBarColor">@color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Carwatch.MaterialAlertDialog</item>
-        <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
+        <item name="materialButtonStyle">@style/Widget.Carwatch.Button</item>
         <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
         <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
+    </style>
+
+    <style name="Widget.Carwatch.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">18dp</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:paddingStart">22dp</item>
+        <item name="android:paddingEnd">22dp</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
@@ -118,7 +133,11 @@
         <item name="android:textColor">@color/md_theme_onSurface</item>
     </style>
 
-    <style name="TextAppearance.Carwatch.Headline" parent="TextAppearance.Material3.TitleLarge" />
+    <style name="TextAppearance.Carwatch.Headline" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
 
     <style name="TextAppearance.Carwatch.DisplayTime" parent="TextAppearance.Material3.DisplayMedium">
         <item name="fontFamily">monospace</item>
@@ -127,7 +146,7 @@
 
     <style name="ShapeAppearance.Carwatch.Card" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">20dp</item>
+        <item name="cornerSize">28dp</item>
     </style>
 
     <style name="Widget.Carwatch.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">

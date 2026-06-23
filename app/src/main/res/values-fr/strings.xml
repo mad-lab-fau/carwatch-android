@@ -137,6 +137,7 @@
     <string name="title_study_finished">Étude terminée</string>
     <string name="message_samples_recorded_evening_required">Vous avez enregistré tous les échantillons de la journée, mais vous devez encore enregistrer un échantillon du soir ce soir juste avant d\'aller vous coucher.\nVeuillez définir un rappel ci-dessous.\nÀ plus tard!</string>
     <string name="message_study_finished">C\'était votre dernier échantillon. Merci d\'avoir participé à l\'étude! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
+    <string name="message_study_finished_after_lights_out">L\'étude est terminée. Merci d\'avoir participé! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
     <string name="message_samples_recorded_day_finished">Vous avez enregistré le dernier échantillon d\'aujourd\'hui.\nÀ demain, et n\'oubliez pas de régler un réveil pour demain.</string>
 
 
@@ -183,6 +184,8 @@
     <string name="good_night_saliva">Veuillez d\'abord prendre votre échantillon de salive du soir! Commencez la procédure en appuyant sur le bouton \'Oui\'.</string>
     <string name="lights_out">Extinction des lumières!</string>
     <string name="lights_on">Lumière allumée!</string>
+    <string name="title_lights_out_tracking_explanation">Suivi de l’attention activé</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch utilise les événements d’attention du téléphone, comme le déverrouillage de l’écran, pour mieux estimer les heures réelles de coucher et de réveil.</string>
 
     <string name="title_share_dialog">Partager les données via…</string>
 

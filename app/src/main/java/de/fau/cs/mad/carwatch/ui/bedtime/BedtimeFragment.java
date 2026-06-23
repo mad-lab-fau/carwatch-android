@@ -28,6 +28,9 @@ import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
+import java.util.Set;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
@@ -36,8 +39,6 @@ import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
-
-    private static final String TAG = BedtimeFragment.class.getSimpleName();
 
     private BedtimeViewModel bedtimeViewModel;
     private final ActivityResultLauncher<Intent> barcodeScannerLauncher = registerForActivityResult(
@@ -103,12 +104,56 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
             }
 
             boolean enableDarkMode = !sp.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
-            sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, enableDarkMode).apply();
+            SharedPreferences.Editor editor = sp.edit();
+            if (enableDarkMode && isStudyFinished(sp)) {
+                editor.putBoolean(Constants.PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT, true);
+            }
+            if (enableDarkMode) {
+                editor.putBoolean(Constants.PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION, true);
+            }
+            Intent currentIntent = getActivity().getIntent();
+            if (currentIntent != null) {
+                currentIntent.removeExtra(Constants.EXTRA_TARGET_NAV_ELEMENT);
+                currentIntent.removeExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE);
+                currentIntent.removeExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG);
+            }
+            editor.putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, enableDarkMode).apply();
             AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
             delegate.setLocalNightMode(enableDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
             delegate.applyDayNight();
             LoggerUtil.log(enableDarkMode ? Constants.LOGGER_ACTION_LIGHTS_OUT : Constants.LOGGER_ACTION_LIGHTS_ON, new JSONObject());
         }
+    }
+
+    private boolean isStudyFinished(@NonNull SharedPreferences sharedPreferences) {
+        int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
+        int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (dayId <= 0 || numDays <= 0 || totalNumSamples <= 0 || dayId < numDays) {
+            return false;
+        }
+
+        return countScannedSamplesForDay(sharedPreferences, dayId) >= totalNumSamples;
+    }
+
+    private int countScannedSamplesForDay(@NonNull SharedPreferences sharedPreferences, int dayId) {
+        Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        int count = 0;
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            try {
+                int scannedDay = Integer.parseInt(barcode.substring(3, 5));
+                if (scannedDay == dayId) {
+                    count++;
+                }
+            } catch (NumberFormatException e) {
+                // Ignore malformed barcode entries when deciding whether the study is complete.
+            }
+        }
+        return count;
     }
 
     private void handleBarcodeScannerResult(int resultCode) {
