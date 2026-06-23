@@ -46,7 +46,6 @@ public class BarcodeChecker {
         }
 
         return new ParsedBarcode(
-                Integer.parseInt(barcode.substring(0, 3)),
                 Integer.parseInt(barcode.substring(3, 5)),
                 Integer.parseInt(barcode.substring(5, 7))
         );
@@ -57,18 +56,12 @@ public class BarcodeChecker {
     }
 
     public static class ParsedBarcode {
-        private final int participantId;
         private final int dayId;
         private final int salivaId;
 
-        private ParsedBarcode(int participantId, int dayId, int salivaId) {
-            this.participantId = participantId;
+        private ParsedBarcode(int dayId, int salivaId) {
             this.dayId = dayId;
             this.salivaId = salivaId;
-        }
-
-        public int getParticipantId() {
-            return participantId;
         }
 
         public int getDayId() {

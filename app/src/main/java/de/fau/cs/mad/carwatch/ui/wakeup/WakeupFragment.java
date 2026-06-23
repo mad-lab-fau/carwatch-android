@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -292,7 +293,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             alarm.setWasSampleTaken(false);
             repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not update wakeup alarm state", e);
         }
     }
 
@@ -323,7 +324,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
             LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log spontaneous awakening", e);
         }
     }
 

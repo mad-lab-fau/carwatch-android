@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.databinding.Observable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
@@ -242,7 +241,6 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
         header.setVisibility(isStudyDetailsSlide ? View.GONE : View.VISIBLE);
         setSlideContentTopMargin(isStudyDetailsSlide ? 0 : dpToPx(112));
-        setSlideContentBottomMargin(0);
         if (isStudyDetailsSlide) {
             headerTitle.setText(R.string.title_study_configuration);
         } else if (slide instanceof PermissionRequest) {
@@ -266,15 +264,6 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
             return;
         }
         layoutParams.topMargin = marginTop;
-        slideShowFragment.setLayoutParams(layoutParams);
-    }
-
-    private void setSlideContentBottomMargin(int marginBottom) {
-        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) slideShowFragment.getLayoutParams();
-        if (layoutParams.bottomMargin == marginBottom) {
-            return;
-        }
-        layoutParams.bottomMargin = marginBottom;
         slideShowFragment.setLayoutParams(layoutParams);
     }
 
@@ -572,9 +561,5 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     private void setSkipButtonVisibility(boolean isVisible) {
         skipButton.setVisibility(isVisible ? Button.VISIBLE : Button.INVISIBLE);
-    }
-
-    private String currentSlideName() {
-        return slides.get(currentSlidePosition).getClass().getSimpleName();
     }
 }

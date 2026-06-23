@@ -74,7 +74,7 @@ public class Ean8Fragment extends BarcodeFragment {
                         json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
                         LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Could not log duplicate barcode scan", e);
                     }
                     showBarcodeAlreadyScannedDialog();
                     break;
@@ -204,7 +204,7 @@ public class Ean8Fragment extends BarcodeFragment {
             json.put(Constants.LOGGER_EXTRA_EXPECTED_SAMPLE, expectedSample);
             LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log barcode scan", e);
         }
 
         TimerHandler.cancelTimer(getContext(), alarmId);
@@ -242,7 +242,7 @@ public class Ean8Fragment extends BarcodeFragment {
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
             LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log spontaneous awakening", e);
         }
 
         sharedPreferences.edit()
@@ -334,7 +334,7 @@ public class Ean8Fragment extends BarcodeFragment {
             json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
             LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log invalid barcode scan", e);
         }
     }
 
@@ -343,7 +343,7 @@ public class Ean8Fragment extends BarcodeFragment {
         try {
             return Integer.parseInt(startSample.substring(1));
         } catch (NumberFormatException e) {
-            return Integer.parseInt(Constants.DEFAULT_START_SAMPLE.substring(1));
+            return 0;
         }
     }
 

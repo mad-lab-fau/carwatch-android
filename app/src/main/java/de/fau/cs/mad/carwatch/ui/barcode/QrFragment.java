@@ -15,12 +15,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.collection.ArraySet;
-import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
@@ -54,7 +55,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof ScanSuccessListener) {
             scanSuccessListener = (ScanSuccessListener) context;
@@ -131,7 +132,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                         json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
                         LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Could not log invalid QR code scan", e);
                     }
                     showInvalidBarcodeDialog();
                     break;
