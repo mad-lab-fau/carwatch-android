@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +71,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
         boolean hasEveningSalivette = sp.getBoolean(Constants.PREF_HAS_EVENING, false);
 
         int viewId = v.getId();
@@ -85,7 +86,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
                 json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
                 LoggerUtil.log(Constants.LOGGER_ACTION_EVENING_SALIVETTE, json);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(BedtimeFragment.class.getSimpleName(), "Could not log evening salivette event", e);
             }
 
 
@@ -129,7 +130,7 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
         int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
-        if (dayId <= 0 || numDays <= 0 || totalNumSamples <= 0 || dayId < numDays) {
+        if (numDays <= 0 || totalNumSamples <= 0 || dayId < numDays) {
             return false;
         }
 

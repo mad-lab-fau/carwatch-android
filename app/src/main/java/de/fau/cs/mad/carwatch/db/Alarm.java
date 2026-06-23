@@ -24,9 +24,6 @@ import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 @Entity(tableName = "alarm")
 @TypeConverters({DateConverter.class, BooleanArrayConverter.class})
 public class Alarm implements Parcelable {
-    @Ignore
-    private static final String TAG = Alarm.class.getSimpleName();
-
     // Class members
 
     @PrimaryKey()
@@ -153,7 +150,7 @@ public class Alarm implements Parcelable {
     }
 
     @Ignore
-    public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<Alarm>() {
+    public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<>() {
         public Alarm createFromParcel(Parcel in) {
             return new Alarm(in);
         }

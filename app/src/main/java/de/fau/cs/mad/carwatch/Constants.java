@@ -12,10 +12,6 @@ public final class Constants {
 
     public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
 
-    public static final DateTime[] MORNING_TIMES = {
-            new LocalTime(5, 0).toDateTimeToday(),
-            new LocalTime(12, 0).toDateTimeToday()
-    };
     public static final DateTime[] EVENING_TIMES = {
             new LocalTime(20, 0).toDateTimeToday(),
             new LocalTime(5, 0).toDateTimeToday().plusDays(1)
@@ -24,9 +20,7 @@ public final class Constants {
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
     public static final String PREF_CURRENT_SLIDE_SHOW_SLIDE = "current_tutorial_slide"; // int
-    public static final String PREF_CURRENT_NAV_ELEMENT = "current_nav_element"; // int
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
-    public static final String PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS = "requested_ignore_battery_optimizations"; // boolean
     public static final String PREF_PARTICIPANT_ID_WAS_SET = "first_run_subject_id"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_PARTICIPANT_ID = "subject_id"; // String
@@ -64,7 +58,6 @@ public final class Constants {
     public static final int SLIDESHOW_FINISHED_SLIDE_ID = -1;
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
-    public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
     public static final LocalTime DEFAULT_EVENING_REMINDER_TIME = new LocalTime(21, 0);

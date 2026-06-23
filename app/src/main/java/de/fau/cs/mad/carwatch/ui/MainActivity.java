@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -29,7 +30,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -520,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showReregisterConfirmationDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.widget_confirmation_dialog, null);
+        View dialogView = inflateDetached(R.layout.widget_confirmation_dialog);
         TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
         TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
         MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
@@ -589,7 +589,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDeleteLogFilesWarningDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.widget_confirmation_dialog, null);
+        View dialogView = inflateDetached(R.layout.widget_confirmation_dialog);
         TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
         TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
         MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
@@ -642,7 +642,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showStudyInformationDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.widget_study_information_dialog, null);
+        View dialogView = inflateDetached(R.layout.widget_study_information_dialog);
 
         setDetailRow(dialogView, R.id.row_study_name, R.string.label_study_name, getPreferenceString(Constants.PREF_STUDY_NAME));
         setDetailRow(dialogView, R.id.row_participant_id, R.string.label_participant_id, getPreferenceString(Constants.PREF_PARTICIPANT_ID));
@@ -665,7 +665,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getPreferenceString(String key) {
         String value = sharedPreferences.getString(key, "");
-        if (value == null || value.trim().isEmpty()) {
+        if (value.trim().isEmpty()) {
             return "-";
         }
         return value.trim();
@@ -697,7 +697,7 @@ public class MainActivity extends AppCompatActivity {
         return String.join(", ", formattedTimes);
     }
 
-    private List<String> splitPreferenceList(String value) {
+    private List<String> splitPreferenceList(@Nullable String value) {
         List<String> values = new ArrayList<>();
         if (value == null || value.trim().isEmpty()) {
             return values;
@@ -733,7 +733,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showKillWarningDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.widget_confirmation_dialog, null);
+        View dialogView = inflateDetached(R.layout.widget_confirmation_dialog);
         TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
         TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
         MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
@@ -761,7 +761,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAppInfoDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.widget_app_info_dialog, null);
+        View dialogView = inflateDetached(R.layout.widget_app_info_dialog);
         TextView appVersionTextView = dialogView.findViewById(R.id.tv_app_version);
         appVersionTextView.setText(HtmlCompat.fromHtml(
                 getString(R.string.app_version, BuildConfig.VERSION_NAME),
@@ -778,5 +778,10 @@ public class MainActivity extends AppCompatActivity {
             closeButton.setOnClickListener(view -> dialog.dismiss());
         }
         dialog.show();
+    }
+
+    private View inflateDetached(int layoutId) {
+        ViewGroup parent = findViewById(android.R.id.content);
+        return getLayoutInflater().inflate(layoutId, parent, false);
     }
 }

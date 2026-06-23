@@ -161,8 +161,6 @@ public class AlarmFragment extends Fragment {
         }
         adapter.setAlarms(sampleAlarms);
         eveningAdapter.setAlarms(eveningAlarms);
-        adapter.notifyDataSetChanged();
-        eveningAdapter.notifyDataSetChanged();
         salivaAlarmsContainer.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         eveningSampleAlarmContainer.setVisibility(eveningAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         salivaAlarmsHeader.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
@@ -189,8 +187,7 @@ public class AlarmFragment extends Fragment {
                         ? R.dimen.alarm_content_list_bottom_padding
                         : R.dimen.primary_screen_bottom_padding));
 
-        if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams) {
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) alarmPrimaryCard.getLayoutParams();
+        if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams params) {
             params.bottomMargin = getResources().getDimensionPixelSize(hasDisplayedAlarms
                     ? R.dimen.alarm_primary_card_list_margin_bottom
                     : R.dimen.alarm_primary_card_margin_bottom);
@@ -371,8 +368,8 @@ public class AlarmFragment extends Fragment {
         String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
         try {
             return Integer.parseInt(startSample.substring(1));
-        } catch (NumberFormatException e) {
-            return Integer.parseInt(Constants.DEFAULT_START_SAMPLE.substring(1));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return 0;
         }
     }
 }

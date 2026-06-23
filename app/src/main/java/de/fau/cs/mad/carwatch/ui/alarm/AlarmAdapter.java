@@ -116,7 +116,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     public void setAlarms(List<Alarm> alarms) {
+        int oldSize = localAlarms.size();
         localAlarms.clear();
+        if (oldSize > 0) {
+            notifyItemRangeRemoved(0, oldSize);
+        }
+
         localAlarms.addAll(alarms);
         Collections.sort(localAlarms, (left, right) -> {
             int leftMinuteOfDay = getMinuteOfDay(left);
@@ -127,6 +132,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
             return Integer.compare(left.getId(), right.getId());
         });
+        if (!localAlarms.isEmpty()) {
+            notifyItemRangeInserted(0, localAlarms.size());
+        }
     }
 
     private static int getMinuteOfDay(Alarm alarm) {
@@ -222,7 +230,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         try {
             return Integer.parseInt(startSample.substring(1));
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            return Integer.parseInt(Constants.DEFAULT_START_SAMPLE.substring(1));
+            return 0;
         }
     }
 
