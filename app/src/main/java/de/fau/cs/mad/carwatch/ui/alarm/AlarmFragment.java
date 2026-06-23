@@ -131,10 +131,15 @@ public class AlarmFragment extends Fragment {
         List<Alarm> sampleAlarms = new ArrayList<>();
         List<Alarm> eveningAlarms = new ArrayList<>();
         boolean wakeupTriggered = sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME);
+        boolean wakeupScanPending = sharedPreferences.getBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false);
+        boolean wakeupStarted = wakeupTriggered || wakeupScanPending;
 
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances) && wakeupTriggered) {
-            DateTime wakeUpTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE));
+        if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances) && wakeupStarted) {
+            long wakeUpTimeMillis = wakeupTriggered
+                    ? sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE)
+                    : sharedPreferences.getLong(Constants.PREF_WAKEUP_SCAN_PENDING_TIME, DateTime.now().getMillis());
+            DateTime wakeUpTime = new DateTime(wakeUpTimeMillis);
             Alarm initialAlarm = getInitialAlarm(alarms);
             Alarm initialSampleAlarm = new Alarm(
                     wakeUpTime,
@@ -142,7 +147,7 @@ public class AlarmFragment extends Fragment {
                     false,
                     Constants.FIRST_SAMPLE_ALARM_ID,
                     Constants.EXTRA_SALIVA_ID_INITIAL,
-                    initialAlarm.wasSampleTaken()
+                    wakeupTriggered && initialAlarm.wasSampleTaken()
             );
             sampleAlarms.add(initialSampleAlarm);
         }

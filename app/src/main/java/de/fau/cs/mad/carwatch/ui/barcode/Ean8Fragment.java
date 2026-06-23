@@ -244,6 +244,7 @@ public class Ean8Fragment extends BarcodeFragment {
         sharedPreferences.edit()
                 .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
                 .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                .remove(Constants.PREF_WAKEUP_SCAN_PENDING_TIME)
                 .apply();
     }
 

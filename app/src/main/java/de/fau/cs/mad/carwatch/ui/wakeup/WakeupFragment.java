@@ -268,9 +268,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         if (wakeupRecorded) {
             logWakeup();
             editor.putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
-                    .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false);
+                    .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                    .remove(Constants.PREF_WAKEUP_SCAN_PENDING_TIME);
         } else {
-            editor.putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, true);
+            editor.putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, true)
+                    .putLong(Constants.PREF_WAKEUP_SCAN_PENDING_TIME, DateTime.now().getMillis());
         }
         editor.apply();
 

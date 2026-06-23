@@ -179,6 +179,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                 .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
                 .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
                 .remove(Constants.PREF_WAKEUP_SCAN_PENDING)
+                .remove(Constants.PREF_WAKEUP_SCAN_PENDING_TIME)
                 .remove(Constants.PREF_EVENING_REMINDER_TIME_MINUTES)
                 .putString(Constants.PREF_STUDY_NAME, parser.getStudyName())
                 .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.getNumParticipants())
