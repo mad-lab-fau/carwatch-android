@@ -9,11 +9,8 @@ import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeChec
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult.VALID;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class BarcodeChecker {
-
-    private static final String TAG = BarcodeChecker.class.getSimpleName();
 
     public enum BarcodeCheckResult {
         VALID,
@@ -43,7 +40,43 @@ public class BarcodeChecker {
         return BarcodeCheckResult.INVALID;
     }
 
+    public static ParsedBarcode parseBarcodeValue(String barcode) {
+        if (barcode == null || !barcode.matches("\\d{7}")) {
+            return null;
+        }
+
+        return new ParsedBarcode(
+                Integer.parseInt(barcode.substring(0, 3)),
+                Integer.parseInt(barcode.substring(3, 5)),
+                Integer.parseInt(barcode.substring(5, 7))
+        );
+    }
+
     public static BarcodeCheckResult isValidQrCode(QrCodeParser parser) {
         return parser.isValid() ? VALID : INVALID;
+    }
+
+    public static class ParsedBarcode {
+        private final int participantId;
+        private final int dayId;
+        private final int salivaId;
+
+        private ParsedBarcode(int participantId, int dayId, int salivaId) {
+            this.participantId = participantId;
+            this.dayId = dayId;
+            this.salivaId = salivaId;
+        }
+
+        public int getParticipantId() {
+            return participantId;
+        }
+
+        public int getDayId() {
+            return dayId;
+        }
+
+        public int getSalivaId() {
+            return salivaId;
+        }
     }
 }

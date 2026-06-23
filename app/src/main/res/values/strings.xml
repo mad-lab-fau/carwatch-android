@@ -26,6 +26,7 @@
     <string name="content_description_open_fab_menu">Open menu</string>
     <string name="content_description_close_fab_menu">Close menu</string>
     <string name="content_description_close">Close</string>
+    <string name="content_description_app_info">Open app info</string>
     <string name="title_reregister_ongoing_study">Study still ongoing</string>
     <string name="message_reregister_ongoing_study">Your study is still ongoing. Are you sure you want to reregister with a new QR code?</string>
     <string name="title_study_information">Study Information</string>
@@ -200,6 +201,11 @@
     <string name="app_active">CARWatch Service is active.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_info_description">CARWatch helps study participants collect saliva samples for Cortisol Awakening Response (CAR) studies. It combines wakeup alarms, scheduled reminders, and barcode scans so samples are taken at the intended times and can be confirmed reliably.</string>
+    <string name="app_info_developer_title">Developer Information</string>
+    <string name="app_info_developer_details">Portabiles GmbH&lt;br>contact@portabiles.de&lt;br>Henkestr. 91&lt;br>91052 Erlangen&lt;br>Germany</string>
+    <string name="app_info_privacy_policy">Privacy Policy</string>
+    <string name="app_info_privacy_policy_url" translatable="false">https://carwatch-tools.github.io/privacy/</string>
     <string name="message_qr_code_invalid">Invalid QR Code! Please scan the QR Code in your study materials.</string>
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>

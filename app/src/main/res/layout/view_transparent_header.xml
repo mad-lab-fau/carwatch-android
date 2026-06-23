@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_header"
     android:layout_width="match_parent"
     android:layout_height="104dp"
@@ -19,5 +20,15 @@
         android:includeFontPadding="false"
         android:textColor="?attr/colorOnSurface"
         android:textSize="30sp" />
+
+    <ImageButton
+        android:id="@+id/btn_header_app_info"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/content_description_app_info"
+        android:src="@drawable/ic_info_24dp"
+        android:visibility="gone"
+        app:tint="?attr/colorOnSurfaceVariant" />
 
 </LinearLayout>

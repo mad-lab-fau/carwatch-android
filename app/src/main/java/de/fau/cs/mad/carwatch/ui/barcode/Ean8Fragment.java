@@ -79,6 +79,11 @@ public class Ean8Fragment extends BarcodeFragment {
                     showBarcodeAlreadyScannedDialog();
                     break;
                 case VALID:
+                    if (!matchesExpectedSample(barcode.getValue(), sharedPreferences)) {
+                        logInvalidBarcode(barcode.getValue());
+                        showInvalidBarcodeDialog();
+                        break;
+                    }
                     scannedBarcodes.add(barcode.getValue());
                     sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
                     cancelAlarm();
@@ -88,13 +93,7 @@ public class Ean8Fragment extends BarcodeFragment {
                     finishScanningProcess();
                     break;
                 case INVALID:
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
-                        LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    logInvalidBarcode(barcode.getValue());
                     showInvalidBarcodeDialog();
                     break;
             }
@@ -167,8 +166,13 @@ public class Ean8Fragment extends BarcodeFragment {
             int startIndex = Integer.parseInt(startSample.substring(1));
             String samplePrefix = startSample.substring(0, 1);
 
-            int scannedDay = Integer.parseInt(barcodeValue.substring(3, 5));
-            int scannedSampleId = Integer.parseInt(barcodeValue.substring(5, 7));
+            BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcodeValue);
+            if (parsedBarcode == null) {
+                return;
+            }
+
+            int scannedDay = parsedBarcode.getDayId();
+            int scannedSampleId = parsedBarcode.getSalivaId();
             String scannedSample = samplePrefix;
             scannedSample += scannedSampleId == idEveningSample + startIndex
                     ? Constants.EXTRA_SALIVA_ID_EVENING
@@ -288,8 +292,13 @@ public class Ean8Fragment extends BarcodeFragment {
                 continue;
             }
 
-            int scannedDay = Integer.parseInt(barcode.substring(3, 5));
-            int scannedSampleId = Integer.parseInt(barcode.substring(5, 7)) - startIndex;
+            BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcode);
+            if (parsedBarcode == null) {
+                continue;
+            }
+
+            int scannedDay = parsedBarcode.getDayId();
+            int scannedSampleId = parsedBarcode.getSalivaId() - startIndex;
             if (scannedDay != dayId) {
                 continue;
             }
@@ -301,6 +310,32 @@ public class Ean8Fragment extends BarcodeFragment {
         }
 
         return count;
+    }
+
+    private boolean matchesExpectedSample(String barcodeValue, SharedPreferences sharedPreferences) {
+        if (alarmId == Constants.EXTRA_ALARM_ID_MANUAL) {
+            return true;
+        }
+
+        BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcodeValue);
+        if (parsedBarcode == null) {
+            return false;
+        }
+
+        int expectedDayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
+        int expectedSampleId = salivaId + getStartSampleIndex(sharedPreferences);
+        return parsedBarcode.getDayId() == expectedDayId
+                && parsedBarcode.getSalivaId() == expectedSampleId;
+    }
+
+    private void logInvalidBarcode(String barcodeValue) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
+            LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private int getStartSampleIndex(SharedPreferences sharedPreferences) {

@@ -40,6 +40,7 @@
     <string name="content_description_open_fab_menu">Menü öffnen</string>
     <string name="content_description_close_fab_menu">Menü schließen</string>
     <string name="content_description_close">Schließen</string>
+    <string name="content_description_app_info">App-Info öffnen</string>
     <string name="title_reregister_ongoing_study">Studie läuft noch</string>
     <string name="message_reregister_ongoing_study">Ihre Studie läuft noch. Sind Sie sicher, dass Sie sich mit einem neuen QR-Code neu registrieren möchten?</string>
     <string name="title_study_information">Studieninformationen</string>
@@ -175,6 +176,10 @@
     <string name="text_slide_show_end">Die App ist nun bereit. Um die Studie zu starten, stellen Sie sich einen Wecker für den nächsten Tag oder melden Sie Ihr Aufwachen am Morgen. Wenn Sie die App neu konfigurieren oder das Tutorial erneut durchführen möchten, drücken Sie die entsprechenden Einträge im Menü oben rechts.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_info_description">CARWatch unterstützt Studienteilnehmende bei der Sammlung von Speichelproben für Studien zur Cortisol Awakening Response (CAR). Die App kombiniert Weckalarme, geplante Erinnerungen und Barcode-Scans, damit Proben zum vorgesehenen Zeitpunkt genommen und zuverlässig bestätigt werden können.</string>
+    <string name="app_info_developer_title">Entwicklerinformationen</string>
+    <string name="app_info_developer_details">Portabiles GmbH&lt;br>contact@portabiles.de&lt;br>Henkestr. 91&lt;br>91052 Erlangen&lt;br>Deutschland</string>
+    <string name="app_info_privacy_policy">Datenschutzerklärung</string>
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
     <string name="saliva_alarms_header">Wecker für Speichelproben</string>

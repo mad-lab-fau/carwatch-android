@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
-import androidx.core.text.HtmlCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
@@ -48,7 +47,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import de.fau.cs.mad.carwatch.Constants;
-import de.fau.cs.mad.carwatch.BuildConfig;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
@@ -761,13 +759,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAppInfoDialog() {
-        View dialogView = inflateDetached(R.layout.widget_app_info_dialog);
-        TextView appVersionTextView = dialogView.findViewById(R.id.tv_app_version);
-        appVersionTextView.setText(HtmlCompat.fromHtml(
-                getString(R.string.app_version, BuildConfig.VERSION_NAME),
-                HtmlCompat.FROM_HTML_MODE_LEGACY
-        ));
-        showInfoBottomSheet(dialogView);
+        AppInfoBottomSheet.show(this);
     }
 
     private void showInfoBottomSheet(View contentView) {

@@ -27,6 +27,7 @@ import androidx.transition.TransitionInflater;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
+import de.fau.cs.mad.carwatch.ui.AppInfoBottomSheet;
 import de.fau.cs.mad.carwatch.ui.HeaderUiHelper;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
@@ -61,6 +62,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     private Button nextButton;
     private View slideNavigation;
     private View header;
+    private View appInfoButton;
     private View slideShowFragment;
     private LinearLayout tabDots;
     private TextView headerTitle;
@@ -72,6 +74,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         setContentView(R.layout.activity_slide_show);
         slideShowFragment = findViewById(R.id.slide_show_fragment);
         header = findViewById(R.id.header);
+        appInfoButton = findViewById(R.id.btn_header_app_info);
         slideNavigation = findViewById(R.id.slide_navigation);
         tabDots = findViewById(R.id.tab_dots);
         headerTitle = findViewById(R.id.tv_header_title);
@@ -84,9 +87,14 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
         initializeSlides();
         addSwipeListener();
+        initializeAppInfoButton();
         initializeSkipButton();
         initializeNextButton();
         showSlide(currentSlidePosition);
+    }
+
+    private void initializeAppInfoButton() {
+        appInfoButton.setOnClickListener(view -> AppInfoBottomSheet.show(this));
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -244,6 +252,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         } else {
             headerTitle.setText(R.string.app_name);
         }
+        appInfoButton.setVisibility(slide instanceof WelcomeText ? View.VISIBLE : View.GONE);
         initButtonsForSlide(slide);
         replaceFragment(slide.getFragment());
         updateVisibleDots(position);

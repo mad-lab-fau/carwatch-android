@@ -27,6 +27,7 @@
     <string name="content_description_open_fab_menu">Ouvrir le menu</string>
     <string name="content_description_close_fab_menu">Fermer le menu</string>
     <string name="content_description_close">Fermer</string>
+    <string name="content_description_app_info">Ouvrir les infos appli</string>
     <string name="title_reregister_ongoing_study">Étude toujours en cours</string>
     <string name="message_reregister_ongoing_study">Votre étude est toujours en cours. Voulez-vous vraiment vous réenregistrer avec un nouveau code QR?</string>
     <string name="title_study_information">Informations sur l\'étude</string>
@@ -196,6 +197,10 @@
     <string name="app_active">Le service CARWatch est actif</string>
 
     <string name="app_version">Version d\'application:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_info_description">CARWatch aide les participants à une étude à collecter des échantillons de salive pour les études sur la réponse d\'éveil du cortisol (CAR). L\'application combine des alarmes de réveil, des rappels programmés et des scans de codes-barres afin que les échantillons soient pris au bon moment et confirmés de manière fiable.</string>
+    <string name="app_info_developer_title">Informations développeur</string>
+    <string name="app_info_developer_details">Portabiles GmbH&lt;br>contact@portabiles.de&lt;br>Henkestr. 91&lt;br>91052 Erlangen&lt;br>Allemagne</string>
+    <string name="app_info_privacy_policy">Politique de confidentialité</string>
     <string name="message_qr_code_invalid">Code QR invalide! Veuillez scanner le code QR figurant dans vos documents d\'étude.</string>
     <string name="title_barcode_already_scanned">Code-barres en double!</string>
     <string name="message_barcode_already_scanned">Ce code-barres a déjà été scanné auparavant. Veuillez vérifier et assurez-vous d\'utiliser une nouvelle salivette.</string>
