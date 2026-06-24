@@ -169,6 +169,9 @@
     <string name="message_overdue_sample_pending">Vous avez encore au moins un échantillon en retard plus tôt aujourd\'hui. Vous allez ensuite être redirigé vers l\'écran du programme, où vous pourrez choisir quel échantillon prendre maintenant.</string>
     <string name="title_delayed_sample_planned">Échantillon différé prévu</string>
     <string name="message_delayed_sample_planned">Un échantillon différé est prévu pour votre étude. Vous recevrez un rappel pour prendre cet échantillon dans %1$d minutes.</string>
+    <string name="title_fixed_time_only_wakeup">Plan d\'échantillons fixe</string>
+    <string name="message_fixed_time_only_wakeup">Votre réveil a été enregistré. Cette étude utilise uniquement des heures d\'échantillonnage fixes, aucun échantillon au réveil n\'est donc requis. Votre premier échantillon restant aujourd\'hui est prévu à %1$s.</string>
+    <string name="message_fixed_time_only_wakeup_no_remaining_samples">Votre réveil a été enregistré. Cette étude utilise uniquement des heures d\'échantillonnage fixes, aucun échantillon au réveil n\'est donc requis. Aucun autre échantillon fixe n\'est prévu aujourd\'hui.</string>
     <string name="wakeup_message">Bonjour! Venez-vous de vous réveiller ?</string>
 
 

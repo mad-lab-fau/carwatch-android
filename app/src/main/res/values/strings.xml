@@ -172,6 +172,9 @@
     <string name="message_overdue_sample_pending">You still have at least one overdue sample from earlier today. Next, you will be taken to the Schedule screen, where you can choose which sample you want to take now.</string>
     <string name="title_delayed_sample_planned">Delayed sample planned</string>
     <string name="message_delayed_sample_planned">A delayed sample is planned for your study. You will receive a reminder to take that sample in %1$d minutes.</string>
+    <string name="title_fixed_time_only_wakeup">Fixed sample schedule</string>
+    <string name="message_fixed_time_only_wakeup">Your wakeup has been recorded. This study uses fixed sample times only, so no wakeup sample is required. Your first remaining sample today is scheduled for %1$s.</string>
+    <string name="message_fixed_time_only_wakeup_no_remaining_samples">Your wakeup has been recorded. This study uses fixed sample times only, so no wakeup sample is required. There are no remaining fixed samples scheduled for today.</string>
     <string name="wakeup_message">Good Morning!\nDid you just wake up?</string>
 
     <!-- Bedtime Fragment -->

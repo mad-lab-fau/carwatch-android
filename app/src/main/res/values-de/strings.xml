@@ -86,6 +86,9 @@
     <string name="message_overdue_sample_pending">Es gibt noch mindestens eine überfällige Probe von früher am heutigen Tag. Als Nächstes gelangen Sie zum Zeitplan, wo Sie auswählen können, welche Probe Sie jetzt nehmen möchten.</string>
     <string name="title_delayed_sample_planned">Verzögerte Probe geplant</string>
     <string name="message_delayed_sample_planned">Für Ihre Studie ist eine verzögerte Probe geplant. Sie erhalten in %1$d Minuten eine Erinnerung, diese Probe zu nehmen.</string>
+    <string name="title_fixed_time_only_wakeup">Fester Probenplan</string>
+    <string name="message_fixed_time_only_wakeup">Ihr Aufwachen wurde gespeichert. Diese Studie verwendet nur feste Probenzeiten, daher ist keine Aufwachprobe erforderlich. Ihre erste verbleibende Probe heute ist für %1$s geplant.</string>
+    <string name="message_fixed_time_only_wakeup_no_remaining_samples">Ihr Aufwachen wurde gespeichert. Diese Studie verwendet nur feste Probenzeiten, daher ist keine Aufwachprobe erforderlich. Für heute sind keine weiteren festen Proben geplant.</string>
     <string name="wakeup_message">Guten Morgen!\nSind Sie gerade aufgewacht?</string>
 
     <string name="bedtime_title">Die Nacht beginnen</string>

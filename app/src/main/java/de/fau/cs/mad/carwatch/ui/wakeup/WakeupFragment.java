@@ -24,6 +24,7 @@ import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -90,6 +91,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
             if (delayedOnlyWakeupSample) {
                 startWakeupSampling(wakeupAlert);
+                return;
+            }
+
+            if (hasOnlyFixedSampleTimes(sp)) {
+                startWakeupSampling(null);
                 return;
             }
 
@@ -161,7 +167,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             showWakeupAlert(wakeupAlert);
         } else {
             initializeDay(true);
-            AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
+            if (hasOnlyFixedSampleTimes(sp)) {
+                showFixedTimeOnlyWakeupInfo(sp);
+            } else {
+                AlarmHandler.showMessageSalivaAlarmsScheduled(getContext(), getActivity().findViewById(R.id.coordinator));
+            }
         }
     }
 
@@ -218,6 +228,70 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         }
 
         return 0;
+    }
+
+    private boolean hasOnlyFixedSampleTimes(SharedPreferences sp) {
+        return !hasConfiguredValues(sp.getString(Constants.PREF_SALIVA_DISTANCES, ""))
+                && hasConfiguredValues(sp.getString(Constants.PREF_SALIVA_TIMES, ""));
+    }
+
+    private boolean hasConfiguredValues(String valuesString) {
+        for (String value : valuesString.split(",")) {
+            if (!value.isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void showFixedTimeOnlyWakeupInfo(SharedPreferences sp) {
+        if (getContext() == null) {
+            return;
+        }
+
+        DateTime firstSampleTime = getNextFixedSampleTime(sp);
+        String message = firstSampleTime == null
+                ? getString(R.string.message_fixed_time_only_wakeup_no_remaining_samples)
+                : getString(R.string.message_fixed_time_only_wakeup, formatSampleTime(firstSampleTime));
+
+        new CarwatchDialogBuilder(getContext())
+                .setIcon(R.drawable.ic_info_24dp)
+                .setTitle(R.string.title_fixed_time_only_wakeup)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    private DateTime getNextFixedSampleTime(SharedPreferences sp) {
+        String fixedTimesString = sp.getString(Constants.PREF_SALIVA_TIMES, "");
+        DateTime now = DateTime.now();
+        DateTime nextSampleTime = null;
+
+        for (String timeRaw : fixedTimesString.split(",")) {
+            if (timeRaw.isEmpty()) {
+                continue;
+            }
+
+            String time = timeRaw.substring(0, 2) + ":" + timeRaw.substring(2);
+            DateTime sampleTime = now.withTime(LocalTime.parse(time));
+            if (sampleTime.isBefore(now)) {
+                continue;
+            }
+            if (nextSampleTime == null || sampleTime.isBefore(nextSampleTime)) {
+                nextSampleTime = sampleTime;
+            }
+        }
+
+        return nextSampleTime;
+    }
+
+    private String formatSampleTime(DateTime sampleTime) {
+        String language = Locale.getDefault().getLanguage();
+        if (language.equals(Locale.GERMAN.getLanguage()) || language.equals(Locale.FRENCH.getLanguage())) {
+            return sampleTime.toString("HH:mm", Locale.getDefault());
+        }
+        return sampleTime.toString("hh:mm a", Locale.US);
     }
 
     private void saveWakeupAlert(SharedPreferences sp, WakeupAlert wakeupAlert) {
