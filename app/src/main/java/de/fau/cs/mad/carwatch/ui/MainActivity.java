@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
+    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (navGestureDetector != null) {
             navGestureDetector.onTouchEvent(event);
         }
@@ -193,12 +194,13 @@ public class MainActivity extends AppCompatActivity {
     private void initializeSwipeNavigation() {
         navGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onDown(MotionEvent e) {
+            public boolean onDown(@NonNull MotionEvent e) {
                 return false;
             }
 
             @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            public boolean onFling(@Nullable MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
+                //noinspection ConstantConditions
                 if (e1 == null || e2 == null || isFabMenuOpen()) {
                     return false;
                 }

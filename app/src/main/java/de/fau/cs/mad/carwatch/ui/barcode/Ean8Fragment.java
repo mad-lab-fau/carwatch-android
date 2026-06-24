@@ -242,6 +242,7 @@ public class Ean8Fragment extends BarcodeFragment {
         sharedPreferences.edit().putLong(Constants.PREF_EVENING_TAKEN, time.getMillis()).apply();
     }
 
+    @SuppressWarnings("ApplySharedPref")
     private void markWakeupRecordedIfNeeded(SharedPreferences sharedPreferences) {
         if (alarmId != Constants.EXTRA_ALARM_ID_INITIAL || salivaId != Constants.EXTRA_SALIVA_ID_INITIAL) {
             return;
@@ -376,6 +377,7 @@ public class Ean8Fragment extends BarcodeFragment {
         return sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private String getExpectedBarcodeId(SharedPreferences sharedPreferences) {
         String expectedSampleId = getExpectedSampleId(sharedPreferences);
         String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, "");

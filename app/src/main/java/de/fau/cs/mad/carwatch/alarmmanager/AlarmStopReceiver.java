@@ -78,8 +78,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
                 alarm.setWasSampleTaken(false);
             repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
-            e.printStackTrace();
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
             return;
         }
 
@@ -97,7 +96,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             json.put(Constants.LOGGER_EXTRA_SALIVA_ID, alarm.getSalivaId());
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_STOP, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log alarm stop", e);
         }
 
         Log.d(TAG, "Stopping Alarm: " + alarmId);

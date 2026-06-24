@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 import android.view.View;
 
@@ -165,8 +164,7 @@ public class AlarmHandler {
                 }
             }
         } catch (ExecutionException | InterruptedException e) {
-            Log.d(TAG, "Could not reset study configuration: failed to get alarms from database");
-            e.printStackTrace();
+            Log.e(TAG, "Could not reset study configuration: failed to get alarms from database", e);
         }
 
         cancelAlarmAtTime(context, Constants.EXTRA_ALARM_ID_INITIAL);
@@ -219,8 +217,7 @@ public class AlarmHandler {
                 }
             }
         } catch (ExecutionException | InterruptedException e) {
-            Log.d(TAG, "Could not finish current study day: failed to get alarms from database");
-            e.printStackTrace();
+            Log.e(TAG, "Could not finish current study day: failed to get alarms from database", e);
             return false;
         }
 
@@ -375,7 +372,7 @@ public class AlarmHandler {
             json.put(Constants.LOGGER_TRANSLATED_TIMESTAMP, Utils.translateTimestamp(alarmTime.getMillis()));
             LoggerUtil.log(Constants.LOGGER_ACTION_TIMER_SET, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log timer set", e);
         }
 
         showAlarmSetMessage(context, snackbarAnchor, alarmTime);
@@ -390,12 +387,7 @@ public class AlarmHandler {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE;
-        }
+        int pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, pendingFlags);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -410,7 +402,7 @@ public class AlarmHandler {
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_CANCEL, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log alarm cancel", e);
         }
 
         alarmManager.cancel(pendingIntent);
@@ -460,8 +452,7 @@ public class AlarmHandler {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1).apply();
         } catch (ExecutionException | InterruptedException e) {
-            Log.d(TAG, "Could not delete yesterdays saliva alarms: failed to get alarms from database");
-            e.printStackTrace();
+            Log.e(TAG, "Could not delete yesterdays saliva alarms: failed to get alarms from database", e);
         }
     }
 
@@ -514,12 +505,7 @@ public class AlarmHandler {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE;
-        }
+        int pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, pendingFlags);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -558,10 +544,7 @@ public class AlarmHandler {
     }
 
     private static int getPendingIntentFlags() {
-        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
-        return pendingFlags;
+        return PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
     }
 
     private static void setBootCompletedReceiverEnabledSetting(Context context, boolean setEnabled) {
@@ -592,7 +575,7 @@ public class AlarmHandler {
 
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log alarm set", e);
         }
     }
 
