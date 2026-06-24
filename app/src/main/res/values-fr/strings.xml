@@ -159,8 +159,8 @@
     <string name="title_reminder_questionnaire">Rappel</string>
     <string name="message_reminder_questionnaire">N\'oubliez pas de remplir les protocoles de sommeil et de salive entre-temps!</string>
 
-    <string name="title_reminder_sensors">All sensors in place?</string>
-    <string name="message_reminder_sensors">Are all sensors in place?\n\nIf you use the sensor armband: Please remember to wear the sensor throughout your time in bed on your non-dominant hand!\n\nIf you use the ECG chest strap: Please make sure that it fits correctly and you moistened the electrodes before wearing.\n\nIf you use the Sleep analyzer mat: Please make sure it is plugged in, has power supply and is correctly placed under the bed sheets.</string>
+    <string name="title_reminder_sensors">Tous les capteurs sont-ils en place?</string>
+    <string name="message_reminder_sensors">Tous les capteurs sont-ils en place?\n\nSi vous utilisez le bracelet capteur: pensez à porter le capteur pendant toute la durée passée au lit, sur votre main non dominante!\n\nSi vous utilisez la ceinture thoracique ECG: assurez-vous qu\'elle est correctement ajustée et humidifiez les électrodes avant de la porter.\n\nSi vous utilisez le tapis d\'analyse du sommeil: assurez-vous qu\'il est branché, alimenté et correctement placé sous les draps.</string>
 
 
     <string name="wakeup_title">Commencer l\'échantillonnage du matin</string>

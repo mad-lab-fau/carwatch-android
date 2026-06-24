@@ -507,6 +507,7 @@ public class MainActivity extends AppCompatActivity {
         setFabMenuAction(R.id.fab_menu_show_tutorial, R.id.menu_show_tutorial);
         setFabMenuAction(R.id.fab_menu_study_information, R.id.menu_study_information);
         setFabMenuAction(R.id.fab_menu_finish_study_day, R.id.menu_finish_study_day);
+        setFabMenuAction(R.id.fab_menu_privacy_policy, R.id.menu_privacy_policy);
         setFabMenuAction(R.id.fab_menu_app_info, R.id.menu_app_info);
     }
 
@@ -579,6 +580,8 @@ public class MainActivity extends AppCompatActivity {
             showStudyInformationDialog();
         } else if (itemId == R.id.menu_finish_study_day) {
             requestFinishStudyDay();
+        } else if (itemId == R.id.menu_privacy_policy) {
+            AppInfoBottomSheet.openPrivacyPolicy(this);
         } else if (itemId == R.id.menu_app_info) {
             showAppInfoDialog();
         }

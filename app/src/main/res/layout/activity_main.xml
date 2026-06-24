@@ -221,6 +221,21 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/fab_menu_privacy_policy"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/app_info_privacy_policy"
+                android:textColor="@color/fab_menu_item_content"
+                app:backgroundTint="@color/fab_menu_item_background"
+                app:icon="@drawable/ic_shield_check_24dp"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/fab_menu_item_content"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.FabMenuItem" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/fab_menu_app_info"
                 style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="wrap_content"

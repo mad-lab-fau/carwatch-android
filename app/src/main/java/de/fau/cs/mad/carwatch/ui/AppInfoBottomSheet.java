@@ -51,7 +51,7 @@ public final class AppInfoBottomSheet {
         dialog.show();
     }
 
-    private static void openPrivacyPolicy(Activity activity) {
+    static void openPrivacyPolicy(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(activity.getString(R.string.app_info_privacy_policy_url)));
         try {
             activity.startActivity(intent);
