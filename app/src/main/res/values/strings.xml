@@ -135,7 +135,7 @@
     <string name="description_saliva_alarm_overview">After you woke up, the screen also provides an overview of past and upcoming saliva alarms and their current state.</string>
     <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken {sample_taken_icon}, was already due {sample_due_icon} or is scheduled for later {sample_later_icon}. Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
     <string name="headline_bedtime_screen_tutorial">Report going to bed</string>
-    <string name="description_bedtime_screen">Here, you can initiate the evening procedure before going to bed. You only need to do this if the study requires you to take an evening sample. The \"Lights out!\" Button will activate the app\'s dark mode.</string>
+    <string name="description_bedtime_screen">Start the evening procedure here before going to bed. The \"Lights out!\" button activates dark mode and uses attention events, such as screen unlocks, to help estimate bedtime and wakeup times.</string>
     <string name="headline_scan_screen_tutorial">Scan your sample</string>
     <string name="description_scan_screen">The barcode scanner opens automatically when you have to take a sample. After sampling, simply scan the barcode on the sample tube so that the sample can later be linked to the time of sampling.</string>
     <string name="headline_slide_show_end">Start sampling!</string>

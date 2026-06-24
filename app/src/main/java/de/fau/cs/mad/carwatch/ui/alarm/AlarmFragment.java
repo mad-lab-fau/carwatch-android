@@ -155,7 +155,7 @@ public class AlarmFragment extends Fragment {
                     false,
                     Constants.FIRST_SAMPLE_ALARM_ID,
                     Constants.EXTRA_SALIVA_ID_INITIAL,
-                    wakeupTriggered && initialAlarm.wasSampleTaken()
+                    isWakeupSampleTaken(initialAlarm)
             );
             sampleAlarms.add(initialSampleAlarm);
         }
@@ -274,6 +274,20 @@ public class AlarmFragment extends Fragment {
             }
         }
         return alarm;
+    }
+
+    private boolean isWakeupSampleTaken(Alarm initialAlarm) {
+        if (initialAlarm.wasSampleTaken()) {
+            return true;
+        }
+
+        long wakeupSampleTakenTime = sharedPreferences.getLong(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME, 0);
+        if (wakeupSampleTakenTime == 0) {
+            return false;
+        }
+
+        DateTime takenDate = new DateTime(wakeupSampleTakenTime);
+        return takenDate.withTime(LocalTime.MIDNIGHT).equals(LocalTime.MIDNIGHT.toDateTimeToday());
     }
 
     private void ensureEveningReminderAlarm() {

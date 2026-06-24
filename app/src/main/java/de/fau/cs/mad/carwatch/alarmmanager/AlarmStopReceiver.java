@@ -61,6 +61,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
                     .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                     .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
                     .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                    .remove(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME)
                     .apply();
 
         } else {

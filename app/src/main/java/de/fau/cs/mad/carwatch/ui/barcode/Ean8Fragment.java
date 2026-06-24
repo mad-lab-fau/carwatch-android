@@ -20,6 +20,7 @@ import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -256,9 +257,10 @@ public class Ean8Fragment extends BarcodeFragment {
 
         sharedPreferences.edit()
                 .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
+                .putLong(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME, DateTime.now().getMillis())
                 .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
                 .remove(Constants.PREF_WAKEUP_SCAN_PENDING_TIME)
-                .apply();
+                .commit();
     }
 
     private String getEndOfDayAlertType(SharedPreferences sharedPreferences) {
@@ -268,8 +270,12 @@ public class Ean8Fragment extends BarcodeFragment {
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
         int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
         int regularSamplesPerDay = hasEveningSample ? totalNumSamples - 1 : totalNumSamples;
-        int scannedRegularSamplesToday = countScannedSamplesForDay(sharedPreferences, dayId, eveningSampleId, false);
-        int scannedEveningSamplesToday = countScannedSamplesForDay(sharedPreferences, dayId, eveningSampleId, true);
+        int scannedRegularSamplesToday = shouldEnforceExpectedBarcodeId(sharedPreferences)
+                ? countScannedSamplesForDay(sharedPreferences, dayId, eveningSampleId, false)
+                : countRecordedRegularSamples(eveningSampleId);
+        int scannedEveningSamplesToday = shouldEnforceExpectedBarcodeId(sharedPreferences)
+                ? countScannedSamplesForDay(sharedPreferences, dayId, eveningSampleId, true)
+                : countRecordedEveningSamples(sharedPreferences);
         boolean currentScanIsEveningSample = alarmId == Constants.EXTRA_ALARM_ID_EVENING || salivaId == eveningSampleId;
 
         if (hasEveningSample && scannedRegularSamplesToday >= regularSamplesPerDay && scannedEveningSamplesToday == 0) {
@@ -291,11 +297,36 @@ public class Ean8Fragment extends BarcodeFragment {
         return Constants.END_OF_DAY_ALERT_DAY_FINISHED;
     }
 
-    private int countScannedSamplesForDay(SharedPreferences sharedPreferences, int dayId, int eveningSampleId, boolean countEvening) {
-        if (!sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+    private int countRecordedRegularSamples(int eveningSampleId) {
+        if (getContext() == null) {
             return 0;
         }
 
+        try {
+            List<Alarm> alarms = AlarmRepository.getInstance(getContext()).getAll();
+            int count = 0;
+            for (Alarm alarm : alarms) {
+                if (!alarm.wasSampleTaken()
+                        || alarm.getId() == Constants.EXTRA_ALARM_ID_EVENING
+                        || alarm.getSalivaId() == eveningSampleId
+                        || alarm.getSalivaId() == Constants.EXTRA_SALIVA_ID_MANUAL) {
+                    continue;
+                }
+                count++;
+            }
+            return count;
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Could not count recorded samples", e);
+            return 0;
+        }
+    }
+
+    private int countRecordedEveningSamples(SharedPreferences sharedPreferences) {
+        DateTime eveningTaken = new DateTime(sharedPreferences.getLong(Constants.PREF_EVENING_TAKEN, 0));
+        return eveningTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday()) ? 1 : 0;
+    }
+
+    private int countScannedSamplesForDay(SharedPreferences sharedPreferences, int dayId, int eveningSampleId, boolean countEvening) {
         int startIndex = getStartSampleIndex(sharedPreferences);
         Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
         int count = 0;

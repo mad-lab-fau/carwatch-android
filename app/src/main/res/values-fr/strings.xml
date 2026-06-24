@@ -127,7 +127,7 @@
     <string name="description_saliva_alarm_overview">Après le réveil, l\'écran fournit également un aperçu des alarmes salivaires passées et à venir, ainsi que de leur état actuel.</string>
     <string name="description_alarm_symbols_tutorial">Les symboles situés à côté de l\'heure d\'alarme indiquent si un échantillon a déjà été prélevé {sample_taken_icon}, s\'il devait l\'être {sample_due_icon} ou s\'il est prévu pour plus tard {sample_later_icon}. Une pression sur l\'icône du scanner ouvre le lecteur de code-barres pour l\'échantillon concerné.</string>
     <string name="headline_bedtime_screen_tutorial">Aller au lit</string>
-    <string name="description_bedtime_screen">Ici, vous pouvez commencer la procédure du soir avant d\'aller vous coucher. Cela n\'est nécessaire que si vous devez prendre un échantillon le soir pour l\'étude. Le bouton \"Extinction des lumières!\" active le mode sombre de l\'application.</string>
+    <string name="description_bedtime_screen">Commencez ici la procédure du soir avant d\'aller vous coucher. Le bouton \"Extinction des lumières!\" active le mode sombre et utilise les événements d’attention, comme les déverrouillages, pour mieux estimer le coucher et le réveil.</string>
     <string name="headline_scan_screen_tutorial">Scanner l\'échantillon</string>
     <string name="description_scan_screen">Le lecteur de code-barres s\'ouvre automatiquement lorsque vous devez prélever un échantillon. Il suffit alors de scanner le code-barres qui se trouve sur le tube d\'échantillon.</string>
     <string name="headline_slide_show_end">Début de l\'échantillonnage!</string>

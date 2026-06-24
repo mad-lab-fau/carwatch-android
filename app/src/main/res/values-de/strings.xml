@@ -181,7 +181,7 @@
     <string name="description_saliva_alarm_overview">Nachdem Sie aufgewacht sind, werden in der Übersicht alle Zeiten angezeigt, zu denen eine Probe genommen werden muss.</string>
     <string name="description_alarm_symbols_tutorial">Die Symbole neben den Zeiten zeigen an, ob die Probe bereits genommen wurde {sample_taken_icon}, schon anstand {sample_due_icon} oder später ansteht {sample_later_icon}. Wenn Sie auf das Scanner Symbol drücken, öffnet sich der Barcode Scanner für die jeweilige Probe.</string>
     <string name="headline_bedtime_screen_tutorial">Zu Bett gehen</string>
-    <string name="description_bedtime_screen">Hier können Sie die Abendprozedur vor dem Schlafengehen starten. Das ist nur notwendig, wenn Sie für die Studie eine Abendprobe nehmen müssen. Der \"Licht aus!\" Button aktiviert den Dunkelmodus der App.</string>
+    <string name="description_bedtime_screen">Starten Sie hier die Abendprozedur vor dem Schlafengehen. Der \"Licht aus!\" Button aktiviert den Dunkelmodus und nutzt Aufmerksamkeitsereignisse wie Bildschirm-Entsperrungen, um Schlafens- und Aufwachzeiten besser zu schätzen.</string>
     <string name="headline_scan_screen_tutorial">Die Probe scannen</string>
     <string name="description_scan_screen">Der Barcodescanner öffnet sich automatisch, wenn Sie eine Probe nehmen müssen. Scannen Sie dann einfach den Barcode, welcher sich auf dem Probenröhrchen befindet.</string>
     <string name="headline_slide_show_end">Probenahme starten!</string>

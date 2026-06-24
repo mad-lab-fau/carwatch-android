@@ -264,7 +264,8 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         SharedPreferences.Editor editor = sp.edit()
                 .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                 .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
-                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
+                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                .remove(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME);
 
         if (wakeupRecorded) {
             logWakeup();
@@ -291,7 +292,7 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
             AlarmHandler.cancelAlarm(context, alarm, view);
             alarm.setActive(false);
             alarm.setWasSampleTaken(false);
-            repository.update(alarm);
+            repository.updateAndWait(alarm);
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "Could not update wakeup alarm state", e);
         }
