@@ -65,6 +65,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_yes"
+                        style="@style/Widget.Material3.Button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
@@ -83,7 +84,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_toggle_night_mode"
-                    style="@style/Widget.MaterialComponents.Button.Accent"
+                    style="@style/Widget.Carwatch.Button.AccentTonal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"

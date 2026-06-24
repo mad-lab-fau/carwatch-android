@@ -73,6 +73,9 @@ CARWatch requires camera access for QR and tube barcode scanning. On newer Andro
 requires notification permissions so that wake-up, saliva sample, and evening sample reminders can
 be shown reliably.
 
+Tutorial and store-listing screenshots are created with Android's
+[Device Art Generator](https://developer.android.com/distribute/marketing-tools/device-art-generator).
+
 ## Usage
 CARWatch is designed for studies in which invited participants collect saliva samples according to a
 configured sampling schedule. The app guides participants through setup, wake-up reporting, sample

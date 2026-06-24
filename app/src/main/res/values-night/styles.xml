@@ -60,13 +60,13 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="Widget.MaterialComponents.Button.OutlinedButton.Accent" parent="Widget.Material3.Button.OutlinedButton">
+    <style name="Widget.Carwatch.Button.OutlinedAccent" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:textColor">?attr/colorTertiary</item>
         <item name="backgroundTint">@color/button_outline_accent_selector</item>
         <item name="rippleColor">@color/button_outline_accent_ripple_color</item>
     </style>
 
-    <style name="Widget.MaterialComponents.Button.Accent" parent="Widget.Material3.Button.TonalButton">
+    <style name="Widget.Carwatch.Button.AccentTonal" parent="Widget.Material3.Button.TonalButton">
         <item name="backgroundTint">@color/button_accent_selector</item>
         <item name="rippleColor">@color/button_accent_ripple_color</item>
         <item name="android:textColor">?attr/colorOnTertiary</item>

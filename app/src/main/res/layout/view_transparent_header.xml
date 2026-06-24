@@ -23,10 +23,12 @@
 
     <ImageButton
         android:id="@+id/btn_header_app_info"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/content_description_app_info"
+        android:padding="9dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_info_24dp"
         android:visibility="gone"
         app:tint="?attr/colorOnSurfaceVariant" />

@@ -70,7 +70,7 @@ public class AlarmFragment extends Fragment {
         FragmentAlarmBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
         View root = dataBinding.getRoot();
         rootView = root;
-        rootView.setAlpha(0f);
+        rootView.setAlpha(1f);
         dataBinding.setViewmodel(alarmViewModel);
 
         if (getActivity() != null) {
@@ -261,10 +261,7 @@ public class AlarmFragment extends Fragment {
         }
 
         contentRevealed = true;
-        rootView.animate()
-                .alpha(1f)
-                .setDuration(120L)
-                .start();
+        rootView.setAlpha(1f);
     }
 
     private Alarm getInitialAlarm(List<Alarm> alarms) {

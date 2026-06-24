@@ -10,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int[] NAV_IDS = {R.id.navigation_wakeup, R.id.navigation_alarm, R.id.navigation_bedtime};
+    private static final int SWIPE_DISTANCE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
     private static DiskLogAdapter sAdapter;
 
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView headerTitle;
 
     private NavController navController;
+    private GestureDetector navGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             navigate(item.getItemId());
             return true;
         });
+        initializeSwipeNavigation();
 
         int currentNavElement = getInitialNavElement();
         navigate(currentNavElement);
@@ -163,12 +169,76 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 NavOptions navOptions = new NavOptions.Builder()
+                        .setEnterAnim(R.anim.top_level_fade_in)
+                        .setExitAnim(R.anim.top_level_fade_out)
+                        .setPopEnterAnim(R.anim.top_level_fade_in)
+                        .setPopExitAnim(R.anim.top_level_fade_out)
                         .setLaunchSingleTop(true)
                         .setPopUpTo(navController.getGraph().getStartDestinationId(), false)
                         .build();
                 navController.navigate(navId, null, navOptions);
                 return;
             }
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (navGestureDetector != null) {
+            navGestureDetector.onTouchEvent(event);
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
+    private void initializeSwipeNavigation() {
+        navGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (e1 == null || e2 == null || isFabMenuOpen()) {
+                    return false;
+                }
+
+                float distanceX = e2.getX() - e1.getX();
+                float distanceY = e2.getY() - e1.getY();
+                if (Math.abs(distanceX) <= Math.abs(distanceY)
+                        || Math.abs(distanceX) <= SWIPE_DISTANCE_THRESHOLD
+                        || Math.abs(velocityX) <= SWIPE_VELOCITY_THRESHOLD) {
+                    return false;
+                }
+
+                navigateToAdjacentDestination(distanceX < 0 ? 1 : -1);
+                return true;
+            }
+        });
+    }
+
+    private boolean isFabMenuOpen() {
+        return fabMenuScrim != null && fabMenuScrim.getVisibility() == View.VISIBLE;
+    }
+
+    private void navigateToAdjacentDestination(int direction) {
+        if (navController == null || navController.getCurrentDestination() == null) {
+            return;
+        }
+
+        int currentDestinationId = navController.getCurrentDestination().getId();
+        for (int i = 0; i < NAV_IDS.length; i++) {
+            if (NAV_IDS[i] != currentDestinationId) {
+                continue;
+            }
+
+            int targetIndex = i + direction;
+            if (targetIndex < 0 || targetIndex >= NAV_IDS.length) {
+                return;
+            }
+
+            navigate(NAV_IDS[targetIndex]);
+            return;
         }
     }
 

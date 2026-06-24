@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
-import androidx.transition.TransitionInflater;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
@@ -47,6 +46,10 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     public static final int SHOW_ALL_SLIDES = 0;
     public static final int SHOW_APP_INITIALIZATION_SLIDES = 1;
     public static final int SHOW_TUTORIAL_SLIDES = 2;
+    private static final int TRANSITION_DIRECTION_NONE = 0;
+    private static final int TRANSITION_DIRECTION_FORWARD = 1;
+    private static final int TRANSITION_DIRECTION_BACKWARD = -1;
+    private static final long SLIDE_TRANSITION_DURATION_MS = 220L;
 
     private final List<WelcomeSlide> slides = new ArrayList<>();
     private int slideShowType;
@@ -67,6 +70,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     private LinearLayout tabDots;
     private TextView headerTitle;
     private boolean waitingForPermissionResult = false;
+    private boolean slideTransitionRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,14 +110,14 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         return new OnSwipeTouchListener(this, consumeTouchEvents) {
             @Override
             public void onSwipeLeft() {
-                if (canShowNextSlide && currentSlidePosition < slides.size() - 1) {
+                if (!slideTransitionRunning && canShowNextSlide && currentSlidePosition < slides.size() - 1) {
                     nextSlide();
                 }
             }
 
             @Override
             public void onSwipeRight() {
-                if (canShowPreviousSlide) {
+                if (!slideTransitionRunning && canShowPreviousSlide) {
                     previousSlide();
                 }
             }
@@ -132,6 +136,9 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     private void initializeSkipButton() {
         skipButton = findViewById(R.id.btn_skip_slides);
         skipButton.setOnClickListener(v -> {
+            if (slideTransitionRunning) {
+                return;
+            }
             if (slides.get(currentSlidePosition) instanceof StudyDetailsSlide) {
                 performReregistrationFromStudyDetails();
                 return;
@@ -239,10 +246,34 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void showSlide(int position) {
+        showSlide(position, TRANSITION_DIRECTION_NONE);
+    }
+
+    private void showSlide(int position, int transitionDirection) {
+        slideTransitionRunning = transitionDirection != TRANSITION_DIRECTION_NONE;
+        applySlide(position, transitionDirection, () -> {
+            if (transitionDirection == TRANSITION_DIRECTION_NONE) {
+                slideTransitionRunning = false;
+                return;
+            }
+            slideShowFragment.postDelayed(
+                    () -> slideTransitionRunning = false,
+                    SLIDE_TRANSITION_DURATION_MS
+            );
+        });
+    }
+
+    private void applySlide(int position, int transitionDirection, Runnable onFragmentCommitted) {
         WelcomeSlide slide = slides.get(position);
         boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
-        header.setVisibility(isStudyDetailsSlide ? View.GONE : View.VISIBLE);
-        setSlideContentTopMargin(isStudyDetailsSlide ? 0 : dpToPx(112));
+        boolean isWelcomeSlide = slide instanceof WelcomeText;
+        boolean isStudyParticipationNotice = slide instanceof StudyParticipationNotice;
+        boolean hideHeader = isStudyDetailsSlide
+                || isStudyParticipationNotice;
+        header.setVisibility(hideHeader ? View.GONE : View.VISIBLE);
+        int topMargin = isStudyDetailsSlide ? 0 : dpToPx((isWelcomeSlide || isStudyParticipationNotice) ? 72 : 112);
+        setSlideContentTopMargin(topMargin);
+        headerTitle.setVisibility(isWelcomeSlide ? View.INVISIBLE : View.VISIBLE);
         if (isStudyDetailsSlide) {
             headerTitle.setText(R.string.title_study_configuration);
         } else if (slide instanceof PermissionRequest) {
@@ -254,7 +285,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         }
         appInfoButton.setVisibility(slide instanceof WelcomeText ? View.VISIBLE : View.GONE);
         initButtonsForSlide(slide);
-        replaceFragment(slide.getFragment());
+        replaceFragment(slide.getFragment(), transitionDirection, onFragmentCommitted);
         updateVisibleDots(position);
         setDotsVisibleForSlide(slide);
         highlightDot(position);
@@ -270,16 +301,21 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void previousSlide() {
+        if (slideTransitionRunning) {
+            return;
+        }
         if (currentSlidePosition <= 0) {
             return;
         }
         currentSlidePosition--;
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, currentSlidePosition).apply();
-        setSlideTransition(currentSlidePosition, currentSlidePosition + 1);
-        showSlide(currentSlidePosition);
+        showSlide(currentSlidePosition, TRANSITION_DIRECTION_BACKWARD);
     }
 
     private void nextSlide() {
+        if (slideTransitionRunning) {
+            return;
+        }
         WelcomeSlide currentSlide = slides.get(currentSlidePosition);
         if (currentSlide instanceof PermissionRequest) {
             boolean permissionDialogShown = Utils.requestRuntimePermissions(this);
@@ -324,8 +360,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
         currentSlidePosition++;
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, currentSlidePosition).apply();
-        setSlideTransition(currentSlidePosition, currentSlidePosition - 1);
-        showSlide(currentSlidePosition);
+        showSlide(currentSlidePosition, TRANSITION_DIRECTION_FORWARD);
     }
 
     @Override
@@ -349,7 +384,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
 
     @Override
     public void onQrCodeScanSuccessful() {
-        if (currentSlidePosition == qrScannerSlidePosition && canShowNextSlide) {
+        if (!slideTransitionRunning && currentSlidePosition == qrScannerSlidePosition && canShowNextSlide) {
             nextSlide();
         }
     }
@@ -372,20 +407,6 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         finish();
     }
 
-    private void setSlideTransition(int positionNextSlide, int positionPrevSlide) {
-        boolean enterRight = positionNextSlide > positionPrevSlide;
-        TransitionInflater inflater = TransitionInflater.from(this);
-
-        if (0 <= positionPrevSlide && positionPrevSlide < slides.size()) {
-            Fragment prevSlide = slides.get(positionPrevSlide).getFragment();
-            prevSlide.setExitTransition(inflater.inflateTransition(enterRight ? R.transition.slide_left : R.transition.slide_right));
-        }
-        if (0 <= positionNextSlide && positionNextSlide < slides.size()) {
-            Fragment nextSlide = slides.get(positionNextSlide).getFragment();
-            nextSlide.setEnterTransition(inflater.inflateTransition(enterRight ? R.transition.slide_right : R.transition.slide_left));
-        }
-    }
-
     private void initButtonsForSlide(WelcomeSlide slide) {
         slideNavigation.setVisibility(slide instanceof QrFragment ? View.GONE : View.VISIBLE);
         boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
@@ -393,7 +414,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         skipButton.setText(isStudyDetailsSlide
                 ? R.string.btn_reregister
                 : showBackButton ? R.string.btn_back : R.string.btn_skip_all);
-        setNavigationButtonWidths(isStudyDetailsSlide);
+        setNavigationButtonWidths();
         setSkipButtonVisibility(isStudyDetailsSlide || showBackButton || slide.getSkipButtonIsVisible().get());
         slide.getSkipButtonIsVisible().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
@@ -431,11 +452,11 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 && slide.getCanShowPreviousSlide().get();
     }
 
-    private void setNavigationButtonWidths(boolean isStudyDetailsSlide) {
-        setButtonWidth(skipButton, isStudyDetailsSlide ? ViewGroup.LayoutParams.WRAP_CONTENT : dpToPx(130));
-        setButtonWidth(nextButton, isStudyDetailsSlide ? ViewGroup.LayoutParams.WRAP_CONTENT : dpToPx(130));
-        skipButton.setMinWidth(dpToPx(isStudyDetailsSlide ? 96 : 130));
-        nextButton.setMinWidth(dpToPx(isStudyDetailsSlide ? 96 : 130));
+    private void setNavigationButtonWidths() {
+        setButtonWidth(skipButton, dpToPx(130));
+        setButtonWidth(nextButton, dpToPx(130));
+        skipButton.setMinWidth(dpToPx(130));
+        nextButton.setMinWidth(dpToPx(130));
     }
 
     private void setButtonWidth(Button button, int width) {
@@ -477,14 +498,30 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         addDot(position);
     }
 
-    private void replaceFragment(Fragment fragment) {
+    private void replaceFragment(Fragment fragment, int transitionDirection, Runnable onCommit) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+        fragment.setEnterTransition(null);
+        fragment.setExitTransition(null);
+        if (transitionDirection == TRANSITION_DIRECTION_FORWARD) {
+            transaction.setCustomAnimations(
+                    R.anim.slide_fade_enter_from_right,
+                    R.anim.slide_fade_exit_to_left
+            );
+        } else if (transitionDirection == TRANSITION_DIRECTION_BACKWARD) {
+            transaction.setCustomAnimations(
+                    R.anim.slide_fade_enter_from_left,
+                    R.anim.slide_fade_exit_to_right
+            );
+        }
         transaction.replace(R.id.slide_show_fragment, fragment);
         transaction.runOnCommit(() -> {
             View root = fragment.getView();
             if (root != null) {
                 root.setOnTouchListener(createSwipeTouchListener(false));
+            }
+            if (onCommit != null) {
+                onCommit.run();
             }
         });
         transaction.commit();
