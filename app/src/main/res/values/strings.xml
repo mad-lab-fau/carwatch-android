@@ -104,6 +104,18 @@
     <string name="message_welcome_invited_only">Use this app only if you were invited to take part in a study.</string>
     <string name="message_welcome_sample_reminders">You will receive reminders for scheduled saliva samples.</string>
     <string name="message_welcome_qr_required">You need a study QR code to set up the app.</string>
+    <string name="headline_study_participation_notice">Study Participation Notice</string>
+    <string name="message_study_notice_intro">This app is only for participants who have already been enrolled by a study team. Please review how CARWatch is used before continuing.</string>
+    <string name="title_study_notice_purpose">Purpose</string>
+    <string name="message_study_notice_purpose">CARWatch is a tool used by study teams to support scheduled saliva sample collection and barcode confirmation. The app itself does not enroll participants or define the study protocol.</string>
+    <string name="title_study_notice_participation">What Participation Involves</string>
+    <string name="message_study_notice_participation">If your study team has invited you to use CARWatch, the app will use notifications for alarms and reminders, the camera for QR and barcode scanning, and on-device storage for study progress and log files.</string>
+    <string name="title_study_notice_data_handling">Data Handling</string>
+    <string name="message_study_notice_data_handling">The app may store your participant ID, study configuration, barcode scan events, and app/device metadata on this device. Study-specific consent, legal basis, and data sharing are determined by the institution running your study. Log files are only shared when you explicitly export them.</string>
+    <string name="title_study_notice_questions">Questions Or Withdrawal</string>
+    <string name="message_study_notice_questions">If you have questions about study participation, consent, privacy, or want to withdraw from a study, contact the study team using the contact details provided by your study organizer.</string>
+    <string name="btn_read_privacy_policy">Read Privacy Policy</string>
+    <string name="message_study_notice_confirmation">I confirm that I am authorized by my study team to use this app and have received the study information provided by that team.</string>
     <string name="headline_permission_request_slide">Unlock Features!</string>
     <string name="message_permission_request">To enable all of the features, our app requires following permissions:</string>
     <string name="symbol_dot" translatable="false">\u2022</string>
@@ -210,5 +222,6 @@
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
     <string name="message_barcode_scanned_successfully">The barcode was scanned successfully!</string>
+    <string name="message_barcode_wrong_sample">This barcode belongs to another sample. Please scan the barcode with ID %1$s.</string>
 
 </resources>

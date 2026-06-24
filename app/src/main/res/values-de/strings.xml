@@ -150,6 +150,18 @@
     <string name="message_welcome_invited_only">Verwenden Sie diese App nur, wenn Sie zur Teilnahme an einer Studie eingeladen wurden.</string>
     <string name="message_welcome_sample_reminders">Sie erhalten Erinnerungen für geplante Speichelproben.</string>
     <string name="message_welcome_qr_required">Sie benötigen einen Studien-QR-Code, um die App einzurichten.</string>
+    <string name="headline_study_participation_notice">Hinweis zur Studienteilnahme</string>
+    <string name="message_study_notice_intro">Diese App ist nur für Teilnehmende gedacht, die bereits von einem Studienteam in eine Studie aufgenommen wurden. Bitte lesen Sie, wie CARWatch verwendet wird, bevor Sie fortfahren.</string>
+    <string name="title_study_notice_purpose">Zweck</string>
+    <string name="message_study_notice_purpose">CARWatch ist ein Werkzeug, das Studienteams bei der geplanten Sammlung von Speichelproben und der Bestätigung per Barcode unterstützt. Die App selbst nimmt keine Teilnehmenden in Studien auf und legt kein Studienprotokoll fest.</string>
+    <string name="title_study_notice_participation">Was die Teilnahme umfasst</string>
+    <string name="message_study_notice_participation">Wenn Ihr Studienteam Sie eingeladen hat, CARWatch zu verwenden, nutzt die App Benachrichtigungen für Alarme und Erinnerungen, die Kamera zum Scannen von QR-Codes und Barcodes sowie lokalen Gerätespeicher für Studienfortschritt und Protokolldateien.</string>
+    <string name="title_study_notice_data_handling">Datenverarbeitung</string>
+    <string name="message_study_notice_data_handling">Die App kann Ihre Teilnehmenden-ID, Studienkonfiguration, Barcode-Scan-Ereignisse sowie App- und Gerätemetadaten auf diesem Gerät speichern. Studienspezifische Einwilligung, Rechtsgrundlage und Datenweitergabe werden von der Institution festgelegt, die Ihre Studie durchführt. Protokolldateien werden nur geteilt, wenn Sie diese ausdrücklich exportieren.</string>
+    <string name="title_study_notice_questions">Fragen oder Widerruf</string>
+    <string name="message_study_notice_questions">Wenn Sie Fragen zur Studienteilnahme, Einwilligung, zum Datenschutz haben oder aus einer Studie ausscheiden möchten, kontaktieren Sie das Studienteam über die Kontaktdaten, die Sie von Ihrer Studienorganisation erhalten haben.</string>
+    <string name="btn_read_privacy_policy">Datenschutzerklärung lesen</string>
+    <string name="message_study_notice_confirmation">Ich bestätige, dass ich von meinem Studienteam zur Nutzung dieser App autorisiert wurde und die von diesem Team bereitgestellten Studieninformationen erhalten habe.</string>
     <string name="headline_permission_request_slide">Funktionen freischalten!</string>
     <string name="message_permission_request">Damit Sie die App optimal nutzen können, benötigen wir folgende Berechtigungen:</string>
     <string name="symbol_dot" translatable="false">\u2022</string>
@@ -189,5 +201,6 @@
     <string name="title_barcode_already_scanned">Doppelter Barcode!</string>
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
     <string name="message_barcode_scanned_successfully">Der Barcode wurde erfolgreich gescannt!</string>
+    <string name="message_barcode_wrong_sample">Dieser Barcode gehört zu einer anderen Probe. Bitte scannen Sie den Barcode mit der ID %1$s.</string>
 
 </resources>

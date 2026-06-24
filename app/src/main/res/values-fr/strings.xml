@@ -96,6 +96,18 @@
     <string name="message_welcome_invited_only">Utilisez cette application uniquement si vous avez été invité à participer à une étude.</string>
     <string name="message_welcome_sample_reminders">Vous recevrez des rappels pour les échantillons de salive programmés.</string>
     <string name="message_welcome_qr_required">Vous avez besoin d\'un code QR d\'étude pour configurer l\'application.</string>
+    <string name="headline_study_participation_notice">Avis de participation à l\'étude</string>
+    <string name="message_study_notice_intro">Cette application est uniquement destinée aux participants déjà inscrits par une équipe d\'étude. Veuillez lire comment CARWatch est utilisé avant de continuer.</string>
+    <string name="title_study_notice_purpose">Objectif</string>
+    <string name="message_study_notice_purpose">CARWatch est un outil utilisé par les équipes d\'étude pour soutenir la collecte planifiée d\'échantillons de salive et la confirmation par code-barres. L\'application elle-même n\'inscrit pas les participants et ne définit pas le protocole de l\'étude.</string>
+    <string name="title_study_notice_participation">Ce que la participation implique</string>
+    <string name="message_study_notice_participation">Si votre équipe d\'étude vous a invité à utiliser CARWatch, l\'application utilisera les notifications pour les alarmes et rappels, la caméra pour scanner les codes QR et codes-barres, et le stockage local pour la progression de l\'étude et les fichiers journaux.</string>
+    <string name="title_study_notice_data_handling">Traitement des données</string>
+    <string name="message_study_notice_data_handling">L\'application peut stocker votre ID de participant, la configuration de l\'étude, les événements de scan de code-barres et les métadonnées de l\'application/de l\'appareil sur cet appareil. Le consentement spécifique à l\'étude, la base légale et le partage des données sont déterminés par l\'institution qui mène votre étude. Les fichiers journaux ne sont partagés que lorsque vous les exportez explicitement.</string>
+    <string name="title_study_notice_questions">Questions ou retrait</string>
+    <string name="message_study_notice_questions">Si vous avez des questions sur la participation à l\'étude, le consentement, la confidentialité, ou si vous souhaitez vous retirer d\'une étude, contactez l\'équipe d\'étude avec les coordonnées fournies par votre organisateur d\'étude.</string>
+    <string name="btn_read_privacy_policy">Lire la politique de confidentialité</string>
+    <string name="message_study_notice_confirmation">Je confirme que je suis autorisé par mon équipe d\'étude à utiliser cette application et que j\'ai reçu les informations d\'étude fournies par cette équipe.</string>
     <string name="headline_permission_request_slide">Déverrouiller les fonctionnalités!</string>
     <string name="message_permission_request">Pour activer toutes les fonctionnalités, notre application nécessite les autorisations suivantes:</string>
     <string name="symbol_dot" translatable="false">\u2022</string>
@@ -205,4 +217,5 @@
     <string name="title_barcode_already_scanned">Code-barres en double!</string>
     <string name="message_barcode_already_scanned">Ce code-barres a déjà été scanné auparavant. Veuillez vérifier et assurez-vous d\'utiliser une nouvelle salivette.</string>
     <string name="message_barcode_scanned_successfully">Le code-barres a été scanné avec succès!</string>
+    <string name="message_barcode_wrong_sample">Ce code-barres appartient à un autre échantillon. Veuillez scanner le code-barres avec l\'ID %1$s.</string>
 </resources>

@@ -79,9 +79,13 @@ public class Ean8Fragment extends BarcodeFragment {
                     showBarcodeAlreadyScannedDialog();
                     break;
                 case VALID:
-                    if (!matchesExpectedSample(barcode.getValue(), sharedPreferences)) {
+                    if (shouldEnforceExpectedBarcodeId(sharedPreferences)
+                            && !matchesExpectedSample(barcode.getValue(), sharedPreferences)) {
                         logInvalidBarcode(barcode.getValue());
-                        showInvalidBarcodeDialog();
+                        showInvalidBarcodeDialog(getString(
+                                R.string.message_barcode_wrong_sample,
+                                getExpectedBarcodeId(sharedPreferences)
+                        ));
                         break;
                     }
                     scannedBarcodes.add(barcode.getValue());
@@ -114,6 +118,10 @@ public class Ean8Fragment extends BarcodeFragment {
 
     @Override
     protected void showInvalidBarcodeDialog() {
+        showInvalidBarcodeDialog(getString(R.string.message_barcode_invalid));
+    }
+
+    private void showInvalidBarcodeDialog(String message) {
         if (getContext() == null) {
             return;
         }
@@ -126,7 +134,7 @@ public class Ean8Fragment extends BarcodeFragment {
         new CarwatchDialogBuilder(getContext())
                 .setTitle(R.string.title_barcode_invalid)
                 .setIcon(icon)
-                .setMessage(R.string.message_barcode_invalid)
+                .setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
@@ -167,16 +175,17 @@ public class Ean8Fragment extends BarcodeFragment {
             String samplePrefix = startSample.substring(0, 1);
 
             BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcodeValue);
-            if (parsedBarcode == null) {
-                return;
-            }
-
-            int scannedDay = parsedBarcode.getDayId();
-            int scannedSampleId = parsedBarcode.getSalivaId();
             String scannedSample = samplePrefix;
-            scannedSample += scannedSampleId == idEveningSample + startIndex
-                    ? Constants.EXTRA_SALIVA_ID_EVENING
-                    : scannedSampleId;
+            int scannedDay = dayId;
+            if (parsedBarcode == null) {
+                scannedSample += barcodeValue;
+            } else {
+                scannedDay = parsedBarcode.getDayId();
+                int scannedSampleId = parsedBarcode.getSalivaId();
+                scannedSample += scannedSampleId == idEveningSample + startIndex
+                        ? Constants.EXTRA_SALIVA_ID_EVENING
+                        : scannedSampleId;
+            }
 
             String expectedSample = samplePrefix;
             switch (alarmId) {
@@ -326,6 +335,42 @@ public class Ean8Fragment extends BarcodeFragment {
         int expectedSampleId = salivaId + getStartSampleIndex(sharedPreferences);
         return parsedBarcode.getDayId() == expectedDayId
                 && parsedBarcode.getSalivaId() == expectedSampleId;
+    }
+
+    private boolean shouldEnforceExpectedBarcodeId(SharedPreferences sharedPreferences) {
+        return sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false);
+    }
+
+    private String getExpectedBarcodeId(SharedPreferences sharedPreferences) {
+        String expectedSampleId = getExpectedSampleId(sharedPreferences);
+        String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, "");
+        if (participantId == null || participantId.trim().isEmpty()) {
+            return expectedSampleId;
+        }
+
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
+        if (numDays > 1) {
+            int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
+            return participantId + "_D" + dayId + "_" + expectedSampleId;
+        }
+
+        return participantId + "_" + expectedSampleId;
+    }
+
+    private String getExpectedSampleId(SharedPreferences sharedPreferences) {
+        String samplePrefix = getSamplePrefix(sharedPreferences);
+        if (alarmId == Constants.EXTRA_ALARM_ID_EVENING) {
+            return samplePrefix + Constants.EXTRA_SALIVA_ID_EVENING;
+        }
+        if (alarmId == Constants.EXTRA_ALARM_ID_MANUAL) {
+            return samplePrefix + Constants.EXTRA_SALIVA_ID_MANUAL_HR;
+        }
+        return samplePrefix + (salivaId + getStartSampleIndex(sharedPreferences));
+    }
+
+    private String getSamplePrefix(SharedPreferences sharedPreferences) {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        return !startSample.isEmpty() ? startSample.substring(0, 1) : Constants.DEFAULT_START_SAMPLE.substring(0, 1);
     }
 
     private void logInvalidBarcode(String barcodeValue) {

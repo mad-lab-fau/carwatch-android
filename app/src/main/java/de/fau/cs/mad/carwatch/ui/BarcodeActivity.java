@@ -3,7 +3,6 @@ package de.fau.cs.mad.carwatch.ui;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,21 +38,28 @@ public class BarcodeActivity extends AppCompatActivity {
         TextView headerTitle = findViewById(R.id.tv_header_title);
         headerTitle.setText(R.string.title_activity_scan);
 
+        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
+        boolean salivaIdProvided = false;
+
         if (getIntent() != null) {
             alarmId = getIntent().getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
             cancelAlarm = getIntent().getBooleanExtra(Constants.EXTRA_CANCEL_ALARM, true);
+            if (getIntent().hasExtra(Constants.EXTRA_SALIVA_ID)) {
+                salivaId = getIntent().getIntExtra(Constants.EXTRA_SALIVA_ID, Constants.EXTRA_SALIVA_ID_INITIAL);
+                salivaIdProvided = true;
+            }
         }
 
-        AlarmRepository repository = AlarmRepository.getInstance(this.getApplication());
-        Alarm alarm;
-        int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
-
-        try {
-            alarm = repository.getAlarmById(alarmId);
-            if (alarm != null)
-                salivaId = alarm.getSalivaId();
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
+        if (!salivaIdProvided) {
+            AlarmRepository repository = AlarmRepository.getInstance(this.getApplication());
+            Alarm alarm;
+            try {
+                alarm = repository.getAlarmById(alarmId);
+                if (alarm != null)
+                    salivaId = alarm.getSalivaId();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {

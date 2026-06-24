@@ -20,15 +20,26 @@ public class BarcodeChecker {
 
     public static BarcodeCheckResult isValidBarcode(String barcode, SharedPreferences sharedPreferences) {
         Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
+        boolean checkDuplicates = sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false);
 
-        if (sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false) && scannedBarcodes.contains(barcode))
+        if (checkDuplicates && scannedBarcodes.contains(barcode))
             return BarcodeCheckResult.DUPLICATE_BARCODE;
+
+        if (!checkDuplicates) {
+            return VALID;
+        }
 
         int numParticipants = sharedPreferences.getInt(Constants.PREF_NUM_PARTICIPANTS, 0);
         int numSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
 
-        int barcodeVal = Integer.parseInt(barcode);
+        int barcodeVal;
+        try {
+            barcodeVal = Integer.parseInt(barcode);
+        } catch (NumberFormatException e) {
+            return INVALID;
+        }
+
         int participantId = (int) (barcodeVal / 1e4);
         int dayId = (int) (barcodeVal / 1e2) % 100;
         int salivaId = barcodeVal % 100;

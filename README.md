@@ -159,7 +159,7 @@ Supported fields:
 | `SS` | First sample label prefix/index | `S0` |
 | `E` | Evening sample required, `1` for yes and `0` for no | `1` |
 | `M` | Contact email address for log export | `study@example.org` |
-| `FD` | Duplicate barcode checking, `1` for enabled and `0` for disabled | `1` |
+| `FD` | Strict barcode checking, `1` to reject duplicates and enforce the expected barcode ID, `0` to accept any scanned barcode ID | `1` |
 | `PID` | Optional participant ID stored directly from the QR code | `VP_001` |
 | `V` | Optional web/config generator version | `1.0.0` |
 
@@ -178,10 +178,12 @@ Notes:
 * The QR code is generated and distributed by the study team, for example through the [CARWatch Study Manager](https://carwatch-tools.github.io/study-manager/) or another study-specific configuration workflow.
 
 ### Saliva tube barcode scanning
-CARWatch uses the camera to scan the barcode printed on each saliva tube. The scanned barcode is
-validated against the configured participant count, study day count, sample count, and expected
-sample. If duplicate checking is enabled in the study configuration, scanning the same tube barcode
-again is rejected.
+CARWatch uses the camera to scan the barcode printed on each saliva tube. With strict barcode
+checking enabled through `FD:1`, CARWatch rejects duplicate barcode values and validates that the
+encoded participant number is within the configured `NP` participant range, the encoded day and
+sample values are within the study configuration, and the encoded day/sample matches the expected
+sample. The encoded barcode participant number is not compared against the optional `PID` field.
+With `FD:0`, CARWatch accepts any scanned barcode ID and does not reject duplicate scans.
 
 When a barcode scan succeeds, CARWatch:
 

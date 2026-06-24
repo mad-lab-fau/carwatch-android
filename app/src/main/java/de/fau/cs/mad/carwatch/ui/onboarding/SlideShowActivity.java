@@ -33,6 +33,7 @@ import de.fau.cs.mad.carwatch.ui.barcode.QrFragment;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.EndTutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.ParticipantIdQuery;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.PermissionRequest;
+import de.fau.cs.mad.carwatch.ui.onboarding.steps.StudyParticipationNotice;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.StudyDetailsSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.TutorialSlide;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
@@ -164,6 +165,7 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 break;
             default:
                 addSlide(new WelcomeText());
+                addSlide(new StudyParticipationNotice());
                 addSlide(new PermissionRequest());
                 qrScannerSlidePosition = addSlide(new QrFragment());
                 tutorialStartPosition = slides.size();
@@ -534,7 +536,9 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
     }
 
     private void setDotsVisibleForSlide(WelcomeSlide slide) {
-        boolean hideDots = slide instanceof WelcomeText || slide instanceof PermissionRequest;
+        boolean hideDots = slide instanceof WelcomeText
+                || slide instanceof StudyParticipationNotice
+                || slide instanceof PermissionRequest;
         tabDots.setVisibility(hideDots ? View.GONE : View.VISIBLE);
     }
 
