@@ -249,6 +249,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int countScannedRegularSamplesForDay(int dayId) {
+        if (!sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return 0;
+        }
+
         boolean hasEveningSample = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
         int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
         Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());

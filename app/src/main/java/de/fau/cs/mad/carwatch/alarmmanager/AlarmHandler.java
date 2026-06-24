@@ -249,6 +249,9 @@ public class AlarmHandler {
         if (totalNumSamples <= 0) {
             return false;
         }
+        if (!sp.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return true;
+        }
 
         Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
         int scannedSamplesForDay = 0;

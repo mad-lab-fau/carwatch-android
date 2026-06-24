@@ -138,6 +138,10 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
     }
 
     private int countScannedSamplesForDay(@NonNull SharedPreferences sharedPreferences, int dayId) {
+        if (!sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return 0;
+        }
+
         Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
         int count = 0;
         for (String barcode : scannedBarcodes) {

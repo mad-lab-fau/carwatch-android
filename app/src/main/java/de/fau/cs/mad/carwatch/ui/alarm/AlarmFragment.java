@@ -46,6 +46,10 @@ public class AlarmFragment extends Fragment {
     private View rootView;
     private LinearLayout alarmContent;
     private View alarmPrimaryCard;
+    private LinearLayout alarmPrimaryCardContent;
+    private View alarmPrimaryIconBadge;
+    private View alarmPrimaryTimeCard;
+    private View alarmPrimaryTimeRow;
     private boolean contentRevealed;
     private Alarm alarm;
     private TextView timeTextView;
@@ -75,6 +79,10 @@ public class AlarmFragment extends Fragment {
 
         alarmContent = root.findViewById(R.id.alarm_content);
         alarmPrimaryCard = root.findViewById(R.id.alarm_primary_card);
+        alarmPrimaryCardContent = root.findViewById(R.id.alarm_primary_card_content);
+        alarmPrimaryIconBadge = root.findViewById(R.id.alarm_primary_icon_badge);
+        alarmPrimaryTimeCard = root.findViewById(R.id.alarm_primary_time_card);
+        alarmPrimaryTimeRow = root.findViewById(R.id.alarm_primary_time_row);
         timeTextView = root.findViewById(R.id.alarm_time_text);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
         salivaAlarmsContainer = root.findViewById(R.id.saliva_alarms);
@@ -193,11 +201,58 @@ public class AlarmFragment extends Fragment {
                         : R.dimen.primary_screen_bottom_padding));
 
         if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams params) {
+            params.height = getResources().getDimensionPixelSize(hasDisplayedAlarms
+                    ? R.dimen.alarm_primary_card_list_height
+                    : R.dimen.primary_card_height);
             params.bottomMargin = getResources().getDimensionPixelSize(hasDisplayedAlarms
                     ? R.dimen.alarm_primary_card_list_margin_bottom
                     : R.dimen.alarm_primary_card_margin_bottom);
             alarmPrimaryCard.setLayoutParams(params);
         }
+
+        setWakeupCardSpacing(hasDisplayedAlarms);
+    }
+
+    private void setWakeupCardSpacing(boolean compact) {
+        if (alarmPrimaryCardContent != null) {
+            int verticalPadding = getResources().getDimensionPixelSize(R.dimen.alarm_primary_card_list_padding_vertical);
+            alarmPrimaryCardContent.setPadding(
+                    alarmPrimaryCardContent.getPaddingLeft(),
+                    compact ? verticalPadding : getResources().getDimensionPixelSize(R.dimen.alarm_primary_card_padding_top),
+                    alarmPrimaryCardContent.getPaddingRight(),
+                    compact ? verticalPadding : getResources().getDimensionPixelSize(R.dimen.alarm_primary_card_padding_bottom));
+        }
+
+        setBottomMargin(alarmPrimaryIconBadge, compact
+                ? R.dimen.alarm_primary_icon_list_margin_bottom
+                : R.dimen.alarm_primary_icon_margin_bottom);
+        setTopMargin(alarmPrimaryTimeCard, compact
+                ? R.dimen.alarm_primary_time_card_list_margin_top
+                : R.dimen.alarm_primary_time_card_margin_top);
+
+        if (alarmPrimaryTimeRow != null) {
+            alarmPrimaryTimeRow.setMinimumHeight(getResources().getDimensionPixelSize(compact
+                    ? R.dimen.alarm_primary_time_row_list_min_height
+                    : R.dimen.alarm_primary_time_row_min_height));
+        }
+    }
+
+    private void setBottomMargin(View view, int dimenRes) {
+        if (view == null || !(view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams params)) {
+            return;
+        }
+
+        params.bottomMargin = getResources().getDimensionPixelSize(dimenRes);
+        view.setLayoutParams(params);
+    }
+
+    private void setTopMargin(View view, int dimenRes) {
+        if (view == null || !(view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams params)) {
+            return;
+        }
+
+        params.topMargin = getResources().getDimensionPixelSize(dimenRes);
+        view.setLayoutParams(params);
     }
 
     private void revealContent() {

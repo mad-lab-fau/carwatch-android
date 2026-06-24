@@ -202,6 +202,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        if (!sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return false;
+        }
+
         int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
         int startIndex = getStartSampleIndex(sharedPreferences);
         Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());

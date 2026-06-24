@@ -292,6 +292,10 @@ public class Ean8Fragment extends BarcodeFragment {
     }
 
     private int countScannedSamplesForDay(SharedPreferences sharedPreferences, int dayId, int eveningSampleId, boolean countEvening) {
+        if (!sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return 0;
+        }
+
         int startIndex = getStartSampleIndex(sharedPreferences);
         Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
         int count = 0;

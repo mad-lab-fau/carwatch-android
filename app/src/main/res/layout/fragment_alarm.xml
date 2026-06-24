@@ -33,6 +33,7 @@
                 app:strokeWidth="1dp">
 
                 <LinearLayout
+                    android:id="@+id/alarm_primary_card_content"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -43,6 +44,7 @@
                     android:paddingBottom="24dp">
 
                     <FrameLayout
+                        android:id="@+id/alarm_primary_icon_badge"
                         android:layout_width="104dp"
                         android:layout_height="104dp"
                         android:layout_marginBottom="20dp"
@@ -68,6 +70,7 @@
                         android:textColor="?attr/colorOnSurface" />
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/alarm_primary_time_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="22dp"
@@ -77,6 +80,7 @@
                         app:strokeWidth="0dp">
 
                         <LinearLayout
+                            android:id="@+id/alarm_primary_time_row"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:clickable="true"
