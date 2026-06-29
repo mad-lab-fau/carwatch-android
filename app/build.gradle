@@ -31,8 +31,8 @@ android {
         minSdk = 23
         targetSdk = 36
 
-        def versionMajor = 2
-        def versionMinor = 5
+        def versionMajor = 3
+        def versionMinor = 0
         def versionPatch = 0
         versionName "${versionMajor}.${versionMinor}.${versionPatch}" + "_" + getGitDate() + "-" + getGitHash()
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
