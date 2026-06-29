@@ -45,4 +45,8 @@ public class AlarmViewModel extends AndroidViewModel {
         repository.update(alarm);
     }
 
+    public void delete(Alarm alarm) {
+        repository.delete(alarm);
+    }
+
 }

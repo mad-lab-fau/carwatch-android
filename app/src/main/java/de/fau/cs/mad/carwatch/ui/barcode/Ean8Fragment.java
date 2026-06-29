@@ -8,15 +8,19 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 import androidx.collection.ArraySet;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.mlkit.vision.barcode.common.Barcode;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -39,6 +43,7 @@ public class Ean8Fragment extends BarcodeFragment {
     private int alarmId = Constants.EXTRA_ALARM_ID_MANUAL;
     private int salivaId = Constants.EXTRA_SALIVA_ID_MANUAL;
     private boolean cancelAlarmAfterScan = true;
+    private String endOfDayAlertType;
 
     @Override
     public void onResume() {
@@ -53,7 +58,7 @@ public class Ean8Fragment extends BarcodeFragment {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
             BarcodeField barcode = new BarcodeField(Constants.BARCODE_TYPE_EAN8, mlKitBarcode.getRawValue());
-            Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
+            Set<String> scannedBarcodes = new ArraySet<>(sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>()));
 
             Log.d(TAG, "Detected Barcode: " + barcode.getValue());
             Log.d(TAG, "Scanned Barcodes: " + scannedBarcodes);
@@ -70,25 +75,30 @@ public class Ean8Fragment extends BarcodeFragment {
                         json.put(Constants.LOGGER_EXTRA_OTHER_BARCODES, scannedBarcodes);
                         LoggerUtil.log(Constants.LOGGER_ACTION_DUPLICATE_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Could not log duplicate barcode scan", e);
                     }
                     showBarcodeAlreadyScannedDialog();
                     break;
                 case VALID:
+                    if (shouldEnforceExpectedBarcodeId(sharedPreferences)
+                            && !matchesExpectedSample(barcode.getValue(), sharedPreferences)) {
+                        logInvalidBarcode(barcode.getValue());
+                        showInvalidBarcodeDialog(getString(
+                                R.string.message_barcode_wrong_sample,
+                                getExpectedBarcodeId(sharedPreferences)
+                        ));
+                        break;
+                    }
                     scannedBarcodes.add(barcode.getValue());
                     sharedPreferences.edit().putStringSet(Constants.PREF_SCANNED_BARCODES, scannedBarcodes).apply();
                     cancelAlarm();
                     cancelTimer(barcode.getValue());
+                    markWakeupRecordedIfNeeded(sharedPreferences);
+                    endOfDayAlertType = getEndOfDayAlertType(sharedPreferences);
                     finishScanningProcess();
                     break;
                 case INVALID:
-                    try {
-                        JSONObject json = new JSONObject();
-                        json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
-                        LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    logInvalidBarcode(barcode.getValue());
                     showInvalidBarcodeDialog();
                     break;
             }
@@ -109,17 +119,23 @@ public class Ean8Fragment extends BarcodeFragment {
 
     @Override
     protected void showInvalidBarcodeDialog() {
+        showInvalidBarcodeDialog(getString(R.string.message_barcode_invalid));
+    }
+
+    private void showInvalidBarcodeDialog(String message) {
         if (getContext() == null) {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
-        new AlertDialog.Builder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(R.string.title_barcode_invalid)
                 .setIcon(icon)
-                .setMessage(R.string.message_barcode_invalid)
+                .setMessage(message)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
@@ -136,7 +152,7 @@ public class Ean8Fragment extends BarcodeFragment {
                     AlarmHandler.cancelAlarm(getContext(), alarm, null);
                     alarm.setActive(false);
                 }
-                repository.update(alarm);
+                repository.updateAndWait(alarm);
             }
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database: "  + e.getMessage());
@@ -159,12 +175,18 @@ public class Ean8Fragment extends BarcodeFragment {
             int startIndex = Integer.parseInt(startSample.substring(1));
             String samplePrefix = startSample.substring(0, 1);
 
-            int scannedDay = Integer.parseInt(barcodeValue.substring(3, 5));
-            int scannedSampleId = Integer.parseInt(barcodeValue.substring(5, 7));
+            BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcodeValue);
             String scannedSample = samplePrefix;
-            scannedSample += scannedSampleId == idEveningSample + startIndex
-                    ? Constants.EXTRA_SALIVA_ID_EVENING
-                    : scannedSampleId;
+            int scannedDay = dayId;
+            if (parsedBarcode == null) {
+                scannedSample += barcodeValue;
+            } else {
+                scannedDay = parsedBarcode.getDayId();
+                int scannedSampleId = parsedBarcode.getSalivaId();
+                scannedSample += scannedSampleId == idEveningSample + startIndex
+                        ? Constants.EXTRA_SALIVA_ID_EVENING
+                        : scannedSampleId;
+            }
 
             String expectedSample = samplePrefix;
             switch (alarmId) {
@@ -192,17 +214,218 @@ public class Ean8Fragment extends BarcodeFragment {
             json.put(Constants.LOGGER_EXTRA_EXPECTED_SAMPLE, expectedSample);
             LoggerUtil.log(Constants.LOGGER_ACTION_BARCODE_SCANNED, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log barcode scan", e);
         }
 
         TimerHandler.cancelTimer(getContext(), alarmId);
 
-        int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 2);
-        int numScannedBarcode = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>()).size();
-        boolean lastSampleWasTaken = totalNumSamples * (dayId + 1) == numScannedBarcode;
+        markEveningSampleTakenIfNeeded(sharedPreferences);
 
-        if (lastSampleWasTaken) {
+        String alertType = getEndOfDayAlertType(sharedPreferences);
+        if (Constants.END_OF_DAY_ALERT_DAY_FINISHED.equals(alertType)
+                || Constants.END_OF_DAY_ALERT_STUDY_FINISHED.equals(alertType)) {
             TimerHandler.finishDay(getContext());
+        }
+    }
+
+    private void markEveningSampleTakenIfNeeded(SharedPreferences sharedPreferences) {
+        int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        if (alarmId != Constants.EXTRA_ALARM_ID_EVENING && salivaId != eveningSampleId) {
+            return;
+        }
+
+        DateTime time = LocalTime.MIDNIGHT.toDateTimeToday();
+        if (LocalTime.now().isBefore(new LocalTime(5, 0))) {
+            time = time.minusDays(1);
+        }
+
+        sharedPreferences.edit().putLong(Constants.PREF_EVENING_TAKEN, time.getMillis()).apply();
+    }
+
+    @SuppressWarnings("ApplySharedPref")
+    private void markWakeupRecordedIfNeeded(SharedPreferences sharedPreferences) {
+        if (alarmId != Constants.EXTRA_ALARM_ID_INITIAL || salivaId != Constants.EXTRA_SALIVA_ID_INITIAL) {
+            return;
+        }
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
+            LoggerUtil.log(Constants.LOGGER_ACTION_SPONTANEOUS_AWAKENING, json);
+        } catch (JSONException e) {
+            Log.e(TAG, "Could not log spontaneous awakening", e);
+        }
+
+        sharedPreferences.edit()
+                .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
+                .putLong(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME, DateTime.now().getMillis())
+                .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                .remove(Constants.PREF_WAKEUP_SCAN_PENDING_TIME)
+                .commit();
+    }
+
+    private String getEndOfDayAlertType(SharedPreferences sharedPreferences) {
+        int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
+        boolean hasEveningSample = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+        int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
+        int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        int regularSamplesPerDay = hasEveningSample ? totalNumSamples - 1 : totalNumSamples;
+        int scannedRegularSamplesToday = shouldEnforceExpectedBarcodeId(sharedPreferences)
+                ? countScannedSamplesForDay(sharedPreferences, dayId, eveningSampleId, false)
+                : countRecordedRegularSamples(eveningSampleId);
+        int scannedEveningSamplesToday = shouldEnforceExpectedBarcodeId(sharedPreferences)
+                ? countScannedSamplesForDay(sharedPreferences, dayId, eveningSampleId, true)
+                : countRecordedEveningSamples(sharedPreferences);
+        boolean currentScanIsEveningSample = alarmId == Constants.EXTRA_ALARM_ID_EVENING || salivaId == eveningSampleId;
+
+        if (hasEveningSample && scannedRegularSamplesToday >= regularSamplesPerDay && scannedEveningSamplesToday == 0) {
+            return Constants.END_OF_DAY_ALERT_EVENING_REQUIRED;
+        }
+
+        boolean allSamplesForDayRecorded = hasEveningSample
+                ? scannedRegularSamplesToday >= regularSamplesPerDay && (scannedEveningSamplesToday > 0 || currentScanIsEveningSample)
+                : scannedRegularSamplesToday >= regularSamplesPerDay;
+
+        if (!allSamplesForDayRecorded) {
+            return null;
+        }
+
+        if (dayId >= numDays) {
+            return Constants.END_OF_DAY_ALERT_STUDY_FINISHED;
+        }
+
+        return Constants.END_OF_DAY_ALERT_DAY_FINISHED;
+    }
+
+    private int countRecordedRegularSamples(int eveningSampleId) {
+        if (getContext() == null) {
+            return 0;
+        }
+
+        try {
+            List<Alarm> alarms = AlarmRepository.getInstance(getContext()).getAll();
+            int count = 0;
+            for (Alarm alarm : alarms) {
+                if (!alarm.wasSampleTaken()
+                        || alarm.getId() == Constants.EXTRA_ALARM_ID_EVENING
+                        || alarm.getSalivaId() == eveningSampleId
+                        || alarm.getSalivaId() == Constants.EXTRA_SALIVA_ID_MANUAL) {
+                    continue;
+                }
+                count++;
+            }
+            return count;
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Could not count recorded samples", e);
+            return 0;
+        }
+    }
+
+    private int countRecordedEveningSamples(SharedPreferences sharedPreferences) {
+        DateTime eveningTaken = new DateTime(sharedPreferences.getLong(Constants.PREF_EVENING_TAKEN, 0));
+        return eveningTaken.equals(LocalTime.MIDNIGHT.toDateTimeToday()) ? 1 : 0;
+    }
+
+    private int countScannedSamplesForDay(SharedPreferences sharedPreferences, int dayId, int eveningSampleId, boolean countEvening) {
+        int startIndex = getStartSampleIndex(sharedPreferences);
+        Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>());
+        int count = 0;
+
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcode);
+            if (parsedBarcode == null) {
+                continue;
+            }
+
+            int scannedDay = parsedBarcode.getDayId();
+            int scannedSampleId = parsedBarcode.getSalivaId() - startIndex;
+            if (scannedDay != dayId) {
+                continue;
+            }
+
+            boolean isEveningSample = scannedSampleId == eveningSampleId;
+            if (isEveningSample == countEvening) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private boolean matchesExpectedSample(String barcodeValue, SharedPreferences sharedPreferences) {
+        if (alarmId == Constants.EXTRA_ALARM_ID_MANUAL) {
+            return true;
+        }
+
+        BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcodeValue);
+        if (parsedBarcode == null) {
+            return false;
+        }
+
+        int expectedDayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
+        int expectedSampleId = salivaId + getStartSampleIndex(sharedPreferences);
+        return parsedBarcode.getDayId() == expectedDayId
+                && parsedBarcode.getSalivaId() == expectedSampleId;
+    }
+
+    private boolean shouldEnforceExpectedBarcodeId(SharedPreferences sharedPreferences) {
+        return sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private String getExpectedBarcodeId(SharedPreferences sharedPreferences) {
+        String expectedSampleId = getExpectedSampleId(sharedPreferences);
+        String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, "");
+        if (participantId == null || participantId.trim().isEmpty()) {
+            return expectedSampleId;
+        }
+
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
+        if (numDays > 1) {
+            int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
+            return participantId + "_D" + dayId + "_" + expectedSampleId;
+        }
+
+        return participantId + "_" + expectedSampleId;
+    }
+
+    private String getExpectedSampleId(SharedPreferences sharedPreferences) {
+        String samplePrefix = getSamplePrefix(sharedPreferences);
+        if (alarmId == Constants.EXTRA_ALARM_ID_EVENING) {
+            return samplePrefix + Constants.EXTRA_SALIVA_ID_EVENING;
+        }
+        if (alarmId == Constants.EXTRA_ALARM_ID_MANUAL) {
+            return samplePrefix + Constants.EXTRA_SALIVA_ID_MANUAL_HR;
+        }
+        return samplePrefix + (salivaId + getStartSampleIndex(sharedPreferences));
+    }
+
+    private String getSamplePrefix(SharedPreferences sharedPreferences) {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        return !startSample.isEmpty() ? startSample.substring(0, 1) : Constants.DEFAULT_START_SAMPLE.substring(0, 1);
+    }
+
+    private void logInvalidBarcode(String barcodeValue) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcodeValue);
+            LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
+        } catch (JSONException e) {
+            Log.e(TAG, "Could not log invalid barcode scan", e);
+        }
+    }
+
+    private int getStartSampleIndex(SharedPreferences sharedPreferences) {
+        String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        try {
+            return Integer.parseInt(startSample.substring(1));
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 
@@ -211,10 +434,12 @@ public class Ean8Fragment extends BarcodeFragment {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
-        new AlertDialog.Builder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(R.string.title_barcode_already_scanned)
                 .setIcon(icon)
                 .setMessage(R.string.message_barcode_already_scanned)
@@ -228,6 +453,10 @@ public class Ean8Fragment extends BarcodeFragment {
 
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, true);
+        intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_alarm);
+        if (endOfDayAlertType != null) {
+            intent.putExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE, endOfDayAlertType);
+        }
         startActivity(intent);
         getActivity().finish();
     }

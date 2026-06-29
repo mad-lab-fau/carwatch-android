@@ -20,18 +20,40 @@
     <string name="menu_kill">Kill Alarms</string>
     <string name="menu_reregister">Reregister</string>
     <string name="menu_show_tutorial">Show Tutorial</string>
-    <string name="menu_app_info">Info</string>
+    <string name="menu_study_information">Study Information</string>
+    <string name="menu_finish_study_day">Finish Study Day</string>
+    <string name="menu_app_info">App Info</string>
+    <string name="content_description_open_fab_menu">Open menu</string>
+    <string name="content_description_close_fab_menu">Close menu</string>
+    <string name="content_description_close">Close</string>
+    <string name="content_description_app_info">Open app info</string>
+    <string name="title_reregister_ongoing_study">Study still ongoing</string>
+    <string name="message_reregister_ongoing_study">Your study is still ongoing. Are you sure you want to reregister with a new QR code?</string>
+    <string name="title_study_information">Study Information</string>
+    <string name="label_study_section">Study</string>
+    <string name="label_contact_email">Contact Email</string>
+    <string name="label_sampling_plan">Sampling Plan</string>
+    <string name="label_interval_samples">Interval Samples</string>
+    <string name="label_fixed_sample_times">Fixed Samples Time</string>
+    <string name="message_no_fixed_sample_times">No fixed sample times configured.</string>
+    <string name="title_finish_study_day">Finish study day?</string>
+    <string name="message_finish_study_day">All remaining samples for today will be canceled and the study day will be marked as finished.</string>
+    <string name="button_keep_samples">Keep Samples</string>
+    <string name="button_finish_day">Finish Day</string>
+    <string name="message_study_day_finished">The study day was marked as finished.</string>
 
     <!-- Delete log files -->
-    <string name="hint_clicks_delete_log_files">%1$d more clicks to delete all log files.</string>
     <string name="title_delete_log_files">Delete logs</string>
     <string name="message_delete_log_files_confirm_dialog">Are you sure to delete all existing log files? This action cannot be undone!</string>
     <string name="message_all_log_files_deleted">All logs were deleted successfully.</string>
     <string name="message_not_all_log_files_deleted">Error while deleting the logs. Some log files could not be deleted.</string>
+    <string name="message_share_logs_failed">The log files could not be shared.</string>
 
     <!-- Notification -->
     <string name="stop">Stop</string>
     <string name="open_scanner">Open scanner</string>
+    <string name="content_description_sample_taken">Sample taken</string>
+    <string name="content_description_sample_status">Sample status</string>
 
     <!-- App Bar Titles -->
     <string name="title_dashboard">Alarm</string>
@@ -50,8 +72,8 @@
     <!-- Participant ID Dialog -->
     <string name="participant_id">Participant ID</string>
     <string name="message_participant_id">Please enter the Participant ID you received from us.</string>
-    <string name="title_kill_alarms">Warning</string>
-    <string name="message_kill_alarms">Are you sure to kill all alarms and saliva timers? This action cannot be undone!</string>
+    <string name="title_kill_alarms">Stop all alarms?</string>
+    <string name="message_kill_alarms">This will stop all active alarms and saliva timers. This action cannot be undone.</string>
 
     <!-- Open battery settings dialog -->
     <string name="title_battery_optimization">Battery Optimization</string>
@@ -59,23 +81,61 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Next</string>
+    <string name="btn_back">Back</string>
     <string name="btn_to_app">To the App</string>
     <string name="btn_skip_all">Skip tutorial</string>
+    <string name="btn_reregister">Reregister</string>
+    <string name="btn_confirm_continue_tutorial">Confirm</string>
+    <string name="message_study_details_confirmation">Please confirm that this study configuration matches the information you received before continuing to the tutorial.</string>
+    <string name="headline_review_study_setup">Review your study setup</string>
+    <string name="message_study_details_continue_if_correct">Only continue if these details are correct. If not, restart setup and scan the correct study QR code.</string>
+    <string name="title_study_configuration">Study Configuration</string>
+    <string name="title_setup">Setup</string>
+    <string name="title_tutorial">Tutorial</string>
+    <string name="label_study_name">Study Name</string>
+    <string name="label_participant_id">Participant ID</string>
+    <string name="label_study_days">Study Days</string>
+    <string name="label_samples_per_day">Samples Per Day</string>
+    <string name="label_evening_sample">Evening Sample</string>
+    <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">The icon of the CARWatch app</string>
     <string name="headline_welcome">Welcome to CARWatch!</string>
+    <string name="message_welcome_participant_intro">CARWatch is intended for study participants. It helps you follow your study schedule by sending reminders, and confirming samples by barcode scans.</string>
+    <string name="message_welcome_invited_only">Use this app only if you were invited to take part in a study.</string>
+    <string name="message_welcome_sample_reminders">You will receive reminders for scheduled saliva samples.</string>
+    <string name="message_welcome_qr_required">You need a study QR code to set up the app.</string>
+    <string name="headline_study_participation_notice">Study Participation Notice</string>
+    <string name="message_study_notice_intro">This app is only for participants who have already been enrolled by a study team. Please review how CARWatch is used before continuing.</string>
+    <string name="title_study_notice_purpose">Purpose</string>
+    <string name="message_study_notice_purpose">CARWatch is a tool used by study teams to support scheduled saliva sample collection and barcode confirmation. The app itself does not enroll participants or define the study protocol.</string>
+    <string name="title_study_notice_participation">What Participation Involves</string>
+    <string name="message_study_notice_participation">If your study team has invited you to use CARWatch, the app will use notifications for alarms and reminders, the camera for QR and barcode scanning, and on-device storage for study progress and log files.</string>
+    <string name="title_study_notice_data_handling">Data Handling</string>
+    <string name="message_study_notice_data_handling">The app may store your participant ID, study configuration, barcode scan events, and app/device metadata on this device. Study-specific consent, legal basis, and data sharing are determined by the institution running your study. Log files are only shared when you explicitly export them.</string>
+    <string name="title_study_notice_questions">Questions Or Withdrawal</string>
+    <string name="message_study_notice_questions">If you have questions about study participation, consent, privacy, or want to withdraw from a study, contact the study team using the contact details provided by your study organizer.</string>
+    <string name="btn_read_privacy_policy">Read Privacy Policy</string>
+    <string name="message_study_notice_confirmation">I confirm that I am authorized by my study team to use this app and have received the study information provided by that team.</string>
     <string name="headline_permission_request_slide">Unlock Features!</string>
     <string name="message_permission_request">To enable all of the features, our app requires following permissions:</string>
     <string name="symbol_dot" translatable="false">\u2022</string>
     <string name="message_camera_access">Camera access to be able to scan the sample tube barcodes</string>
     <string name="message_notification_permission">Sending notifications to inform you about upcoming samples</string>
+    <string name="headline_prepare_carwatch">Prepare CARWatch</string>
+    <string name="message_prepare_carwatch_permissions">CARWatch needs a few permissions so it can remind you on time and confirm samples securely.</string>
+    <string name="label_permission_notifications">Notifications</string>
+    <string name="message_permission_notifications_card">Send reminders when saliva samples are scheduled.</string>
+    <string name="label_permission_camera">Camera</string>
+    <string name="message_permission_camera_card">Scan study QR codes and sample tube barcodes.</string>
+    <string name="label_permission_required">Required</string>
     <string name="headline_wakeup_screen_tutorial">Report waking up</string>
     <string name="description_wakeup_screen">You only need to report your awakening if you didn\'t set an alarm for the morning or woke up before the alarm went off. Clicking the \"Yes\" Button will schedule the sample alarms for the upcoming day.</string>
     <string name="headline_alarm_tutorial">Track your alarms</string>
     <string name="description_wakeup_alarm">You can set an alarm for the next morning directly from the alarm clock screen. Simply tap on the displayed time and choose your desired wake-up time.</string>
     <string name="description_saliva_alarm_overview">After you woke up, the screen also provides an overview of past and upcoming saliva alarms and their current state.</string>
-    <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken (checkmark), was already due (clock) or is scheduled for later (hourglass). Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
+    <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken {sample_taken_icon}, was already due {sample_due_icon} or is scheduled for later {sample_later_icon}. Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
     <string name="headline_bedtime_screen_tutorial">Report going to bed</string>
-    <string name="description_bedtime_screen">Here, you can initiate the evening procedure before going to bed. You only need to do this if the study requires you to take an evening sample. The \"Lights out!\" Button will activate the app\'s dark mode.</string>
+    <string name="description_bedtime_screen">Start the evening procedure here before going to bed. The \"Lights out!\" button activates dark mode and uses attention events, such as screen unlocks, to help estimate bedtime and wakeup times.</string>
     <string name="headline_scan_screen_tutorial">Scan your sample</string>
     <string name="description_scan_screen">The barcode scanner opens automatically when you have to take a sample. After sampling, simply scan the barcode on the sample tube so that the sample can later be linked to the time of sampling.</string>
     <string name="headline_slide_show_end">Start sampling!</string>
@@ -89,6 +149,12 @@
     <string name="title_barcode_invalid">Invalid Barcode</string>
     <string name="title_qr_code_invalid">Invalid QR Code</string>
     <string name="message_barcode_invalid">Invalid Barcode! Please scan the correct barcode label on the saliva tube.</string>
+    <string name="title_samples_recorded">Samples Recorded</string>
+    <string name="title_study_finished">Study Finished</string>
+    <string name="message_samples_recorded_evening_required">You\'ve recorded all samples for the day, but you are still required to record an evening sample tonight right before you go to bed.\nPlease set a reminder below.\nSee you later!</string>
+    <string name="message_study_finished">This was your last sample. Thank you for participating in the study! Please export your logs and send them to your study contact email.</string>
+    <string name="message_study_finished_after_lights_out">The study is finished. Thank you for participating! Please export your logs and send them to your study contact email.</string>
+    <string name="message_samples_recorded_day_finished">You\'ve recorded the last sample for today.\nSee you tomorrow, and don\'t forget to set a wakeup alarm for tomorrow.</string>
 
     <!-- Reminder Dialogs -->
     <string name="title_alarm_reminder">Alarm Set</string>
@@ -102,16 +168,25 @@
     <!-- Wakeup Fragment -->
     <string name="wakeup_title">Start Morning Sampling</string>
     <string name="wakeup_text">We will now begin with collecting the morning saliva samples.</string>
+    <string name="title_overdue_sample_pending">Overdue sample pending</string>
+    <string name="message_overdue_sample_pending">You still have at least one overdue sample from earlier today. Next, you will be taken to the Schedule screen, where you can choose which sample you want to take now.</string>
+    <string name="title_delayed_sample_planned">Delayed sample planned</string>
+    <string name="message_delayed_sample_planned">A delayed sample is planned for your study. You will receive a reminder to take that sample in %1$d minutes.</string>
+    <string name="title_fixed_time_only_wakeup">Fixed sample schedule</string>
+    <string name="message_fixed_time_only_wakeup">Your wakeup has been recorded. This study uses fixed sample times only, so no wakeup sample is required. Your first remaining sample today is scheduled for %1$s.</string>
+    <string name="message_fixed_time_only_wakeup_no_remaining_samples">Your wakeup has been recorded. This study uses fixed sample times only, so no wakeup sample is required. There are no remaining fixed samples scheduled for today.</string>
     <string name="wakeup_message">Good Morning!\nDid you just wake up?</string>
 
     <!-- Bedtime Fragment -->
     <string name="bedtime_title">Start Night</string>
     <string name="bedtime_text">We will now begin with the evening procedure.</string>
     <string name="bedtime_message">Good Evening!\nAre you going to bed?</string>
+    <string name="message_no_evening_sample_required">No evening sample is required. Thank you and good night!</string>
 
     <!-- Alarm Fragment -->
     <string name="set_alarm_message">"Please set your desired\n alarm time for tomorrow. "</string>
     <string name="saliva_alarms_header">Saliva sample alarms</string>
+    <string name="evening_sample_alarm_header">Evening sample alarm</string>
     <string name="cancel_saliva_alarm_message">This alarm is required for the study. Are you sure to cancel this alarm?</string>
     <string name="open_scanner_before_alarm_message">This sample is scheduled for later. Are you sure you want to scan the sample now?</string>
 
@@ -122,15 +197,18 @@
     <string name="warning_study_finished">You have already finished the study.</string>
 
     <string name="feedback_thanks">Thank you for your feedback!</string>
+    <string name="feedback_wakeup_no">Let us know when you wake up.</string>
+    <string name="feedback_bedtime_no">Let us know when you go to bed.</string>
     <string name="good_night">Thank you and good night!</string>
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
     <string name="lights_on">Lights on!</string>
+    <string name="title_lights_out_tracking_explanation">Attention tracking is on</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch uses phone attention events, like screen unlocks, to help estimate real bedtime and wakeup times.</string>
 
     <string name="title_share_dialog">Share Logs via…</string>
 
 
-    <string name="hint_clicks_kill_alarms">%1$d more clicks to kill all alarms.</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -138,9 +216,15 @@
     <string name="app_active">CARWatch Service is active.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_info_description">CARWatch helps study participants collect saliva samples for Cortisol Awakening Response (CAR) studies. It combines wakeup alarms, scheduled reminders, and barcode scans so samples are taken at the intended times and can be confirmed reliably.</string>
+    <string name="app_info_developer_title">Developer Information</string>
+    <string name="app_info_developer_details">Portabiles GmbH&lt;br>contact@portabiles.de&lt;br>Henkestr. 91&lt;br>91052 Erlangen&lt;br>Germany</string>
+    <string name="app_info_privacy_policy">Privacy Policy</string>
+    <string name="app_info_privacy_policy_url" translatable="false">https://carwatch-tools.github.io/privacy/</string>
     <string name="message_qr_code_invalid">Invalid QR Code! Please scan the QR Code in your study materials.</string>
     <string name="title_barcode_already_scanned">Duplicate Barcode!</string>
     <string name="message_barcode_already_scanned">This barcode was already scanned before. Please check and make sure to use a new salivette.</string>
     <string name="message_barcode_scanned_successfully">The barcode was scanned successfully!</string>
+    <string name="message_barcode_wrong_sample">This barcode belongs to another sample. Please scan the barcode with ID %1$s.</string>
 
 </resources>

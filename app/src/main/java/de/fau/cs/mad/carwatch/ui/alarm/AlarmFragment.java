@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -36,17 +38,28 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 
 public class AlarmFragment extends Fragment {
 
-    private static final String TAG = AlarmFragment.class.getSimpleName();
-
     private SharedPreferences sharedPreferences;
     private AlarmViewModel alarmViewModel;
     private AlarmAdapter adapter;
+    private AlarmAdapter eveningAdapter;
     private CoordinatorLayout coordinatorLayout;
+    private View rootView;
+    private LinearLayout alarmContent;
+    private View alarmPrimaryCard;
+    private LinearLayout alarmPrimaryCardContent;
+    private View alarmPrimaryIconBadge;
+    private View alarmPrimaryTimeCard;
+    private View alarmPrimaryTimeRow;
+    private boolean contentRevealed;
     private Alarm alarm;
     private TextView timeTextView;
     private LinearLayout alarmSeparator;
+    private LinearLayout salivaAlarmsContainer;
+    private LinearLayout eveningSampleAlarmContainer;
     private TextView salivaAlarmsHeader;
+    private TextView eveningSampleAlarmHeader;
     private SwitchMaterial activeSwitch;
+    private Alarm eveningAlarm;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,16 +69,28 @@ public class AlarmFragment extends Fragment {
 
         FragmentAlarmBinding dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_alarm, container, false);
         View root = dataBinding.getRoot();
+        rootView = root;
+        rootView.setAlpha(1f);
         dataBinding.setViewmodel(alarmViewModel);
 
         if (getActivity() != null) {
             coordinatorLayout = getActivity().findViewById(R.id.coordinator);
         }
 
+        alarmContent = root.findViewById(R.id.alarm_content);
+        alarmPrimaryCard = root.findViewById(R.id.alarm_primary_card);
+        alarmPrimaryCardContent = root.findViewById(R.id.alarm_primary_card_content);
+        alarmPrimaryIconBadge = root.findViewById(R.id.alarm_primary_icon_badge);
+        alarmPrimaryTimeCard = root.findViewById(R.id.alarm_primary_time_card);
+        alarmPrimaryTimeRow = root.findViewById(R.id.alarm_primary_time_row);
         timeTextView = root.findViewById(R.id.alarm_time_text);
         activeSwitch = root.findViewById(R.id.alarm_active_switch);
+        salivaAlarmsContainer = root.findViewById(R.id.saliva_alarms);
+        eveningSampleAlarmContainer = root.findViewById(R.id.evening_sample_alarm);
         salivaAlarmsHeader = root.findViewById(R.id.tv_saliva_alarms);
+        eveningSampleAlarmHeader = root.findViewById(R.id.tv_evening_sample_alarm);
         alarmSeparator = root.findViewById(R.id.alarm_separator);
+        setAlarmContentOffset(false);
 
         // Add an observer on the LiveData returned by getAlarm
         alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_INITIAL).observe(getViewLifecycleOwner(), alarm -> {
@@ -78,15 +103,28 @@ public class AlarmFragment extends Fragment {
             initializeSalivaAlarmsAdapter(root);
         });
 
+        alarmViewModel.getAlarmLiveData(Constants.EXTRA_ALARM_ID_EVENING).observe(getViewLifecycleOwner(), alarm -> {
+            this.eveningAlarm = alarm;
+            ensureEveningReminderAlarm();
+            if (adapter != null && eveningAdapter != null) {
+                setSalivaAlarmAdapterItems(alarmViewModel.getAlarms().getValue());
+            }
+        });
+
         return root;
     }
 
     private void initializeSalivaAlarmsAdapter(View root) {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        adapter = new AlarmAdapter(getResources(), alarmViewModel, getSampleIdPrefix(), getStartSampleId());
+        GridLayoutManager eveningLayoutManager = new GridLayoutManager(getContext(), 1);
+        adapter = new AlarmAdapter(alarmViewModel, getSampleIdPrefix(), getStartSampleId());
+        eveningAdapter = new AlarmAdapter(alarmViewModel, getSampleIdPrefix(), getStartSampleId());
         RecyclerView recyclerView = root.findViewById(R.id.saliva_alarms_list);
+        RecyclerView eveningRecyclerView = root.findViewById(R.id.evening_sample_alarm_list);
         recyclerView.setLayoutManager(layoutManager);
+        eveningRecyclerView.setLayoutManager(eveningLayoutManager);
         recyclerView.setAdapter(adapter);
+        eveningRecyclerView.setAdapter(eveningAdapter);
         setSalivaAlarmAdapterItems(alarmViewModel.getAlarms().getValue());
 
         // update adapter if alarms change
@@ -97,32 +135,212 @@ public class AlarmFragment extends Fragment {
         if (alarms == null)
             return;
 
+        ensureEveningReminderAlarm();
         List<Alarm> sampleAlarms = new ArrayList<>();
+        List<Alarm> eveningAlarms = new ArrayList<>();
+        boolean wakeupTriggered = sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME);
+        boolean wakeupScanPending = sharedPreferences.getBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false);
+        boolean wakeupStarted = wakeupTriggered || wakeupScanPending;
 
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        if (salivaDistances.startsWith("0") && sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
-            DateTime wakeUpTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE));
+        if (AlarmHandler.requiresImmediateWakeupSample(salivaDistances) && wakeupStarted) {
+            long wakeUpTimeMillis = wakeupTriggered
+                    ? sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, Long.MAX_VALUE)
+                    : sharedPreferences.getLong(Constants.PREF_WAKEUP_SCAN_PENDING_TIME, DateTime.now().getMillis());
+            DateTime wakeUpTime = new DateTime(wakeUpTimeMillis);
+            Alarm initialAlarm = getInitialAlarm(alarms);
             Alarm initialSampleAlarm = new Alarm(
                     wakeUpTime,
                     false,
                     false,
                     Constants.FIRST_SAMPLE_ALARM_ID,
-                    alarm.getSalivaId(),
-                    alarm.wasSampleTaken()
+                    Constants.EXTRA_SALIVA_ID_INITIAL,
+                    isWakeupSampleTaken(initialAlarm)
             );
             sampleAlarms.add(initialSampleAlarm);
         }
 
         // initial alarm is not shown in list
         for (Alarm alarm : alarms) {
+            if (alarm.getId() == Constants.EXTRA_ALARM_ID_EVENING) {
+                if (wakeupTriggered && sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false)) {
+                    eveningAlarms.add(alarm);
+                }
+                continue;
+            }
             if (alarm.getId() != Constants.EXTRA_ALARM_ID_INITIAL) {
                 sampleAlarms.add(alarm);
             }
         }
         adapter.setAlarms(sampleAlarms);
-        adapter.notifyDataSetChanged();
+        eveningAdapter.setAlarms(eveningAlarms);
+        salivaAlarmsContainer.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        eveningSampleAlarmContainer.setVisibility(eveningAlarms.isEmpty() ? View.GONE : View.VISIBLE);
         salivaAlarmsHeader.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
-        alarmSeparator.setVisibility(sampleAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        eveningSampleAlarmHeader.setVisibility(eveningAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        alarmSeparator.setVisibility(sampleAlarms.isEmpty() && eveningAlarms.isEmpty() ? View.GONE : View.VISIBLE);
+        setAlarmContentOffset(!sampleAlarms.isEmpty() || !eveningAlarms.isEmpty());
+        revealContent();
+    }
+
+    private void setAlarmContentOffset(boolean hasDisplayedAlarms) {
+        if (alarmContent == null) {
+            return;
+        }
+
+        alarmContent.setTranslationY(0f);
+        alarmContent.setGravity(hasDisplayedAlarms
+                ? Gravity.TOP | Gravity.CENTER_HORIZONTAL
+                : Gravity.CENTER);
+        alarmContent.setPadding(
+                alarmContent.getPaddingLeft(),
+                alarmContent.getPaddingTop(),
+                alarmContent.getPaddingRight(),
+                getResources().getDimensionPixelSize(hasDisplayedAlarms
+                        ? R.dimen.alarm_content_list_bottom_padding
+                        : R.dimen.primary_screen_bottom_padding));
+
+        if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams params) {
+            params.height = getResources().getDimensionPixelSize(hasDisplayedAlarms
+                    ? R.dimen.alarm_primary_card_list_height
+                    : R.dimen.primary_card_height);
+            params.bottomMargin = getResources().getDimensionPixelSize(hasDisplayedAlarms
+                    ? R.dimen.alarm_primary_card_list_margin_bottom
+                    : R.dimen.alarm_primary_card_margin_bottom);
+            alarmPrimaryCard.setLayoutParams(params);
+        }
+
+        setWakeupCardSpacing(hasDisplayedAlarms);
+    }
+
+    private void setWakeupCardSpacing(boolean compact) {
+        if (alarmPrimaryCardContent != null) {
+            int verticalPadding = getResources().getDimensionPixelSize(R.dimen.alarm_primary_card_list_padding_vertical);
+            alarmPrimaryCardContent.setPadding(
+                    alarmPrimaryCardContent.getPaddingLeft(),
+                    compact ? verticalPadding : getResources().getDimensionPixelSize(R.dimen.alarm_primary_card_padding_top),
+                    alarmPrimaryCardContent.getPaddingRight(),
+                    compact ? verticalPadding : getResources().getDimensionPixelSize(R.dimen.alarm_primary_card_padding_bottom));
+        }
+
+        setBottomMargin(alarmPrimaryIconBadge, compact
+                ? R.dimen.alarm_primary_icon_list_margin_bottom
+                : R.dimen.alarm_primary_icon_margin_bottom);
+        setTopMargin(alarmPrimaryTimeCard, compact
+                ? R.dimen.alarm_primary_time_card_list_margin_top
+                : R.dimen.alarm_primary_time_card_margin_top);
+
+        if (alarmPrimaryTimeRow != null) {
+            alarmPrimaryTimeRow.setMinimumHeight(getResources().getDimensionPixelSize(compact
+                    ? R.dimen.alarm_primary_time_row_list_min_height
+                    : R.dimen.alarm_primary_time_row_min_height));
+        }
+    }
+
+    private void setBottomMargin(View view, int dimenRes) {
+        if (view == null || !(view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams params)) {
+            return;
+        }
+
+        params.bottomMargin = getResources().getDimensionPixelSize(dimenRes);
+        view.setLayoutParams(params);
+    }
+
+    private void setTopMargin(View view, int dimenRes) {
+        if (view == null || !(view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams params)) {
+            return;
+        }
+
+        params.topMargin = getResources().getDimensionPixelSize(dimenRes);
+        view.setLayoutParams(params);
+    }
+
+    private void revealContent() {
+        if (contentRevealed || rootView == null) {
+            return;
+        }
+
+        contentRevealed = true;
+        rootView.setAlpha(1f);
+    }
+
+    private Alarm getInitialAlarm(List<Alarm> alarms) {
+        for (Alarm alarm : alarms) {
+            if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+                return alarm;
+            }
+        }
+        return alarm;
+    }
+
+    private boolean isWakeupSampleTaken(Alarm initialAlarm) {
+        if (initialAlarm.wasSampleTaken()) {
+            return true;
+        }
+
+        long wakeupSampleTakenTime = sharedPreferences.getLong(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME, 0);
+        if (wakeupSampleTakenTime == 0) {
+            return false;
+        }
+
+        DateTime takenDate = new DateTime(wakeupSampleTakenTime);
+        return takenDate.withTime(LocalTime.MIDNIGHT).equals(LocalTime.MIDNIGHT.toDateTimeToday());
+    }
+
+    private void ensureEveningReminderAlarm() {
+        boolean hasEveningSample = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+        if (!hasEveningSample) {
+            if (eveningAlarm != null) {
+                AlarmHandler.cancelAlarm(requireContext(), eveningAlarm, null);
+                alarmViewModel.delete(eveningAlarm);
+                eveningAlarm = null;
+            }
+            return;
+        }
+
+        int eveningSalivaId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        boolean eveningSampleTaken = isEveningSampleTaken();
+        if (eveningAlarm == null) {
+            eveningAlarm = new Alarm(
+                    getEveningReminderTime(),
+                    false,
+                    true,
+                    Constants.EXTRA_ALARM_ID_EVENING,
+                    eveningSalivaId,
+                    eveningSampleTaken
+            );
+            alarmViewModel.insert(eveningAlarm);
+            return;
+        }
+
+        boolean changed = false;
+        if (eveningAlarm.getSalivaId() != eveningSalivaId) {
+            eveningAlarm.setSalivaId(eveningSalivaId);
+            changed = true;
+        }
+        if (eveningAlarm.wasSampleTaken() != eveningSampleTaken) {
+            eveningAlarm.setWasSampleTaken(eveningSampleTaken);
+            if (eveningSampleTaken && eveningAlarm.isActive()) {
+                eveningAlarm.setActive(false);
+                AlarmHandler.cancelAlarm(requireContext(), eveningAlarm, null);
+            }
+            changed = true;
+        }
+        if (changed) {
+            alarmViewModel.update(eveningAlarm);
+        }
+    }
+
+    private boolean isEveningSampleTaken() {
+        DateTime date = new DateTime(sharedPreferences.getLong(Constants.PREF_EVENING_TAKEN, 0));
+        return date.equals(LocalTime.MIDNIGHT.toDateTimeToday());
+    }
+
+    private DateTime getEveningReminderTime() {
+        int defaultMinutes = Constants.DEFAULT_EVENING_REMINDER_TIME.getHourOfDay() * 60
+                + Constants.DEFAULT_EVENING_REMINDER_TIME.getMinuteOfHour();
+        int minutes = sharedPreferences.getInt(Constants.PREF_EVENING_REMINDER_TIME_MINUTES, defaultMinutes);
+        return new LocalTime(minutes / 60, minutes % 60).toDateTimeToday();
     }
 
     private void setAlarmView() {
@@ -152,7 +370,7 @@ public class AlarmFragment extends Fragment {
             TimePickerDialog timePicker = new TimePickerDialog(context, (timePicker1, selectedHour, selectedMinute) -> {
                 LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
                 alarm.setTime(selectedTime.toDateTimeToday());
-                timeTextView.setText(selectedTime.toString("HH:mm"));
+                timeTextView.setText(alarm.getStringTime());
                 alarm.setActive(true);
                 setInitialSalivaId();
                 scheduleAlarm(context);
@@ -164,14 +382,14 @@ public class AlarmFragment extends Fragment {
 
     private void setInitialSalivaId() {
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
-        boolean requestSaliva = salivaDistances.startsWith("0");
+        boolean requestSaliva = AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
         alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
     }
 
     private void setAlarmColor(boolean isActive) {
         // Set alarm TextView colors based on alarm's activity state
         int colorId = isActive ? R.color.colorAccent : R.color.colorGrey500;
-        timeTextView.setTextColor(getResources().getColor(colorId));
+        timeTextView.setTextColor(ContextCompat.getColor(requireContext(), colorId));
     }
 
     private void updateAlarm() {
@@ -196,7 +414,7 @@ public class AlarmFragment extends Fragment {
         alarm.setTime(time);
         setInitialSalivaId();
         alarmViewModel.insert(alarm);
-        timeTextView.setText(time.toString("HH:mm"));
+        timeTextView.setText(alarm.getStringTime());
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
     }
 
@@ -204,7 +422,8 @@ public class AlarmFragment extends Fragment {
         if (getContext() == null) {
             return;
         }
-        new AlertDialog.Builder(getContext())
+        new CarwatchDialogBuilder(getContext())
+                .setIcon(R.drawable.ic_info_24dp)
                 .setTitle(R.string.title_alarm_reminder)
                 .setMessage(R.string.message_alarm_reminder)
                 .setCancelable(false)
@@ -220,8 +439,8 @@ public class AlarmFragment extends Fragment {
         String startSample = sharedPreferences.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
         try {
             return Integer.parseInt(startSample.substring(1));
-        } catch (NumberFormatException e) {
-            return Integer.parseInt(Constants.DEFAULT_START_SAMPLE.substring(1));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return 0;
         }
     }
 }

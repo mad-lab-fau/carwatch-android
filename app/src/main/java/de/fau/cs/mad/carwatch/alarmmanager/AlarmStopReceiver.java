@@ -47,7 +47,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
         boolean firstAlarmProcessAlreadyFinished = false;
-        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + 1;
+        boolean dayWasManuallyAdvanced = sharedPreferences.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
+        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + (dayWasManuallyAdvanced ? 0 : 1);
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
         boolean studyIsFinished = dayCounter > numDays;
         boolean resetWasSampleTaken = false;
@@ -59,6 +60,8 @@ public class AlarmStopReceiver extends BroadcastReceiver {
                     .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
                     .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                     .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                    .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                    .remove(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME)
                     .apply();
 
         } else {
@@ -75,8 +78,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
                 alarm.setWasSampleTaken(false);
             repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
-            e.printStackTrace();
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
             return;
         }
 
@@ -94,7 +96,7 @@ public class AlarmStopReceiver extends BroadcastReceiver {
             json.put(Constants.LOGGER_EXTRA_SALIVA_ID, alarm.getSalivaId());
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_STOP, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log alarm stop", e);
         }
 
         Log.d(TAG, "Stopping Alarm: " + alarmId);

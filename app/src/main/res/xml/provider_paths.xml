@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+    <cache-path path="shared_logs/" name="shared_logs" />
+    <external-files-path path="." name="external_files" />
     <external-path path="." name="logs" />
 </paths>

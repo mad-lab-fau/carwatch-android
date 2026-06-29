@@ -7,20 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.annotation.Nullable;
-
 import de.fau.cs.mad.carwatch.R;
-import de.fau.cs.mad.carwatch.util.Utils;
-
 /**
  * create an instance of this fragment.
  */
 public class PermissionRequest extends BaseWelcomeSlide {
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public PermissionRequest() {
+        super();
         canShowNextSlide.set(true);
+        canShowPreviousSlide.set(true);
     }
 
     @Override
@@ -38,11 +34,6 @@ public class PermissionRequest extends BaseWelcomeSlide {
         }
 
         return root;
-    }
-
-    @Override
-    public void onSlideFinished() {
-        Utils.requestRuntimePermissions(getActivity());
     }
 
     @Override

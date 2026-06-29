@@ -1,88 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    android:layout_centerHorizontal="true"
-    android:layout_centerVertical="true"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="horizontal">
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+    app:cardElevation="0dp"
+    app:shapeAppearanceOverlay="@style/ShapeAppearance.Carwatch.Card"
+    app:strokeColor="?attr/colorOutlineVariant"
+    app:strokeWidth="1dp">
 
-    <TextView
-        android:id="@+id/tv_sample_name"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:gravity="center"
-        android:textSize="@dimen/sample_prefix_text_size"
-        android:fontFamily="monospace"
-        app:layout_constraintEnd_toStartOf="@id/alarm_time_layout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="76dp"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp">
 
-    <LinearLayout
-        android:id="@+id/alarm_time_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:id="@+id/tv_sample_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/alarm_active_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_sample_name"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/alarm_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="25dp"
             android:fontFamily="monospace"
-            android:textSize="@dimen/alarm_text_size" />
-    </LinearLayout>
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/alarm_active_switch"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv_scanner_icon"
-        android:layout_width="@dimen/sample_suffix_icon_width"
-        android:layout_height="@dimen/manual_scan_icon_height"
-        android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_barcode_scanner_24dp"
-        app:tint="@color/barcode_field_box_stroke"
-        app:layout_constraintStart_toEndOf="@id/alarm_time_layout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="visible" />
+        <FrameLayout
+            android:id="@+id/action_icon_container"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/status_icon_container"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/iv_check_icon"
-        android:layout_width="@dimen/sample_suffix_icon_width"
-        android:layout_height="@dimen/check_icon_height"
-        android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_check"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/alarm_time_layout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+            <ImageView
+                android:id="@+id/iv_scanner_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/open_scanner"
+                android:padding="7dp"
+                android:src="@drawable/ic_barcode_scanner_24dp"
+                android:visibility="visible"
+                app:tint="?attr/colorOnPrimaryContainer" />
+        </FrameLayout>
 
-    <ImageView
-        android:id="@+id/iv_sample_status_icon"
-        android:layout_width="@dimen/sample_suffix_icon_width"
-        android:layout_height="30dp"
-        android:layout_marginStart="@dimen/sample_suffix_icon_margin_start"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_hourglass"
-        app:layout_constraintStart_toEndOf="@id/iv_scanner_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="visible" />
+        <FrameLayout
+            android:id="@+id/status_icon_container"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/iv_sample_status_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/content_description_sample_status"
+                android:src="@drawable/ic_hourglass"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/iv_check_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/content_description_sample_taken"
+                android:src="@drawable/ic_check"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

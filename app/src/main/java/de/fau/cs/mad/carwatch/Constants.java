@@ -12,10 +12,6 @@ public final class Constants {
 
     public static final long[] VIBRATION_PATTERN = {0, 500, 1000};
 
-    public static final DateTime[] MORNING_TIMES = {
-            new LocalTime(5, 0).toDateTimeToday(),
-            new LocalTime(12, 0).toDateTimeToday()
-    };
     public static final DateTime[] EVENING_TIMES = {
             new LocalTime(20, 0).toDateTimeToday(),
             new LocalTime(5, 0).toDateTimeToday().plusDays(1)
@@ -24,9 +20,7 @@ public final class Constants {
     public static final String SETTINGS_NIGHT_DISPLAY_ACTIVATED = "night_display_activated";
 
     public static final String PREF_CURRENT_SLIDE_SHOW_SLIDE = "current_tutorial_slide"; // int
-    public static final String PREF_CURRENT_NAV_ELEMENT = "current_nav_element"; // int
     public static final String PREF_FIRST_RUN_QR = "first_run_qr"; // boolean
-    public static final String PREF_REQUESTED_IGNORE_BATTERY_OPTIMIZATIONS = "requested_ignore_battery_optimizations"; // boolean
     public static final String PREF_PARTICIPANT_ID_WAS_SET = "first_run_subject_id"; // boolean
     public static final String PREF_STUDY_NAME = "study_name"; // String
     public static final String PREF_PARTICIPANT_ID = "subject_id"; // String
@@ -48,14 +42,27 @@ public final class Constants {
     public static final String PREF_EVENING_SALIVA_ID = "evening_saliva_id"; // int
     public static final String PREF_TIMER_NOTIFICATION_IS_SHOWN = "timer_notification_is_shown"; // boolean
     public static final String PREF_LAST_WAKE_UP_ALARM_RING_TIME = "last_wake_up_alarm_ring_time"; // long (milliseconds from epoch)
+    public static final String PREF_REREGISTRATION_MODE = "reregistration_mode"; // boolean
+    public static final String PREF_WAKEUP_ALERT_TYPE = "wakeup_alert_type"; // String
+    public static final String PREF_WAKEUP_DELAYED_SAMPLE_MINUTES = "wakeup_delayed_sample_minutes"; // int
+    public static final String PREF_STUDY_DAY_MANUALLY_ADVANCED = "study_day_manually_advanced"; // boolean
+    public static final String PREF_WAKEUP_SCAN_PENDING = "wakeup_scan_pending"; // boolean
+    public static final String PREF_WAKEUP_SCAN_PENDING_TIME = "wakeup_scan_pending_time"; // long (milliseconds from epoch)
+    public static final String PREF_WAKEUP_SAMPLE_TAKEN_TIME = "wakeup_sample_taken_time"; // long (milliseconds from epoch)
+    public static final String PREF_EVENING_REMINDER_TIME_MINUTES = "evening_reminder_time_minutes"; // int (minutes after midnight)
+    public static final String PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT = "show_study_finished_after_lights_out"; // boolean
+    public static final String PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION = "show_lights_out_tracking_explanation"; // boolean
+
+    public static final String WAKEUP_ALERT_OVERDUE_SAMPLE = "overdue_sample";
+    public static final String WAKEUP_ALERT_DELAYED_SAMPLE = "delayed_sample";
 
     public static final int INITIAL_SLIDE_SHOW_SLIDE = 0;
     public static final int SLIDESHOW_FINISHED_SLIDE_ID = -1;
 
     public static final int REQUEST_CODE_ALARM_ACTIVITY = 0xF00;
-    public static final int REQUEST_CODE_SCAN = 0xCAFE;
 
     public static final LocalTime DEFAULT_ALARM_TIME = new LocalTime(7, 0);
+    public static final LocalTime DEFAULT_EVENING_REMINDER_TIME = new LocalTime(21, 0);
     public static final String DEFAULT_START_SAMPLE = "S0";
 
     public static final String EXTRA_SLIDE_SHOW_TYPE = "extra_slide_show_type";
@@ -64,9 +71,15 @@ public final class Constants {
     public static final String EXTRA_SALIVA_ID = "extra_saliva_id";
     public static final String EXTRA_CANCEL_ALARM = "extra_cancel_alarm";
     public static final String EXTRA_SOURCE = "extra_source";
+    public static final String EXTRA_TARGET_NAV_ELEMENT = "extra_target_nav_element";
     public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
+    public static final String EXTRA_END_OF_DAY_ALERT_TYPE = "extra_end_of_day_alert_type";
     public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
     public static final String EXTRA_SALIVA_ID_EVENING = "A";
+
+    public static final String END_OF_DAY_ALERT_EVENING_REQUIRED = "evening_required";
+    public static final String END_OF_DAY_ALERT_STUDY_FINISHED = "study_finished";
+    public static final String END_OF_DAY_ALERT_DAY_FINISHED = "day_finished";
     public static final int EXTRA_ALARM_ID_INITIAL = 0;
     public static final int EXTRA_TIMER_ID_INITIAL = 0;
     public static final int EXTRA_SALIVA_ID_INITIAL = 0;

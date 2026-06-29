@@ -1,33 +1,53 @@
 package de.fau.cs.mad.carwatch.ui;
 
 import android.app.NotificationManager;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -38,25 +58,30 @@ import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
 import de.fau.cs.mad.carwatch.util.Utils;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int[] NAV_IDS = {R.id.navigation_wakeup, R.id.navigation_alarm, R.id.navigation_bedtime};
+    private static final int SWIPE_DISTANCE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
     private static DiskLogAdapter sAdapter;
 
     private SharedPreferences sharedPreferences;
 
     private CoordinatorLayout coordinatorLayout;
+    private FloatingActionButton fabMenuToggle;
+    private View fabMenuScrim;
+    private View fabMenuContainer;
+    private MaterialButton finishStudyDayButton;
+    private TextView headerTitle;
 
     private NavController navController;
-
-    private int killAlarmClickCounter = 0;
-    private int deleteLogFilesClickCounter = 0;
-    private static final int CLICK_THRESHOLD_TOAST = 2;
-    private static final int CLICK_THRESHOLD_KILL = 5;
-    private static final int CLICK_THRESHOLD_DELETE_LOG_FILES = 5;
+    private GestureDetector navGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate delegate = getDelegate();
         AppCompatDelegate.setDefaultNightMode(sharedPreferences.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
         delegate.applyDayNight();
+        HeaderUiHelper.configureTransparentStatusBar(this, sharedPreferences);
 
         initializeLoggingUtil(this);
 
@@ -79,51 +105,360 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        killAlarmClickCounter = 0;
-        deleteLogFilesClickCounter = 0;
-
         coordinatorLayout = findViewById(R.id.coordinator);
+        headerTitle = findViewById(R.id.tv_header_title);
+        setupFabMenu();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(NAV_IDS).build();
-
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-        int currentNavElement = sharedPreferences.getInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0]);
-        navigate(currentNavElement);
-
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
-
-
-        if (getIntent() != null && getIntent().getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
-            Snackbar.make(coordinatorLayout, getString(R.string.message_barcode_scanned_successfully), Snackbar.LENGTH_SHORT).show();
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment == null) {
+            throw new IllegalStateException("Missing navigation host fragment");
         }
+        navController = navHostFragment.getNavController();
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            CharSequence label = destination.getLabel();
+            headerTitle.setText(label == null ? getString(R.string.app_name) : label);
+            updateBottomNavSelection(navView, destination.getId());
+        });
+        navView.setOnItemSelectedListener(item -> {
+            navigate(item.getItemId());
+            return true;
+        });
+        initializeSwipeNavigation();
+
+        int currentNavElement = getInitialNavElement();
+        navigate(currentNavElement);
+        syncBottomNavSelection();
+        navView.post(this::syncBottomNavSelection);
+
+
+        Intent currentIntent = getIntent();
+        if (currentIntent != null && currentIntent.getBooleanExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG, false)) {
+            currentIntent.removeExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG);
+            coordinatorLayout.post(() -> CarwatchSnackbar.show(
+                    coordinatorLayout,
+                    getString(R.string.message_barcode_scanned_successfully),
+                    CarwatchSnackbar.LENGTH_SHORT
+            ));
+        }
+        showPendingWakeupAlert();
+        if (!showLightsOutTrackingExplanation()) {
+            showStudyFinishedAfterLightsOutAlert();
+        }
+        showEndOfDayAlert();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (navController != null && navController.getCurrentDestination() != null)
-            sharedPreferences.edit().putInt(Constants.PREF_CURRENT_NAV_ELEMENT, navController.getCurrentDestination().getId()).apply();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        sharedPreferences.edit().putInt(Constants.PREF_CURRENT_NAV_ELEMENT, NAV_IDS[0]).apply();
     }
 
     public void navigate(int navId) {
         for (int id : NAV_IDS) {
             if (id == navId) {
-                navController.navigate(navId);
+                if (navController.getCurrentDestination() != null
+                        && navController.getCurrentDestination().getId() == navId) {
+                    syncBottomNavSelection();
+                    return;
+                }
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setEnterAnim(R.anim.top_level_fade_in)
+                        .setExitAnim(R.anim.top_level_fade_out)
+                        .setPopEnterAnim(R.anim.top_level_fade_in)
+                        .setPopExitAnim(R.anim.top_level_fade_out)
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(navController.getGraph().getStartDestinationId(), false)
+                        .build();
+                navController.navigate(navId, null, navOptions);
                 return;
             }
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
+        if (navGestureDetector != null) {
+            navGestureDetector.onTouchEvent(event);
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
+    private void initializeSwipeNavigation() {
+        navGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDown(@NonNull MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onFling(@Nullable MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
+                //noinspection ConstantConditions
+                if (e1 == null || e2 == null || isFabMenuOpen()) {
+                    return false;
+                }
+
+                float distanceX = e2.getX() - e1.getX();
+                float distanceY = e2.getY() - e1.getY();
+                if (Math.abs(distanceX) <= Math.abs(distanceY)
+                        || Math.abs(distanceX) <= SWIPE_DISTANCE_THRESHOLD
+                        || Math.abs(velocityX) <= SWIPE_VELOCITY_THRESHOLD) {
+                    return false;
+                }
+
+                navigateToAdjacentDestination(distanceX < 0 ? 1 : -1);
+                return true;
+            }
+        });
+    }
+
+    private boolean isFabMenuOpen() {
+        return fabMenuScrim != null && fabMenuScrim.getVisibility() == View.VISIBLE;
+    }
+
+    private void navigateToAdjacentDestination(int direction) {
+        if (navController == null || navController.getCurrentDestination() == null) {
+            return;
+        }
+
+        int currentDestinationId = navController.getCurrentDestination().getId();
+        for (int i = 0; i < NAV_IDS.length; i++) {
+            if (NAV_IDS[i] != currentDestinationId) {
+                continue;
+            }
+
+            int targetIndex = i + direction;
+            if (targetIndex < 0 || targetIndex >= NAV_IDS.length) {
+                return;
+            }
+
+            navigate(NAV_IDS[targetIndex]);
+            return;
+        }
+    }
+
+    private void updateBottomNavSelection(BottomNavigationView navView, int destinationId) {
+        for (int id : NAV_IDS) {
+            if (destinationId == id) {
+                navView.getMenu().findItem(id).setChecked(true);
+                break;
+            }
+        }
+    }
+
+    private void syncBottomNavSelection() {
+        if (navController == null || navController.getCurrentDestination() == null) {
+            return;
+        }
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        if (navView != null) {
+            updateBottomNavSelection(navView, navController.getCurrentDestination().getId());
+        }
+    }
+
+    private int getInitialNavElement() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(Constants.EXTRA_TARGET_NAV_ELEMENT)) {
+            return intent.getIntExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_wakeup);
+        }
+
+        int studyDay = getStartupStudyDay();
+        int regularSamplesPerDay = getRegularSamplesPerDay();
+        int scannedRegularSamplesToday = countScannedRegularSamplesForDay(studyDay);
+        boolean wakeupStartedToday = isWakeupRecordedToday() || sharedPreferences.getBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false);
+
+        if (regularSamplesPerDay > 0 && scannedRegularSamplesToday >= regularSamplesPerDay) {
+            return R.id.navigation_bedtime;
+        }
+
+        if (regularSamplesPerDay == 0 && wakeupStartedToday) {
+            return R.id.navigation_bedtime;
+        }
+
+        if (!wakeupStartedToday && scannedRegularSamplesToday == 0) {
+            return R.id.navigation_wakeup;
+        }
+
+        return R.id.navigation_alarm;
+    }
+
+    private int getStartupStudyDay() {
+        int currentDayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
+        if (sharedPreferences.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                || sharedPreferences.getBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                || isWakeupRecordedToday()) {
+            return Math.max(currentDayCounter, 1);
+        }
+
+        return Math.max(currentDayCounter + 1, 1);
+    }
+
+    private boolean isWakeupRecordedToday() {
+        if (!sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+            return false;
+        }
+
+        DateTime lastWakeup = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+        return lastWakeup.withTime(LocalTime.MIDNIGHT).equals(LocalTime.MIDNIGHT.toDateTimeToday());
+    }
+
+    private int getRegularSamplesPerDay() {
+        int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (totalNumSamples <= 0) {
+            return 0;
+        }
+        return sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false)
+                ? Math.max(totalNumSamples - 1, 0)
+                : totalNumSamples;
+    }
+
+    private int countScannedRegularSamplesForDay(int dayId) {
+        if (!sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return 0;
+        }
+
+        boolean hasEveningSample = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
+        int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        int count = 0;
+
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            try {
+                int scannedDay = Integer.parseInt(barcode.substring(3, 5));
+                int scannedSampleId = Integer.parseInt(barcode.substring(5, 7));
+                if (scannedDay == dayId && (!hasEveningSample || scannedSampleId != eveningSampleId)) {
+                    count++;
+                }
+            } catch (NumberFormatException e) {
+                Log.d(TAG, "Could not parse scanned barcode for startup destination: " + barcode);
+            }
+        }
+
+        return count;
+    }
+
+    private void showPendingWakeupAlert() {
+        String wakeupAlertType = sharedPreferences.getString(Constants.PREF_WAKEUP_ALERT_TYPE, null);
+        if (wakeupAlertType == null) {
+            return;
+        }
+
+        int delayedSampleMinutes = sharedPreferences.getInt(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES, 0);
+        sharedPreferences.edit()
+                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .apply();
+
+        int titleId = wakeupAlertType.equals(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE)
+                ? R.string.title_overdue_sample_pending
+                : R.string.title_delayed_sample_planned;
+        String message = wakeupAlertType.equals(Constants.WAKEUP_ALERT_OVERDUE_SAMPLE)
+                ? getString(R.string.message_overdue_sample_pending)
+                : getString(R.string.message_delayed_sample_planned, delayedSampleMinutes);
+
+        new CarwatchDialogBuilder(this)
+                .setIcon(R.drawable.ic_info_24dp)
+                .setTitle(titleId)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, (dialog, which) -> navigate(R.id.navigation_alarm))
+                .show();
+    }
+
+    private void showEndOfDayAlert() {
+        if (getIntent() == null) {
+            return;
+        }
+
+        String alertType = getIntent().getStringExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE);
+        if (alertType == null) {
+            return;
+        }
+        getIntent().removeExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE);
+
+        int titleId;
+        int messageId = switch (alertType) {
+            case Constants.END_OF_DAY_ALERT_EVENING_REQUIRED -> {
+                titleId = R.string.title_samples_recorded;
+                yield R.string.message_samples_recorded_evening_required;
+            }
+            case Constants.END_OF_DAY_ALERT_STUDY_FINISHED -> {
+                titleId = R.string.title_study_finished;
+                yield R.string.message_study_finished;
+            }
+            default -> {
+                titleId = R.string.title_samples_recorded;
+                yield R.string.message_samples_recorded_day_finished;
+            }
+        };
+
+        Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_check_circle_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(this, R.color.colorGreen500));
+        }
+
+        new CarwatchDialogBuilder(this)
+                .setIcon(icon)
+                .setTitle(titleId)
+                .setMessage(messageId)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    private void showStudyFinishedAfterLightsOutAlert() {
+        if (!sharedPreferences.getBoolean(Constants.PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT, false)) {
+            return;
+        }
+
+        sharedPreferences.edit()
+                .remove(Constants.PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT)
+                .apply();
+
+        Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_check_circle_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(this, R.color.colorGreen500));
+        }
+
+        new CarwatchDialogBuilder(this)
+                .setIcon(icon)
+                .setTitle(R.string.title_study_finished)
+                .setMessage(R.string.message_study_finished_after_lights_out)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    private boolean showLightsOutTrackingExplanation() {
+        if (!sharedPreferences.getBoolean(Constants.PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION, false)) {
+            return false;
+        }
+
+        sharedPreferences.edit()
+                .remove(Constants.PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION)
+                .apply();
+
+        Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_info_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(this, R.color.md_theme_primary));
+        }
+
+        new CarwatchDialogBuilder(this)
+                .setIcon(icon)
+                .setTitle(R.string.title_lights_out_tracking_explanation)
+                .setMessage(R.string.message_lights_out_tracking_explanation)
+                .setPositiveButton(R.string.ok, (dialogInterface, which) -> showStudyFinishedAfterLightsOutAlert())
+                .show();
+        return true;
     }
 
     public static void initializeLoggingUtil(Context context) {
@@ -145,120 +480,379 @@ public class MainActivity extends AppCompatActivity {
         if (!Utils.allPermissionsGranted(this)) {
             Utils.requestRuntimePermissions(this);
         }
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_share:
-                String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
-                String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, null);
-
-                try {
-                    File zipFile = LoggerUtil.zipDirectory(this, studyName, participantId);
-                    createFileShareDialog(zipFile);
-                } catch (FileNotFoundException e) {
-                    Snackbar.make(coordinatorLayout, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.menu_delete_log_files:
-                deleteLogFilesClickCounter++;
-                if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_DELETE_LOG_FILES) {
-                    showDeleteLogFilesWarningDialog();
-                    deleteLogFilesClickCounter = 0;
-                } else if (deleteLogFilesClickCounter >= CLICK_THRESHOLD_TOAST) {
-                    Snackbar.make(
-                            coordinatorLayout,
-                            getString(R.string.hint_clicks_delete_log_files, (CLICK_THRESHOLD_DELETE_LOG_FILES - deleteLogFilesClickCounter)),
-                            Snackbar.LENGTH_SHORT
-                    ).show();
-                }
-                break;
-            case R.id.menu_kill:
-                killAlarmClickCounter++;
-                if (killAlarmClickCounter >= CLICK_THRESHOLD_KILL) {
-                    showKillWarningDialog();
-                    killAlarmClickCounter = 0;
-                } else if (killAlarmClickCounter >= CLICK_THRESHOLD_TOAST) {
-                    Snackbar.make(coordinatorLayout, getString(R.string.hint_clicks_kill_alarms, (CLICK_THRESHOLD_KILL - killAlarmClickCounter)), Snackbar.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.menu_reregister:
-                sharedPreferences.edit().clear().apply();
-                Intent intent = new Intent(this, SlideShowActivity.class);
-                intent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_APP_INITIALIZATION_SLIDES);
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.menu_show_tutorial:
-                sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE).apply();
-                Intent tutorialIntent = new Intent(this, SlideShowActivity.class);
-                tutorialIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_TUTORIAL_SLIDES);
-                startActivity(tutorialIntent);
-                break;
-            case R.id.menu_app_info:
-                showAppInfoDialog();
-                break;
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        if (navView != null) {
+            navView.post(this::syncBottomNavSelection);
         }
-        return super.onOptionsItemSelected(item);
     }
 
-    private void createFileShareDialog(File zipFile) {
+    private void setupFabMenu() {
+        fabMenuToggle = findViewById(R.id.fab_menu_toggle);
+        fabMenuScrim = findViewById(R.id.fab_menu_scrim);
+        fabMenuContainer = findViewById(R.id.fab_menu_container);
+        finishStudyDayButton = findViewById(R.id.fab_menu_finish_study_day);
+
+        fabMenuToggle.setOnClickListener(view -> openFabMenu());
+        findViewById(R.id.fab_menu_close).setOnClickListener(view -> closeFabMenu());
+        fabMenuScrim.setOnClickListener(view -> closeFabMenu());
+        fabMenuContainer.setOnClickListener(view -> {
+            // Keep taps on menu controls from bubbling to the outside scrim.
+        });
+
+        setFabMenuAction(R.id.fab_menu_share, R.id.menu_share);
+        setFabMenuAction(R.id.fab_menu_delete_logs, R.id.menu_delete_log_files);
+        setFabMenuAction(R.id.fab_menu_kill, R.id.menu_kill);
+        setFabMenuAction(R.id.fab_menu_reregister, R.id.menu_reregister);
+        setFabMenuAction(R.id.fab_menu_show_tutorial, R.id.menu_show_tutorial);
+        setFabMenuAction(R.id.fab_menu_study_information, R.id.menu_study_information);
+        setFabMenuAction(R.id.fab_menu_finish_study_day, R.id.menu_finish_study_day);
+        setFabMenuAction(R.id.fab_menu_privacy_policy, R.id.menu_privacy_policy);
+        setFabMenuAction(R.id.fab_menu_app_info, R.id.menu_app_info);
+    }
+
+    private void setFabMenuAction(int buttonId, int menuItemId) {
+        findViewById(buttonId).setOnClickListener(view -> {
+            closeFabMenu();
+            handleMenuAction(menuItemId);
+        });
+    }
+
+    private void openFabMenu() {
+        updateFinishStudyDayFabState();
+        fabMenuToggle.setVisibility(View.GONE);
+        fabMenuScrim.setAlpha(0f);
+        fabMenuContainer.setAlpha(0f);
+        fabMenuContainer.setTranslationY(-12f);
+        fabMenuScrim.setVisibility(View.VISIBLE);
+        fabMenuScrim.animate().alpha(1f).setDuration(120).start();
+        fabMenuContainer.animate().alpha(1f).translationY(0f).setDuration(160).start();
+    }
+
+    private void closeFabMenu() {
+        if (fabMenuScrim.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        fabMenuContainer.animate().alpha(0f).translationY(-12f).setDuration(100).start();
+        fabMenuScrim.animate()
+                .alpha(0f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    fabMenuScrim.setVisibility(View.GONE);
+                    fabMenuToggle.setVisibility(View.VISIBLE);
+                })
+                .start();
+    }
+
+    private void updateFinishStudyDayFabState() {
+        boolean canFinishStudyDay = AlarmHandler.canFinishCurrentStudyDay(this);
+        finishStudyDayButton.setEnabled(canFinishStudyDay);
+        finishStudyDayButton.setAlpha(canFinishStudyDay ? 1f : 0.56f);
+    }
+
+    private void handleMenuAction(int itemId) {
+        if (itemId == R.id.menu_share) {
+            String studyName = sharedPreferences.getString(Constants.PREF_STUDY_NAME, null);
+            String participantId = sharedPreferences.getString(Constants.PREF_PARTICIPANT_ID, null);
+
+            try {
+                File zipFile = LoggerUtil.zipDirectory(this, studyName, participantId);
+                createFileShareDialog(zipFile);
+            } catch (FileNotFoundException e) {
+                CarwatchSnackbar.show(coordinatorLayout, Objects.requireNonNull(e.getMessage()), CarwatchSnackbar.LENGTH_SHORT);
+            } catch (ActivityNotFoundException | IllegalArgumentException | IOException e) {
+                Log.e(TAG, "Unable to share log files", e);
+                CarwatchSnackbar.show(coordinatorLayout, R.string.message_share_logs_failed, CarwatchSnackbar.LENGTH_SHORT);
+            }
+        } else if (itemId == R.id.menu_delete_log_files) {
+            showDeleteLogFilesWarningDialog();
+        } else if (itemId == R.id.menu_kill) {
+            showKillWarningDialog();
+        } else if (itemId == R.id.menu_reregister) {
+            requestReregistration();
+        } else if (itemId == R.id.menu_show_tutorial) {
+            sharedPreferences.edit().putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE).apply();
+            Intent tutorialIntent = new Intent(this, SlideShowActivity.class);
+            tutorialIntent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_TUTORIAL_SLIDES);
+            startActivity(tutorialIntent);
+        } else if (itemId == R.id.menu_study_information) {
+            showStudyInformationDialog();
+        } else if (itemId == R.id.menu_finish_study_day) {
+            requestFinishStudyDay();
+        } else if (itemId == R.id.menu_privacy_policy) {
+            AppInfoBottomSheet.openPrivacyPolicy(this);
+        } else if (itemId == R.id.menu_app_info) {
+            showAppInfoDialog();
+        }
+    }
+
+    private void requestReregistration() {
+        if (!AlarmHandler.isStudyOngoing(this)) {
+            performReregistration();
+            return;
+        }
+
+        showReregisterConfirmationDialog();
+    }
+
+    private void showReregisterConfirmationDialog() {
+        View dialogView = inflateDetached(R.layout.widget_confirmation_dialog);
+        TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
+        TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
+        MaterialButton confirmButton = dialogView.findViewById(R.id.btn_confirmation_confirm);
+
+        titleView.setText(R.string.title_reregister_ongoing_study);
+        messageView.setText(R.string.message_reregister_ongoing_study);
+        confirmButton.setText(R.string.menu_reregister);
+
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
+                .setView(dialogView)
+                .create();
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+        confirmButton.setOnClickListener(view -> {
+            dialog.dismiss();
+            performReregistration();
+        });
+        dialog.show();
+    }
+
+    private void performReregistration() {
+        AlarmHandler.resetStudyConfiguration(this);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        Intent intent = new Intent(this, SlideShowActivity.class);
+        intent.putExtra(Constants.EXTRA_SLIDE_SHOW_TYPE, SlideShowActivity.SHOW_ALL_SLIDES);
+        startActivity(intent);
+        finish();
+    }
+
+    private void createFileShareDialog(File zipFile) throws IOException {
+        File shareFile = copyToShareCache(zipFile);
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         Uri uri = GenericFileProvider.getUriForFile(this,
                 getApplicationContext().getPackageName() +
                         ".logger.fileprovider",
-                zipFile);
+                shareFile);
         String extra_email = sharedPreferences.getString(Constants.PREF_SHARE_EMAIL_ADDRESS, "");
-        sharingIntent.setType("application/octet-stream");
+        sharingIntent.setType("application/zip");
+        sharingIntent.setClipData(ClipData.newUri(getContentResolver(), shareFile.getName(), uri));
         sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
         sharingIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{extra_email});
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, zipFile.getName());
-        startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog)));
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, shareFile.getName());
+        Intent chooser = Intent.createChooser(sharingIntent, getString(R.string.title_share_dialog));
+        chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        chooser.setClipData(ClipData.newUri(getContentResolver(), shareFile.getName(), uri));
+        startActivity(chooser);
+    }
+
+    private File copyToShareCache(File source) throws IOException {
+        File shareDirectory = new File(getCacheDir(), "shared_logs");
+        if (!shareDirectory.exists() && !shareDirectory.mkdirs()) {
+            throw new IOException("Could not create share cache directory.");
+        }
+
+        File target = new File(shareDirectory, source.getName());
+        try (FileInputStream input = new FileInputStream(source);
+             FileOutputStream output = new FileOutputStream(target, false)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+        }
+        return target;
     }
 
     private void showDeleteLogFilesWarningDialog() {
-        new AlertDialog.Builder(this)
+        View dialogView = inflateDetached(R.layout.widget_confirmation_dialog);
+        TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
+        TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
+        MaterialButton confirmButton = dialogView.findViewById(R.id.btn_confirmation_confirm);
+
+        titleView.setText(R.string.title_delete_log_files);
+        messageView.setText(R.string.message_delete_log_files_confirm_dialog);
+        confirmButton.setText(R.string.menu_delete_logs);
+
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setCancelable(false)
-                .setTitle(R.string.title_delete_log_files)
-                .setMessage(R.string.message_delete_log_files_confirm_dialog)
-                .setPositiveButton(R.string.yes, (dialog, which) -> deleteLogFiles())
-                .setNegativeButton(R.string.cancel, ((dialog, which) -> { }))
-                .show();
+                .setView(dialogView)
+                .create();
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+        confirmButton.setOnClickListener(view -> {
+            deleteLogFiles();
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     private void deleteLogFiles() {
         boolean fileWereDeleted = LoggerUtil.deleteLogFiles(this);
         String msg = fileWereDeleted ? getString(R.string.message_all_log_files_deleted) : getString(R.string.message_not_all_log_files_deleted);
-        Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_SHORT).show();
+        CarwatchSnackbar.show(coordinatorLayout, msg, CarwatchSnackbar.LENGTH_SHORT);
+    }
+
+    private void requestFinishStudyDay() {
+        if (!AlarmHandler.canFinishCurrentStudyDay(this)) {
+            invalidateOptionsMenu();
+            return;
+        }
+
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
+                .setIcon(R.drawable.ic_check_circle_24dp)
+                .setTitle(R.string.title_finish_study_day)
+                .setMessage(R.string.message_finish_study_day)
+                .setNegativeButton(R.string.button_keep_samples, null)
+                .setPositiveButton(R.string.button_finish_day, (dialogInterface, which) -> finishStudyDay())
+                .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.md_theme_error));
+    }
+
+    private void finishStudyDay() {
+        if (AlarmHandler.finishCurrentStudyDay(this)) {
+            CarwatchSnackbar.show(coordinatorLayout, R.string.message_study_day_finished, CarwatchSnackbar.LENGTH_SHORT);
+            navigate(R.id.navigation_alarm);
+        }
+        updateFinishStudyDayFabState();
+    }
+
+    private void showStudyInformationDialog() {
+        View dialogView = inflateDetached(R.layout.widget_study_information_dialog);
+
+        setDetailRow(dialogView, R.id.row_study_name, R.string.label_study_name, getPreferenceString(Constants.PREF_STUDY_NAME));
+        setDetailRow(dialogView, R.id.row_participant_id, R.string.label_participant_id, getPreferenceString(Constants.PREF_PARTICIPANT_ID));
+        setDetailRow(dialogView, R.id.row_study_days, R.string.label_study_days, String.valueOf(sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0)));
+        setDetailRow(dialogView, R.id.row_contact_email, R.string.label_contact_email, getPreferenceString(Constants.PREF_SHARE_EMAIL_ADDRESS));
+        setDetailRow(dialogView, R.id.row_interval_samples, R.string.label_interval_samples, formatIntervalSamples(sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "")));
+        setDetailRow(dialogView, R.id.row_fixed_sample_times, R.string.label_fixed_sample_times, formatFixedSampleTimes(sharedPreferences.getString(Constants.PREF_SALIVA_TIMES, "")));
+        setDetailRow(dialogView, R.id.row_evening_sample, R.string.label_evening_sample, getString(sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false) ? R.string.yes : R.string.no));
+
+        showInfoBottomSheet(dialogView);
+    }
+
+    private void setDetailRow(View root, int rowId, int labelId, String value) {
+        View row = root.findViewById(rowId);
+        TextView labelView = row.findViewById(R.id.tv_detail_label);
+        TextView valueView = row.findViewById(R.id.tv_detail_value);
+        labelView.setText(labelId);
+        valueView.setText(value);
+    }
+
+    private String getPreferenceString(String key) {
+        String value = sharedPreferences.getString(key, "");
+        if (value.trim().isEmpty()) {
+            return "-";
+        }
+        return value.trim();
+    }
+
+    private String formatIntervalSamples(String intervalSamples) {
+        List<String> values = splitPreferenceList(intervalSamples);
+        if (values.isEmpty()) {
+            return "-";
+        }
+
+        List<String> formattedValues = new ArrayList<>();
+        for (String value : values) {
+            formattedValues.add(value + " min");
+        }
+        return String.join(", ", formattedValues);
+    }
+
+    private String formatFixedSampleTimes(String fixedSampleTimes) {
+        List<String> values = splitPreferenceList(fixedSampleTimes);
+        if (values.isEmpty()) {
+            return getString(R.string.message_no_fixed_sample_times);
+        }
+
+        List<String> formattedTimes = new ArrayList<>();
+        for (String value : values) {
+            formattedTimes.add(formatFixedSampleTime(value));
+        }
+        return String.join(", ", formattedTimes);
+    }
+
+    private List<String> splitPreferenceList(@Nullable String value) {
+        List<String> values = new ArrayList<>();
+        if (value == null || value.trim().isEmpty()) {
+            return values;
+        }
+
+        String[] parts = value.split(Constants.QR_PARSER_LIST_SEPARATOR);
+        for (String part : parts) {
+            String trimmedValue = part.trim();
+            if (!trimmedValue.isEmpty()) {
+                values.add(trimmedValue);
+            }
+        }
+        return values;
+    }
+
+    private String formatFixedSampleTime(String value) {
+        if (value.length() != 4) {
+            return value;
+        }
+
+        try {
+            int hour = Integer.parseInt(value.substring(0, 2));
+            int minute = Integer.parseInt(value.substring(2, 4));
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            return new SimpleDateFormat("h:mm a", Locale.getDefault()).format(calendar.getTime());
+        } catch (NumberFormatException e) {
+            return value;
+        }
     }
 
     public void showKillWarningDialog() {
-        new AlertDialog.Builder(this)
+        View dialogView = inflateDetached(R.layout.widget_confirmation_dialog);
+        TextView titleView = dialogView.findViewById(R.id.tv_confirmation_title);
+        TextView messageView = dialogView.findViewById(R.id.tv_confirmation_message);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.btn_confirmation_cancel);
+        MaterialButton confirmButton = dialogView.findViewById(R.id.btn_confirmation_confirm);
+
+        titleView.setText(R.string.title_kill_alarms);
+        messageView.setText(R.string.message_kill_alarms);
+        confirmButton.setText(R.string.menu_kill);
+
+        AlertDialog dialog = new CarwatchDialogBuilder(this)
                 .setCancelable(false)
-                .setTitle(getString(R.string.title_kill_alarms))
-                .setMessage(getString(R.string.message_kill_alarms))
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    AlarmHandler.killAll(getApplication());
-                    AlarmSoundControl.getInstance().stopAlarmSound();
-                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    if (notificationManager != null)
-                        notificationManager.cancelAll();
-                })
-                .setNegativeButton(R.string.cancel, ((dialog, which) -> {
-                }))
-                .show();
+                .setView(dialogView)
+                .create();
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+        confirmButton.setOnClickListener(view -> {
+            AlarmHandler.killAll(getApplication());
+            AlarmSoundControl.getInstance().stopAlarmSound();
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.cancelAll();
+            }
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     private void showAppInfoDialog() {
-        AppInfoDialog dialog = new AppInfoDialog();
-        dialog.show(getSupportFragmentManager(), "app_info");
+        AppInfoBottomSheet.show(this);
+    }
+
+    private void showInfoBottomSheet(View contentView) {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(contentView);
+        View closeButton = contentView.findViewById(R.id.btn_sheet_close);
+        if (closeButton != null) {
+            closeButton.setOnClickListener(view -> dialog.dismiss());
+        }
+        dialog.show();
+    }
+
+    private View inflateDetached(int layoutId) {
+        ViewGroup parent = findViewById(android.R.id.content);
+        return getLayoutInflater().inflate(layoutId, parent, false);
     }
 }

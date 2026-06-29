@@ -205,7 +205,7 @@ public class DiskLogHandler extends Handler {
         String studyName = sp.getString(Constants.PREF_STUDY_NAME, null);
         String participantId = sp.getString(Constants.PREF_PARTICIPANT_ID, null);
         if (participantId != null && studyName != null) {
-            filename = "carwatch_" + studyName.toLowerCase() + "_" + participantId.toLowerCase() + "_" + DateTime.now().toString("YYYYMMdd");
+            filename = "carwatch_" + studyName + "_" + participantId + "_" + DateTime.now().toString("YYYYMMdd");
         } else {
             filename = "carwatch_" + DateTime.now().toString("YYYYMMdd");
         }

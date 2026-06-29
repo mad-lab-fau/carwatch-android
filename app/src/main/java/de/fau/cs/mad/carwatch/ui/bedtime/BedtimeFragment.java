@@ -5,40 +5,47 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
+import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
+import java.util.Set;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
-import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = BedtimeFragment.class.getSimpleName();
-
     private BedtimeViewModel bedtimeViewModel;
+    private final ActivityResultLauncher<Intent> barcodeScannerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> handleBarcodeScannerResult(result.getResultCode())
+    );
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -64,102 +71,149 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
         boolean hasEveningSalivette = sp.getBoolean(Constants.PREF_HAS_EVENING, false);
 
-        switch (v.getId()) {
-            case R.id.button_no:
-                if (getActivity() != null) {
-                    Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.feedback_thanks), Snackbar.LENGTH_SHORT).show();
-                    ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
-                }
-                break;
-            case R.id.button_yes:
-                // create Json object and log information
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
-                    LoggerUtil.log(Constants.LOGGER_ACTION_EVENING_SALIVETTE, json);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        int viewId = v.getId();
+        if (viewId == R.id.button_no) {
+            if (getActivity() != null) {
+                CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), R.string.feedback_bedtime_no, CarwatchSnackbar.LENGTH_SHORT);
+            }
+        } else if (viewId == R.id.button_yes) {
+            // create Json object and log information
+            try {
+                JSONObject json = new JSONObject();
+                json.put(Constants.LOGGER_EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
+                LoggerUtil.log(Constants.LOGGER_ACTION_EVENING_SALIVETTE, json);
+            } catch (JSONException e) {
+                Log.e(BedtimeFragment.class.getSimpleName(), "Could not log evening salivette event", e);
+            }
 
 
-                DateTime date = new DateTime(sp.getLong(Constants.PREF_EVENING_TAKEN, 0));
-                if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
-                    showBedtimeWarningDialog();
-                } else {
-                    bedtimeViewModel.setSalivaTaken(true);
-                    if (!UserPresentService.serviceRunning) {
-                        UserPresentService.startService(getContext());
-                    }
-                    showBedtimeDialog(hasEveningSalivette);
-                }
+            DateTime date = new DateTime(sp.getLong(Constants.PREF_EVENING_TAKEN, 0));
+            if (!hasEveningSalivette) {
+                completeBedtimeWithoutEveningSample();
+            } else if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
+                showBedtimeWarningDialog();
+            } else {
+                showBedtimeDialog();
+            }
 
-                break;
-            case R.id.button_toggle_night_mode:
-                if (getActivity() == null) {
-                    break;
-                }
+        } else if (viewId == R.id.button_toggle_night_mode) {
+            if (getActivity() == null) {
+                return;
+            }
 
-                boolean enableDarkMode = !sp.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
-                sp.edit().putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, enableDarkMode).apply();
-                AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
-                delegate.setLocalNightMode(enableDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
-                delegate.applyDayNight();
-                LoggerUtil.log(enableDarkMode ? Constants.LOGGER_ACTION_LIGHTS_OUT : Constants.LOGGER_ACTION_LIGHTS_ON, new JSONObject());
-                break;
+            boolean enableDarkMode = !sp.getBoolean(Constants.PREF_NIGHT_MODE_ENABLED, false);
+            SharedPreferences.Editor editor = sp.edit();
+            if (enableDarkMode && isStudyFinished(sp)) {
+                editor.putBoolean(Constants.PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT, true);
+            }
+            if (enableDarkMode) {
+                editor.putBoolean(Constants.PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION, true);
+            }
+            Intent currentIntent = getActivity().getIntent();
+            if (currentIntent != null) {
+                currentIntent.removeExtra(Constants.EXTRA_TARGET_NAV_ELEMENT);
+                currentIntent.removeExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE);
+                currentIntent.removeExtra(Constants.EXTRA_SHOW_BARCODE_SCANNED_MSG);
+            }
+            editor.putBoolean(Constants.PREF_NIGHT_MODE_ENABLED, enableDarkMode).apply();
+            AppCompatDelegate delegate = ((AppCompatActivity) getActivity()).getDelegate();
+            delegate.setLocalNightMode(enableDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+            delegate.applyDayNight();
+            LoggerUtil.log(enableDarkMode ? Constants.LOGGER_ACTION_LIGHTS_OUT : Constants.LOGGER_ACTION_LIGHTS_ON, new JSONObject());
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private boolean isStudyFinished(@NonNull SharedPreferences sharedPreferences) {
+        int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0);
+        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
+        int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (numDays <= 0 || totalNumSamples <= 0 || dayId < numDays) {
+            return false;
+        }
+
+        return countScannedSamplesForDay(sharedPreferences, dayId) >= totalNumSamples;
+    }
+
+    private int countScannedSamplesForDay(@NonNull SharedPreferences sharedPreferences, int dayId) {
+        if (!sharedPreferences.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return 0;
+        }
+
+        Set<String> scannedBarcodes = sharedPreferences.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        int count = 0;
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            try {
+                int scannedDay = Integer.parseInt(barcode.substring(3, 5));
+                if (scannedDay == dayId) {
+                    count++;
+                }
+            } catch (NumberFormatException e) {
+                // Ignore malformed barcode entries when deciding whether the study is complete.
+            }
+        }
+        return count;
+    }
+
+    private void handleBarcodeScannerResult(int resultCode) {
         if (getActivity() == null) {
             return;
         }
 
-        if (requestCode == Constants.REQUEST_CODE_SCAN) {
-            if (resultCode == Activity.RESULT_OK) {
-                bedtimeViewModel.setSalivaTaken(true);
-                if (!UserPresentService.serviceRunning) {
-                    UserPresentService.startService(getContext());
-                }
+        if (resultCode == Activity.RESULT_OK) {
+            bedtimeViewModel.setSalivaTaken(true);
+            if (!UserPresentService.serviceRunning) {
+                UserPresentService.startService(getContext());
             }
         }
     }
 
 
-    private void showBedtimeDialog(boolean hasEveningSalivette) {
+    private void completeBedtimeWithoutEveningSample() {
+        bedtimeViewModel.setSalivaTaken(true);
+        if (!UserPresentService.serviceRunning) {
+            UserPresentService.startService(getContext());
+        }
+        if (getActivity() != null) {
+            CarwatchSnackbar.show(
+                    getActivity().findViewById(R.id.coordinator),
+                    R.string.message_no_evening_sample_required,
+                    CarwatchSnackbar.LENGTH_LONG
+            );
+        }
+    }
+
+    private void showBedtimeDialog() {
         if (getContext() == null) {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_bedtime_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_bedtime_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
         int eveningSalivaId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, 1);
 
-        new AlertDialog.Builder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(getString(R.string.bedtime_title))
                 .setCancelable(false)
                 .setIcon(icon)
                 .setMessage(getString(R.string.bedtime_text))
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                    if (hasEveningSalivette) {
-                        TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, eveningSalivaId);
+                    TimerHandler.scheduleSalivaCountdown(getContext(), Constants.EXTRA_ALARM_ID_EVENING, eveningSalivaId);
 
-                        Intent intent = new Intent(getContext(), BarcodeActivity.class);
-                        intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
-                        intent.putExtra(Constants.EXTRA_SALIVA_ID, eveningSalivaId);
-                        startActivityForResult(intent, Constants.REQUEST_CODE_SCAN);
-                    } else {
-                        bedtimeViewModel.setSalivaTaken(true);
-                        if (!UserPresentService.serviceRunning) {
-                            UserPresentService.startService(getContext());
-                        }
-                    }
+                    Intent intent = new Intent(getContext(), BarcodeActivity.class);
+                    intent.putExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_EVENING);
+                    intent.putExtra(Constants.EXTRA_SALIVA_ID, eveningSalivaId);
+                    barcodeScannerLauncher.launch(intent);
                 })
                 .show();
     }
@@ -168,10 +222,12 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         if (getContext() == null) {
             return;
         }
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
-        new AlertDialog.Builder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(getString(R.string.warning_title))
                 .setCancelable(false)
                 .setIcon(icon)

@@ -15,6 +15,8 @@ import androidx.room.TypeConverters;
 
 import org.joda.time.DateTime;
 
+import java.util.Locale;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.converter.BooleanArrayConverter;
 import de.fau.cs.mad.carwatch.db.converter.DateConverter;
@@ -22,9 +24,6 @@ import de.fau.cs.mad.carwatch.db.converter.DateConverter;
 @Entity(tableName = "alarm")
 @TypeConverters({DateConverter.class, BooleanArrayConverter.class})
 public class Alarm implements Parcelable {
-    @Ignore
-    private static final String TAG = Alarm.class.getSimpleName();
-
     // Class members
 
     @PrimaryKey()
@@ -108,11 +107,15 @@ public class Alarm implements Parcelable {
     }
 
     /**
-     * Get String of alarm ring time in 12 hour format
+     * Get localized string of alarm ring time.
      */
     @Ignore
     public String getStringTime() {
-        return this.time.toString("HH:mm");
+        String language = Locale.getDefault().getLanguage();
+        if (language.equals(Locale.GERMAN.getLanguage()) || language.equals(Locale.FRENCH.getLanguage())) {
+            return this.time.toString("HH:mm", Locale.getDefault());
+        }
+        return this.time.toString("hh:mm a", Locale.US);
     }
 
     /**
@@ -147,7 +150,7 @@ public class Alarm implements Parcelable {
     }
 
     @Ignore
-    public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<Alarm>() {
+    public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<>() {
         public Alarm createFromParcel(Parcel in) {
             return new Alarm(in);
         }

@@ -11,11 +11,13 @@
     <string name="message_participant_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
     <string name="prompt_point_at_a_barcode">Bitte richten Sie Ihre Kamera auf einen Barcode</string>
-    <string name="prompt_scanning">Scanning&#8230;</string>
+    <string name="prompt_scanning">Scan läuft&#8230;</string>
     <string name="prompt_barcode_scan_successful">Barcode erfolgreich gescannt!</string>
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
-    <string name="stop">Stop</string>
+    <string name="stop">Stopp</string>
     <string name="open_scanner">Scanner öffnen</string>
+    <string name="content_description_sample_taken">Probe genommen</string>
+    <string name="content_description_sample_status">Probenstatus</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d.</string>
     <string name="timer_notification_text_evening">Bitte nehmen Sie die Abend-Speichelprobe.</string>
     <string name="timer_over_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d jetzt!</string>
@@ -29,23 +31,47 @@
     <!-- Menu -->
     <string name="menu_share">Logs teilen …</string>
     <string name="menu_delete_logs">Logs löschen</string>
-    <string name="menu_kill">Kill Alarms</string>
+    <string name="menu_kill">Alarme beenden</string>
     <string name="menu_reregister">Neu registrieren</string>
     <string name="menu_show_tutorial">Tutorial zeigen</string>
-    <string name="menu_app_info">Info</string>
+    <string name="menu_study_information">Studieninformationen</string>
+    <string name="menu_finish_study_day">Studientag beenden</string>
+    <string name="menu_app_info">App-Info</string>
+    <string name="content_description_open_fab_menu">Menü öffnen</string>
+    <string name="content_description_close_fab_menu">Menü schließen</string>
+    <string name="content_description_close">Schließen</string>
+    <string name="content_description_app_info">App-Info öffnen</string>
+    <string name="title_reregister_ongoing_study">Studie läuft noch</string>
+    <string name="message_reregister_ongoing_study">Ihre Studie läuft noch. Sind Sie sicher, dass Sie sich mit einem neuen QR-Code neu registrieren möchten?</string>
+    <string name="title_study_information">Studieninformationen</string>
+    <string name="label_study_section">Studie</string>
+    <string name="label_contact_email">Kontakt-E-Mail</string>
+    <string name="label_sampling_plan">Probenplan</string>
+    <string name="label_interval_samples">Intervallproben</string>
+    <string name="label_fixed_sample_times">Feste Probenzeiten</string>
+    <string name="message_no_fixed_sample_times">Keine festen Probenzeiten konfiguriert.</string>
+    <string name="title_finish_study_day">Studientag beenden?</string>
+    <string name="message_finish_study_day">Alle verbleibenden Proben für heute werden abgebrochen und der Studientag wird als abgeschlossen markiert.</string>
+    <string name="button_keep_samples">Proben behalten</string>
+    <string name="button_finish_day">Tag beenden</string>
+    <string name="message_study_day_finished">Der Studientag wurde als abgeschlossen markiert.</string>
 
     <!-- Delete log files -->
-    <string name="hint_clicks_delete_log_files">Noch %1$d Klicks, um alle Log Dateien zu löschen</string>
     <string name="title_delete_log_files">Logs löschen</string>
     <string name="message_delete_log_files_confirm_dialog">Sind Sie sicher, dass Sie alle Log Dateien löschen wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
     <string name="message_all_log_files_deleted">Die Logs wurden gelöscht.</string>
     <string name="message_not_all_log_files_deleted">Fehler beim Löschen der Logs. Einige Log Dateien konnten nicht gelöscht werden.</string>
+    <string name="message_share_logs_failed">Die Logs konnten nicht geteilt werden.</string>
 
     <string name="feedback_thanks">Vielen Dank für das Feedback!</string>
+    <string name="feedback_wakeup_no">Melden Sie sich, wenn Sie aufgewacht sind.</string>
+    <string name="feedback_bedtime_no">Melden Sie sich, wenn Sie ins Bett gehen.</string>
     <string name="good_night">Vielen Dank und Gute Nacht!</string>
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
     <string name="lights_out">Licht aus!</string>
     <string name="lights_on">Licht an!</string>
+    <string name="title_lights_out_tracking_explanation">Aufmerksamkeitserfassung ist aktiv</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch nutzt Aufmerksamkeitsereignisse des Smartphones, z. B. Entsperren des Bildschirms, um tatsächliche Schlafens- und Aufwachzeiten besser zu erkennen.</string>
 
     <string name="cancel_saliva_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
     <string name="open_scanner_before_alarm_message">Diese Probe ist für später angesetzt. Sind Sie sicher, dass Sie die Probe jetzt scannen wollen?</string>
@@ -56,11 +82,19 @@
 
     <string name="wakeup_title">Den Morgen beginnen</string>
     <string name="wakeup_text">Wir beginnen nun mit dem Morgenprozedere</string>
+    <string name="title_overdue_sample_pending">Überfällige Probe ausstehend</string>
+    <string name="message_overdue_sample_pending">Es gibt noch mindestens eine überfällige Probe von früher am heutigen Tag. Als Nächstes gelangen Sie zum Zeitplan, wo Sie auswählen können, welche Probe Sie jetzt nehmen möchten.</string>
+    <string name="title_delayed_sample_planned">Verzögerte Probe geplant</string>
+    <string name="message_delayed_sample_planned">Für Ihre Studie ist eine verzögerte Probe geplant. Sie erhalten in %1$d Minuten eine Erinnerung, diese Probe zu nehmen.</string>
+    <string name="title_fixed_time_only_wakeup">Fester Probenplan</string>
+    <string name="message_fixed_time_only_wakeup">Ihr Aufwachen wurde gespeichert. Diese Studie verwendet nur feste Probenzeiten, daher ist keine Aufwachprobe erforderlich. Ihre erste verbleibende Probe heute ist für %1$s geplant.</string>
+    <string name="message_fixed_time_only_wakeup_no_remaining_samples">Ihr Aufwachen wurde gespeichert. Diese Studie verwendet nur feste Probenzeiten, daher ist keine Aufwachprobe erforderlich. Für heute sind keine weiteren festen Proben geplant.</string>
     <string name="wakeup_message">Guten Morgen!\nSind Sie gerade aufgewacht?</string>
 
     <string name="bedtime_title">Die Nacht beginnen</string>
     <string name="bedtime_text">Wir beginnen nun mit dem Abendprozedere.</string>
     <string name="bedtime_message">Guten Abend!\nSind Sie dabei, ins Bett zu gehen?</string>
+    <string name="message_no_evening_sample_required">Keine Abendprobe erforderlich. Vielen Dank und gute Nacht!</string>
 
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
@@ -80,8 +114,13 @@
     <string name="app_active">CARWatch Service ist aktiv.</string>
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
+    <string name="title_samples_recorded">Proben erfasst</string>
+    <string name="title_study_finished">Studie abgeschlossen</string>
+    <string name="message_samples_recorded_evening_required">Sie haben alle Proben für heute erfasst, müssen aber heute Abend direkt vor dem Schlafengehen noch eine Abendprobe erfassen.\nBitte stellen Sie unten eine Erinnerung ein.\nBis später!</string>
+    <string name="message_study_finished">Dies war Ihre letzte Probe. Vielen Dank für Ihre Teilnahme an der Studie! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
+    <string name="message_study_finished_after_lights_out">Die Studie ist abgeschlossen. Vielen Dank für Ihre Teilnahme! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
+    <string name="message_samples_recorded_day_finished">Sie haben die letzte Probe für heute erfasst.\nBis morgen, und vergessen Sie nicht, einen Weckalarm für morgen einzustellen.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
-    <string name="hint_clicks_kill_alarms">Noch %1$d Klicks, um alle Alarme zu beenden.</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
 
@@ -91,35 +130,80 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Weiter</string>
+    <string name="btn_back">Zurück</string>
     <string name="btn_to_app">Zur App</string>
     <string name="btn_skip_all">Tutorial überspringen</string>
+    <string name="btn_reregister">Neu registrieren</string>
+    <string name="btn_confirm_continue_tutorial">Bestätigen</string>
+    <string name="message_study_details_confirmation">Bitte bestätigen Sie, dass diese Studienkonfiguration mit den Informationen übereinstimmt, die Sie erhalten haben, bevor Sie mit dem Tutorial fortfahren.</string>
+    <string name="headline_review_study_setup">Überprüfen Sie Ihre Studienkonfiguration</string>
+    <string name="message_study_details_continue_if_correct">Fahren Sie nur fort, wenn diese Angaben korrekt sind. Falls nicht, starten Sie die Einrichtung neu und scannen Sie den richtigen Studien-QR-Code.</string>
+    <string name="title_study_configuration">Studienkonfiguration</string>
+    <string name="title_setup">Einrichtung</string>
+    <string name="title_tutorial">Tutorial</string>
+    <string name="label_study_name">Studienname</string>
+    <string name="label_participant_id">Teilnehmer-ID</string>
+    <string name="label_study_days">Studientage</string>
+    <string name="label_samples_per_day">Proben pro Tag</string>
+    <string name="label_evening_sample">Abendprobe</string>
+    <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">Das Icon der CARWatch app</string>
     <string name="headline_welcome">Willkommen bei CARWatch!</string>
+    <string name="message_welcome_participant_intro">CARWatch ist für Studienteilnehmende gedacht. Die App hilft Ihnen, Ihren Studienplan einzuhalten, indem sie Erinnerungen sendet und Proben per Barcode-Scan bestätigt.</string>
+    <string name="message_welcome_invited_only">Verwenden Sie diese App nur, wenn Sie zur Teilnahme an einer Studie eingeladen wurden.</string>
+    <string name="message_welcome_sample_reminders">Sie erhalten Erinnerungen für geplante Speichelproben.</string>
+    <string name="message_welcome_qr_required">Sie benötigen einen Studien-QR-Code, um die App einzurichten.</string>
+    <string name="headline_study_participation_notice">Hinweis zur Studienteilnahme</string>
+    <string name="message_study_notice_intro">Diese App ist nur für Teilnehmende gedacht, die bereits von einem Studienteam in eine Studie aufgenommen wurden. Bitte lesen Sie, wie CARWatch verwendet wird, bevor Sie fortfahren.</string>
+    <string name="title_study_notice_purpose">Zweck</string>
+    <string name="message_study_notice_purpose">CARWatch ist ein Werkzeug, das Studienteams bei der geplanten Sammlung von Speichelproben und der Bestätigung per Barcode unterstützt. Die App selbst nimmt keine Teilnehmenden in Studien auf und legt kein Studienprotokoll fest.</string>
+    <string name="title_study_notice_participation">Was die Teilnahme umfasst</string>
+    <string name="message_study_notice_participation">Wenn Ihr Studienteam Sie eingeladen hat, CARWatch zu verwenden, nutzt die App Benachrichtigungen für Alarme und Erinnerungen, die Kamera zum Scannen von QR-Codes und Barcodes sowie lokalen Gerätespeicher für Studienfortschritt und Protokolldateien.</string>
+    <string name="title_study_notice_data_handling">Datenverarbeitung</string>
+    <string name="message_study_notice_data_handling">Die App kann Ihre Teilnehmenden-ID, Studienkonfiguration, Barcode-Scan-Ereignisse sowie App- und Gerätemetadaten auf diesem Gerät speichern. Studienspezifische Einwilligung, Rechtsgrundlage und Datenweitergabe werden von der Institution festgelegt, die Ihre Studie durchführt. Protokolldateien werden nur geteilt, wenn Sie diese ausdrücklich exportieren.</string>
+    <string name="title_study_notice_questions">Fragen oder Widerruf</string>
+    <string name="message_study_notice_questions">Wenn Sie Fragen zur Studienteilnahme, Einwilligung, zum Datenschutz haben oder aus einer Studie ausscheiden möchten, kontaktieren Sie das Studienteam über die Kontaktdaten, die Sie von Ihrer Studienorganisation erhalten haben.</string>
+    <string name="btn_read_privacy_policy">Datenschutzerklärung lesen</string>
+    <string name="message_study_notice_confirmation">Ich bestätige, dass ich von meinem Studienteam zur Nutzung dieser App autorisiert wurde und die von diesem Team bereitgestellten Studieninformationen erhalten habe.</string>
     <string name="headline_permission_request_slide">Funktionen freischalten!</string>
     <string name="message_permission_request">Damit Sie die App optimal nutzen können, benötigen wir folgende Berechtigungen:</string>
+    <string name="symbol_dot" translatable="false">\u2022</string>
     <string name="message_camera_access">Kamerazugriff, um die Barcodes auf den Probenröhrchen zu scannen</string>
     <string name="message_notification_permission">Die Berechtigung, Benachrichtigungen zu senden, um über anstehende Proben zu informieren</string>
+    <string name="headline_prepare_carwatch">CARWatch vorbereiten</string>
+    <string name="message_prepare_carwatch_permissions">CARWatch benötigt einige Berechtigungen, damit die App Sie pünktlich erinnern und Proben sicher bestätigen kann.</string>
+    <string name="label_permission_notifications">Benachrichtigungen</string>
+    <string name="message_permission_notifications_card">Erinnerungen senden, wenn Speichelproben geplant sind.</string>
+    <string name="label_permission_camera">Kamera</string>
+    <string name="message_permission_camera_card">Studien-QR-Codes und Barcodes von Probenröhrchen scannen.</string>
+    <string name="label_permission_required">Erforderlich</string>
     <string name="headline_wakeup_screen_tutorial">Den Morgen starten</string>
     <string name="description_wakeup_screen">Diese Funktion müssen Sie nur nutzen, wenn Sie keinen Wecker für den Morgen gestellt hatten oder aufgewacht sind, bevor der Wecker geklingelt hat. Durch drücken des \"Ja\" Buttons, werden die Probenwecker für den kommenden Tag eingerichtet.</string>
     <string name="headline_alarm_tutorial">Die Probenwecker</string>
     <string name="description_wakeup_alarm">In der Weckerübersicht können Sie einen Wecker für den nächsten Morgen stellen. Dafür müssen Sie nur auf die angezeigte Zeit tippen und die gewünschte Weckzeit auswählen.</string>
     <string name="description_saliva_alarm_overview">Nachdem Sie aufgewacht sind, werden in der Übersicht alle Zeiten angezeigt, zu denen eine Probe genommen werden muss.</string>
-    <string name="description_alarm_symbols_tutorial">Die Symbole neben den Zeiten zeigen an, ob die Probe bereits genommen wurde (Haken), schon anstand (Uhr) oder später ansteht (Sanduhr). Wenn Sie auf das Scanner Symbol drücken, öffnet sich der Barcode Scanner für die jeweilige Probe.</string>
+    <string name="description_alarm_symbols_tutorial">Die Symbole neben den Zeiten zeigen an, ob die Probe bereits genommen wurde {sample_taken_icon}, schon anstand {sample_due_icon} oder später ansteht {sample_later_icon}. Wenn Sie auf das Scanner Symbol drücken, öffnet sich der Barcode Scanner für die jeweilige Probe.</string>
     <string name="headline_bedtime_screen_tutorial">Zu Bett gehen</string>
-    <string name="description_bedtime_screen">Hier können Sie die Abendprozedur vor dem Schlafengehen starten. Das ist nur notwendig, wenn Sie für die Studie eine Abendprobe nehmen müssen. Der \"Licht aus!\" Button aktiviert den Dunkelmodus der App.</string>
+    <string name="description_bedtime_screen">Starten Sie hier die Abendprozedur vor dem Schlafengehen. Der \"Licht aus!\" Button aktiviert den Dunkelmodus und nutzt Aufmerksamkeitsereignisse wie Bildschirm-Entsperrungen, um Schlafens- und Aufwachzeiten besser zu schätzen.</string>
     <string name="headline_scan_screen_tutorial">Die Probe scannen</string>
     <string name="description_scan_screen">Der Barcodescanner öffnet sich automatisch, wenn Sie eine Probe nehmen müssen. Scannen Sie dann einfach den Barcode, welcher sich auf dem Probenröhrchen befindet.</string>
     <string name="headline_slide_show_end">Probenahme starten!</string>
     <string name="text_slide_show_end">Die App ist nun bereit. Um die Studie zu starten, stellen Sie sich einen Wecker für den nächsten Tag oder melden Sie Ihr Aufwachen am Morgen. Wenn Sie die App neu konfigurieren oder das Tutorial erneut durchführen möchten, drücken Sie die entsprechenden Einträge im Menü oben rechts.</string>
 
-    <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_version">App-Version:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_info_description">CARWatch unterstützt Studienteilnehmende bei der Sammlung von Speichelproben für Studien zur Cortisol Awakening Response (CAR). Die App kombiniert Weckalarme, geplante Erinnerungen und Barcode-Scans, damit Proben zum vorgesehenen Zeitpunkt genommen und zuverlässig bestätigt werden können.</string>
+    <string name="app_info_developer_title">Entwicklerinformationen</string>
+    <string name="app_info_developer_details">Portabiles GmbH&lt;br>contact@portabiles.de&lt;br>Henkestr. 91&lt;br>91052 Erlangen&lt;br>Deutschland</string>
+    <string name="app_info_privacy_policy">Datenschutzerklärung</string>
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
     <string name="saliva_alarms_header">Wecker für Speichelproben</string>
+    <string name="evening_sample_alarm_header">Wecker für Abendprobe</string>
     <string name="title_qr_code_invalid">Ungültiger QR-Code</string>
     <string name="message_qr_code_invalid">Ungültiger QR-Code! Scannen Sie bitte den QR-Code, den Sie in den Studienmaterialien erhalten haben.</string>
     <string name="title_barcode_already_scanned">Doppelter Barcode!</string>
     <string name="message_barcode_already_scanned">Dieser Barcode wurde bereits verwendet! Bitte stellen Sie sicher, eine neue Salivette zu verwenden.</string>
     <string name="message_barcode_scanned_successfully">Der Barcode wurde erfolgreich gescannt!</string>
+    <string name="message_barcode_wrong_sample">Dieser Barcode gehört zu einer anderen Probe. Bitte scannen Sie den Barcode mit der ID %1$s.</string>
 
 </resources>

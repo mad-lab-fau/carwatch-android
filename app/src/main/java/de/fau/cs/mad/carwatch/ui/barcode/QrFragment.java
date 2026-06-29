@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,13 +14,17 @@ import com.google.mlkit.vision.barcode.common.Barcode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.collection.ArraySet;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeField;
 import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
@@ -36,12 +41,31 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
     private SharedPreferences sharedPreferences;
     private final ObservableBoolean isSkipButtonVisible = new ObservableBoolean(false);
     private final ObservableBoolean canShowNextSlide = new ObservableBoolean(false);
+    private ScanSuccessListener scanSuccessListener;
+    private boolean validQrCodeHandled = false;
 
+    public interface ScanSuccessListener {
+        void onQrCodeScanSuccessful();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof ScanSuccessListener) {
+            scanSuccessListener = (ScanSuccessListener) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        scanSuccessListener = null;
     }
 
     @Override
@@ -90,9 +114,17 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
 
             switch (check) {
                 case VALID:
+                    if (validQrCodeHandled) {
+                        return;
+                    }
+                    validQrCodeHandled = true;
+                    workflowModel.setWorkflowState(WorkflowState.SEARCHED);
                     setStudyData(parser);
                     canShowNextSlide.set(true);
                     canShowNextSlide.notifyChange();
+                    if (scanSuccessListener != null) {
+                        scanSuccessListener.onQrCodeScanSuccessful();
+                    }
                     break;
                 case INVALID:
                     try {
@@ -100,7 +132,7 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                         json.put(Constants.LOGGER_EXTRA_BARCODE_VALUE, barcode.getValue());
                         LoggerUtil.log(Constants.LOGGER_ACTION_INVALID_BARCODE_SCANNED, json);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Could not log invalid QR code scan", e);
                     }
                     showInvalidBarcodeDialog();
                     break;
@@ -114,10 +146,12 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
             return;
         }
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_warning_24dp);
-        icon.setTint(getResources().getColor(R.color.colorPrimary));
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
 
-        new AlertDialog.Builder(getContext())
+        new CarwatchDialogBuilder(getContext())
                 .setTitle(R.string.title_qr_code_invalid)
                 .setIcon(icon)
                 .setMessage(R.string.message_qr_code_invalid)
@@ -130,11 +164,25 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
         String salivaTimes = parser.getSalivaTimes();
 
         int numEveningSamples = parser.hasEveningSample() ? 1 : 0;
-        int numMorningSamples = salivaDistances.isEmpty() ? 0 : salivaDistances.split(",").length;
+        int numMorningSamples = AlarmHandler.countMorningSamples(salivaDistances);
         int numFixedSamples = salivaTimes.isEmpty() ? 0 : salivaTimes.split(",").length;
         int numSamples = numFixedSamples + numMorningSamples + numEveningSamples;
         int eveningSampleId = parser.hasEveningSample() ? numSamples - 1 : -1;
         sharedPreferences.edit()
+                .putInt(Constants.PREF_DAY_COUNTER, 0)
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1)
+                .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
+                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                .putStringSet(Constants.PREF_SCANNED_BARCODES, new ArraySet<>())
+                .remove(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)
+                .remove(Constants.PREF_EVENING_TAKEN)
+                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .remove(Constants.PREF_WAKEUP_SCAN_PENDING)
+                .remove(Constants.PREF_WAKEUP_SCAN_PENDING_TIME)
+                .remove(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME)
+                .remove(Constants.PREF_EVENING_REMINDER_TIME_MINUTES)
                 .putString(Constants.PREF_STUDY_NAME, parser.getStudyName())
                 .putInt(Constants.PREF_NUM_PARTICIPANTS, parser.getNumParticipants())
                 .putString(Constants.PREF_SALIVA_DISTANCES, salivaDistances)

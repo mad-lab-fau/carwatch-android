@@ -9,14 +9,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
+import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -27,8 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import de.fau.cs.mad.carwatch.Constants;
@@ -37,6 +38,7 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.BootCompletedReceiver;
+import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 import de.fau.cs.mad.carwatch.util.Utils;
 
@@ -99,7 +101,7 @@ public class AlarmHandler {
         if (alarmManager == null) {
             alarm.setActive(false);
             if (snackBarAnchor != null) {
-                Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set_error), Snackbar.LENGTH_SHORT).show();
+                CarwatchSnackbar.show(snackBarAnchor, context.getString(R.string.alarm_set_error), CarwatchSnackbar.LENGTH_SHORT);
             }
             return;
         }
@@ -126,12 +128,211 @@ public class AlarmHandler {
         scheduleSalivaAlarms(context);
     }
 
+    public static void resetStudyConfiguration(Context context) {
+        AlarmRepository repository = AlarmRepository.getInstance(context);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
+        AlarmSoundControl.getInstance().stopAlarmSound();
+        UserPresentService.stopService(context);
+
+        try {
+            List<Alarm> alarms = repository.getAll();
+
+            if (alarms != null) {
+                boolean initialAlarmExists = false;
+                for (Alarm alarm : alarms) {
+                    cancelAlarmAtTime(context, alarm.getId());
+                    TimerHandler.cancelTimer(context, alarm.getId());
+
+                    if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+                        initialAlarmExists = true;
+                        alarm.setTime(Constants.DEFAULT_ALARM_TIME.toDateTimeToday());
+                        alarm.setActive(false);
+                        alarm.setIsFixed(false);
+                        alarm.setSalivaId(Constants.EXTRA_SALIVA_ID_INITIAL);
+                        alarm.setWasSampleTaken(false);
+                        repository.update(alarm);
+                    } else {
+                        repository.delete(alarm);
+                    }
+                }
+
+                if (!initialAlarmExists) {
+                    repository.insert(new Alarm());
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Could not reset study configuration: failed to get alarms from database", e);
+        }
+
+        cancelAlarmAtTime(context, Constants.EXTRA_ALARM_ID_INITIAL);
+        cancelAlarmAtTime(context, Constants.EXTRA_ALARM_ID_EVENING);
+        TimerHandler.cancelTimer(context, Constants.EXTRA_ALARM_ID_INITIAL);
+        TimerHandler.cancelTimer(context, Constants.EXTRA_ALARM_ID_EVENING);
+
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .clear()
+                .putInt(Constants.PREF_CURRENT_SLIDE_SHOW_SLIDE, Constants.INITIAL_SLIDE_SHOW_SLIDE)
+                .putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1)
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putInt(Constants.PREF_DAY_COUNTER, 0)
+                .putBoolean(Constants.PREF_FIRST_RUN_QR, true)
+                .putBoolean(Constants.PREF_PARTICIPANT_ID_WAS_SET, false)
+                .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
+                .putBoolean(Constants.PREF_REREGISTRATION_MODE, true)
+                .apply();
+
+        setBootCompletedReceiverEnabledSetting(context, false);
+    }
+
+    public static boolean canFinishCurrentStudyDay(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        return dayCounter > 0
+                && !sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                && hasRemainingSamplesForDay(sp, dayCounter);
+    }
+
+    public static boolean finishCurrentStudyDay(Context context) {
+        if (!canFinishCurrentStudyDay(context)) {
+            return false;
+        }
+
+        AlarmRepository repository = AlarmRepository.getInstance(context);
+        try {
+            List<Alarm> alarms = repository.getAll();
+            if (alarms != null) {
+                for (Alarm alarm : alarms) {
+                    TimerHandler.cancelTimer(context, alarm.getId());
+                    if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+                        continue;
+                    }
+
+                    cancelAlarmAtTime(context, alarm.getId());
+                    alarm.setActive(false);
+                    repository.delete(alarm);
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Could not finish current study day: failed to get alarms from database", e);
+            return false;
+        }
+
+        cancelAlarmAtTime(context, Constants.EXTRA_ALARM_ID_EVENING);
+        TimerHandler.cancelTimer(context, Constants.EXTRA_ALARM_ID_EVENING);
+        TimerHandler.finishDay(context);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        int numDays = sp.getInt(Constants.PREF_NUM_DAYS, 0);
+        boolean hasNextDay = dayCounter < numDays;
+        sp.edit()
+                .putInt(Constants.PREF_DAY_COUNTER, dayCounter + 1)
+                .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, hasNextDay)
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
+                .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
+                .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .apply();
+
+        return true;
+    }
+
+    private static boolean hasRemainingSamplesForDay(SharedPreferences sp, int dayCounter) {
+        int totalNumSamples = sp.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (totalNumSamples <= 0) {
+            return false;
+        }
+        if (!sp.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)) {
+            return true;
+        }
+
+        Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        int scannedSamplesForDay = 0;
+        for (String barcode : scannedBarcodes) {
+            if (barcode == null || barcode.length() < 7) {
+                continue;
+            }
+
+            try {
+                int scannedDay = Integer.parseInt(barcode.substring(3, 5));
+                if (scannedDay == dayCounter) {
+                    scannedSamplesForDay++;
+                }
+            } catch (NumberFormatException e) {
+                Log.d(TAG, "Could not parse scanned barcode day from " + barcode);
+            }
+        }
+
+        return scannedSamplesForDay < totalNumSamples;
+    }
+
+    public static boolean isStudyOngoing(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!sp.contains(Constants.PREF_NUM_DAYS)) {
+            return false;
+        }
+
+        int numDays = sp.getInt(Constants.PREF_NUM_DAYS, 0);
+        if (numDays <= 0) {
+            return false;
+        }
+
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        if (dayCounter < numDays) {
+            return true;
+        }
+        if (dayCounter > numDays) {
+            return false;
+        }
+
+        int totalNumSamples = sp.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        if (totalNumSamples <= 0) {
+            return false;
+        }
+
+        Set<String> scannedBarcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        return scannedBarcodes.size() < totalNumSamples * numDays;
+    }
+
+    public static boolean requiresImmediateWakeupSample(String timeDistancesString) {
+        String[] timeDistances = timeDistancesString.split(",");
+        for (String distanceString : timeDistances) {
+            if (distanceString.isEmpty()) {
+                continue;
+            }
+
+            return Integer.parseInt(distanceString) == 0;
+        }
+
+        return false;
+    }
+
+    public static int countMorningSamples(String timeDistancesString) {
+        if (timeDistancesString.isEmpty()) {
+            return 0;
+        }
+
+        int count = requiresImmediateWakeupSample(timeDistancesString) ? 1 : 0;
+        for (String distanceString : timeDistancesString.split(",")) {
+            if (distanceString.isEmpty() || distanceString.equals("0")) {
+                continue;
+            }
+            count++;
+        }
+
+        return count;
+    }
+
     public static void showMessageSalivaAlarmsScheduled(Context context, View anchor) {
         if (anchor == null || context == null)
             return;
 
         String message = context.getString(R.string.saliva_alarms_set);
-        Snackbar.make(anchor, message, Snackbar.LENGTH_LONG).show();
+        CarwatchSnackbar.show(anchor, message, CarwatchSnackbar.LENGTH_LONG);
     }
 
     public static void showAlarmSetMessage(Context context, View snackBarAnchor, DateTime time) {
@@ -139,7 +340,7 @@ public class AlarmHandler {
             return;
 
         String timeDiffString = createTimeDiffString(time);
-        Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), Snackbar.LENGTH_SHORT).show();
+        CarwatchSnackbar.show(snackBarAnchor, context.getString(R.string.alarm_set, timeDiffString), CarwatchSnackbar.LENGTH_SHORT);
     }
 
     public static void scheduleSalivaAlarm(Context context, Alarm alarm, View snackbarAnchor) {
@@ -171,7 +372,7 @@ public class AlarmHandler {
             json.put(Constants.LOGGER_TRANSLATED_TIMESTAMP, Utils.translateTimestamp(alarmTime.getMillis()));
             LoggerUtil.log(Constants.LOGGER_ACTION_TIMER_SET, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log timer set", e);
         }
 
         showAlarmSetMessage(context, snackbarAnchor, alarmTime);
@@ -186,12 +387,7 @@ public class AlarmHandler {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE;
-        }
+        int pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarm.getId(), intent, pendingFlags);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -206,7 +402,7 @@ public class AlarmHandler {
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarm.getId());
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_CANCEL, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log alarm cancel", e);
         }
 
         alarmManager.cancel(pendingIntent);
@@ -230,7 +426,7 @@ public class AlarmHandler {
 
         if (snackBarAnchor != null) {
             // Show snackbar to notify user
-            Snackbar.make(snackBarAnchor, context.getString(R.string.alarm_cancelled), Snackbar.LENGTH_SHORT).show();
+            CarwatchSnackbar.show(snackBarAnchor, context.getString(R.string.alarm_cancelled), CarwatchSnackbar.LENGTH_SHORT);
         }
     }
 
@@ -256,8 +452,7 @@ public class AlarmHandler {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             sp.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL + 1).apply();
         } catch (ExecutionException | InterruptedException e) {
-            Log.d(TAG, "Could not delete yesterdays saliva alarms: failed to get alarms from database");
-            e.printStackTrace();
+            Log.e(TAG, "Could not delete yesterdays saliva alarms: failed to get alarms from database", e);
         }
     }
 
@@ -291,12 +486,15 @@ public class AlarmHandler {
 
         int id = sp.getInt(Constants.PREF_CURRENT_ALARM_ID, 1);
         int salivaId = Constants.EXTRA_SALIVA_ID_INITIAL;
-        if (timeDistancesString.startsWith("0"))
+        if (requiresImmediateWakeupSample(timeDistancesString))
             // if first sample request has no offset, it was already scheduled with the first alarm
             salivaId++;
 
+        DateTime now = DateTime.now();
         for (int i = 0; i < alarmTimes.size(); i++) {
-            Alarm alarm = new Alarm(alarmTimes.get(i), true, isFixed.get(i), id++, salivaId++, false);
+            DateTime alarmTime = alarmTimes.get(i);
+            boolean fixedAlarmAlreadyDue = isFixed.get(i) && alarmTime.isBefore(now);
+            Alarm alarm = new Alarm(alarmTime, !fixedAlarmAlreadyDue, isFixed.get(i), id++, salivaId++, false);
             repo.insert(alarm);
             AlarmHandler.scheduleSalivaAlarm(context, alarm, null);
         }
@@ -307,12 +505,7 @@ public class AlarmHandler {
         // Get PendingIntent to AlarmReceiver Broadcast channel
         Intent intent = new Intent(context, AlarmReceiver.class);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE;
-        }
+        int pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, pendingFlags);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -351,10 +544,7 @@ public class AlarmHandler {
     }
 
     private static int getPendingIntentFlags() {
-        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
-        return pendingFlags;
+        return PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
     }
 
     private static void setBootCompletedReceiverEnabledSetting(Context context, boolean setEnabled) {
@@ -368,14 +558,11 @@ public class AlarmHandler {
         Period timeDiff = new Period(DateTime.now(), nextRingTime);
         String timeDiffString = formatter.print(timeDiff);
 
-        switch (Locale.getDefault().getLanguage()) {
-            case "de":
-                return (timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString);
-            case "fr":
-                return timeDiffString.isEmpty() ? "" : "pour " + timeDiffString;
-            default:
-                return timeDiffString.isEmpty() ? "" : timeDiffString + " from ";
-        }
+        return switch (Locale.getDefault().getLanguage()) {
+            case "de" -> (timeDiffString.isEmpty() ? "jetzt" : "in " + timeDiffString);
+            case "fr" -> timeDiffString.isEmpty() ? "" : "pour " + timeDiffString;
+            default -> timeDiffString.isEmpty() ? "" : timeDiffString + " from ";
+        };
     }
 
     private static void logAlarmSet(Alarm alarm, DateTime nextRing) {
@@ -388,7 +575,7 @@ public class AlarmHandler {
 
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_SET, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log alarm set", e);
         }
     }
 

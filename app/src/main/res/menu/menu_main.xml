@@ -26,6 +26,19 @@
         android:title="@string/menu_show_tutorial" />
 
     <item
+        android:id="@+id/menu_study_information"
+        android:title="@string/menu_study_information" />
+
+    <item
+        android:id="@+id/menu_finish_study_day"
+        android:icon="@drawable/ic_check_circle_24dp"
+        android:title="@string/menu_finish_study_day" />
+
+    <item
+        android:id="@+id/menu_privacy_policy"
+        android:title="@string/app_info_privacy_policy" />
+
+    <item
         android:id="@+id/menu_app_info"
         android:title="@string/menu_app_info" />
 </menu>

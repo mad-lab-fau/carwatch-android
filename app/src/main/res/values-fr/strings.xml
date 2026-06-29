@@ -21,17 +21,39 @@
     <string name="menu_kill">Arrêter les alarmes</string>
     <string name="menu_reregister">Réenregistrer</string>
     <string name="menu_show_tutorial">Afficher le tutoriel</string>
-    <string name="menu_app_info">Informations</string>
+    <string name="menu_study_information">Informations sur l\'étude</string>
+    <string name="menu_finish_study_day">Terminer la journée d\'étude</string>
+    <string name="menu_app_info">Infos appli</string>
+    <string name="content_description_open_fab_menu">Ouvrir le menu</string>
+    <string name="content_description_close_fab_menu">Fermer le menu</string>
+    <string name="content_description_close">Fermer</string>
+    <string name="content_description_app_info">Ouvrir les infos appli</string>
+    <string name="title_reregister_ongoing_study">Étude toujours en cours</string>
+    <string name="message_reregister_ongoing_study">Votre étude est toujours en cours. Voulez-vous vraiment vous réenregistrer avec un nouveau code QR?</string>
+    <string name="title_study_information">Informations sur l\'étude</string>
+    <string name="label_study_section">Étude</string>
+    <string name="label_contact_email">E-mail de contact</string>
+    <string name="label_sampling_plan">Plan d\'échantillonnage</string>
+    <string name="label_interval_samples">Échantillons à intervalle</string>
+    <string name="label_fixed_sample_times">Heures fixes d\'échantillonnage</string>
+    <string name="message_no_fixed_sample_times">Aucune heure fixe d\'échantillonnage configurée.</string>
+    <string name="title_finish_study_day">Terminer la journée d\'étude?</string>
+    <string name="message_finish_study_day">Tous les échantillons restants pour aujourd\'hui seront annulés et la journée d\'étude sera marquée comme terminée.</string>
+    <string name="button_keep_samples">Garder les échantillons</string>
+    <string name="button_finish_day">Terminer la journée</string>
+    <string name="message_study_day_finished">La journée d\'étude a été marquée comme terminée.</string>
 
     <!-- Delete log files -->
-    <string name="hint_clicks_delete_log_files">%1$d clics supplémentaires pour supprimer tous les fichiers journaux.</string>
     <string name="title_delete_log_files">Supprimer les fichiers journaux</string>
     <string name="message_delete_log_files_confirm_dialog">Êtes-vous sûr de vouloir supprimer tous les fichiers journaux existants? Cette action ne peut pas être annulée!</string>
     <string name="message_all_log_files_deleted">Tous les journaux ont été supprimés avec succès.</string>
     <string name="message_not_all_log_files_deleted">Erreur lors de la suppression des journaux. Certains fichiers journaux n\'ont pas pu être supprimés.</string>
+    <string name="message_share_logs_failed">Les journaux n\'ont pas pu être partagés.</string>
 
     <string name="stop">Arrêter</string>
     <string name="open_scanner">Scanner ouvert</string>
+    <string name="content_description_sample_taken">Échantillon prélevé</string>
+    <string name="content_description_sample_status">Statut de l\'échantillon</string>
 
     <string name="title_dashboard">Alarme</string>
     <string name="title_wakeup">Réveil</string>
@@ -51,22 +73,61 @@
 
     <!-- Slide Show Activity -->
     <string name="btn_next">Suivant</string>
+    <string name="btn_back">Retour</string>
     <string name="btn_to_app">Vers l\'application</string>
     <string name="btn_skip_all">Sauter le tutoriel</string>
+    <string name="btn_reregister">Réenregistrer</string>
+    <string name="btn_confirm_continue_tutorial">Confirmer</string>
+    <string name="message_study_details_confirmation">Veuillez confirmer que cette configuration d\'étude correspond aux informations que vous avez reçues avant de continuer le tutoriel.</string>
+    <string name="headline_review_study_setup">Vérifiez la configuration de votre étude</string>
+    <string name="message_study_details_continue_if_correct">Continuez uniquement si ces informations sont correctes. Sinon, recommencez la configuration et scannez le bon code QR de l\'étude.</string>
+    <string name="title_study_configuration">Configuration de l\'étude</string>
+    <string name="title_setup">Configuration</string>
+    <string name="title_tutorial">Tutoriel</string>
+    <string name="label_study_name">Nom de l\'étude</string>
+    <string name="label_participant_id">ID de participant</string>
+    <string name="label_study_days">Jours d\'étude</string>
+    <string name="label_samples_per_day">Échantillons par jour</string>
+    <string name="label_evening_sample">Échantillon du soir</string>
+    <string name="study_detail_row">%1$s: %2$s</string>
     <string name="description_app_icon">L\'icône de l\'application CARWatch</string>
     <string name="headline_welcome">Bienvenue en CARWatch!</string>
+    <string name="message_welcome_participant_intro">CARWatch est destinée aux participants à une étude. Elle vous aide à suivre le calendrier de votre étude en envoyant des rappels et en confirmant les échantillons par scan de code-barres.</string>
+    <string name="message_welcome_invited_only">Utilisez cette application uniquement si vous avez été invité à participer à une étude.</string>
+    <string name="message_welcome_sample_reminders">Vous recevrez des rappels pour les échantillons de salive programmés.</string>
+    <string name="message_welcome_qr_required">Vous avez besoin d\'un code QR d\'étude pour configurer l\'application.</string>
+    <string name="headline_study_participation_notice">Avis de participation à l\'étude</string>
+    <string name="message_study_notice_intro">Cette application est uniquement destinée aux participants déjà inscrits par une équipe d\'étude. Veuillez lire comment CARWatch est utilisé avant de continuer.</string>
+    <string name="title_study_notice_purpose">Objectif</string>
+    <string name="message_study_notice_purpose">CARWatch est un outil utilisé par les équipes d\'étude pour soutenir la collecte planifiée d\'échantillons de salive et la confirmation par code-barres. L\'application elle-même n\'inscrit pas les participants et ne définit pas le protocole de l\'étude.</string>
+    <string name="title_study_notice_participation">Ce que la participation implique</string>
+    <string name="message_study_notice_participation">Si votre équipe d\'étude vous a invité à utiliser CARWatch, l\'application utilisera les notifications pour les alarmes et rappels, la caméra pour scanner les codes QR et codes-barres, et le stockage local pour la progression de l\'étude et les fichiers journaux.</string>
+    <string name="title_study_notice_data_handling">Traitement des données</string>
+    <string name="message_study_notice_data_handling">L\'application peut stocker votre ID de participant, la configuration de l\'étude, les événements de scan de code-barres et les métadonnées de l\'application/de l\'appareil sur cet appareil. Le consentement spécifique à l\'étude, la base légale et le partage des données sont déterminés par l\'institution qui mène votre étude. Les fichiers journaux ne sont partagés que lorsque vous les exportez explicitement.</string>
+    <string name="title_study_notice_questions">Questions ou retrait</string>
+    <string name="message_study_notice_questions">Si vous avez des questions sur la participation à l\'étude, le consentement, la confidentialité, ou si vous souhaitez vous retirer d\'une étude, contactez l\'équipe d\'étude avec les coordonnées fournies par votre organisateur d\'étude.</string>
+    <string name="btn_read_privacy_policy">Lire la politique de confidentialité</string>
+    <string name="message_study_notice_confirmation">Je confirme que je suis autorisé par mon équipe d\'étude à utiliser cette application et que j\'ai reçu les informations d\'étude fournies par cette équipe.</string>
     <string name="headline_permission_request_slide">Déverrouiller les fonctionnalités!</string>
     <string name="message_permission_request">Pour activer toutes les fonctionnalités, notre application nécessite les autorisations suivantes:</string>
+    <string name="symbol_dot" translatable="false">\u2022</string>
     <string name="message_camera_access">Accès à la caméra pour pouvoir scanner les codes-barres des tubes à échantillons</string>
     <string name="message_notification_permission">Envoi de notifications pour vous informer des échantillons à venir</string>
+    <string name="headline_prepare_carwatch">Préparer CARWatch</string>
+    <string name="message_prepare_carwatch_permissions">CARWatch a besoin de quelques autorisations afin de vous rappeler les prélèvements à temps et de confirmer les échantillons en toute sécurité.</string>
+    <string name="label_permission_notifications">Notifications</string>
+    <string name="message_permission_notifications_card">Envoyer des rappels lorsque des échantillons de salive sont programmés.</string>
+    <string name="label_permission_camera">Caméra</string>
+    <string name="message_permission_camera_card">Scanner les codes QR de l\'étude et les codes-barres des tubes d\'échantillons.</string>
+    <string name="label_permission_required">Obligatoire</string>
     <string name="headline_wakeup_screen_tutorial">Commencer la matinée</string>
     <string name="description_wakeup_screen">Vous ne devez utiliser cette fonction que si vous n\'aviez pas réglé de réveil pour le matin ou si vous vous êtes réveillé avant que le réveil ne sonne. En appuyant sur le bouton \"Oui\", les réveils d\'échantillons sont configurés pour le jour suivant.</string>
     <string name="headline_alarm_tutorial">Suivez vos alarmes!</string>
     <string name="description_wakeup_alarm">Vous pouvez programmer une alarme pour le lendemain matin directement à partir de l\'écran du réveil. Il vous suffit de toucher l\'heure affichée et de choisir l\'heure de réveil souhaitée.</string>
     <string name="description_saliva_alarm_overview">Après le réveil, l\'écran fournit également un aperçu des alarmes salivaires passées et à venir, ainsi que de leur état actuel.</string>
-    <string name="description_alarm_symbols_tutorial">Les symboles situés à côté de l\'heure d\'alarme indiquent si un échantillon a déjà été prélevé (coche), s\'il devait l\'être (horloge) ou s\'il est prévu pour plus tard (sablier). Une pression sur l\'icône du scanner ouvre le lecteur de code-barres pour l\'échantillon concerné.</string>
+    <string name="description_alarm_symbols_tutorial">Les symboles situés à côté de l\'heure d\'alarme indiquent si un échantillon a déjà été prélevé {sample_taken_icon}, s\'il devait l\'être {sample_due_icon} ou s\'il est prévu pour plus tard {sample_later_icon}. Une pression sur l\'icône du scanner ouvre le lecteur de code-barres pour l\'échantillon concerné.</string>
     <string name="headline_bedtime_screen_tutorial">Aller au lit</string>
-    <string name="description_bedtime_screen">Ici, vous pouvez commencer la procédure du soir avant d\'aller vous coucher. Cela n\'est nécessaire que si vous devez prendre un échantillon le soir pour l\'étude. Le bouton \"Extinction des lumières!\" active le mode sombre de l\'application.</string>
+    <string name="description_bedtime_screen">Commencez ici la procédure du soir avant d\'aller vous coucher. Le bouton \"Extinction des lumières!\" active le mode sombre et utilise les événements d’attention, comme les déverrouillages, pour mieux estimer le coucher et le réveil.</string>
     <string name="headline_scan_screen_tutorial">Scanner l\'échantillon</string>
     <string name="description_scan_screen">Le lecteur de code-barres s\'ouvre automatiquement lorsque vous devez prélever un échantillon. Il suffit alors de scanner le code-barres qui se trouve sur le tube d\'échantillon.</string>
     <string name="headline_slide_show_end">Début de l\'échantillonnage!</string>
@@ -85,6 +146,12 @@
     <string name="title_barcode_invalid">Code-barres invalide</string>
     <string name="title_qr_code_invalid">Code-QR invalide</string>
     <string name="message_barcode_invalid">Code-barres invalide! Veuillez scanner l\'étiquette de code-barres correcte sur le tube à salive.</string>
+    <string name="title_samples_recorded">Échantillons enregistrés</string>
+    <string name="title_study_finished">Étude terminée</string>
+    <string name="message_samples_recorded_evening_required">Vous avez enregistré tous les échantillons de la journée, mais vous devez encore enregistrer un échantillon du soir ce soir juste avant d\'aller vous coucher.\nVeuillez définir un rappel ci-dessous.\nÀ plus tard!</string>
+    <string name="message_study_finished">C\'était votre dernier échantillon. Merci d\'avoir participé à l\'étude! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
+    <string name="message_study_finished_after_lights_out">L\'étude est terminée. Merci d\'avoir participé! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
+    <string name="message_samples_recorded_day_finished">Vous avez enregistré le dernier échantillon d\'aujourd\'hui.\nÀ demain, et n\'oubliez pas de régler un réveil pour demain.</string>
 
 
     <string name="title_alarm_reminder">Alarme réglée</string>
@@ -92,22 +159,31 @@
     <string name="title_reminder_questionnaire">Rappel</string>
     <string name="message_reminder_questionnaire">N\'oubliez pas de remplir les protocoles de sommeil et de salive entre-temps!</string>
 
-    <string name="title_reminder_sensors">All sensors in place?</string>
-    <string name="message_reminder_sensors">Are all sensors in place?\n\nIf you use the sensor armband: Please remember to wear the sensor throughout your time in bed on your non-dominant hand!\n\nIf you use the ECG chest strap: Please make sure that it fits correctly and you moistened the electrodes before wearing.\n\nIf you use the Sleep analyzer mat: Please make sure it is plugged in, has power supply and is correctly placed under the bed sheets.</string>
+    <string name="title_reminder_sensors">Tous les capteurs sont-ils en place?</string>
+    <string name="message_reminder_sensors">Tous les capteurs sont-ils en place?\n\nSi vous utilisez le bracelet capteur: pensez à porter le capteur pendant toute la durée passée au lit, sur votre main non dominante!\n\nSi vous utilisez la ceinture thoracique ECG: assurez-vous qu\'elle est correctement ajustée et humidifiez les électrodes avant de la porter.\n\nSi vous utilisez le tapis d\'analyse du sommeil: assurez-vous qu\'il est branché, alimenté et correctement placé sous les draps.</string>
 
 
     <string name="wakeup_title">Commencer l\'échantillonnage du matin</string>
     <string name="wakeup_text">Nous allons maintenant procéder aux prélèvements des échantillons de salive du matin</string>
+    <string name="title_overdue_sample_pending">Échantillon en retard en attente</string>
+    <string name="message_overdue_sample_pending">Vous avez encore au moins un échantillon en retard plus tôt aujourd\'hui. Vous allez ensuite être redirigé vers l\'écran du programme, où vous pourrez choisir quel échantillon prendre maintenant.</string>
+    <string name="title_delayed_sample_planned">Échantillon différé prévu</string>
+    <string name="message_delayed_sample_planned">Un échantillon différé est prévu pour votre étude. Vous recevrez un rappel pour prendre cet échantillon dans %1$d minutes.</string>
+    <string name="title_fixed_time_only_wakeup">Plan d\'échantillons fixe</string>
+    <string name="message_fixed_time_only_wakeup">Votre réveil a été enregistré. Cette étude utilise uniquement des heures d\'échantillonnage fixes, aucun échantillon au réveil n\'est donc requis. Votre premier échantillon restant aujourd\'hui est prévu à %1$s.</string>
+    <string name="message_fixed_time_only_wakeup_no_remaining_samples">Votre réveil a été enregistré. Cette étude utilise uniquement des heures d\'échantillonnage fixes, aucun échantillon au réveil n\'est donc requis. Aucun autre échantillon fixe n\'est prévu aujourd\'hui.</string>
     <string name="wakeup_message">Bonjour! Venez-vous de vous réveiller ?</string>
 
 
     <string name="bedtime_title">Débutez votre prélèvement du soir</string>
     <string name="bedtime_text">Nous allons maintenant procéder au prélèvement de l\'échantillon de salive du soir</string>
     <string name="bedtime_message">Bonne soirée! Vous-couchez vous?</string>
+    <string name="message_no_evening_sample_required">Aucun échantillon du soir n\'est requis. Merci et bonne nuit!</string>
 
 
     <string name="set_alarm_message">Veuillez régler l\'heure d\'alarme souhaitée pour demain.</string>
     <string name="saliva_alarms_header">Réveil pour les échantillons de salive</string>
+    <string name="evening_sample_alarm_header">Alarme pour l\'échantillon du soir</string>
     <string name="cancel_saliva_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>
     <string name="open_scanner_before_alarm_message">Cet échantillon est prévu pour plus tard. Êtes-vous sûr de vouloir scanner l\'échantillon maintenant?</string>
 
@@ -118,14 +194,17 @@
     <string name="warning_study_finished">Vous avez déjà terminé l\'étude.</string>
 
     <string name="feedback_thanks">Merci pour vos commentaires!</string>
+    <string name="feedback_wakeup_no">Dites-nous quand vous vous réveillez.</string>
+    <string name="feedback_bedtime_no">Dites-nous quand vous allez vous coucher.</string>
     <string name="good_night">Merci et bonne nuit!</string>
     <string name="good_night_saliva">Veuillez d\'abord prendre votre échantillon de salive du soir! Commencez la procédure en appuyant sur le bouton \'Oui\'.</string>
     <string name="lights_out">Extinction des lumières!</string>
     <string name="lights_on">Lumière allumée!</string>
+    <string name="title_lights_out_tracking_explanation">Suivi de l’attention activé</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch utilise les événements d’attention du téléphone, comme le déverrouillage de l’écran, pour mieux estimer les heures réelles de coucher et de réveil.</string>
 
     <string name="title_share_dialog">Partager les données via…</string>
 
-    <string name="hint_clicks_kill_alarms">%1$d clics supplémentaires pour annuler toutes les alarmes.</string>
 
     <string name="yes">Oui</string>
     <string name="no">Non</string>
@@ -133,8 +212,13 @@
     <string name="app_active">Le service CARWatch est actif</string>
 
     <string name="app_version">Version d\'application:&lt;br> &lt;b>%1$s&lt;/b></string>
+    <string name="app_info_description">CARWatch aide les participants à une étude à collecter des échantillons de salive pour les études sur la réponse d\'éveil du cortisol (CAR). L\'application combine des alarmes de réveil, des rappels programmés et des scans de codes-barres afin que les échantillons soient pris au bon moment et confirmés de manière fiable.</string>
+    <string name="app_info_developer_title">Informations développeur</string>
+    <string name="app_info_developer_details">Portabiles GmbH&lt;br>contact@portabiles.de&lt;br>Henkestr. 91&lt;br>91052 Erlangen&lt;br>Allemagne</string>
+    <string name="app_info_privacy_policy">Politique de confidentialité</string>
     <string name="message_qr_code_invalid">Code QR invalide! Veuillez scanner le code QR figurant dans vos documents d\'étude.</string>
     <string name="title_barcode_already_scanned">Code-barres en double!</string>
     <string name="message_barcode_already_scanned">Ce code-barres a déjà été scanné auparavant. Veuillez vérifier et assurez-vous d\'utiliser une nouvelle salivette.</string>
     <string name="message_barcode_scanned_successfully">Le code-barres a été scanné avec succès!</string>
+    <string name="message_barcode_wrong_sample">Ce code-barres appartient à un autre échantillon. Veuillez scanner le code-barres avec l\'ID %1$s.</string>
 </resources>
