@@ -129,13 +129,25 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         if (!UserPresentService.serviceRunning) {
             UserPresentService.startService(getContext());
         }
-        if (getActivity() != null) {
-            CarwatchSnackbar.show(
-                    getActivity().findViewById(R.id.coordinator),
-                    R.string.message_no_evening_sample_required,
-                    CarwatchSnackbar.LENGTH_LONG
-            );
+        showAttentionTrackingStartedWithoutEveningSampleDialog();
+    }
+
+    private void showAttentionTrackingStartedWithoutEveningSampleDialog() {
+        if (getContext() == null) {
+            return;
         }
+
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_info_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
+
+        new CarwatchDialogBuilder(getContext())
+                .setIcon(icon)
+                .setTitle(R.string.title_attention_tracking_started)
+                .setMessage(R.string.message_attention_tracking_started_no_evening_sample)
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     private void showBedtimeDialog() {

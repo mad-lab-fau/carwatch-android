@@ -71,8 +71,8 @@
     <string name="good_night_saliva">Bitte nehmen Sie zuerst Ihre Abendsalivette!\nStarten Sie das Prozedere, indem Sie den \'Ja\'-Knopf drücken.</string>
     <string name="lights_out">Licht aus!</string>
     <string name="lights_on">Licht an!</string>
-    <string name="title_lights_out_tracking_explanation">Aufmerksamkeitserfassung ist aktiv</string>
-    <string name="message_lights_out_tracking_explanation">CARWatch nutzt Aufmerksamkeitsereignisse des Smartphones, z. B. Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen.</string>
+    <string name="title_lights_out_tracking_explanation">Smartphone-Interaktionserfassung ist aktiv</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch nutzt Smartphone-Interaktionsereignisse, z. B. Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen.</string>
 
     <string name="cancel_saliva_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
     <string name="open_scanner_before_alarm_message">Diese Probe ist für später angesetzt. Sind Sie sicher, dass Sie die Probe jetzt scannen wollen?</string>
@@ -113,8 +113,8 @@
     <string name="title_activity_scan">Barcode einscannen</string>
 
     <string name="app_active">CARWatch Service ist aktiv.</string>
-    <string name="attention_tracking_notification_title">CARWatch-Schlafenszeit-Erfassung ist aktiv</string>
-    <string name="attention_tracking_notification_text">Bildschirm-Sperr- und Entsperrereignisse werden protokolliert, um die tatsächliche Schlafens- und Aufwachzeit abzuschätzen.</string>
+    <string name="attention_tracking_notification_title">Smartphone-Interaktionserfassung ist aktiv</string>
+    <string name="attention_tracking_notification_text">Nur Bildschirm-Sperren/Entsperren wird protokolliert. Keine Bildschirminhalte oder App-Namen.</string>
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
     <string name="title_samples_recorded">Proben erfasst</string>
@@ -123,8 +123,9 @@
     <string name="message_study_finished">Dies war Ihre letzte Probe. Vielen Dank für Ihre Teilnahme an der Studie! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
     <string name="message_study_finished_after_lights_out">Die Studie ist abgeschlossen. Vielen Dank für Ihre Teilnahme! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
     <string name="message_samples_recorded_day_finished">Sie haben die letzte Probe für heute erfasst.\nWenn Sie ins Bett gehen, öffnen Sie bitte den Bettzeit-Bildschirm und protokollieren Sie Ihre Schlafenszeit. Bis morgen, und vergessen Sie nicht, einen Weckalarm für morgen einzustellen.</string>
-    <string name="title_attention_tracking_started">Aufmerksamkeitserfassung ist aktiv</string>
-    <string name="message_attention_tracking_started">Ihre Abendprobe wurde erfolgreich erfasst. CARWatch protokolliert jetzt Aufmerksamkeitsereignisse des Smartphones, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
+    <string name="title_attention_tracking_started">Smartphone-Interaktionserfassung ist aktiv</string>
+    <string name="message_attention_tracking_started">Ihre Abendprobe wurde erfolgreich erfasst. CARWatch protokolliert jetzt Smartphone-Interaktionsereignisse, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Es werden keine Bildschirminhalte und keine verwendeten Apps erfasst. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
+    <string name="message_attention_tracking_started_no_evening_sample">CARWatch protokolliert jetzt Smartphone-Interaktionsereignisse, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Es werden keine Bildschirminhalte und keine verwendeten Apps erfasst. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
@@ -189,7 +190,7 @@
     <string name="description_saliva_alarm_overview">Nachdem Sie aufgewacht sind, werden in der Übersicht alle Zeiten angezeigt, zu denen eine Probe genommen werden muss.</string>
     <string name="description_alarm_symbols_tutorial">Die Symbole neben den Zeiten zeigen an, ob die Probe bereits genommen wurde {sample_taken_icon}, schon anstand {sample_due_icon} oder später ansteht {sample_later_icon}. Wenn Sie auf das Scanner Symbol drücken, öffnet sich der Barcode Scanner für die jeweilige Probe.</string>
     <string name="headline_bedtime_screen_tutorial">Zu Bett gehen</string>
-    <string name="description_bedtime_screen">Wenn Sie ins Bett gehen, öffnen Sie diesen Bildschirm und tippen Sie auf \"Ja\". Falls erforderlich, startet dies die Abendprobenahme. Außerdem wird die Schlafenszeit erfasst und die Aufmerksamkeitserfassung gestartet, um Schlafens- und Aufwachzeit abzuschätzen. Sie endet, sobald Ihr Aufwachen erfasst wurde.</string>
+    <string name="description_bedtime_screen">Wenn Sie ins Bett gehen, öffnen Sie diesen Bildschirm und tippen Sie auf \"Ja\". Falls erforderlich, startet dies die Abendprobenahme. Außerdem wird die Schlafenszeit erfasst und die Smartphone-Interaktionserfassung gestartet, um Schlafens- und Aufwachzeit abzuschätzen. Sie endet, sobald Ihr Aufwachen erfasst wurde.</string>
     <string name="headline_scan_screen_tutorial">Die Probe scannen</string>
     <string name="description_scan_screen">Der Barcodescanner öffnet sich automatisch, wenn Sie eine Probe nehmen müssen. Scannen Sie dann einfach den Barcode, welcher sich auf dem Probenröhrchen befindet.</string>
     <string name="headline_slide_show_end">Probenahme starten!</string>
