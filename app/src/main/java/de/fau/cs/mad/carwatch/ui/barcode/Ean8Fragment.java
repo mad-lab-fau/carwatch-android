@@ -301,7 +301,7 @@ public class Ean8Fragment extends BarcodeFragment {
         }
 
         boolean allSamplesForDayRecorded = hasEveningSample
-                ? scannedRegularSamplesToday >= regularSamplesPerDay && (scannedEveningSamplesToday > 0 || currentScanIsEveningSample)
+                ? scannedRegularSamplesToday >= regularSamplesPerDay && scannedEveningSamplesToday > 0
                 : scannedRegularSamplesToday >= regularSamplesPerDay;
 
         if (!allSamplesForDayRecorded) {
