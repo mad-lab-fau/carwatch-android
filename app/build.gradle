@@ -31,8 +31,8 @@ android {
         minSdk = 23
         targetSdk = 36
 
-        def versionMajor = 2
-        def versionMinor = 5
+        def versionMajor = 3
+        def versionMinor = 0
         def versionPatch = 0
         versionName "${versionMajor}.${versionMinor}.${versionPatch}" + "_" + getGitDate() + "-" + getGitHash()
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
@@ -70,7 +70,7 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version" // or kapt for Kotlin
 
     // Lifecycle (ViewModel, LiveData, etc.)
-    def lifecycle_version = "2.10.0"
+    def lifecycle_version = "2.11.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
