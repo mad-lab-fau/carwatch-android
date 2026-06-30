@@ -159,6 +159,11 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
                 .setPositiveButton(R.string.ok, (dialog, which) -> workflowModel.workflowState.setValue(WorkflowState.DETECTING)).show();
     }
 
+    @Override
+    protected int getDetectingPromptStringRes() {
+        return R.string.prompt_point_at_a_qr_code;
+    }
+
     private void setStudyData(QrCodeParser parser) {
         String salivaDistances = parser.getSalivaDistances();
         String salivaTimes = parser.getSalivaTimes();

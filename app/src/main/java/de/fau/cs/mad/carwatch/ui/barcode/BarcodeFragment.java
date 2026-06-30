@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -37,7 +39,6 @@ import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.Workf
 public abstract class BarcodeFragment extends Fragment implements View.OnClickListener, Observer<Barcode> {
 
     private static final String TAG = BarcodeFragment.class.getSimpleName();
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
 
     protected CameraSource cameraSource;
     protected CameraSourcePreview preview;
@@ -47,6 +48,14 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
 
     protected WorkflowModel workflowModel;
     protected WorkflowState currentWorkflowState;
+
+    private final ActivityResultLauncher<String> cameraPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (Boolean.TRUE.equals(isGranted) && workflowModel != null) {
+                    currentWorkflowState = WorkflowState.NOT_STARTED;
+                    workflowModel.workflowState.setValue(WorkflowState.DETECTING);
+                }
+            });
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -98,7 +107,7 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
     private void startCameraPreview() {
         if (!workflowModel.isCameraLive() && cameraSource != null) {
             if (!hasCameraPermission()) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
                 return;
             }
 
@@ -124,19 +133,6 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
         return getContext() != null
                 && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode != REQUEST_CAMERA_PERMISSION) {
-            return;
-        }
-
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            currentWorkflowState = WorkflowState.NOT_STARTED;
-            workflowModel.workflowState.setValue(WorkflowState.DETECTING);
-        }
     }
 
     private void stopCameraPreview() {
@@ -166,7 +162,7 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
                     switch (workflowState) {
                         case DETECTING:
                             promptChip.setVisibility(View.VISIBLE);
-                            promptChip.setText(R.string.prompt_point_at_a_barcode);
+                            promptChip.setText(getDetectingPromptStringRes());
                             startCameraPreview();
                             break;
                         case SEARCHING:
@@ -195,5 +191,9 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
 
 
     protected abstract void showInvalidBarcodeDialog();
+
+    protected int getDetectingPromptStringRes() {
+        return R.string.prompt_point_at_a_barcode;
+    }
 
 }

@@ -80,6 +80,7 @@ public final class Constants {
     public static final String END_OF_DAY_ALERT_EVENING_REQUIRED = "evening_required";
     public static final String END_OF_DAY_ALERT_STUDY_FINISHED = "study_finished";
     public static final String END_OF_DAY_ALERT_DAY_FINISHED = "day_finished";
+    public static final String END_OF_DAY_ALERT_EVENING_SAMPLE_RECORDED = "evening_sample_recorded";
     public static final int EXTRA_ALARM_ID_INITIAL = 0;
     public static final int EXTRA_TIMER_ID_INITIAL = 0;
     public static final int EXTRA_SALIVA_ID_INITIAL = 0;
@@ -105,7 +106,7 @@ public final class Constants {
     public static final String LOGGER_ACTION_ALARM_RING = "alarm_ring";
     public static final String LOGGER_ACTION_ALARM_STOP = "alarm_stop";
     public static final String LOGGER_ACTION_ALARM_KILLALL = "alarm_killall";
-    public static final String LOGGER_ACTION_EVENING_SALIVETTE = "evening_salivette";
+    public static final String LOGGER_ACTION_EVENING_SALIVETTE = "bedtime";
     public static final String LOGGER_ACTION_BARCODE_SCAN_INIT = "barcode_scan_init";
     public static final String LOGGER_ACTION_BARCODE_SCANNED = "barcode_scanned";
     public static final String LOGGER_ACTION_INVALID_BARCODE_SCANNED = "invalid_barcode_scanned";

@@ -226,14 +226,11 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
                 true
         );
 
-        boolean eveningSampleRequired = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
         tutorialSlides.add(wakeupScreenTutorial);
         tutorialSlides.add(wakeUpAlarmTutorial);
         tutorialSlides.add(salivaAlarmsTutorial);
         tutorialSlides.add(alarmSymbolsTutorial);
-        if (eveningSampleRequired) {
-            tutorialSlides.add(bedtimeScreenTutorial);
-        }
+        tutorialSlides.add(bedtimeScreenTutorial);
         tutorialSlides.add(scanScreenTutorial);
 
         return tutorialSlides;

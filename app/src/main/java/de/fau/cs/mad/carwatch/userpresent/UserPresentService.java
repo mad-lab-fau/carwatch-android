@@ -82,7 +82,7 @@ public class UserPresentService extends Service {
 
     public static void startService(Context context) {
         Intent serviceIntent = new Intent(context, UserPresentService.class);
-        context.startService(serviceIntent);
+        ContextCompat.startForegroundService(context, serviceIntent);
     }
 
     public static void stopService(Context context) {
@@ -94,19 +94,14 @@ public class UserPresentService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, pendingFlags);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_bedtime_24dp)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.app_active))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.app_active)))
+                .setContentTitle(getString(R.string.attention_tracking_notification_title))
+                .setContentText(getString(R.string.attention_tracking_notification_text))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.attention_tracking_notification_text)))
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 .setColorized(false)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

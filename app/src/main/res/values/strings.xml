@@ -135,7 +135,7 @@
     <string name="description_saliva_alarm_overview">After you woke up, the screen also provides an overview of past and upcoming saliva alarms and their current state.</string>
     <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken {sample_taken_icon}, was already due {sample_due_icon} or is scheduled for later {sample_later_icon}. Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
     <string name="headline_bedtime_screen_tutorial">Report going to bed</string>
-    <string name="description_bedtime_screen">Start the evening procedure here before going to bed. The \"Lights out!\" button activates dark mode and uses attention events, such as screen unlocks, to help estimate bedtime and wakeup times.</string>
+    <string name="description_bedtime_screen">When you go to bed, open this screen and tap \"Yes\". If required, this starts evening sampling. It also records bedtime and starts phone interaction logging to estimate your true bedtime and wakeup time. Logging stops when wakeup is recorded.</string>
     <string name="headline_scan_screen_tutorial">Scan your sample</string>
     <string name="description_scan_screen">The barcode scanner opens automatically when you have to take a sample. After sampling, simply scan the barcode on the sample tube so that the sample can later be linked to the time of sampling.</string>
     <string name="headline_slide_show_end">Start sampling!</string>
@@ -143,6 +143,7 @@
 
     <!-- Barcode Scanner -->
     <string name="prompt_point_at_a_barcode">Please point your camera at a barcode</string>
+    <string name="prompt_point_at_a_qr_code">Please point your camera at the study QR code</string>
     <string name="prompt_scanning">Scanning&#8230;</string>
     <string name="prompt_barcode_scan_successful">Barcode scan successful!</string>
     <string name="text_barcode_scan_successful">Value: %1$s</string>
@@ -154,7 +155,10 @@
     <string name="message_samples_recorded_evening_required">You\'ve recorded all samples for the day, but you are still required to record an evening sample tonight right before you go to bed.\nPlease set a reminder below.\nSee you later!</string>
     <string name="message_study_finished">This was your last sample. Thank you for participating in the study! Please export your logs and send them to your study contact email.</string>
     <string name="message_study_finished_after_lights_out">The study is finished. Thank you for participating! Please export your logs and send them to your study contact email.</string>
-    <string name="message_samples_recorded_day_finished">You\'ve recorded the last sample for today.\nSee you tomorrow, and don\'t forget to set a wakeup alarm for tomorrow.</string>
+    <string name="message_samples_recorded_day_finished">You\'ve recorded the last sample for today.\nWhen you go to bed, please open the Bedtime screen and log your bedtime. See you tomorrow, and don\'t forget to set a wakeup alarm for tomorrow.</string>
+    <string name="title_attention_tracking_started">Phone interaction tracking is on</string>
+    <string name="message_attention_tracking_started">Your bedtime sample was recorded successfully. CARWatch will now log phone interaction events, such as screen locking and unlocking, to help estimate your true bedtime and wakeup time. No screen content or app names are recorded. This logging stops automatically when your wakeup is recorded.</string>
+    <string name="message_attention_tracking_started_no_evening_sample">CARWatch will now log phone interaction events, such as screen locking and unlocking, to help estimate your true bedtime and wakeup time. No screen content or app names are recorded. This logging stops automatically when your wakeup is recorded.</string>
 
     <!-- Reminder Dialogs -->
     <string name="title_alarm_reminder">Alarm Set</string>
@@ -203,8 +207,8 @@
     <string name="good_night_saliva">Please take your evening saliva sample first!\nStart the procedure by pressing the \'Yes\' Button.</string>
     <string name="lights_out">Lights out!</string>
     <string name="lights_on">Lights on!</string>
-    <string name="title_lights_out_tracking_explanation">Attention tracking is on</string>
-    <string name="message_lights_out_tracking_explanation">CARWatch uses phone attention events, like screen unlocks, to help estimate real bedtime and wakeup times.</string>
+    <string name="title_lights_out_tracking_explanation">Phone interaction tracking is on</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch uses phone interaction events, like screen unlocks, to help estimate your true bedtime and wakeup time.</string>
 
     <string name="title_share_dialog">Share Logs via…</string>
 
@@ -214,6 +218,8 @@
     <string name="no">No</string>
 
     <string name="app_active">CARWatch Service is active.</string>
+    <string name="attention_tracking_notification_title">Phone interaction tracking is active</string>
+    <string name="attention_tracking_notification_text">Logging screen lock/unlock only. No screen content or app names are recorded.</string>
 
     <string name="app_version">App Version:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info_description">CARWatch helps study participants collect saliva samples for Cortisol Awakening Response (CAR) studies. It combines wakeup alarms, scheduled reminders, and barcode scans so samples are taken at the intended times and can be confirmed reliably.</string>
