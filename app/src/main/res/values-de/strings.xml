@@ -11,6 +11,7 @@
     <string name="message_participant_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
     <string name="prompt_point_at_a_barcode">Bitte richten Sie Ihre Kamera auf einen Barcode</string>
+    <string name="prompt_point_at_a_qr_code">Bitte richten Sie Ihre Kamera auf den Studien-QR-Code</string>
     <string name="prompt_scanning">Scan läuft&#8230;</string>
     <string name="prompt_barcode_scan_successful">Barcode erfolgreich gescannt!</string>
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
@@ -71,7 +72,7 @@
     <string name="lights_out">Licht aus!</string>
     <string name="lights_on">Licht an!</string>
     <string name="title_lights_out_tracking_explanation">Aufmerksamkeitserfassung ist aktiv</string>
-    <string name="message_lights_out_tracking_explanation">CARWatch nutzt Aufmerksamkeitsereignisse des Smartphones, z. B. Entsperren des Bildschirms, um tatsächliche Schlafens- und Aufwachzeiten besser zu erkennen.</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch nutzt Aufmerksamkeitsereignisse des Smartphones, z. B. Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen.</string>
 
     <string name="cancel_saliva_alarm_message">Dieser Alarm wird für die Studie benötigt. Sind Sie sich sicher, dass Sie den Alarm deaktivieren wollen?</string>
     <string name="open_scanner_before_alarm_message">Diese Probe ist für später angesetzt. Sind Sie sicher, dass Sie die Probe jetzt scannen wollen?</string>
@@ -112,6 +113,8 @@
     <string name="title_activity_scan">Barcode einscannen</string>
 
     <string name="app_active">CARWatch Service ist aktiv.</string>
+    <string name="attention_tracking_notification_title">CARWatch-Schlafenszeit-Erfassung ist aktiv</string>
+    <string name="attention_tracking_notification_text">Bildschirm-Sperr- und Entsperrereignisse werden protokolliert, um die tatsächliche Schlafens- und Aufwachzeit abzuschätzen.</string>
     <string name="title_barcode_invalid">Ungültiger Barcode</string>
     <string name="message_barcode_invalid">Ungültiger Barcode! Bitte scannen Sie das Barcode-Etikett auf der Salivette.</string>
     <string name="title_samples_recorded">Proben erfasst</string>
@@ -120,6 +123,8 @@
     <string name="message_study_finished">Dies war Ihre letzte Probe. Vielen Dank für Ihre Teilnahme an der Studie! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
     <string name="message_study_finished_after_lights_out">Die Studie ist abgeschlossen. Vielen Dank für Ihre Teilnahme! Bitte exportieren Sie Ihre Logs und senden Sie sie an die Kontakt-E-Mail der Studie.</string>
     <string name="message_samples_recorded_day_finished">Sie haben die letzte Probe für heute erfasst.\nBis morgen, und vergessen Sie nicht, einen Weckalarm für morgen einzustellen.</string>
+    <string name="title_attention_tracking_started">Aufmerksamkeitserfassung ist aktiv</string>
+    <string name="message_attention_tracking_started">Ihre Abendprobe wurde erfolgreich erfasst. CARWatch protokolliert jetzt Aufmerksamkeitsereignisse des Smartphones, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>

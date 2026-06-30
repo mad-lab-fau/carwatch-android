@@ -3,6 +3,7 @@ package de.fau.cs.mad.carwatch.ui.barcode;
 import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeCheckResult;
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -34,6 +35,7 @@ import de.fau.cs.mad.carwatch.barcodedetection.BarcodeProcessor;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
+import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 public class Ean8Fragment extends BarcodeFragment {
@@ -220,12 +222,23 @@ public class Ean8Fragment extends BarcodeFragment {
         TimerHandler.cancelTimer(getContext(), alarmId);
 
         markEveningSampleTakenIfNeeded(sharedPreferences);
+        startAttentionTrackingIfEveningSample(sharedPreferences);
 
         String alertType = getEndOfDayAlertType(sharedPreferences);
         if (Constants.END_OF_DAY_ALERT_DAY_FINISHED.equals(alertType)
                 || Constants.END_OF_DAY_ALERT_STUDY_FINISHED.equals(alertType)) {
             TimerHandler.finishDay(getContext());
         }
+    }
+
+    private void startAttentionTrackingIfEveningSample(SharedPreferences sharedPreferences) {
+        int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        boolean isEveningSample = alarmId == Constants.EXTRA_ALARM_ID_EVENING || salivaId == eveningSampleId;
+        if (!isEveningSample || UserPresentService.serviceRunning || getContext() == null) {
+            return;
+        }
+
+        UserPresentService.startService(getContext());
     }
 
     private void markEveningSampleTakenIfNeeded(SharedPreferences sharedPreferences) {
@@ -268,6 +281,11 @@ public class Ean8Fragment extends BarcodeFragment {
         int dayId = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 1);
         boolean hasEveningSample = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
         int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        boolean currentScanIsEveningSample = alarmId == Constants.EXTRA_ALARM_ID_EVENING || salivaId == eveningSampleId;
+        if (currentScanIsEveningSample) {
+            return Constants.END_OF_DAY_ALERT_EVENING_SAMPLE_RECORDED;
+        }
+
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
         int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
         int regularSamplesPerDay = hasEveningSample ? totalNumSamples - 1 : totalNumSamples;
@@ -277,7 +295,6 @@ public class Ean8Fragment extends BarcodeFragment {
         int scannedEveningSamplesToday = shouldEnforceExpectedBarcodeId(sharedPreferences)
                 ? countScannedSamplesForDay(sharedPreferences, dayId, eveningSampleId, true)
                 : countRecordedEveningSamples(sharedPreferences);
-        boolean currentScanIsEveningSample = alarmId == Constants.EXTRA_ALARM_ID_EVENING || salivaId == eveningSampleId;
 
         if (hasEveningSample && scannedRegularSamplesToday >= regularSamplesPerDay && scannedEveningSamplesToday == 0) {
             return Constants.END_OF_DAY_ALERT_EVENING_REQUIRED;
@@ -457,6 +474,7 @@ public class Ean8Fragment extends BarcodeFragment {
         if (endOfDayAlertType != null) {
             intent.putExtra(Constants.EXTRA_END_OF_DAY_ALERT_TYPE, endOfDayAlertType);
         }
+        getActivity().setResult(Activity.RESULT_OK);
         startActivity(intent);
         getActivity().finish();
     }

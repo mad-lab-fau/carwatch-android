@@ -166,7 +166,7 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
                     switch (workflowState) {
                         case DETECTING:
                             promptChip.setVisibility(View.VISIBLE);
-                            promptChip.setText(R.string.prompt_point_at_a_barcode);
+                            promptChip.setText(getDetectingPromptStringRes());
                             startCameraPreview();
                             break;
                         case SEARCHING:
@@ -195,5 +195,9 @@ public abstract class BarcodeFragment extends Fragment implements View.OnClickLi
 
 
     protected abstract void showInvalidBarcodeDialog();
+
+    protected int getDetectingPromptStringRes() {
+        return R.string.prompt_point_at_a_barcode;
+    }
 
 }

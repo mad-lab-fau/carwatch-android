@@ -14,6 +14,7 @@
 
     <string name="title_activity_settings">Paramètres</string>
     <string name="title_activity_scan">Scannez le code-barres</string>
+    <string name="prompt_point_at_a_qr_code">Veuillez diriger votre caméra vers le code QR de l’étude</string>
 
     <!-- Menu -->
     <string name="menu_share">Partager les données…</string>
@@ -152,6 +153,8 @@
     <string name="message_study_finished">C\'était votre dernier échantillon. Merci d\'avoir participé à l\'étude! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
     <string name="message_study_finished_after_lights_out">L\'étude est terminée. Merci d\'avoir participé! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
     <string name="message_samples_recorded_day_finished">Vous avez enregistré le dernier échantillon d\'aujourd\'hui.\nÀ demain, et n\'oubliez pas de régler un réveil pour demain.</string>
+    <string name="title_attention_tracking_started">Le suivi de l’attention est actif</string>
+    <string name="message_attention_tracking_started">Votre échantillon du soir a bien été enregistré. CARWatch va maintenant consigner les événements d’attention du téléphone, comme le verrouillage et le déverrouillage de l’écran, afin de mieux estimer vos heures réelles de coucher et de réveil. Cette consignation s’arrête automatiquement lorsque votre réveil est enregistré.</string>
 
 
     <string name="title_alarm_reminder">Alarme réglée</string>
@@ -201,7 +204,7 @@
     <string name="lights_out">Extinction des lumières!</string>
     <string name="lights_on">Lumière allumée!</string>
     <string name="title_lights_out_tracking_explanation">Suivi de l’attention activé</string>
-    <string name="message_lights_out_tracking_explanation">CARWatch utilise les événements d’attention du téléphone, comme le déverrouillage de l’écran, pour mieux estimer les heures réelles de coucher et de réveil.</string>
+    <string name="message_lights_out_tracking_explanation">CARWatch utilise les événements d’attention du téléphone, comme le déverrouillage de l’écran, pour mieux estimer vos heures réelles de coucher et de réveil.</string>
 
     <string name="title_share_dialog">Partager les données via…</string>
 
@@ -210,6 +213,8 @@
     <string name="no">Non</string>
 
     <string name="app_active">Le service CARWatch est actif</string>
+    <string name="attention_tracking_notification_title">Le suivi du coucher CARWatch est actif</string>
+    <string name="attention_tracking_notification_text">Consignation des verrouillages et déverrouillages de l’écran pour estimer les heures réelles de coucher et de réveil.</string>
 
     <string name="app_version">Version d\'application:&lt;br> &lt;b>%1$s&lt;/b></string>
     <string name="app_info_description">CARWatch aide les participants à une étude à collecter des échantillons de salive pour les études sur la réponse d\'éveil du cortisol (CAR). L\'application combine des alarmes de réveil, des rappels programmés et des scans de codes-barres afin que les échantillons soient pris au bon moment et confirmés de manière fiable.</string>

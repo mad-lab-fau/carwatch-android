@@ -80,6 +80,7 @@ public final class Constants {
     public static final String END_OF_DAY_ALERT_EVENING_REQUIRED = "evening_required";
     public static final String END_OF_DAY_ALERT_STUDY_FINISHED = "study_finished";
     public static final String END_OF_DAY_ALERT_DAY_FINISHED = "day_finished";
+    public static final String END_OF_DAY_ALERT_EVENING_SAMPLE_RECORDED = "evening_sample_recorded";
     public static final int EXTRA_ALARM_ID_INITIAL = 0;
     public static final int EXTRA_TIMER_ID_INITIAL = 0;
     public static final int EXTRA_SALIVA_ID_INITIAL = 0;

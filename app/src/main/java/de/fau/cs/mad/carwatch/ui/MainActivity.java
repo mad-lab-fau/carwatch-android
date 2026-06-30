@@ -397,6 +397,10 @@ public class MainActivity extends AppCompatActivity {
                 titleId = R.string.title_study_finished;
                 yield R.string.message_study_finished;
             }
+            case Constants.END_OF_DAY_ALERT_EVENING_SAMPLE_RECORDED -> {
+                titleId = R.string.title_attention_tracking_started;
+                yield R.string.message_attention_tracking_started;
+            }
             default -> {
                 titleId = R.string.title_samples_recorded;
                 yield R.string.message_samples_recorded_day_finished;
