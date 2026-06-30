@@ -33,7 +33,7 @@ android {
 
         def versionMajor = 3
         def versionMinor = 0
-        def versionPatch = 0
+        def versionPatch = 1
         versionName "${versionMajor}.${versionMinor}.${versionPatch}" + "_" + getGitDate() + "-" + getGitHash()
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
     }
