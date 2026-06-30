@@ -135,7 +135,7 @@
     <string name="description_saliva_alarm_overview">After you woke up, the screen also provides an overview of past and upcoming saliva alarms and their current state.</string>
     <string name="description_alarm_symbols_tutorial">The symbols next to the alarm time show whether a sample has been taken {sample_taken_icon}, was already due {sample_due_icon} or is scheduled for later {sample_later_icon}. Pressing the scanner icon opens the barcode scanner for the respective sample.</string>
     <string name="headline_bedtime_screen_tutorial">Report going to bed</string>
-    <string name="description_bedtime_screen">Start the evening procedure here before going to bed. The \"Lights out!\" button activates dark mode and uses attention events, such as screen unlocks, to help estimate bedtime and wakeup times.</string>
+    <string name="description_bedtime_screen">When you go to bed, open this screen and tap \"Yes\". If required, this starts evening sampling. It also records bedtime and starts attention logging to estimate your true bedtime and wakeup time. Logging stops when wakeup is recorded.</string>
     <string name="headline_scan_screen_tutorial">Scan your sample</string>
     <string name="description_scan_screen">The barcode scanner opens automatically when you have to take a sample. After sampling, simply scan the barcode on the sample tube so that the sample can later be linked to the time of sampling.</string>
     <string name="headline_slide_show_end">Start sampling!</string>
@@ -155,7 +155,7 @@
     <string name="message_samples_recorded_evening_required">You\'ve recorded all samples for the day, but you are still required to record an evening sample tonight right before you go to bed.\nPlease set a reminder below.\nSee you later!</string>
     <string name="message_study_finished">This was your last sample. Thank you for participating in the study! Please export your logs and send them to your study contact email.</string>
     <string name="message_study_finished_after_lights_out">The study is finished. Thank you for participating! Please export your logs and send them to your study contact email.</string>
-    <string name="message_samples_recorded_day_finished">You\'ve recorded the last sample for today.\nSee you tomorrow, and don\'t forget to set a wakeup alarm for tomorrow.</string>
+    <string name="message_samples_recorded_day_finished">You\'ve recorded the last sample for today.\nWhen you go to bed, please open the Bedtime screen and log your bedtime. See you tomorrow, and don\'t forget to set a wakeup alarm for tomorrow.</string>
     <string name="title_attention_tracking_started">Attention tracking is on</string>
     <string name="message_attention_tracking_started">Your bedtime sample was recorded successfully. CARWatch will now log phone attention events, such as screen locking and unlocking, to help estimate your true bedtime and wakeup time. This logging stops automatically when your wakeup is recorded.</string>
 

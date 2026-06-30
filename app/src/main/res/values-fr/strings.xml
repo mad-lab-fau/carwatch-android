@@ -128,7 +128,7 @@
     <string name="description_saliva_alarm_overview">Après le réveil, l\'écran fournit également un aperçu des alarmes salivaires passées et à venir, ainsi que de leur état actuel.</string>
     <string name="description_alarm_symbols_tutorial">Les symboles situés à côté de l\'heure d\'alarme indiquent si un échantillon a déjà été prélevé {sample_taken_icon}, s\'il devait l\'être {sample_due_icon} ou s\'il est prévu pour plus tard {sample_later_icon}. Une pression sur l\'icône du scanner ouvre le lecteur de code-barres pour l\'échantillon concerné.</string>
     <string name="headline_bedtime_screen_tutorial">Aller au lit</string>
-    <string name="description_bedtime_screen">Commencez ici la procédure du soir avant d\'aller vous coucher. Le bouton \"Extinction des lumières!\" active le mode sombre et utilise les événements d’attention, comme les déverrouillages, pour mieux estimer le coucher et le réveil.</string>
+    <string name="description_bedtime_screen">Lorsque vous allez vous coucher, ouvrez cet écran et appuyez sur \"Oui\". Si nécessaire, cela démarre l’échantillonnage du soir. Cela enregistre aussi le coucher et lance le suivi de l’attention pour estimer le coucher et le réveil. Le suivi s’arrête lorsque votre réveil est enregistré.</string>
     <string name="headline_scan_screen_tutorial">Scanner l\'échantillon</string>
     <string name="description_scan_screen">Le lecteur de code-barres s\'ouvre automatiquement lorsque vous devez prélever un échantillon. Il suffit alors de scanner le code-barres qui se trouve sur le tube d\'échantillon.</string>
     <string name="headline_slide_show_end">Début de l\'échantillonnage!</string>
@@ -152,7 +152,7 @@
     <string name="message_samples_recorded_evening_required">Vous avez enregistré tous les échantillons de la journée, mais vous devez encore enregistrer un échantillon du soir ce soir juste avant d\'aller vous coucher.\nVeuillez définir un rappel ci-dessous.\nÀ plus tard!</string>
     <string name="message_study_finished">C\'était votre dernier échantillon. Merci d\'avoir participé à l\'étude! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
     <string name="message_study_finished_after_lights_out">L\'étude est terminée. Merci d\'avoir participé! Veuillez exporter vos journaux et les envoyer à l\'adresse e-mail de contact de votre étude.</string>
-    <string name="message_samples_recorded_day_finished">Vous avez enregistré le dernier échantillon d\'aujourd\'hui.\nÀ demain, et n\'oubliez pas de régler un réveil pour demain.</string>
+    <string name="message_samples_recorded_day_finished">Vous avez enregistré le dernier échantillon d\'aujourd\'hui.\nLorsque vous allez vous coucher, veuillez ouvrir l\'écran Heure du coucher et consigner votre heure de coucher. À demain, et n\'oubliez pas de régler un réveil pour demain.</string>
     <string name="title_attention_tracking_started">Le suivi de l’attention est actif</string>
     <string name="message_attention_tracking_started">Votre échantillon du soir a bien été enregistré. CARWatch va maintenant consigner les événements d’attention du téléphone, comme le verrouillage et le déverrouillage de l’écran, afin de mieux estimer vos heures réelles de coucher et de réveil. Cette consignation s’arrête automatiquement lorsque votre réveil est enregistré.</string>
 
