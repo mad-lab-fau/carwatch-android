@@ -1,8 +1,8 @@
 package de.fau.cs.mad.carwatch.ui;
 
 import android.content.Context;
+import android.graphics.text.LineBreaker;
 import android.os.Build;
-import android.text.Layout;
 import android.view.View;
 import android.widget.TextView;
 
@@ -40,8 +40,8 @@ public class CarwatchDialogBuilder extends MaterialAlertDialogBuilder {
         }
 
         messageView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            messageView.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            messageView.setJustificationMode(LineBreaker.JUSTIFICATION_MODE_INTER_WORD);
         }
     }
 }
