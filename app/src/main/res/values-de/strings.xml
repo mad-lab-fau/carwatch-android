@@ -7,6 +7,7 @@
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
     <string name="saliva_alarms_set">Die Probenwecker wurden gestellt.</string>
     <string name="cancel">Abbrechen</string>
+    <string name="continue_action">Fortfahren</string>
     <string name="participant_id">Probanden-ID</string>
     <string name="message_participant_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
@@ -79,6 +80,7 @@
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
     <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>
+    <string name="warning_unfinished_samples">Für heute sind noch nicht alle Speichelproben abgeschlossen.</string>
     <string name="warning_study_finished">Sie haben die Studie bereits abgeschlossen.</string>
 
     <string name="wakeup_title">Den Morgen beginnen</string>

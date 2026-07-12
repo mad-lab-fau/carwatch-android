@@ -29,12 +29,21 @@ import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.TimerHandler;
+import de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker;
+import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
+import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
@@ -88,12 +97,12 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
 
             DateTime date = new DateTime(sp.getLong(Constants.PREF_EVENING_TAKEN, 0));
-            if (!hasEveningSalivette) {
-                completeBedtimeWithoutEveningSample();
-            } else if (date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
+            if (hasEveningSalivette && date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
                 showBedtimeWarningDialog();
+            } else if (hasUnfinishedRegularSamples(sp, hasEveningSalivette)) {
+                showUnfinishedSamplesWarningDialog(hasEveningSalivette);
             } else {
-                showBedtimeDialog();
+                proceedWithBedtime(hasEveningSalivette);
             }
 
         } else if (viewId == R.id.button_toggle_night_mode) {
@@ -108,6 +117,101 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
             delegate.applyDayNight();
             LoggerUtil.log(enableDarkMode ? Constants.LOGGER_ACTION_LIGHTS_OUT : Constants.LOGGER_ACTION_LIGHTS_ON, new JSONObject());
         }
+    }
+
+    private void proceedWithBedtime(boolean hasEveningSalivette) {
+        if (hasEveningSalivette) {
+            showBedtimeDialog();
+        } else {
+            completeBedtimeWithoutEveningSample();
+        }
+    }
+
+    private boolean hasUnfinishedRegularSamples(SharedPreferences sp, boolean hasEveningSalivette) {
+        int totalSamples = sp.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
+        int expectedRegularSamples = hasEveningSalivette ? totalSamples - 1 : totalSamples;
+        if (expectedRegularSamples <= 0) {
+            return false;
+        }
+
+        int recordedRegularSamples = sp.getBoolean(Constants.PREF_CHECK_DUPLICATES, false)
+                ? countScannedRegularSamples(sp)
+                : countRecordedRegularSamples(sp);
+        return recordedRegularSamples < expectedRegularSamples;
+    }
+
+    private int countScannedRegularSamples(SharedPreferences sp) {
+        int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 1);
+        int eveningSampleId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        int startSampleIndex = getStartSampleIndex(sp);
+        Set<String> barcodes = sp.getStringSet(Constants.PREF_SCANNED_BARCODES, Collections.emptySet());
+        int count = 0;
+
+        for (String barcode : barcodes) {
+            BarcodeChecker.ParsedBarcode parsedBarcode = BarcodeChecker.parseBarcodeValue(barcode);
+            if (parsedBarcode != null
+                    && parsedBarcode.getDayId() == dayId
+                    && parsedBarcode.getSalivaId() - startSampleIndex != eveningSampleId) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private int countRecordedRegularSamples(SharedPreferences sp) {
+        int eveningSampleId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        try {
+            List<Alarm> alarms = AlarmRepository.getInstance(requireContext()).getAll();
+            int count = 0;
+            for (Alarm alarm : alarms) {
+                if (alarm.wasSampleTaken()
+                        && alarm.getId() != Constants.EXTRA_ALARM_ID_EVENING
+                        && alarm.getSalivaId() != eveningSampleId
+                        && alarm.getSalivaId() != Constants.EXTRA_SALIVA_ID_MANUAL) {
+                    count++;
+                }
+            }
+            return count;
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(BedtimeFragment.class.getSimpleName(), "Could not count recorded samples", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            return 0;
+        }
+    }
+
+    private int getStartSampleIndex(SharedPreferences sp) {
+        String startSample = sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE);
+        try {
+            return Integer.parseInt(startSample.substring(1));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return 0;
+        }
+    }
+
+    private void showUnfinishedSamplesWarningDialog(boolean hasEveningSalivette) {
+        if (getContext() == null) {
+            return;
+        }
+
+        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_warning_24dp);
+        if (icon != null) {
+            icon.setTint(ContextCompat.getColor(requireContext(), R.color.colorPrimary));
+        }
+
+        new CarwatchDialogBuilder(getContext())
+                .setTitle(R.string.warning_title)
+                .setCancelable(false)
+                .setIcon(icon)
+                .setMessage(R.string.warning_unfinished_samples)
+                .setPositiveButton(R.string.continue_action, (dialog, which) -> proceedWithBedtime(hasEveningSalivette))
+                .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                    if (getActivity() instanceof MainActivity) {
+                        ((MainActivity) getActivity()).navigate(R.id.navigation_alarm);
+                    }
+                })
+                .show();
     }
 
     private void handleBarcodeScannerResult(int resultCode) {

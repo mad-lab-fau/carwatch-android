@@ -5,6 +5,7 @@
     <string name="ok">D\'accord</string>
 
     <string name="cancel">Annuler</string>
+    <string name="continue_action">Continuer</string>
     <string name="alarm_notification_text">Alarme!</string>
     <string name="timer_notification_text">Veuillez faire l\'échantillon de salive #%1$d.</string>
     <string name="timer_notification_text_evening">Veuillez faire l\'échantillon de salive du soir!</string>
@@ -196,6 +197,7 @@
     <string name="warning_title">Avertissement</string>
     <string name="warning_already_taken_wakeup">Vous avez déjà complété tous les échantillons de salive du matin</string>
     <string name="warning_already_taken_bedtime">Vous avez déjà complété votre échantillon de salive du soir</string>
+    <string name="warning_unfinished_samples">Il reste encore des échantillons de salive à terminer aujourd’hui.</string>
     <string name="warning_already_report_wakeup">Vous avez déjà enregistré l\'heure de réveil!</string>
     <string name="warning_study_finished">Vous avez déjà terminé l\'étude.</string>
 
