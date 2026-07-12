@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import com.google.android.material.button.MaterialButton;
 import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
+import de.fau.cs.mad.carwatch.ui.CarwatchSnackbar;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
@@ -76,12 +77,24 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
         demoButton.setIconResource(R.drawable.ic_school_24dp);
         demoButton.setOnClickListener(view -> {
             demoButton.setEnabled(false);
-            DemoStudyLoader.load(requireActivity(), () -> {
-                Intent intent = new Intent(requireContext(), MainActivity.class);
-                intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_alarm);
-                startActivity(intent);
-                requireActivity().finish();
-            });
+            DemoStudyLoader.load(
+                    requireActivity(),
+                    () -> {
+                        Intent intent = new Intent(requireContext(), MainActivity.class);
+                        intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_alarm);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    },
+                    () -> {
+                        if (!isAdded()) {
+                            return;
+                        }
+                        demoButton.setEnabled(true);
+                        CarwatchSnackbar.show(
+                                demoButton,
+                                R.string.message_demo_study_load_failed,
+                                CarwatchSnackbar.LENGTH_SHORT);
+                    });
         });
 
         ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(

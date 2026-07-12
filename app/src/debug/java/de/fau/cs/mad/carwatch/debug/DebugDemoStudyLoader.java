@@ -2,6 +2,7 @@ package de.fau.cs.mad.carwatch.debug;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.collection.ArraySet;
 import androidx.preference.PreferenceManager;
@@ -19,9 +20,11 @@ import de.fau.cs.mad.carwatch.db.AlarmDatabase;
 /** Creates a deterministic in-progress study for manual layout testing in debug builds. */
 @SuppressWarnings("unused") // Loaded reflectively by DemoStudyLoader in debug builds.
 public final class DebugDemoStudyLoader {
+    private static final String TAG = DebugDemoStudyLoader.class.getSimpleName();
+
     private DebugDemoStudyLoader() {}
 
-    public static void load(Activity activity, Runnable onLoaded) {
+    public static void load(Activity activity, Runnable onLoaded, Runnable onError) {
         DateTime todayAtEight = LocalTime.parse("08:00").toDateTimeToday();
         DateTime nextWakeup = todayAtEight.isAfterNow() ? todayAtEight : todayAtEight.plusDays(1);
 
@@ -58,24 +61,29 @@ public final class DebugDemoStudyLoader {
                 .apply();
 
         Thread databaseThread = new Thread(() -> {
-            AlarmDao dao = AlarmDatabase.getInstance(activity.getApplicationContext()).alarmModel();
-            List<Alarm> existingAlarms = dao.getAll();
-            for (Alarm existingAlarm : existingAlarms) {
-                dao.delete(existingAlarm);
+            try {
+                AlarmDao dao = AlarmDatabase.getInstance(activity.getApplicationContext()).alarmModel();
+                List<Alarm> existingAlarms = dao.getAll();
+                for (Alarm existingAlarm : existingAlarms) {
+                    dao.delete(existingAlarm);
+                }
+
+                dao.insertOrReplaceAlarm(new Alarm(
+                        nextWakeup, true, false, Constants.EXTRA_ALARM_ID_INITIAL,
+                        Constants.EXTRA_SALIVA_ID_INITIAL, true));
+                dao.insertOrReplaceAlarm(new Alarm(
+                        todayAtEight.plusMinutes(15), true, false, 1, 1, false));
+                dao.insertOrReplaceAlarm(new Alarm(
+                        todayAtEight.plusMinutes(30), true, false, 2, 2, false));
+                dao.insertOrReplaceAlarm(new Alarm(
+                        LocalTime.parse("21:00").toDateTimeToday(), true, true,
+                        Constants.EXTRA_ALARM_ID_EVENING, 3, false));
+
+                activity.runOnUiThread(onLoaded);
+            } catch (RuntimeException e) {
+                Log.e(TAG, "Could not create demo study", e);
+                activity.runOnUiThread(onError);
             }
-
-            dao.insertOrReplaceAlarm(new Alarm(
-                    nextWakeup, true, false, Constants.EXTRA_ALARM_ID_INITIAL,
-                    Constants.EXTRA_SALIVA_ID_INITIAL, true));
-            dao.insertOrReplaceAlarm(new Alarm(
-                    todayAtEight.plusMinutes(15), true, false, 1, 1, false));
-            dao.insertOrReplaceAlarm(new Alarm(
-                    todayAtEight.plusMinutes(30), true, false, 2, 2, false));
-            dao.insertOrReplaceAlarm(new Alarm(
-                    LocalTime.parse("21:00").toDateTimeToday(), true, true,
-                    Constants.EXTRA_ALARM_ID_EVENING, 3, false));
-
-            activity.runOnUiThread(onLoaded);
         }, "demo-study-loader");
         databaseThread.start();
     }

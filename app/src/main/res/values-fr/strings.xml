@@ -187,6 +187,7 @@
 
     <string name="set_alarm_message">Veuillez régler l\'heure d\'alarme souhaitée pour demain.</string>
     <string name="menu_load_demo_study">Charger l’étude démo</string>
+    <string name="message_demo_study_load_failed">Impossible de charger l’étude démo. Veuillez réessayer.</string>
     <string name="saliva_alarms_header">Réveil pour les échantillons de salive</string>
     <string name="evening_sample_alarm_header">Alarme pour l\'échantillon du soir</string>
     <string name="cancel_saliva_alarm_message">Cette alarme est nécessaire pour l\'étude. Êtes-vous sûr de vouloir désactiver l\'alarme?</string>

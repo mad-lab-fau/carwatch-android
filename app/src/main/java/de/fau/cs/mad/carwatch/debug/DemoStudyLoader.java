@@ -19,18 +19,20 @@ public final class DemoStudyLoader {
         return BuildConfig.DEBUG;
     }
 
-    public static void load(Activity activity, Runnable onLoaded) {
+    public static void load(Activity activity, Runnable onLoaded, Runnable onError) {
         if (!BuildConfig.DEBUG) {
+            onError.run();
             return;
         }
 
         try {
             Class.forName(DEBUG_LOADER_CLASS)
-                    .getMethod("load", Activity.class, Runnable.class)
-                    .invoke(null, activity, onLoaded);
+                    .getMethod("load", Activity.class, Runnable.class, Runnable.class)
+                    .invoke(null, activity, onLoaded, onError);
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
                  | InvocationTargetException e) {
             Log.e(TAG, "Could not load debug demo study", e);
+            onError.run();
         }
     }
 }

@@ -516,12 +516,22 @@ public class MainActivity extends AppCompatActivity {
         setFabMenuAction(R.id.fab_menu_finish_study_day, R.id.menu_finish_study_day);
         demoStudyButton.setOnClickListener(view -> {
             closeFabMenu();
-            DemoStudyLoader.load(this, () -> {
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_alarm);
-                startActivity(intent);
-                finish();
-            });
+            demoStudyButton.setEnabled(false);
+            DemoStudyLoader.load(
+                    this,
+                    () -> {
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_alarm);
+                        startActivity(intent);
+                        finish();
+                    },
+                    () -> {
+                        demoStudyButton.setEnabled(true);
+                        CarwatchSnackbar.show(
+                                coordinatorLayout,
+                                R.string.message_demo_study_load_failed,
+                                CarwatchSnackbar.LENGTH_SHORT);
+                    });
         });
         setFabMenuAction(R.id.fab_menu_privacy_policy, R.id.menu_privacy_policy);
         setFabMenuAction(R.id.fab_menu_app_info, R.id.menu_app_info);

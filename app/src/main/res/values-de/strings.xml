@@ -204,6 +204,7 @@
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
     <string name="menu_load_demo_study">Demo-Studie laden</string>
+    <string name="message_demo_study_load_failed">Die Demo-Studie konnte nicht geladen werden. Bitte versuchen Sie es erneut.</string>
     <string name="saliva_alarms_header">Wecker für Speichelproben</string>
     <string name="evening_sample_alarm_header">Wecker für Abendprobe</string>
     <string name="title_qr_code_invalid">Ungültiger QR-Code</string>

@@ -406,12 +406,16 @@ public class AlarmFragment extends Fragment {
 
             float maxTextSizePx = TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_SP, 45, getResources().getDisplayMetrics());
+            float minTextSizePx = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_SP, 20, getResources().getDisplayMetrics());
             timeTextView.getPaint().setTextSize(maxTextSizePx);
             float measuredWidth = timeTextView.getPaint().measureText(timeTextView.getText().toString());
             float fittedSizePx = measuredWidth > availableWidth
                     ? maxTextSizePx * availableWidth / measuredWidth
                     : maxTextSizePx;
-            timeTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.max(fittedSizePx - 1f, 12f));
+            timeTextView.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    Math.max(fittedSizePx - 1f, minTextSizePx));
         });
     }
 
