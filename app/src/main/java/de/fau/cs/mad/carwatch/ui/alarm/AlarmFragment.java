@@ -400,7 +400,7 @@ public class AlarmFragment extends Fragment {
             int availableWidth = timeTextView.getWidth()
                     - timeTextView.getCompoundPaddingLeft()
                     - timeTextView.getCompoundPaddingRight();
-            if (availableWidth <= 0 || timeTextView.getText().length() == 0) {
+            if (availableWidth <= 0 || timeTextView.length() == 0) {
                 return;
             }
 
