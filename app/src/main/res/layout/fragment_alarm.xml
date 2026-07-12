@@ -88,20 +88,22 @@
                             android:gravity="center_vertical"
                             android:minHeight="88dp"
                             android:orientation="horizontal"
-                            android:paddingStart="18dp"
-                            android:paddingEnd="18dp">
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp">
 
                             <com.google.android.material.switchmaterial.SwitchMaterial
                                 android:id="@+id/alarm_active_switch"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="16dp" />
+                                android:layout_marginEnd="6dp" />
 
                             <TextView
                                 android:id="@+id/alarm_time_text"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:maxLines="1"
+                                android:singleLine="true"
                                 android:textAlignment="viewEnd"
                                 android:textAppearance="@style/TextAppearance.Carwatch.DisplayTime"
                                 android:textColor="?attr/colorOnSurface" />

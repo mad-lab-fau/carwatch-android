@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -349,7 +350,7 @@ public class AlarmFragment extends Fragment {
     private void setAlarmView() {
         final Context context = getContext();
 
-        timeTextView.setText(alarm.getStringTime());
+        setWakeupAlarmTimeText();
         activeSwitch.setChecked(alarm.isActive());
         setAlarmColor(alarm.isActive());
 
@@ -374,7 +375,7 @@ public class AlarmFragment extends Fragment {
             TimePickerDialog timePicker = new TimePickerDialog(context, (timePicker1, selectedHour, selectedMinute) -> {
                 LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
                 alarm.setTime(selectedTime.toDateTimeToday());
-                timeTextView.setText(alarm.getStringTime());
+                setWakeupAlarmTimeText();
                 alarm.setActive(true);
                 setInitialSalivaId();
                 scheduleAlarm(context);
@@ -391,6 +392,27 @@ public class AlarmFragment extends Fragment {
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
         boolean requestSaliva = AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
         alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
+    }
+
+    private void setWakeupAlarmTimeText() {
+        timeTextView.setText(alarm.getStringTime());
+        timeTextView.post(() -> {
+            int availableWidth = timeTextView.getWidth()
+                    - timeTextView.getCompoundPaddingLeft()
+                    - timeTextView.getCompoundPaddingRight();
+            if (availableWidth <= 0 || timeTextView.getText().length() == 0) {
+                return;
+            }
+
+            float maxTextSizePx = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_SP, 45, getResources().getDisplayMetrics());
+            timeTextView.getPaint().setTextSize(maxTextSizePx);
+            float measuredWidth = timeTextView.getPaint().measureText(timeTextView.getText().toString());
+            float fittedSizePx = measuredWidth > availableWidth
+                    ? maxTextSizePx * availableWidth / measuredWidth
+                    : maxTextSizePx;
+            timeTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.max(fittedSizePx - 1f, 12f));
+        });
     }
 
     private void setAlarmColor(boolean isActive) {
@@ -421,7 +443,7 @@ public class AlarmFragment extends Fragment {
         alarm.setTime(time);
         setInitialSalivaId();
         alarmViewModel.insert(alarm);
-        timeTextView.setText(alarm.getStringTime());
+        setWakeupAlarmTimeText();
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
     }
 

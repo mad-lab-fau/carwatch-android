@@ -265,10 +265,17 @@ public class SlideShowActivity extends AppCompatActivity implements QrFragment.S
         boolean isStudyDetailsSlide = slide instanceof StudyDetailsSlide;
         boolean isWelcomeSlide = slide instanceof WelcomeText;
         boolean isStudyParticipationNotice = slide instanceof StudyParticipationNotice;
+        boolean isPermissionRequest = slide instanceof PermissionRequest;
         boolean hideHeader = isStudyDetailsSlide
-                || isStudyParticipationNotice;
+                || isStudyParticipationNotice
+                || isPermissionRequest;
         header.setVisibility(hideHeader ? View.GONE : View.VISIBLE);
-        int topMargin = isStudyDetailsSlide ? 0 : dpToPx((isWelcomeSlide || isStudyParticipationNotice) ? 72 : 112);
+        int topMargin = (isStudyDetailsSlide
+                || isPermissionRequest
+                || isWelcomeSlide
+                || isStudyParticipationNotice)
+                ? 0
+                : dpToPx(112);
         setSlideContentTopMargin(topMargin);
         headerTitle.setVisibility(isWelcomeSlide ? View.INVISIBLE : View.VISIBLE);
         if (isStudyDetailsSlide) {

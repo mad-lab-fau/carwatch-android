@@ -4,10 +4,14 @@ import static de.fau.cs.mad.carwatch.barcodedetection.BarcodeChecker.BarcodeChec
 import static de.fau.cs.mad.carwatch.barcodedetection.camera.WorkflowModel.WorkflowState;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.mlkit.vision.barcode.common.Barcode;
 
@@ -18,9 +22,11 @@ import androidx.collection.ArraySet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import com.google.android.material.button.MaterialButton;
 import de.fau.cs.mad.carwatch.ui.CarwatchDialogBuilder;
 import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
@@ -32,6 +38,8 @@ import de.fau.cs.mad.carwatch.barcodedetection.QrCodeParser;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.onboarding.steps.WelcomeSlide;
 import de.fau.cs.mad.carwatch.logger.MetadataLogger;
+import de.fau.cs.mad.carwatch.debug.DemoStudyLoader;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 
 
 public class QrFragment extends BarcodeFragment implements WelcomeSlide {
@@ -52,6 +60,39 @@ public class QrFragment extends BarcodeFragment implements WelcomeSlide {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        View root = super.onCreateView(inflater, container, savedInstanceState);
+        if (!DemoStudyLoader.isAvailable() || !(root instanceof ConstraintLayout rootLayout)) {
+            return root;
+        }
+
+        MaterialButton demoButton = new MaterialButton(requireContext());
+        demoButton.setId(View.generateViewId());
+        demoButton.setText(R.string.menu_load_demo_study);
+        demoButton.setIconResource(R.drawable.ic_school_24dp);
+        demoButton.setOnClickListener(view -> {
+            demoButton.setEnabled(false);
+            DemoStudyLoader.load(requireActivity(), () -> {
+                Intent intent = new Intent(requireContext(), MainActivity.class);
+                intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_alarm);
+                startActivity(intent);
+                requireActivity().finish();
+            });
+        });
+
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+        params.bottomMargin = getResources().getDimensionPixelSize(R.dimen.demo_study_button_bottom_margin);
+        rootLayout.addView(demoButton, params);
+        return root;
     }
 
     @Override
