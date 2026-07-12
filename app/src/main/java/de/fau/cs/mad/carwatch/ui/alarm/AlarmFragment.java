@@ -201,9 +201,12 @@ public class AlarmFragment extends Fragment {
                         : R.dimen.primary_screen_bottom_padding));
 
         if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams params) {
-            params.height = getResources().getDimensionPixelSize(hasDisplayedAlarms
-                    ? R.dimen.alarm_primary_card_list_height
-                    : R.dimen.primary_card_height);
+            // The prompt can wrap to an additional line on narrow screens or with a larger
+            // font. A fixed compact height clips the time row in that case, leaving no visible
+            // way to set the next wake-up alarm while sample alarms are displayed.
+            params.height = hasDisplayedAlarms
+                    ? ViewGroup.LayoutParams.WRAP_CONTENT
+                    : getResources().getDimensionPixelSize(R.dimen.primary_card_height);
             params.bottomMargin = getResources().getDimensionPixelSize(hasDisplayedAlarms
                     ? R.dimen.alarm_primary_card_list_margin_bottom
                     : R.dimen.alarm_primary_card_margin_bottom);
@@ -359,8 +362,9 @@ public class AlarmFragment extends Fragment {
             updateAlarm();
         });
 
-        // define behavior on time update
-        timeTextView.setOnClickListener(view -> {
+        // Define behavior on time update. Keep both the time and its containing row actionable so
+        // the alarm can always be changed, even when the compact layout is used.
+        View.OnClickListener showTimePicker = view -> {
             DateTime time;
             if (alarm.getTime() == null) {
                 time = DateTime.now();
@@ -377,7 +381,10 @@ public class AlarmFragment extends Fragment {
                 updateAlarm();
             }, time.getHourOfDay(), time.getMinuteOfHour(), true);
             timePicker.show();
-        });
+        };
+        timeTextView.setOnClickListener(showTimePicker);
+        alarmPrimaryTimeRow.setOnClickListener(showTimePicker);
+        alarmPrimaryCard.setOnClickListener(showTimePicker);
     }
 
     private void setInitialSalivaId() {
