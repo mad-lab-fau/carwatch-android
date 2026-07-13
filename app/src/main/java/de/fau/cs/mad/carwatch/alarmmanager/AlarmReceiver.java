@@ -106,6 +106,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
+    @SuppressLint("FullScreenIntent")
     private Notification buildNotification(Context context, Alarm alarm) {
         PendingIntent stopIntent = createStopAlarmIntent(context, alarm);
 

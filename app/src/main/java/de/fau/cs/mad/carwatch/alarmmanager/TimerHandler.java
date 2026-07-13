@@ -147,6 +147,7 @@ public class TimerHandler {
         return builder.build();
     }
 
+    @SuppressLint("FullScreenIntent")
     public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         // Full screen Intent
