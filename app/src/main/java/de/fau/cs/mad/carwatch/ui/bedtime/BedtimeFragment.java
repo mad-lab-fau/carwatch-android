@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -99,10 +100,8 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
             DateTime date = new DateTime(sp.getLong(Constants.PREF_EVENING_TAKEN, 0));
             if (hasEveningSalivette && date.equals(LocalTime.MIDNIGHT.toDateTimeToday())) {
                 showBedtimeWarningDialog();
-            } else if (hasUnfinishedRegularSamples(sp, hasEveningSalivette)) {
-                showUnfinishedSamplesWarningDialog(hasEveningSalivette);
             } else {
-                proceedWithBedtime(hasEveningSalivette);
+                checkUnfinishedRegularSamplesAndProceed(sp, hasEveningSalivette);
             }
 
         } else if (viewId == R.id.button_toggle_night_mode) {
@@ -140,6 +139,28 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
         return recordedRegularSamples < expectedRegularSamples;
     }
 
+    private void checkUnfinishedRegularSamplesAndProceed(SharedPreferences sp, boolean hasEveningSalivette) {
+        AsyncTask.execute(() -> {
+            boolean hasUnfinishedRegularSamples = hasUnfinishedRegularSamples(sp, hasEveningSalivette);
+            Activity activity = getActivity();
+            if (activity == null) {
+                return;
+            }
+
+            activity.runOnUiThread(() -> {
+                if (!isAdded()) {
+                    return;
+                }
+
+                if (hasUnfinishedRegularSamples) {
+                    showUnfinishedSamplesWarningDialog(hasEveningSalivette);
+                } else {
+                    proceedWithBedtime(hasEveningSalivette);
+                }
+            });
+        });
+    }
+
     private int countScannedRegularSamples(SharedPreferences sp) {
         int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 1);
         int eveningSampleId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
@@ -160,8 +181,12 @@ public class BedtimeFragment extends Fragment implements View.OnClickListener {
 
     private int countRecordedRegularSamples(SharedPreferences sp) {
         int eveningSampleId = sp.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
+        if (getContext() == null) {
+            return 0;
+        }
+
         try {
-            List<Alarm> alarms = AlarmRepository.getInstance(requireContext()).getAll();
+            List<Alarm> alarms = AlarmRepository.getInstance(getContext()).getAll();
             int count = 0;
             for (Alarm alarm : alarms) {
                 if (alarm.wasSampleTaken()
