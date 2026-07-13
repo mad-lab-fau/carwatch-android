@@ -30,7 +30,6 @@
     <dimen name="alarm_primary_time_row_list_min_height">64dp</dimen>
     <dimen name="tutorial_text_block_height">150dp</dimen>
     <dimen name="tutorial_text_margin_bottom">120dp</dimen>
-    <dimen name="slide_navigation_height">88dp</dimen>
     <dimen name="slide_navigation_margin_horizontal">16dp</dimen>
     <dimen name="slide_navigation_margin_bottom">24dp</dimen>
     <dimen name="slide_navigation_content_margin">7dp</dimen>

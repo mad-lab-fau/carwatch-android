@@ -77,6 +77,7 @@ public final class Constants {
     public static final String EXTRA_TARGET_NAV_ELEMENT = "extra_target_nav_element";
     public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
     public static final String EXTRA_END_OF_DAY_ALERT_TYPE = "extra_end_of_day_alert_type";
+    public static final String EXTRA_OPENED_FROM_ALARM_NOTIFICATION = "extra_opened_from_alarm_notification";
     public static final String EXTRA_CONFIRM_WAKEUP_FOR_SAMPLE = "extra_confirm_wakeup_for_sample";
     public static final String EXTRA_SAMPLE_AFTER_WAKEUP_ALARM_ID = "extra_sample_after_wakeup_alarm_id";
     public static final String EXTRA_SAMPLE_AFTER_WAKEUP_SALIVA_ID = "extra_sample_after_wakeup_saliva_id";

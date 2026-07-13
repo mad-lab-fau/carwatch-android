@@ -52,6 +52,7 @@
     <!-- Notification -->
     <string name="stop">Stop</string>
     <string name="open_scanner">Open scanner</string>
+    <string name="open_app">Open app</string>
     <string name="content_description_sample_taken">Sample taken</string>
     <string name="content_description_sample_status">Sample status</string>
 

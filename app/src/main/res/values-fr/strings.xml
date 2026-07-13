@@ -54,6 +54,7 @@
 
     <string name="stop">Arrêter</string>
     <string name="open_scanner">Scanner ouvert</string>
+    <string name="open_app">Ouvrir l’application</string>
     <string name="content_description_sample_taken">Échantillon prélevé</string>
     <string name="content_description_sample_status">Statut de l\'échantillon</string>
 

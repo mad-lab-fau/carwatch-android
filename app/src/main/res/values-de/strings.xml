@@ -18,6 +18,7 @@
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
     <string name="stop">Stopp</string>
     <string name="open_scanner">Scanner öffnen</string>
+    <string name="open_app">App öffnen</string>
     <string name="content_description_sample_taken">Probe genommen</string>
     <string name="content_description_sample_status">Probenstatus</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d.</string>

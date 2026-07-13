@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        handleAlarmNotificationOpen();
 
         // disable night mode per default
         AppCompatDelegate delegate = getDelegate();
@@ -150,6 +151,37 @@ public class MainActivity extends AppCompatActivity {
             showStudyFinishedAfterLightsOutAlert();
         }
         showEndOfDayAlert();
+    }
+
+    private void handleAlarmNotificationOpen() {
+        Intent intent = getIntent();
+        if (intent == null
+                || !intent.getBooleanExtra(Constants.EXTRA_OPENED_FROM_ALARM_NOTIFICATION, false)) {
+            return;
+        }
+
+        int alarmId = intent.getIntExtra(
+                Constants.EXTRA_ALARM_ID,
+                Constants.EXTRA_ALARM_ID_INITIAL);
+        AlarmSoundControl.getInstance().stopAlarmSound();
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancel(alarmId);
+        }
+        intent.removeExtra(Constants.EXTRA_OPENED_FROM_ALARM_NOTIFICATION);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleAlarmNotificationOpen();
+        if (intent.hasExtra(Constants.EXTRA_TARGET_NAV_ELEMENT)) {
+            navigate(intent.getIntExtra(
+                    Constants.EXTRA_TARGET_NAV_ELEMENT,
+                    R.id.navigation_wakeup));
+        }
     }
 
     @Override

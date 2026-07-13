@@ -26,6 +26,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.ShowAlarmActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
@@ -103,6 +104,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private Notification buildNotification(Context context, Alarm alarm) {
         PendingIntent stopIntent = createStopAlarmIntent(context, alarm);
+        PendingIntent openIntent = createOpenAlarmIntent(context, alarm);
         String notificationText = getNotificationText(context, alarm);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -118,8 +120,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(notificationText)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationText))
-                .setContentIntent(stopIntent)
+                .setContentIntent(openIntent)
                 .setAutoCancel(false)
+                .addAction(R.drawable.ic_alarm_black_24dp, context.getString(R.string.open_app), openIntent)
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent);
 
         Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
@@ -152,6 +155,26 @@ public class AlarmReceiver extends BroadcastReceiver {
         int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
         return context.getString(R.string.timer_notification_text, alarm.getSalivaId() + startSampleIdx);
     }
+
+    private PendingIntent createOpenAlarmIntent(Context context, Alarm alarm) {
+        Intent intent;
+        if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+            intent = new Intent(context, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_wakeup);
+            intent.putExtra(Constants.EXTRA_OPENED_FROM_ALARM_NOTIFICATION, true);
+        } else {
+            intent = new Intent(context, ShowAlarmActivity.class);
+        }
+        intent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
+
+        return PendingIntent.getActivity(
+                context,
+                alarm.getId(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
     private PendingIntent createStopAlarmIntent(Context context, Alarm alarm) {
         Intent stopAlarmIntent = new Intent(context, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());

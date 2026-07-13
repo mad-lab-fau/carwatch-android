@@ -13,6 +13,7 @@ import org.joda.time.LocalTime;
 import java.util.List;
 
 import de.fau.cs.mad.carwatch.Constants;
+import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.db.AlarmDao;
 import de.fau.cs.mad.carwatch.db.AlarmDatabase;
@@ -68,17 +69,26 @@ public final class DebugDemoStudyLoader {
                     dao.delete(existingAlarm);
                 }
 
-                dao.insertOrReplaceAlarm(new Alarm(
+                Alarm wakeupAlarm = new Alarm(
                         nextWakeup, true, false, Constants.EXTRA_ALARM_ID_INITIAL,
-                        Constants.EXTRA_SALIVA_ID_INITIAL, true));
-                dao.insertOrReplaceAlarm(new Alarm(
-                        todayAtEight.plusMinutes(15), true, false, 1, 1, false));
-                dao.insertOrReplaceAlarm(new Alarm(
-                        todayAtEight.plusMinutes(30), true, false, 2, 2, false));
-                dao.insertOrReplaceAlarm(new Alarm(
+                        Constants.EXTRA_SALIVA_ID_INITIAL, true);
+                Alarm firstSampleAlarm = new Alarm(
+                        todayAtEight.plusMinutes(15), true, false, 1, 1, false);
+                Alarm secondSampleAlarm = new Alarm(
+                        todayAtEight.plusMinutes(30), true, false, 2, 2, false);
+                Alarm eveningAlarm = new Alarm(
                         LocalTime.parse("21:00").toDateTimeToday(), true, true,
-                        Constants.EXTRA_ALARM_ID_EVENING, 3, false));
+                        Constants.EXTRA_ALARM_ID_EVENING, 3, false);
 
+                dao.insertOrReplaceAlarm(wakeupAlarm);
+                dao.insertOrReplaceAlarm(firstSampleAlarm);
+                dao.insertOrReplaceAlarm(secondSampleAlarm);
+                dao.insertOrReplaceAlarm(eveningAlarm);
+
+                AlarmHandler.scheduleWakeUpAlarm(activity, wakeupAlarm);
+                scheduleSampleAlarmIfFuture(activity, firstSampleAlarm);
+                scheduleSampleAlarmIfFuture(activity, secondSampleAlarm);
+                scheduleSampleAlarmIfFuture(activity, eveningAlarm);
                 activity.runOnUiThread(onLoaded);
             } catch (RuntimeException e) {
                 Log.e(TAG, "Could not create demo study", e);
@@ -86,5 +96,11 @@ public final class DebugDemoStudyLoader {
             }
         }, "demo-study-loader");
         databaseThread.start();
+    }
+
+    private static void scheduleSampleAlarmIfFuture(Activity activity, Alarm alarm) {
+        if (alarm.getTime().isAfterNow()) {
+            AlarmHandler.scheduleSalivaAlarm(activity, alarm, null);
+        }
     }
 }
