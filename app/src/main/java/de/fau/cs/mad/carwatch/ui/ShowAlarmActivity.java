@@ -50,10 +50,18 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
         try {
             alarm = repository.getAlarmById(alarmId);
+            if (alarm == null) {
+                Log.e(TAG, "No alarm found with id " + alarmId);
+                finish();
+                return;
+            }
             salivaId = alarm.getSalivaId();
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
-            e.printStackTrace();
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            finish();
             return;
         }
 

@@ -20,17 +20,6 @@ import de.fau.cs.mad.carwatch.ui.MainActivity;
  * This class contains the functionalities of the alarm view.
  */
 public class AlarmViewFunctionalities {
-    public static void openScanner(Context context, Alarm alarm) {
-        if (context == null || alarm == null)
-            return;
-
-        if (requiresWakeupConfirmation(context, alarm)) {
-            showWakeupRequiredDialog(context, alarm);
-            return;
-        }
-        doOpenScanner(context, alarm);
-    }
-
     /**
      * Shows confirmation dialog if the alarm is in the future, otherwise opens the barcode scanner.
      *

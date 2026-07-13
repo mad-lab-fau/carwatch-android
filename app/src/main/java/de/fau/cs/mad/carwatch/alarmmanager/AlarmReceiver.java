@@ -62,8 +62,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         try {
             alarm = repository.getAlarmById(alarmId);
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
-            e.printStackTrace();
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             return;
         }
 
@@ -95,8 +97,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             json.put(Constants.LOGGER_EXTRA_SALIVA_ID, alarm.getSalivaId());
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_RING, json);
         } catch (JSONException e) {
-            Log.e(TAG, "Error while creating JSON object for logger for alarm with ID " + alarmId);
-            e.printStackTrace();
+            Log.e(TAG, "Error while creating JSON object for logger for alarm with ID " + alarmId, e);
         }
 
         if (notificationManager != null) {
@@ -111,9 +112,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
         fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
 
-        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
 
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, pendingFlags);
@@ -133,8 +132,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationText(context, alarm)))
                 .setContentIntent(stopIntent)
                 .setAutoCancel(false)
-                .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent)
-                .setFullScreenIntent(fullScreenPendingIntent, true);
+                .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent);
+
+        if (canUseFullScreenIntent(context)) {
+            builder.setFullScreenIntent(fullScreenPendingIntent, true);
+        }
 
         return builder.build();
     }
@@ -164,13 +166,17 @@ public class AlarmReceiver extends BroadcastReceiver {
         stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
         stopAlarmIntent.setAction(Constants.ACTION_STOP_ALARM);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         return PendingIntent.getBroadcast(context, 0, stopAlarmIntent, pendingFlags);
+    }
+
+    private boolean canUseFullScreenIntent(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            return true;
+        }
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        return notificationManager != null && notificationManager.canUseFullScreenIntent();
     }
 
 }

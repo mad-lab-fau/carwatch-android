@@ -44,7 +44,7 @@ public class TimerHandler {
             json.put(Constants.LOGGER_EXTRA_DAY_COUNTER, dayId);
             LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log completion of study day " + dayId, e);
         }
     }
 
@@ -96,12 +96,7 @@ public class TimerHandler {
         // Get PendingIntent to TimerReceiver Broadcast channel
         Intent intent = new Intent(context, TimerReceiver.class);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE;
-        }
+        int pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, timerId, intent, pendingFlags);
 
         if (alarmManager != null && pendingIntent != null) {
@@ -126,12 +121,7 @@ public class TimerHandler {
         contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, pendingFlags);
 
@@ -164,12 +154,7 @@ public class TimerHandler {
         fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, pendingFlags);
 
@@ -195,8 +180,13 @@ public class TimerHandler {
                 .setContentText(contentText)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
-                .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent)
-                .setFullScreenIntent(fullScreenPendingIntent, true);
+                .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent);
+
+        if (canUseFullScreenIntent(context)) {
+            builder.setFullScreenIntent(fullScreenPendingIntent, true);
+        } else {
+            builder.setContentIntent(fullScreenPendingIntent);
+        }
 
         return builder.build();
     }
@@ -207,13 +197,17 @@ public class TimerHandler {
         intent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         return PendingIntent.getBroadcast(context, timerId, intent, pendingFlags);
+    }
+
+    private static boolean canUseFullScreenIntent(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            return true;
+        }
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        return notificationManager != null && notificationManager.canUseFullScreenIntent();
     }
 
 }
