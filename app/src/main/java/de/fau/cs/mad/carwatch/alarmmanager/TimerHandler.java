@@ -13,7 +13,6 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -183,10 +182,16 @@ public class TimerHandler {
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
                 .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent);
 
-        if (NotificationManagerCompat.from(context).canUseFullScreenIntent()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             builder.setFullScreenIntent(fullScreenPendingIntent, true);
         } else {
-            builder.setContentIntent(fullScreenPendingIntent);
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
+                builder.setFullScreenIntent(fullScreenPendingIntent, true);
+            } else {
+                builder.setContentIntent(fullScreenPendingIntent);
+            }
         }
 
         return builder.build();

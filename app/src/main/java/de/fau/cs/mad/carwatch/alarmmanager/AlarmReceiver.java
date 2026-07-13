@@ -10,10 +10,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -134,8 +134,14 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(false)
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent);
 
-        if (NotificationManagerCompat.from(context).canUseFullScreenIntent()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             builder.setFullScreenIntent(fullScreenPendingIntent, true);
+        } else {
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
+                builder.setFullScreenIntent(fullScreenPendingIntent, true);
+            }
         }
 
         return builder.build();
