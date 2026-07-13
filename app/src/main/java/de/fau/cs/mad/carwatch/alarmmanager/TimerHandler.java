@@ -13,6 +13,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -147,7 +148,6 @@ public class TimerHandler {
         return builder.build();
     }
 
-    @SuppressLint("FullScreenIntent")
     public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
         // Full screen Intent
@@ -183,7 +183,7 @@ public class TimerHandler {
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
                 .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent);
 
-        if (canUseFullScreenIntent(context)) {
+        if (NotificationManagerCompat.from(context).canUseFullScreenIntent()) {
             builder.setFullScreenIntent(fullScreenPendingIntent, true);
         } else {
             builder.setContentIntent(fullScreenPendingIntent);
@@ -200,15 +200,6 @@ public class TimerHandler {
 
         int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         return PendingIntent.getBroadcast(context, timerId, intent, pendingFlags);
-    }
-
-    private static boolean canUseFullScreenIntent(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            return true;
-        }
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        return notificationManager != null && notificationManager.canUseFullScreenIntent();
     }
 
 }
