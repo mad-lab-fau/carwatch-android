@@ -11,8 +11,6 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +20,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
 
 /**
@@ -43,39 +42,18 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        DateTime lastWakeUpAlarmRingTime = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
-        DateTime dayCurrentSalivaAlarmsWereScheduled = lastWakeUpAlarmRingTime.withTime(LocalTime.MIDNIGHT);
         int alarmId = intent.getIntExtra(Constants.EXTRA_ALARM_ID, Constants.EXTRA_ALARM_ID_INITIAL);
-        boolean firstAlarmProcessAlreadyFinished = false;
-        boolean dayWasManuallyAdvanced = sharedPreferences.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false);
-        int dayCounter = sharedPreferences.getInt(Constants.PREF_DAY_COUNTER, 0) + (dayWasManuallyAdvanced ? 0 : 1);
-        int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
-        boolean studyIsFinished = dayCounter > numDays;
-        boolean resetWasSampleTaken = false;
-
-        if (dayCurrentSalivaAlarmsWereScheduled.isBefore(LocalTime.MIDNIGHT.toDateTimeToday()) && alarmId == Constants.EXTRA_ALARM_ID_INITIAL && !studyIsFinished) {
-            resetWasSampleTaken = true;
-            AlarmHandler.rescheduleSalivaAlarms(context);
-            sharedPreferences.edit()
-                    .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
-                    .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
-                    .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
-                    .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
-                    .remove(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME)
-                    .apply();
-
-        } else {
-            firstAlarmProcessAlreadyFinished = true;
-        }
 
         AlarmRepository repository = AlarmRepository.getInstance((Application) context.getApplicationContext());
         Alarm alarm;
 
         try {
             alarm = repository.getAlarmById(alarmId);
+            if (alarm == null) {
+                Log.e(TAG, "No alarm found with id " + alarmId);
+                return;
+            }
             alarm.setActive(false);
-            if (resetWasSampleTaken)
-                alarm.setWasSampleTaken(false);
             repository.update(alarm);
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
@@ -84,8 +62,21 @@ public class AlarmStopReceiver extends BroadcastReceiver {
 
         AlarmSource alarmSource = (AlarmSource) intent.getSerializableExtra(Constants.EXTRA_SOURCE);
         if (alarmSource == null) {
-            // this should never happen!
             alarmSource = AlarmSource.SOURCE_UNKNOWN;
+        }
+
+        if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
+            // A wakeup alarm is only an invitation to confirm wakeup. Day rollover and
+            // sample scheduling happen after YES (and, if needed, Continue), never here.
+            if (alarmSource == AlarmSource.SOURCE_ACTIVITY) {
+                setResultCode(Activity.RESULT_CANCELED);
+            } else {
+                Intent wakeupIntent = new Intent(context, MainActivity.class);
+                wakeupIntent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, de.fau.cs.mad.carwatch.R.id.navigation_wakeup);
+                wakeupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(wakeupIntent);
+            }
+            return;
         }
 
         try {
@@ -104,13 +95,6 @@ public class AlarmStopReceiver extends BroadcastReceiver {
         if (alarm.getSalivaId() == -1) {
             // no saliva procedure requested
             Log.d(TAG, "No saliva procedure requested for alarm with id " + alarmId);
-            if (alarmSource == AlarmSource.SOURCE_ACTIVITY)
-                setResultCode(Activity.RESULT_CANCELED);
-            return;
-        }
-
-        if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL && firstAlarmProcessAlreadyFinished) {
-            Log.d(TAG, "First alarm process already finished for alarm with id " + alarmId);
             if (alarmSource == AlarmSource.SOURCE_ACTIVITY)
                 setResultCode(Activity.RESULT_CANCELED);
             return;

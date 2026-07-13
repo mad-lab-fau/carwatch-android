@@ -199,6 +199,12 @@
     <string name="warning_already_taken_bedtime">Vous avez déjà complété votre échantillon de salive du soir</string>
     <string name="warning_unfinished_samples">Il reste encore des échantillons de salive à terminer aujourd’hui.</string>
     <string name="warning_already_report_wakeup">Vous avez déjà enregistré l\'heure de réveil!</string>
+    <string name="title_previous_day_unfinished">Jour précédent non terminé</string>
+    <string name="message_previous_day_unfinished">Il s’agit d’un nouveau jour d’étude. Le jour précédent n’a pas été terminé. Les échantillons restants seront marqués comme manquants.</string>
+    <string name="button_continue">Continuer</string>
+    <string name="title_wakeup_not_recorded">Réveil non enregistré</string>
+    <string name="message_wakeup_not_recorded">Vous n’avez pas encore enregistré votre réveil. Veuillez le faire avant de scanner cet échantillon.</string>
+    <string name="button_record_wakeup_now">Enregistrer le réveil</string>
     <string name="warning_study_finished">Vous avez déjà terminé l\'étude.</string>
 
     <string name="feedback_thanks">Merci pour vos commentaires!</string>

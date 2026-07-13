@@ -106,6 +106,13 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         sendOrderedBroadcast(stopAlarmIntent, null, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
+                    Intent wakeupIntent = new Intent(ShowAlarmActivity.this, MainActivity.class);
+                    wakeupIntent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_wakeup);
+                    startActivity(wakeupIntent);
+                    finish();
+                    return;
+                }
                 if (getResultCode() == Activity.RESULT_CANCELED) {
                     if (checkAlarmOngoing() || salivaId == -1) {
                         finish();

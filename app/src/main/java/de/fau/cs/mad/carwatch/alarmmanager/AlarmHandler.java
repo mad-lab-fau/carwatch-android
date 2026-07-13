@@ -119,6 +119,55 @@ public class AlarmHandler {
     }
 
     /**
+     * Re-arms the wakeup alarm for the calendar day after a wakeup was recorded.
+     * This deliberately touches only the initial alarm: today's saliva alarms keep
+     * their original times when the next wakeup time is created or edited.
+     */
+    public static void scheduleNextDayWakeUpAlarm(@NonNull Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int currentDay = preferences.getInt(Constants.PREF_DAY_COUNTER, 0);
+        int numberOfDays = preferences.getInt(Constants.PREF_NUM_DAYS, 0);
+        if (currentDay <= 0 || currentDay >= numberOfDays) {
+            return;
+        }
+
+        AlarmRepository repository = AlarmRepository.getInstance(context);
+        try {
+            Alarm alarm = repository.getAlarmById(Constants.EXTRA_ALARM_ID_INITIAL);
+            if (alarm == null || alarm.getTime() == null) {
+                return;
+            }
+
+            LocalTime wakeupTime = alarm.getTime().toLocalTime();
+            alarm.setTime(wakeupTime.toDateTimeToday().plusDays(1));
+            alarm.setActive(true);
+            alarm.setWasSampleTaken(false);
+            String distances = preferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
+            alarm.setSalivaId(requiresImmediateWakeupSample(distances)
+                    ? Constants.EXTRA_SALIVA_ID_INITIAL
+                    : -1);
+            repository.updateAndWait(alarm);
+            scheduleWakeUpAlarm(context, alarm);
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "Could not schedule the next-day wakeup alarm", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    public static boolean hasUnfinishedCurrentStudyDay(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        if (sp.getBoolean(Constants.PREF_CURRENT_STUDY_DAY_FINISHED, false)) {
+            return false;
+        }
+        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
+        return dayCounter > 0
+                && !sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                && hasRemainingSamplesForDay(sp, dayCounter);
+    }
+
+    /**
      * deletes and re-schedules all saliva alarms with relative and fixed times except for the wake-up alarm
      *
      * @param context Context to use
@@ -189,11 +238,7 @@ public class AlarmHandler {
     }
 
     public static boolean canFinishCurrentStudyDay(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        int dayCounter = sp.getInt(Constants.PREF_DAY_COUNTER, 0);
-        return dayCounter > 0
-                && !sp.getBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
-                && hasRemainingSamplesForDay(sp, dayCounter);
+        return hasUnfinishedCurrentStudyDay(context);
     }
 
     public static boolean finishCurrentStudyDay(Context context) {
@@ -236,6 +281,7 @@ public class AlarmHandler {
                 .putBoolean(Constants.PREF_TIMER_NOTIFICATION_IS_SHOWN, false)
                 .remove(Constants.PREF_WAKEUP_ALERT_TYPE)
                 .remove(Constants.PREF_WAKEUP_DELAYED_SAMPLE_MINUTES)
+                .putBoolean(Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP, false)
                 .apply();
 
         return true;
@@ -535,6 +581,9 @@ public class AlarmHandler {
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
+        if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+            intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_wakeup);
+        }
 
         return PendingIntent.getActivity(
                 context,

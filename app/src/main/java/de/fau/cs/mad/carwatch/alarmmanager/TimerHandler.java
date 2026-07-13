@@ -34,7 +34,10 @@ public class TimerHandler {
     public static void finishDay(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 1);
-        sp.edit().putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL).apply();
+        sp.edit()
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putBoolean(Constants.PREF_CURRENT_STUDY_DAY_FINISHED, true)
+                .apply();
 
         try {
             JSONObject json = new JSONObject();

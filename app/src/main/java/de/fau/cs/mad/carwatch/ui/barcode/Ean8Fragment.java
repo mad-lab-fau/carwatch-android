@@ -273,8 +273,11 @@ public class Ean8Fragment extends BarcodeFragment {
                 .putLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, DateTime.now().getMillis())
                 .putLong(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME, DateTime.now().getMillis())
                 .putBoolean(Constants.PREF_WAKEUP_SCAN_PENDING, false)
+                .putBoolean(Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP, false)
                 .remove(Constants.PREF_WAKEUP_SCAN_PENDING_TIME)
+                .remove(Constants.PREF_PENDING_WAKEUP_NOTIFICATION_TIME)
                 .commit();
+        AlarmHandler.scheduleNextDayWakeUpAlarm(requireContext());
     }
 
     private String getEndOfDayAlertType(SharedPreferences sharedPreferences) {
@@ -282,10 +285,6 @@ public class Ean8Fragment extends BarcodeFragment {
         boolean hasEveningSample = sharedPreferences.getBoolean(Constants.PREF_HAS_EVENING, false);
         int eveningSampleId = sharedPreferences.getInt(Constants.PREF_EVENING_SALIVA_ID, -1);
         boolean currentScanIsEveningSample = alarmId == Constants.EXTRA_ALARM_ID_EVENING || salivaId == eveningSampleId;
-        if (currentScanIsEveningSample) {
-            return Constants.END_OF_DAY_ALERT_EVENING_SAMPLE_RECORDED;
-        }
-
         int numDays = sharedPreferences.getInt(Constants.PREF_NUM_DAYS, 0);
         int totalNumSamples = sharedPreferences.getInt(Constants.PREF_TOTAL_NUM_SAMPLES, 0);
         int regularSamplesPerDay = hasEveningSample ? totalNumSamples - 1 : totalNumSamples;
@@ -305,7 +304,17 @@ public class Ean8Fragment extends BarcodeFragment {
                 : scannedRegularSamplesToday >= regularSamplesPerDay;
 
         if (!allSamplesForDayRecorded) {
-            return null;
+            return currentScanIsEveningSample
+                    ? Constants.END_OF_DAY_ALERT_EVENING_SAMPLE_RECORDED
+                    : null;
+        }
+
+        sharedPreferences.edit()
+                .putBoolean(Constants.PREF_CURRENT_STUDY_DAY_FINISHED, true)
+                .apply();
+
+        if (currentScanIsEveningSample) {
+            return Constants.END_OF_DAY_ALERT_EVENING_SAMPLE_RECORDED;
         }
 
         if (dayId >= numDays) {

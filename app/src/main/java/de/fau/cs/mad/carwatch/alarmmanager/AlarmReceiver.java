@@ -67,6 +67,21 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
+        if (alarm == null) {
+            Log.e(TAG, "No alarm found with id " + alarmId);
+            return;
+        }
+
+        if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            preferences.edit()
+                    .putLong(Constants.PREF_PENDING_WAKEUP_NOTIFICATION_TIME, System.currentTimeMillis())
+                    .putBoolean(
+                            Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP,
+                            AlarmHandler.hasUnfinishedCurrentStudyDay(context))
+                    .apply();
+        }
+
         Notification notification = buildNotification(context, alarm);
 
         // Play alarm ringing sound
@@ -116,6 +131,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(getNotificationText(context, alarm))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationText(context, alarm)))
+                .setContentIntent(stopIntent)
+                .setAutoCancel(false)
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent)
                 .setFullScreenIntent(fullScreenPendingIntent, true);
 

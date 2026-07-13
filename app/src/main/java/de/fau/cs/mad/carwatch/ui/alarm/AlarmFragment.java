@@ -374,7 +374,11 @@ public class AlarmFragment extends Fragment {
             }
             TimePickerDialog timePicker = new TimePickerDialog(context, (timePicker1, selectedHour, selectedMinute) -> {
                 LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
-                alarm.setTime(selectedTime.toDateTimeToday());
+                DateTime selectedDateTime = selectedTime.toDateTimeToday();
+                if (isWakeupInitializedToday()) {
+                    selectedDateTime = selectedDateTime.plusDays(1);
+                }
+                alarm.setTime(selectedDateTime);
                 setWakeupAlarmTimeText();
                 alarm.setActive(true);
                 setInitialSalivaId();
@@ -386,6 +390,14 @@ public class AlarmFragment extends Fragment {
         timeTextView.setOnClickListener(showTimePicker);
         alarmPrimaryTimeRow.setOnClickListener(showTimePicker);
         alarmPrimaryCard.setOnClickListener(showTimePicker);
+    }
+
+    private boolean isWakeupInitializedToday() {
+        if (!sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+            return false;
+        }
+        DateTime wakeup = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+        return wakeup.toLocalDate().equals(DateTime.now().toLocalDate());
     }
 
     private void setInitialSalivaId() {

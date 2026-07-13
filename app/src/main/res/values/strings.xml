@@ -3,7 +3,6 @@
 
     <string name="ok">OK</string>
 
-    <string name="cancel">Cancel</string>
     <string name="continue_action">Continue</string>
     <string name="alarm_notification_text">Alarm!</string>
     <string name="timer_notification_text">Please take saliva sample #%1$d.</string>
@@ -202,6 +201,13 @@
     <string name="warning_already_taken_bedtime">You have already taken the evening saliva sample</string>
     <string name="warning_unfinished_samples">There are still unfinished saliva samples for today.</string>
     <string name="warning_already_report_wakeup">You already reported your wakeup!</string>
+    <string name="title_previous_day_unfinished">Previous day unfinished</string>
+    <string name="message_previous_day_unfinished">This is a new study day. We noticed that the previous day was not completed. The remaining samples will be marked as missing.</string>
+    <string name="button_continue">Continue</string>
+    <string name="title_wakeup_not_recorded">Wakeup not recorded</string>
+    <string name="message_wakeup_not_recorded">You have not recorded wakeup yet. Please record wakeup before scanning this sample.</string>
+    <string name="button_record_wakeup_now">Record Wakeup Now</string>
+    <string name="cancel">Cancel</string>
     <string name="warning_study_finished">You have already finished the study.</string>
 
     <string name="feedback_thanks">Thank you for your feedback!</string>

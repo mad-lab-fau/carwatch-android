@@ -129,6 +129,12 @@
     <string name="message_attention_tracking_started">Ihre Abendprobe wurde erfolgreich erfasst. CARWatch protokolliert jetzt Smartphone-Interaktionsereignisse, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Es werden keine Bildschirminhalte und keine verwendeten Apps erfasst. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
     <string name="message_attention_tracking_started_no_evening_sample">CARWatch protokolliert jetzt Smartphone-Interaktionsereignisse, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Es werden keine Bildschirminhalte und keine verwendeten Apps erfasst. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
+    <string name="title_previous_day_unfinished">Vorheriger Tag nicht abgeschlossen</string>
+    <string name="message_previous_day_unfinished">Dies ist ein neuer Studientag. Der vorherige Tag wurde nicht abgeschlossen. Die verbleibenden Proben werden als fehlend markiert.</string>
+    <string name="button_continue">Weiter</string>
+    <string name="title_wakeup_not_recorded">Aufwachen nicht erfasst</string>
+    <string name="message_wakeup_not_recorded">Sie haben Ihr Aufwachen noch nicht erfasst. Bitte erfassen Sie es, bevor Sie diese Probe scannen.</string>
+    <string name="button_record_wakeup_now">Aufwachen jetzt erfassen</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
 

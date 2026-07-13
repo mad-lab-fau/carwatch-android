@@ -49,6 +49,9 @@ public final class Constants {
     public static final String PREF_WAKEUP_SCAN_PENDING = "wakeup_scan_pending"; // boolean
     public static final String PREF_WAKEUP_SCAN_PENDING_TIME = "wakeup_scan_pending_time"; // long (milliseconds from epoch)
     public static final String PREF_WAKEUP_SAMPLE_TAKEN_TIME = "wakeup_sample_taken_time"; // long (milliseconds from epoch)
+    public static final String PREF_PENDING_WAKEUP_NOTIFICATION_TIME = "pending_wakeup_notification_time"; // long (milliseconds from epoch)
+    public static final String PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP = "finish_previous_day_on_wakeup"; // boolean
+    public static final String PREF_CURRENT_STUDY_DAY_FINISHED = "current_study_day_finished"; // boolean
     public static final String PREF_EVENING_REMINDER_TIME_MINUTES = "evening_reminder_time_minutes"; // int (minutes after midnight)
     public static final String PREF_SHOW_STUDY_FINISHED_AFTER_LIGHTS_OUT = "show_study_finished_after_lights_out"; // boolean
     public static final String PREF_SHOW_LIGHTS_OUT_TRACKING_EXPLANATION = "show_lights_out_tracking_explanation"; // boolean
@@ -74,6 +77,10 @@ public final class Constants {
     public static final String EXTRA_TARGET_NAV_ELEMENT = "extra_target_nav_element";
     public static final String EXTRA_SHOW_BARCODE_SCANNED_MSG = "extra_show_barcode_scanned_msg";
     public static final String EXTRA_END_OF_DAY_ALERT_TYPE = "extra_end_of_day_alert_type";
+    public static final String EXTRA_CONFIRM_WAKEUP_FOR_SAMPLE = "extra_confirm_wakeup_for_sample";
+    public static final String EXTRA_SAMPLE_AFTER_WAKEUP_ALARM_ID = "extra_sample_after_wakeup_alarm_id";
+    public static final String EXTRA_SAMPLE_AFTER_WAKEUP_SALIVA_ID = "extra_sample_after_wakeup_saliva_id";
+    public static final String EXTRA_SAMPLE_AFTER_WAKEUP_CANCEL_ALARM = "extra_sample_after_wakeup_cancel_alarm";
     public static final String EXTRA_SALIVA_ID_MANUAL_HR = "M";
     public static final String EXTRA_SALIVA_ID_EVENING = "A";
 
