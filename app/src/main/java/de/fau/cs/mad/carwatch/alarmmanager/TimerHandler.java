@@ -182,9 +182,7 @@ public class TimerHandler {
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
                 .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            builder.setFullScreenIntent(fullScreenPendingIntent, true);
-        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             NotificationManager notificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
@@ -192,6 +190,8 @@ public class TimerHandler {
             } else {
                 builder.setContentIntent(fullScreenPendingIntent);
             }
+        } else {
+            builder.setContentIntent(fullScreenPendingIntent);
         }
 
         return builder.build();
