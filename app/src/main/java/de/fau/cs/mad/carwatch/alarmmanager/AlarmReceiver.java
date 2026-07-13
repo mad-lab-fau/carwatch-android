@@ -122,19 +122,22 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(false)
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent);
 
+        Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
+        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                fullScreenIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             NotificationManager notificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
-                Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
-                fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
-                PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(
-                        context,
-                        0,
-                        fullScreenIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 builder.setFullScreenIntent(fullScreenPendingIntent, true);
             }
+        } else {
+            builder.setFullScreenIntent(fullScreenPendingIntent, true);
         }
 
         return builder.build();
