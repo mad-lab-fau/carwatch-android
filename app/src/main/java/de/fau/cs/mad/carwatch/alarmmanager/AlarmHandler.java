@@ -118,11 +118,6 @@ public class AlarmHandler {
         showAlarmSetMessage(context, snackBarAnchor, alarm.getTimeToNextRing());
     }
 
-    /**
-     * Re-arms the wakeup alarm for the calendar day after a wakeup was recorded.
-     * This deliberately touches only the initial alarm: today's saliva alarms keep
-     * their original times when the next wakeup time is created or edited.
-     */
     public static void scheduleNextDayWakeUpAlarm(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int currentDay = preferences.getInt(Constants.PREF_DAY_COUNTER, 0);

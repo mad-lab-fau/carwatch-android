@@ -16,16 +16,10 @@ import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.ui.BarcodeActivity;
 import de.fau.cs.mad.carwatch.ui.MainActivity;
 
-/**
- * This class contains the functionalities of the alarm view.
- */
-public class AlarmViewFunctionalities {
-    /**
-     * Shows confirmation dialog if the alarm is in the future, otherwise opens the barcode scanner.
-     *
-     * @param context The context.
-     * @param alarm The alarm that belongs to the sample for which the scanner should be opened.
-     */
+public final class AlarmViewFunctionalities {
+    private AlarmViewFunctionalities() {
+    }
+
     public static void requestOpenBarcodeScanner(Context context, Alarm alarm) {
         if (context == null || alarm == null)
             return;
@@ -89,8 +83,7 @@ public class AlarmViewFunctionalities {
     }
 
     private static void showOpenScannerDialog(Context context, Alarm alarm) {
-        AlertDialog.Builder builder = new CarwatchDialogBuilder(context);
-        AlertDialog dialog = builder
+        AlertDialog dialog = new CarwatchDialogBuilder(context)
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.warning_title)
                 .setMessage(R.string.open_scanner_before_alarm_message)
@@ -102,7 +95,9 @@ public class AlarmViewFunctionalities {
 
     private static void doOpenScanner(Context context, Alarm alarm) {
         Intent intent = new Intent(context, BarcodeActivity.class);
-        int alarmId = alarm.getId() == Constants.FIRST_SAMPLE_ALARM_ID ? Constants.EXTRA_ALARM_ID_INITIAL : alarm.getId();
+        int alarmId = alarm.getId() == Constants.FIRST_SAMPLE_ALARM_ID
+                ? Constants.EXTRA_ALARM_ID_INITIAL
+                : alarm.getId();
         intent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
         intent.putExtra(Constants.EXTRA_SALIVA_ID, alarm.getSalivaId());
         intent.putExtra(Constants.EXTRA_CANCEL_ALARM, alarm.getId() != Constants.FIRST_SAMPLE_ALARM_ID);

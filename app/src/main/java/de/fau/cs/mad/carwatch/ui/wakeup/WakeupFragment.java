@@ -91,40 +91,40 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
     }
 
     private void continueWakeupFlow(SharedPreferences sp) {
-            int dayCounter = getWakeupStudyDay(sp);
-            int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
-            if (dayCounter > numDays) {
-                if (getActivity() != null) {
-                    CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), CarwatchSnackbar.LENGTH_SHORT);
-                }
-                return;
+        int dayCounter = getWakeupStudyDay(sp);
+        int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
+        if (dayCounter > numDays) {
+            if (getActivity() != null) {
+                CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), CarwatchSnackbar.LENGTH_SHORT);
             }
+            return;
+        }
 
-            if (startRequestedSampleAfterWakeup()) {
-                return;
-            }
+        if (startRequestedSampleAfterWakeup()) {
+            return;
+        }
 
-            WakeupAlert wakeupAlert = createWakeupAlert(sp);
-            if (isOverdueSampleAlert(wakeupAlert)) {
-                startWakeupSampling(wakeupAlert);
-                return;
-            }
+        WakeupAlert wakeupAlert = createWakeupAlert(sp);
+        if (isOverdueSampleAlert(wakeupAlert)) {
+            startWakeupSampling(wakeupAlert);
+            return;
+        }
 
-            String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-            boolean delayedOnlyWakeupSample = wakeupAlert != null
-                    && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
-                    && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
-            if (delayedOnlyWakeupSample) {
-                startWakeupSampling(wakeupAlert);
-                return;
-            }
+        String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        boolean delayedOnlyWakeupSample = wakeupAlert != null
+                && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
+                && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
+        if (delayedOnlyWakeupSample) {
+            startWakeupSampling(wakeupAlert);
+            return;
+        }
 
-            if (hasOnlyFixedSampleTimes(sp)) {
-                startWakeupSampling(null);
-                return;
-            }
+        if (hasOnlyFixedSampleTimes(sp)) {
+            startWakeupSampling(null);
+            return;
+        }
 
-            showWakeupDialog();
+        showWakeupDialog();
     }
 
     private boolean startRequestedSampleAfterWakeup() {
@@ -165,15 +165,13 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean hasUnfinishedPreviousDay(SharedPreferences sp) {
-        if (sp.getBoolean(Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP, false)
-                && AlarmHandler.hasUnfinishedCurrentStudyDay(requireContext())) {
-            return true;
-        }
-        if (!sp.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)
-                || isWakeupInitializedToday(sp)) {
-            return false;
-        }
-        return AlarmHandler.hasUnfinishedCurrentStudyDay(requireContext());
+        boolean rolloverPending = sp.getBoolean(
+                Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP,
+                false);
+        boolean previousWakeup = sp.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)
+                && !isWakeupInitializedToday(sp);
+        return (rolloverPending || previousWakeup)
+                && AlarmHandler.hasUnfinishedCurrentStudyDay(requireContext());
     }
 
     private void showPreviousDayUnfinishedAlert() {

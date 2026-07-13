@@ -36,20 +36,18 @@ import static android.os.Build.VERSION_CODES;
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
-    private final String CHANNEL_ID = TAG + "Channel";
+    private static final String CHANNEL_ID = TAG + "Channel";
 
     @SuppressLint("WrongConstant")
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Create and add notification channel
         if (VERSION.SDK_INT >= VERSION_CODES.O && notificationManager != null) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
             notificationManager.createNotificationChannel(channel);
         }
 
-        // stop user present service if running
         if (UserPresentService.serviceRunning) {
             UserPresentService.stopService(context);
         }
@@ -86,12 +84,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Notification notification = buildNotification(context, alarm);
 
-        // Play alarm ringing sound
-        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
-        alarmSoundControl.playAlarmSound(context);
+        AlarmSoundControl.getInstance().playAlarmSound(context);
 
         try {
-            // create Json object and log information
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
             json.put(Constants.LOGGER_EXTRA_SALIVA_ID, alarm.getSalivaId());
@@ -108,14 +103,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private Notification buildNotification(Context context, Alarm alarm) {
         PendingIntent stopIntent = createStopAlarmIntent(context, alarm);
-
-        Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
-        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
-
-        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-
-        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
-                fullScreenIntent, pendingFlags);
+        String notificationText = getNotificationText(context, alarm);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -128,8 +116,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setColorized(false)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(getNotificationText(context, alarm))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationText(context, alarm)))
+                .setContentText(notificationText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationText))
                 .setContentIntent(stopIntent)
                 .setAutoCancel(false)
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent);
@@ -138,6 +126,13 @@ public class AlarmReceiver extends BroadcastReceiver {
             NotificationManager notificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
+                Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
+                fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
+                PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(
+                        context,
+                        0,
+                        fullScreenIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 builder.setFullScreenIntent(fullScreenPendingIntent, true);
             }
         }
@@ -154,15 +149,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
         return context.getString(R.string.timer_notification_text, alarm.getSalivaId() + startSampleIdx);
     }
-
-
-    /**
-        * Creates a PendingIntent to stop the alarm
-        *
-        * @param context Context
-        * @param alarm   Alarm to stop
-        * @return PendingIntent to stop the alarm
-    */
     private PendingIntent createStopAlarmIntent(Context context, Alarm alarm) {
         Intent stopAlarmIntent = new Intent(context, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());

@@ -202,9 +202,6 @@ public class AlarmFragment extends Fragment {
                         : R.dimen.primary_screen_bottom_padding));
 
         if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams params) {
-            // The prompt can wrap to an additional line on narrow screens or with a larger
-            // font. A fixed compact height clips the time row in that case, leaving no visible
-            // way to set the next wake-up alarm while sample alarms are displayed.
             params.height = hasDisplayedAlarms
                     ? ViewGroup.LayoutParams.WRAP_CONTENT
                     : getResources().getDimensionPixelSize(R.dimen.primary_card_height);
@@ -363,8 +360,6 @@ public class AlarmFragment extends Fragment {
             updateAlarm();
         });
 
-        // Define behavior on time update. Keep both the time and its containing row actionable so
-        // the alarm can always be changed, even when the compact layout is used.
         View.OnClickListener showTimePicker = view -> {
             DateTime time;
             if (alarm.getTime() == null) {
