@@ -183,6 +183,8 @@ public class TimerHandler {
             if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
                 builder.setFullScreenIntent(scannerPendingIntent, true);
             }
+        } else {
+            builder.setFullScreenIntent(scannerPendingIntent, true);
         }
 
         return builder.build();
