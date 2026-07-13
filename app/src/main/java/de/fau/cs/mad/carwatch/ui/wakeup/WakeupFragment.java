@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -178,22 +179,25 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         if (getContext() == null) {
             return;
         }
-        new CarwatchDialogBuilder(getContext())
+        AlertDialog dialog = new CarwatchDialogBuilder(getContext())
                 .setIcon(R.drawable.ic_warning_24dp)
                 .setTitle(R.string.title_previous_day_unfinished)
                 .setMessage(R.string.message_previous_day_unfinished)
                 .setCancelable(false)
-                .setPositiveButton(R.string.button_continue, (dialog, which) -> {
-                    boolean previousDayClosed = AlarmHandler.finishCurrentStudyDay(requireContext());
-                    if (previousDayClosed
-                            || !AlarmHandler.hasUnfinishedCurrentStudyDay(requireContext())) {
-                        PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
-                                .putBoolean(Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP, false)
-                                .apply();
-                        continueWakeupFlow(PreferenceManager.getDefaultSharedPreferences(requireContext()));
-                    }
-                })
+                .setPositiveButton(R.string.button_continue, null)
                 .show();
+        Button continueButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        continueButton.setOnClickListener(view -> {
+            boolean previousDayClosed = AlarmHandler.finishCurrentStudyDay(requireContext());
+            if (previousDayClosed
+                    || !AlarmHandler.hasUnfinishedCurrentStudyDay(requireContext())) {
+                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
+                        .putBoolean(Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP, false)
+                        .apply();
+                dialog.dismiss();
+                continueWakeupFlow(PreferenceManager.getDefaultSharedPreferences(requireContext()));
+            }
+        });
     }
 
     private void showWakeupAlreadyRecordedMessage() {
