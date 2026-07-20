@@ -50,10 +50,18 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
 
         try {
             alarm = repository.getAlarmById(alarmId);
+            if (alarm == null) {
+                Log.e(TAG, "No alarm found with id " + alarmId);
+                finish();
+                return;
+            }
             salivaId = alarm.getSalivaId();
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
-            e.printStackTrace();
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            finish();
             return;
         }
 
@@ -106,6 +114,13 @@ public class ShowAlarmActivity extends AppCompatActivity implements SwipeButton.
         sendOrderedBroadcast(stopAlarmIntent, null, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
+                    Intent wakeupIntent = new Intent(ShowAlarmActivity.this, MainActivity.class);
+                    wakeupIntent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_wakeup);
+                    startActivity(wakeupIntent);
+                    finish();
+                    return;
+                }
                 if (getResultCode() == Activity.RESULT_CANCELED) {
                     if (checkAlarmOngoing() || salivaId == -1) {
                         finish();

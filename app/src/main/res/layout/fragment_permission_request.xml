@@ -4,8 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fadeScrollbars="false"
     android:fillViewport="true"
     android:paddingHorizontal="24dp"
+    android:scrollbarStyle="outsideInset"
+    android:scrollbars="vertical"
     tools:context=".ui.onboarding.SlideShowActivity">
 
     <LinearLayout
@@ -14,7 +18,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingTop="18dp"
-        android:paddingBottom="24dp">
+        android:paddingBottom="@dimen/onboarding_floating_navigation_clearance">
 
         <ImageView
             android:layout_width="82dp"

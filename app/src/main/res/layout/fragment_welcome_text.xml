@@ -14,7 +14,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingTop="8dp"
-        android:paddingBottom="24dp">
+        android:paddingBottom="@dimen/onboarding_floating_navigation_clearance">
 
         <ImageView
             android:id="@+id/iv_welcome_app_icon"

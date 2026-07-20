@@ -4,6 +4,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -201,9 +202,9 @@ public class AlarmFragment extends Fragment {
                         : R.dimen.primary_screen_bottom_padding));
 
         if (alarmPrimaryCard != null && alarmPrimaryCard.getLayoutParams() instanceof LinearLayout.LayoutParams params) {
-            params.height = getResources().getDimensionPixelSize(hasDisplayedAlarms
-                    ? R.dimen.alarm_primary_card_list_height
-                    : R.dimen.primary_card_height);
+            params.height = hasDisplayedAlarms
+                    ? ViewGroup.LayoutParams.WRAP_CONTENT
+                    : getResources().getDimensionPixelSize(R.dimen.primary_card_height);
             params.bottomMargin = getResources().getDimensionPixelSize(hasDisplayedAlarms
                     ? R.dimen.alarm_primary_card_list_margin_bottom
                     : R.dimen.alarm_primary_card_margin_bottom);
@@ -346,7 +347,7 @@ public class AlarmFragment extends Fragment {
     private void setAlarmView() {
         final Context context = getContext();
 
-        timeTextView.setText(alarm.getStringTime());
+        setWakeupAlarmTimeText();
         activeSwitch.setChecked(alarm.isActive());
         setAlarmColor(alarm.isActive());
 
@@ -359,8 +360,7 @@ public class AlarmFragment extends Fragment {
             updateAlarm();
         });
 
-        // define behavior on time update
-        timeTextView.setOnClickListener(view -> {
+        View.OnClickListener showTimePicker = view -> {
             DateTime time;
             if (alarm.getTime() == null) {
                 time = DateTime.now();
@@ -369,21 +369,62 @@ public class AlarmFragment extends Fragment {
             }
             TimePickerDialog timePicker = new TimePickerDialog(context, (timePicker1, selectedHour, selectedMinute) -> {
                 LocalTime selectedTime = new LocalTime(selectedHour, selectedMinute);
-                alarm.setTime(selectedTime.toDateTimeToday());
-                timeTextView.setText(alarm.getStringTime());
+                DateTime selectedDateTime = selectedTime.toDateTimeToday();
+                if (isWakeupInitializedToday()) {
+                    selectedDateTime = selectedDateTime.plusDays(1);
+                }
+                alarm.setTime(selectedDateTime);
+                setWakeupAlarmTimeText();
                 alarm.setActive(true);
                 setInitialSalivaId();
                 scheduleAlarm(context);
                 updateAlarm();
             }, time.getHourOfDay(), time.getMinuteOfHour(), true);
             timePicker.show();
-        });
+        };
+        timeTextView.setOnClickListener(showTimePicker);
+        alarmPrimaryTimeRow.setOnClickListener(showTimePicker);
+        alarmPrimaryCard.setOnClickListener(showTimePicker);
+    }
+
+    private boolean isWakeupInitializedToday() {
+        if (!sharedPreferences.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)) {
+            return false;
+        }
+        DateTime wakeup = new DateTime(sharedPreferences.getLong(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME, 0));
+        return wakeup.toLocalDate().equals(DateTime.now().toLocalDate());
     }
 
     private void setInitialSalivaId() {
         String salivaDistances = sharedPreferences.getString(Constants.PREF_SALIVA_DISTANCES, "");
         boolean requestSaliva = AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
         alarm.setSalivaId(requestSaliva ? Constants.EXTRA_SALIVA_ID_INITIAL : -1);
+    }
+
+    private void setWakeupAlarmTimeText() {
+        timeTextView.setText(alarm.getStringTime());
+        timeTextView.post(() -> {
+            int availableWidth = timeTextView.getWidth()
+                    - timeTextView.getCompoundPaddingLeft()
+                    - timeTextView.getCompoundPaddingRight();
+            if (availableWidth <= 0 || timeTextView.length() == 0) {
+                return;
+            }
+
+            float maxTextSizePx = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_SP, 45, getResources().getDisplayMetrics());
+            float minTextSizePx = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_SP, 20, getResources().getDisplayMetrics());
+            timeTextView.getPaint().setTextSize(maxTextSizePx);
+            float measuredWidth = timeTextView.getPaint().measureText(timeTextView.getText().toString());
+            boolean hasOverflow = measuredWidth > availableWidth;
+            float fittedSizePx = hasOverflow
+                    ? maxTextSizePx * availableWidth / measuredWidth
+                    : maxTextSizePx;
+            timeTextView.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    hasOverflow ? Math.max(fittedSizePx - 1f, minTextSizePx) : fittedSizePx);
+        });
     }
 
     private void setAlarmColor(boolean isActive) {
@@ -414,7 +455,7 @@ public class AlarmFragment extends Fragment {
         alarm.setTime(time);
         setInitialSalivaId();
         alarmViewModel.insert(alarm);
-        timeTextView.setText(alarm.getStringTime());
+        setWakeupAlarmTimeText();
         sharedPreferences.edit().putInt(Constants.PREF_CURRENT_ALARM_ID, alarm.getId() + 1).apply();
     }
 

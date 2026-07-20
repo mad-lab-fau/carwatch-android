@@ -53,6 +53,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmHandler;
 import de.fau.cs.mad.carwatch.alarmmanager.AlarmSoundControl;
+import de.fau.cs.mad.carwatch.debug.DemoStudyLoader;
 import de.fau.cs.mad.carwatch.logger.GenericFileProvider;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
 import de.fau.cs.mad.carwatch.ui.onboarding.SlideShowActivity;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        handleAlarmNotificationOpen();
 
         // disable night mode per default
         AppCompatDelegate delegate = getDelegate();
@@ -149,6 +151,37 @@ public class MainActivity extends AppCompatActivity {
             showStudyFinishedAfterLightsOutAlert();
         }
         showEndOfDayAlert();
+    }
+
+    private void handleAlarmNotificationOpen() {
+        Intent intent = getIntent();
+        if (intent == null
+                || !intent.getBooleanExtra(Constants.EXTRA_OPENED_FROM_ALARM_NOTIFICATION, false)) {
+            return;
+        }
+
+        int alarmId = intent.getIntExtra(
+                Constants.EXTRA_ALARM_ID,
+                Constants.EXTRA_ALARM_ID_INITIAL);
+        AlarmSoundControl.getInstance().stopAlarmSound();
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancel(alarmId);
+        }
+        intent.removeExtra(Constants.EXTRA_OPENED_FROM_ALARM_NOTIFICATION);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleAlarmNotificationOpen();
+        if (intent.hasExtra(Constants.EXTRA_TARGET_NAV_ELEMENT)) {
+            navigate(intent.getIntExtra(
+                    Constants.EXTRA_TARGET_NAV_ELEMENT,
+                    R.id.navigation_wakeup));
+        }
     }
 
     @Override
@@ -496,6 +529,8 @@ public class MainActivity extends AppCompatActivity {
         fabMenuScrim = findViewById(R.id.fab_menu_scrim);
         fabMenuContainer = findViewById(R.id.fab_menu_container);
         finishStudyDayButton = findViewById(R.id.fab_menu_finish_study_day);
+        MaterialButton demoStudyButton = findViewById(R.id.fab_menu_demo_study);
+        demoStudyButton.setVisibility(DemoStudyLoader.isAvailable() ? View.VISIBLE : View.GONE);
 
         fabMenuToggle.setOnClickListener(view -> openFabMenu());
         findViewById(R.id.fab_menu_close).setOnClickListener(view -> closeFabMenu());
@@ -511,6 +546,25 @@ public class MainActivity extends AppCompatActivity {
         setFabMenuAction(R.id.fab_menu_show_tutorial, R.id.menu_show_tutorial);
         setFabMenuAction(R.id.fab_menu_study_information, R.id.menu_study_information);
         setFabMenuAction(R.id.fab_menu_finish_study_day, R.id.menu_finish_study_day);
+        demoStudyButton.setOnClickListener(view -> {
+            closeFabMenu();
+            demoStudyButton.setEnabled(false);
+            DemoStudyLoader.load(
+                    this,
+                    () -> {
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_alarm);
+                        startActivity(intent);
+                        finish();
+                    },
+                    () -> {
+                        demoStudyButton.setEnabled(true);
+                        CarwatchSnackbar.show(
+                                coordinatorLayout,
+                                R.string.message_demo_study_load_failed,
+                                CarwatchSnackbar.LENGTH_SHORT);
+                    });
+        });
         setFabMenuAction(R.id.fab_menu_privacy_policy, R.id.menu_privacy_policy);
         setFabMenuAction(R.id.fab_menu_app_info, R.id.menu_app_info);
     }

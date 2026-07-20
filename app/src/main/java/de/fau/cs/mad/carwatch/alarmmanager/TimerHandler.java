@@ -34,14 +34,17 @@ public class TimerHandler {
     public static void finishDay(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         int dayId = sp.getInt(Constants.PREF_DAY_COUNTER, 1);
-        sp.edit().putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL).apply();
+        sp.edit()
+                .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
+                .putBoolean(Constants.PREF_CURRENT_STUDY_DAY_FINISHED, true)
+                .apply();
 
         try {
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_DAY_COUNTER, dayId);
             LoggerUtil.log(Constants.LOGGER_ACTION_DAY_FINISHED, json);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Could not log completion of study day " + dayId, e);
         }
     }
 
@@ -63,7 +66,6 @@ public class TimerHandler {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        // Create and add notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (notificationManager != null) {
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
@@ -86,19 +88,12 @@ public class TimerHandler {
 
     public static void cancelTimer(Context context, int alarmId) {
         int timerId = alarmId + Constants.ALARM_OFFSET_TIMER;
-        // Dismiss notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        // Get PendingIntent to TimerReceiver Broadcast channel
         Intent intent = new Intent(context, TimerReceiver.class);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_NO_CREATE;
-        }
+        int pendingFlags = PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, timerId, intent, pendingFlags);
 
         if (alarmManager != null && pendingIntent != null) {
@@ -111,9 +106,7 @@ public class TimerHandler {
             notificationManager.cancel(timerId);
         }
 
-        // Play alarm ringing sound
-        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
-        alarmSoundControl.stopAlarmSound();
+        AlarmSoundControl.getInstance().stopAlarmSound();
     }
 
     private static Notification buildCountdownNotification(Context context, int timerId, int salivaId, long when) {
@@ -123,12 +116,7 @@ public class TimerHandler {
         contentIntent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         contentIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, 0,
                 contentIntent, pendingFlags);
 
@@ -156,19 +144,13 @@ public class TimerHandler {
 
     public static Notification buildAlarmNotification(Context context, int timerId, int salivaId) {
         int alarmId = timerId - Constants.ALARM_OFFSET_TIMER;
-        // Full screen Intent
-        Intent fullScreenIntent = new Intent(context, BarcodeActivity.class);
-        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
-        fullScreenIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        Intent scannerIntent = new Intent(context, BarcodeActivity.class);
+        scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
-        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
-                fullScreenIntent, pendingFlags);
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+        PendingIntent scannerPendingIntent = PendingIntent.getActivity(
+                context, 0, scannerIntent, pendingFlags);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         int startSampleIdx = Integer.parseInt(sp.getString(Constants.PREF_START_SAMPLE, Constants.DEFAULT_START_SAMPLE).substring(1));
@@ -191,25 +173,29 @@ public class TimerHandler {
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(contentText)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
+                .setContentIntent(scannerPendingIntent)
                 .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopAlarmPendingIntent)
-                .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), fullScreenPendingIntent)
-                .setFullScreenIntent(fullScreenPendingIntent, true);
+                .addAction(R.drawable.ic_barcode_scanner_notification_24dp, context.getString(R.string.open_scanner), scannerPendingIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
+                builder.setFullScreenIntent(scannerPendingIntent, true);
+            }
+        } else {
+            builder.setFullScreenIntent(scannerPendingIntent, true);
+        }
 
         return builder.build();
     }
 
     private static PendingIntent getTimerPendingIntent(Context context, int timerId, int salivaId) {
-        // Get PendingIntent to TimerReceiver Broadcast
         Intent intent = new Intent(context, TimerReceiver.class);
         intent.putExtra(Constants.EXTRA_TIMER_ID, timerId);
         intent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         return PendingIntent.getBroadcast(context, timerId, intent, pendingFlags);
     }
 

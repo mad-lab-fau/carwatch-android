@@ -7,6 +7,7 @@
     <string name="alarm_set_error">Fehler beim Setzen des Alarms.</string>
     <string name="saliva_alarms_set">Die Probenwecker wurden gestellt.</string>
     <string name="cancel">Abbrechen</string>
+    <string name="continue_action">Fortfahren</string>
     <string name="participant_id">Probanden-ID</string>
     <string name="message_participant_id">Bitte geben Sie die Probanden-ID ein, die Sie von uns zugewiesen bekommen haben.</string>
     <string name="ok">OK</string>
@@ -17,6 +18,7 @@
     <string name="text_barcode_scan_successful">Wert: %1$s</string>
     <string name="stop">Stopp</string>
     <string name="open_scanner">Scanner öffnen</string>
+    <string name="open_app">App öffnen</string>
     <string name="content_description_sample_taken">Probe genommen</string>
     <string name="content_description_sample_status">Probenstatus</string>
     <string name="timer_notification_text">Bitte nehmen Sie die Speichelprobe #%1$d.</string>
@@ -79,6 +81,7 @@
     <string name="warning_title">Warnung</string>
     <string name="warning_already_taken_wakeup">Sie haben bereits alle Speichelproben für diesen Morgen genommen!</string>
     <string name="warning_already_taken_bedtime">Sie haben bereits die Abend-Speichelprobe genommen!</string>
+    <string name="warning_unfinished_samples">Für heute sind noch nicht alle Speichelproben abgeschlossen.</string>
     <string name="warning_study_finished">Sie haben die Studie bereits abgeschlossen.</string>
 
     <string name="wakeup_title">Den Morgen beginnen</string>
@@ -127,6 +130,12 @@
     <string name="message_attention_tracking_started">Ihre Abendprobe wurde erfolgreich erfasst. CARWatch protokolliert jetzt Smartphone-Interaktionsereignisse, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Es werden keine Bildschirminhalte und keine verwendeten Apps erfasst. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
     <string name="message_attention_tracking_started_no_evening_sample">CARWatch protokolliert jetzt Smartphone-Interaktionsereignisse, z. B. Sperren und Entsperren des Bildschirms, um Ihre tatsächliche Schlafens- und Aufwachzeit besser abzuschätzen. Es werden keine Bildschirminhalte und keine verwendeten Apps erfasst. Diese Protokollierung endet automatisch, sobald Ihr Aufwachen erfasst wurde.</string>
     <string name="warning_already_report_wakeup">Sie haben bereits Ihr Aufwachen berichtet!</string>
+    <string name="title_previous_day_unfinished">Vorheriger Tag nicht abgeschlossen</string>
+    <string name="message_previous_day_unfinished">Dies ist ein neuer Studientag. Der vorherige Tag wurde nicht abgeschlossen. Die verbleibenden Proben werden als fehlend markiert.</string>
+    <string name="button_continue">Weiter</string>
+    <string name="title_wakeup_not_recorded">Aufwachen nicht erfasst</string>
+    <string name="message_wakeup_not_recorded">Sie haben Ihr Aufwachen noch nicht erfasst. Bitte erfassen Sie es, bevor Sie diese Probe scannen.</string>
+    <string name="button_record_wakeup_now">Aufwachen jetzt erfassen</string>
     <string name="title_kill_alarms">Achtung</string>
     <string name="message_kill_alarms">Sind Sie sicher, alle Alarme und Speichelproben-Timer beenden zu wollen? Diese Aktion kann nicht rückgängig gemacht werden!</string>
 
@@ -203,6 +212,8 @@
     <string name="app_info_privacy_policy">Datenschutzerklärung</string>
     <string name="title_share_dialog">Logs teilen via…</string>
     <string name="set_alarm_message">Bitte stellen Sie ihre \ngewünschte Weckzeit\nfür morgen ein.</string>
+    <string name="menu_load_demo_study">Demo-Studie laden</string>
+    <string name="message_demo_study_load_failed">Die Demo-Studie konnte nicht geladen werden. Bitte versuchen Sie es erneut.</string>
     <string name="saliva_alarms_header">Wecker für Speichelproben</string>
     <string name="evening_sample_alarm_header">Wecker für Abendprobe</string>
     <string name="title_qr_code_invalid">Ungültiger QR-Code</string>

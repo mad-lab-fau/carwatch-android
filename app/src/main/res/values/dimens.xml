@@ -14,6 +14,7 @@
     <dimen name="home_card_padding">28dp</dimen>
     <dimen name="primary_card_height">430dp</dimen>
     <dimen name="alarm_primary_card_list_height">300dp</dimen>
+    <dimen name="demo_study_button_bottom_margin">72dp</dimen>
     <dimen name="primary_screen_bottom_padding">48dp</dimen>
     <dimen name="alarm_content_list_bottom_padding">96dp</dimen>
     <dimen name="alarm_primary_card_margin_bottom">0dp</dimen>
@@ -29,13 +30,14 @@
     <dimen name="alarm_primary_time_row_list_min_height">64dp</dimen>
     <dimen name="tutorial_text_block_height">150dp</dimen>
     <dimen name="tutorial_text_margin_bottom">120dp</dimen>
-    <dimen name="slide_navigation_height">72dp</dimen>
     <dimen name="slide_navigation_margin_horizontal">16dp</dimen>
     <dimen name="slide_navigation_margin_bottom">24dp</dimen>
     <dimen name="slide_navigation_content_margin">7dp</dimen>
     <dimen name="slide_navigation_button_width">130dp</dimen>
     <dimen name="slide_navigation_button_height">58dp</dimen>
+    <dimen name="slide_navigation_responsive_button_height">56dp</dimen>
     <dimen name="slide_navigation_button_corner_radius">18dp</dimen>
+    <dimen name="onboarding_floating_navigation_clearance">128dp</dimen>
     <dimen name="slide_dot_cell_size">10dp</dimen>
     <dimen name="slide_dot_margin_horizontal">1dp</dimen>
 

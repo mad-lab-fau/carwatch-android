@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -53,6 +54,12 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
         yesButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
 
+        if (getActivity() != null
+                && getActivity().getIntent().getBooleanExtra(Constants.EXTRA_CONFIRM_WAKEUP_FOR_SAMPLE, false)) {
+            getActivity().getIntent().removeExtra(Constants.EXTRA_CONFIRM_WAKEUP_FOR_SAMPLE);
+            root.post(this::handleWakeupYes);
+        }
+
         return root;
     }
 
@@ -64,43 +71,133 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), R.string.feedback_wakeup_no, CarwatchSnackbar.LENGTH_SHORT);
             }
         } else if (viewId == R.id.button_yes) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            if (isWakeupInitializedToday(sp)) {
-                showWakeupAlreadyRecordedMessage();
-                return;
-            }
-
-            int dayCounter = getWakeupStudyDay(sp);
-            int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
-            if (dayCounter > numDays) {
-                if (getActivity() != null) {
-                    CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), CarwatchSnackbar.LENGTH_SHORT);
-                }
-                return;
-            }
-
-            WakeupAlert wakeupAlert = createWakeupAlert(sp);
-            if (isOverdueSampleAlert(wakeupAlert)) {
-                startWakeupSampling(wakeupAlert);
-                return;
-            }
-
-            String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
-            boolean delayedOnlyWakeupSample = wakeupAlert != null
-                    && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
-                    && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
-            if (delayedOnlyWakeupSample) {
-                startWakeupSampling(wakeupAlert);
-                return;
-            }
-
-            if (hasOnlyFixedSampleTimes(sp)) {
-                startWakeupSampling(null);
-                return;
-            }
-
-            showWakeupDialog();
+            handleWakeupYes();
         }
+    }
+
+    private void handleWakeupYes() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        if (isWakeupInitializedToday(sp)) {
+            showWakeupAlreadyRecordedMessage();
+            clearSampleAfterWakeupExtras();
+            return;
+        }
+
+        if (hasUnfinishedPreviousDay(sp)) {
+            showPreviousDayUnfinishedAlert();
+            return;
+        }
+
+        continueWakeupFlow(sp);
+    }
+
+    private void continueWakeupFlow(SharedPreferences sp) {
+        int dayCounter = getWakeupStudyDay(sp);
+        int numDays = sp.getInt(Constants.PREF_NUM_DAYS, Integer.MAX_VALUE);
+        if (dayCounter > numDays) {
+            if (getActivity() != null) {
+                CarwatchSnackbar.show(getActivity().findViewById(R.id.coordinator), getString(R.string.warning_study_finished), CarwatchSnackbar.LENGTH_SHORT);
+            }
+            return;
+        }
+
+        if (startRequestedSampleAfterWakeup()) {
+            return;
+        }
+
+        WakeupAlert wakeupAlert = createWakeupAlert(sp);
+        if (isOverdueSampleAlert(wakeupAlert)) {
+            startWakeupSampling(wakeupAlert);
+            return;
+        }
+
+        String salivaDistances = sp.getString(Constants.PREF_SALIVA_DISTANCES, "");
+        boolean delayedOnlyWakeupSample = wakeupAlert != null
+                && wakeupAlert.type.equals(Constants.WAKEUP_ALERT_DELAYED_SAMPLE)
+                && !AlarmHandler.requiresImmediateWakeupSample(salivaDistances);
+        if (delayedOnlyWakeupSample) {
+            startWakeupSampling(wakeupAlert);
+            return;
+        }
+
+        if (hasOnlyFixedSampleTimes(sp)) {
+            startWakeupSampling(null);
+            return;
+        }
+
+        showWakeupDialog();
+    }
+
+    private boolean startRequestedSampleAfterWakeup() {
+        if (getActivity() == null
+                || !getActivity().getIntent().hasExtra(Constants.EXTRA_SAMPLE_AFTER_WAKEUP_ALARM_ID)) {
+            return false;
+        }
+
+        Intent sourceIntent = getActivity().getIntent();
+        int alarmId = sourceIntent.getIntExtra(
+                Constants.EXTRA_SAMPLE_AFTER_WAKEUP_ALARM_ID,
+                Constants.EXTRA_ALARM_ID_MANUAL);
+        int salivaId = sourceIntent.getIntExtra(
+                Constants.EXTRA_SAMPLE_AFTER_WAKEUP_SALIVA_ID,
+                Constants.EXTRA_SALIVA_ID_MANUAL);
+        boolean cancelAlarm = sourceIntent.getBooleanExtra(
+                Constants.EXTRA_SAMPLE_AFTER_WAKEUP_CANCEL_ALARM,
+                true);
+        clearSampleAfterWakeupExtras();
+
+        initializeDay(true);
+        Intent scannerIntent = new Intent(requireContext(), BarcodeActivity.class);
+        scannerIntent.putExtra(Constants.EXTRA_ALARM_ID, alarmId);
+        scannerIntent.putExtra(Constants.EXTRA_SALIVA_ID, salivaId);
+        scannerIntent.putExtra(Constants.EXTRA_CANCEL_ALARM, cancelAlarm);
+        startActivity(scannerIntent);
+        return true;
+    }
+
+    private void clearSampleAfterWakeupExtras() {
+        if (getActivity() == null) {
+            return;
+        }
+        Intent intent = getActivity().getIntent();
+        intent.removeExtra(Constants.EXTRA_SAMPLE_AFTER_WAKEUP_ALARM_ID);
+        intent.removeExtra(Constants.EXTRA_SAMPLE_AFTER_WAKEUP_SALIVA_ID);
+        intent.removeExtra(Constants.EXTRA_SAMPLE_AFTER_WAKEUP_CANCEL_ALARM);
+    }
+
+    private boolean hasUnfinishedPreviousDay(SharedPreferences sp) {
+        boolean rolloverPending = sp.getBoolean(
+                Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP,
+                false);
+        boolean previousWakeup = sp.contains(Constants.PREF_LAST_WAKE_UP_ALARM_RING_TIME)
+                && !isWakeupInitializedToday(sp);
+        return (rolloverPending || previousWakeup)
+                && AlarmHandler.hasUnfinishedCurrentStudyDay(requireContext());
+    }
+
+    private void showPreviousDayUnfinishedAlert() {
+        if (getContext() == null) {
+            return;
+        }
+        AlertDialog dialog = new CarwatchDialogBuilder(getContext())
+                .setIcon(R.drawable.ic_warning_24dp)
+                .setTitle(R.string.title_previous_day_unfinished)
+                .setMessage(R.string.message_previous_day_unfinished)
+                .setCancelable(false)
+                .setPositiveButton(R.string.button_continue, null)
+                .show();
+        Button continueButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        continueButton.setOnClickListener(view -> {
+            boolean previousDayClosed = AlarmHandler.finishCurrentStudyDay(requireContext());
+            if (previousDayClosed
+                    || !AlarmHandler.hasUnfinishedCurrentStudyDay(requireContext())) {
+                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
+                        .putBoolean(Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP, false)
+                        .apply();
+                dialog.dismiss();
+                continueWakeupFlow(PreferenceManager.getDefaultSharedPreferences(requireContext()));
+            }
+        });
     }
 
     private void showWakeupAlreadyRecordedMessage() {
@@ -339,6 +436,9 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                 .putInt(Constants.PREF_DAY_COUNTER, dayCounter)
                 .putInt(Constants.PREF_ID_ONGOING_ALARM, Constants.EXTRA_ALARM_ID_INITIAL)
                 .putBoolean(Constants.PREF_STUDY_DAY_MANUALLY_ADVANCED, false)
+                .putBoolean(Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP, false)
+                .putBoolean(Constants.PREF_CURRENT_STUDY_DAY_FINISHED, false)
+                .remove(Constants.PREF_PENDING_WAKEUP_NOTIFICATION_TIME)
                 .remove(Constants.PREF_WAKEUP_SAMPLE_TAKEN_TIME);
 
         if (wakeupRecorded) {
@@ -351,6 +451,11 @@ public class WakeupFragment extends Fragment implements View.OnClickListener {
                     .putLong(Constants.PREF_WAKEUP_SCAN_PENDING_TIME, DateTime.now().getMillis());
         }
         editor.apply();
+
+        if (wakeupRecorded) {
+            AlarmHandler.scheduleNextDayWakeUpAlarm(context);
+            return;
+        }
 
         if (getActivity() == null)
             return;

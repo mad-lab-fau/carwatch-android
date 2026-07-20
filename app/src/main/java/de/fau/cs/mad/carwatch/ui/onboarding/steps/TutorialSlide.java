@@ -70,11 +70,11 @@ public class TutorialSlide extends BaseWelcomeSlide {
         DisplayMetrics displayMetrics = requireContext().getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
 
-        if (dpHeight < 900) {
-            titleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-            descriptionText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-            screenView.getLayoutParams().height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, displayMetrics);
-        }
+        float imageHeightDp = Math.max(240f, Math.min(480f, dpHeight * 0.44f));
+        screenView.getLayoutParams().height = Math.round(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                imageHeightDp,
+                displayMetrics));
         return root;
     }
 

@@ -26,6 +26,7 @@ import de.fau.cs.mad.carwatch.Constants;
 import de.fau.cs.mad.carwatch.R;
 import de.fau.cs.mad.carwatch.db.Alarm;
 import de.fau.cs.mad.carwatch.logger.LoggerUtil;
+import de.fau.cs.mad.carwatch.ui.MainActivity;
 import de.fau.cs.mad.carwatch.ui.ShowAlarmActivity;
 import de.fau.cs.mad.carwatch.userpresent.UserPresentService;
 import de.fau.cs.mad.carwatch.util.AlarmRepository;
@@ -36,20 +37,18 @@ import static android.os.Build.VERSION_CODES;
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
-    private final String CHANNEL_ID = TAG + "Channel";
+    private static final String CHANNEL_ID = TAG + "Channel";
 
     @SuppressLint("WrongConstant")
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Create and add notification channel
         if (VERSION.SDK_INT >= VERSION_CODES.O && notificationManager != null) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, TAG, NotificationManager.IMPORTANCE_MAX);
             notificationManager.createNotificationChannel(channel);
         }
 
-        // stop user present service if running
         if (UserPresentService.serviceRunning) {
             UserPresentService.stopService(context);
         }
@@ -62,26 +61,39 @@ public class AlarmReceiver extends BroadcastReceiver {
         try {
             alarm = repository.getAlarmById(alarmId);
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database");
-            e.printStackTrace();
+            Log.e(TAG, "Error while getting alarm with id " + alarmId + " from database", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             return;
+        }
+
+        if (alarm == null) {
+            Log.e(TAG, "No alarm found with id " + alarmId);
+            return;
+        }
+
+        if (alarmId == Constants.EXTRA_ALARM_ID_INITIAL) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            preferences.edit()
+                    .putLong(Constants.PREF_PENDING_WAKEUP_NOTIFICATION_TIME, System.currentTimeMillis())
+                    .putBoolean(
+                            Constants.PREF_SHOULD_FINISH_PREVIOUS_DAY_ON_WAKEUP,
+                            AlarmHandler.hasUnfinishedCurrentStudyDay(context))
+                    .apply();
         }
 
         Notification notification = buildNotification(context, alarm);
 
-        // Play alarm ringing sound
-        AlarmSoundControl alarmSoundControl = AlarmSoundControl.getInstance();
-        alarmSoundControl.playAlarmSound(context);
+        AlarmSoundControl.getInstance().playAlarmSound(context);
 
         try {
-            // create Json object and log information
             JSONObject json = new JSONObject();
             json.put(Constants.LOGGER_EXTRA_ALARM_ID, alarmId);
             json.put(Constants.LOGGER_EXTRA_SALIVA_ID, alarm.getSalivaId());
             LoggerUtil.log(Constants.LOGGER_ACTION_ALARM_RING, json);
         } catch (JSONException e) {
-            Log.e(TAG, "Error while creating JSON object for logger for alarm with ID " + alarmId);
-            e.printStackTrace();
+            Log.e(TAG, "Error while creating JSON object for logger for alarm with ID " + alarmId, e);
         }
 
         if (notificationManager != null) {
@@ -92,16 +104,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private Notification buildNotification(Context context, Alarm alarm) {
         PendingIntent stopIntent = createStopAlarmIntent(context, alarm);
-
-        Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
-        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
-
-        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
-
-        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
-                fullScreenIntent, pendingFlags);
+        PendingIntent openIntent = createOpenAlarmIntent(context, alarm);
+        String notificationText = getNotificationText(context, alarm);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -114,10 +118,30 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setColorized(false)
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(getNotificationText(context, alarm))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(getNotificationText(context, alarm)))
-                .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent)
-                .setFullScreenIntent(fullScreenPendingIntent, true);
+                .setContentText(notificationText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationText))
+                .setContentIntent(openIntent)
+                .setAutoCancel(false)
+                .addAction(R.drawable.ic_alarm_black_24dp, context.getString(R.string.open_app), openIntent)
+                .addAction(R.drawable.ic_stop_black_24dp, context.getString(R.string.stop), stopIntent);
+
+        Intent fullScreenIntent = new Intent(context, ShowAlarmActivity.class);
+        fullScreenIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                fullScreenIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null && notificationManager.canUseFullScreenIntent()) {
+                builder.setFullScreenIntent(fullScreenPendingIntent, true);
+            }
+        } else {
+            builder.setFullScreenIntent(fullScreenPendingIntent, true);
+        }
 
         return builder.build();
     }
@@ -132,14 +156,25 @@ public class AlarmReceiver extends BroadcastReceiver {
         return context.getString(R.string.timer_notification_text, alarm.getSalivaId() + startSampleIdx);
     }
 
+    private PendingIntent createOpenAlarmIntent(Context context, Alarm alarm) {
+        Intent intent;
+        if (alarm.getId() == Constants.EXTRA_ALARM_ID_INITIAL) {
+            intent = new Intent(context, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra(Constants.EXTRA_TARGET_NAV_ELEMENT, R.id.navigation_wakeup);
+            intent.putExtra(Constants.EXTRA_OPENED_FROM_ALARM_NOTIFICATION, true);
+        } else {
+            intent = new Intent(context, ShowAlarmActivity.class);
+        }
+        intent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
 
-    /**
-        * Creates a PendingIntent to stop the alarm
-        *
-        * @param context Context
-        * @param alarm   Alarm to stop
-        * @return PendingIntent to stop the alarm
-    */
+        return PendingIntent.getActivity(
+                context,
+                alarm.getId(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
     private PendingIntent createStopAlarmIntent(Context context, Alarm alarm) {
         Intent stopAlarmIntent = new Intent(context, AlarmStopReceiver.class);
         stopAlarmIntent.putExtra(Constants.EXTRA_ALARM_ID, alarm.getId());
@@ -147,12 +182,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         stopAlarmIntent.putExtra(Constants.EXTRA_SOURCE, AlarmSource.SOURCE_NOTIFICATION);
         stopAlarmIntent.setAction(Constants.ACTION_STOP_ALARM);
 
-        int pendingFlags;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
-        } else {
-            pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        }
+        int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         return PendingIntent.getBroadcast(context, 0, stopAlarmIntent, pendingFlags);
     }
 
